@@ -252,8 +252,11 @@ a:hover .gfx-arw{transform:translate(2px,-2px)}
 .gfx-hm .h1{transition:stroke-dashoffset .5s cubic-bezier(.7,0,.84,0) .12s}.gfx-hm .h2{transition:stroke-dashoffset .16s cubic-bezier(.7,0,.84,0) 0s}
 .gfx-hm-on>.gfx-hm .h1{stroke-dashoffset:0;transition:stroke-dashoffset .75s cubic-bezier(.86,0,.07,1) 0s}
 .gfx-hm-on>.gfx-hm .h2{stroke-dashoffset:0;transition:stroke-dashoffset .42s cubic-bezier(.19,1,.22,1) .62s}
-.gfx-hm-host .gfx-arw{transition:opacity .35s cubic-bezier(.19,1,.22,1) .5s,transform .6s cubic-bezier(.19,1,.22,1)}
-.gfx-hm-on .gfx-arw{opacity:0;transition:opacity .2s ease 0s}
+.gfx-hm-host .gfx-arw,.gfx-hm-host .gfx-btn-arw{transition:opacity .35s cubic-bezier(.19,1,.22,1) .5s,transform .6s cubic-bezier(.19,1,.22,1)}
+.gfx-hm-on .gfx-arw,.gfx-hm-on .gfx-btn-arw{opacity:0;transition:opacity .2s ease 0s}
+.gfx-hm-host.button .button_overlap_frame{height:0!important;transition:none}
+.gfx-hm-host .button-content-wrapper:hover,.gfx-hm-host.button:hover .button-content-wrapper{opacity:1!important}
+.gfx-hm-host.button[class*="79f0400b-0395-da6b-f809-b97c64b85a41"]:hover{background-color:#fff}
 .gfx-hm-host:focus-visible{outline:none}
 .gfx-nav .navigation-item.button-text:hover,.footer_section_wrapper .footer-link.button-text:hover{opacity:1!important}
 @media (min-width:992px) and (max-height:680px){
@@ -1670,7 +1673,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
         if (o.row) { y = er.height - 0.75; const rise = 14, run = rise / TAN; x0 = 0; tipX = er.width; x1 = tipX - run; tipY = y - rise; }
         else {
           const lr = textRect(label), h = lr.height, gap = Math.max(3, Math.round(h * 0.16));
-          const glyph = o.glyph !== false && $('.gfx-arw', el), gr = glyph ? glyph.getBoundingClientRect() : null;
+          const glyph = o.glyph !== false && $$('.gfx-arw, .gfx-btn-arw', el).filter(g => g.getClientRects().length)[0], gr = glyph ? glyph.getBoundingClientRect() : null;
           x0 = lr.left - er.left; y = lr.bottom - er.top + gap;
           if (gr && gr.width) { x1 = lr.right - er.left + 2; tipX = gr.right - er.left; const run = Math.max(6, tipX - x1); tipX = x1 + run; tipY = y - run * TAN; }
           else { x1 = lr.right - er.left + h * 0.06; const rise = Math.max(5, h * 0.42), run = rise / TAN; tipX = x1 + run; tipY = y - rise; }
@@ -1686,6 +1689,9 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       el.addEventListener('focus', () => { if (el.matches(':focus-visible')) on(); }); el.addEventListener('blur', off);
     };
     $$('.gfx-nav .nav_desktop > a.navigation-item').forEach(a => mark(a));
+    // v14 (sbx5.js): every button carries the mark too (label + its arrow); the nav's bordered button marks its label
+    $$('.gfx-hero-content .button, .gfx-btn-end .button').forEach(b => mark(b, { label: '.button-text' }));
+    $$('.gfx-nav .nav_desktop .nav-button').forEach(a => mark(a, { label: '.navigation-item' }));
     $$('.gfx-team-sec .team_member_contacts a').forEach(a => mark(a, { label: a.matches('.team_member_contact_button') ? '.paragraph' : null }));
     $$('.footer_section_wrapper a').forEach(a => mark(a));
     $$('.gfx-door').forEach(d => mark(d, { label: '.heading-4', glyph: false }));
