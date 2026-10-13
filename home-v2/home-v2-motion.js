@@ -258,6 +258,14 @@ a:hover .gfx-arw{transform:translate(2px,-2px)}
 .gfx-hm-host .button-content-wrapper:hover,.gfx-hm-host.button:hover .button-content-wrapper{opacity:1!important}
 .gfx-hm-host.button[class*="79f0400b-0395-da6b-f809-b97c64b85a41"]:hover{background-color:#fff}
 .gfx-hm-host:focus-visible{outline:none}
+.gfx-skip{position:fixed;left:16px;top:12px;z-index:10000;padding:10px 16px;background:#0e0e0e;color:#fff;font:500 14px/1 "DM Sans",sans-serif;text-decoration:none;transform:translateY(-160%);transition:transform .3s}
+.gfx-skip:focus,.gfx-skip:focus-visible{transform:none;outline:2px solid #2f9a6c;outline-offset:2px}
+.gfx-motion{position:absolute;left:48px;bottom:28px;z-index:5;display:inline-flex;align-items:center;gap:8px;padding:6px 0;background:none;border:0;cursor:pointer;font:400 14px/1 "DM Sans",sans-serif;letter-spacing:0;text-transform:none;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.gfx-motion i{display:inline-block;width:8px;height:9px;border-left:2px solid currentColor;border-right:2px solid currentColor;box-sizing:border-box}
+.gfx-motion[data-still="true"] i{width:0;height:0;border:0;border-left:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent}
+html.gfx-still .gfx-marq-track{animation-play-state:paused!important}
+@media (max-width:991px){.gfx-motion{left:20px;bottom:auto;top:calc(100vh - 44px)}}
+@media (max-width:767px){html button.gfx-motion{min-height:44px;padding-top:15px;padding-bottom:15px;margin-top:-9px;margin-bottom:-9px;box-sizing:border-box;font-size:16px}html .gfx-skip{padding-top:15px;padding-bottom:15px}}
 .gfx-nav .navigation-item.button-text:hover,.footer_section_wrapper .footer-link.button-text:hover{opacity:1!important}
 @media (min-width:992px) and (max-height:680px){
 html.gfx-m .gfx-case-tl{height:auto}html.gfx-m .gfx-case-stage{display:block}
@@ -586,6 +594,34 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     ['(max-width: 479px)', '(max-width: 600px)'].forEach(q => { try { const m = W.matchMedia(q); if (m.addEventListener) m.addEventListener('change', apply); else m.addListener(apply); } catch (e) { /* old browsers */ } });
   });
 
+  /* the skip link (sbx-content.js landmarks): the first stop for a keyboard, it takes focus into the hero */
+  const skipLink = () => safe('skip', () => {
+    if ($('.gfx-skip') || !D.body) return;
+    const first = $('.gfx-hero-sec'); if (!first) return;
+    const a = D.createElement('a'); a.className = 'gfx-skip'; a.href = '#'; a.textContent = 'Skip to content';
+    a.addEventListener('click', e => { e.preventDefault(); first.setAttribute('tabindex', '-1'); first.focus({ preventScroll: true }); });
+    D.body.insertBefore(a, D.body.firstChild);
+  });
+  /* pause motion (sbx-content.js, WCAG 2.2.2): one quiet control stops the hero film and the client logos; it holds for
+     the visit. Reduced motion needs none. */
+  const pauseControl = () => safe('pause', () => {
+    const hero = $('.gfx-hero-sec'); if (!hero || $('.gfx-motion', hero)) return null;
+    const btn = D.createElement('button'); btn.type = 'button'; btn.className = 'gfx-motion';
+    const vids = () => $$('.gfx-hero-sec video');
+    const apply = still => {
+      H.classList.toggle('gfx-still', still);
+      btn.dataset.still = still ? 'true' : 'false';
+      btn.innerHTML = '<i aria-hidden="true"></i><span>' + (still ? 'Play motion' : 'Pause motion') + '</span>';
+      vids().forEach(v => { if (still) v.pause(); else if (v.play) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } });
+      store.set('gfx-still', still ? '1' : '');
+    };
+    btn.addEventListener('click', () => apply(!H.classList.contains('gfx-still')));
+    hero.appendChild(btn);
+    apply(store.get('gfx-still') === '1');
+    vids().forEach(v => v.addEventListener('play', () => { if (H.classList.contains('gfx-still')) v.pause(); }));
+    return btn;
+  });
+
   /* the static marks of the settled page (reduced motion, or no motion library): drawn where their words rest */
   const settledMarks = () => safe('settled marks', () => {
     const hero = $('.gfx-hero-h'); if (hero) makeMark(hero.parentElement, rangeOf(hero, 'engage'), { low: true, dark: true, drawn: true });
@@ -641,6 +677,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
 
   onReady(() => {
     safe('ix2 sweep', () => { strip(D.body); if (ixObs) ixObs.disconnect(); });
+    skipLink();
     stopIX2(); cleanIX();
     W.addEventListener('load', () => { stopIX2(); setTimeout(ix3Late, 3000); }, { once: true });
     if (REDUCE) { reducedInit(); return; }
@@ -687,7 +724,10 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     // the opening and the hero start as soon as the libraries are here (the fonts re-split the headline themselves)
     let intro = null;
     safe('intro', () => { intro = introInit(); });
+    const pause = pauseControl();
     safe('hero', () => heroInit(intro));
+    // the pause control belongs to the hero: once the hero is covered it leaves the reading order and the view (sbx-m1.js)
+    if (pause) ST.create({ start: () => W.innerHeight * 0.98, end: 'max', onToggle: s => { pause.style.visibility = s.isActive ? 'hidden' : ''; } });
     safe('nav', navInit);
     safe('marquee', marqueeInit);
     portalCrops();
@@ -872,7 +912,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
   /* ---------- the hero (sbx.js M1): headline, then the paragraph, the arrow under "engage.", then the buttons ---------- */
   function heroInit(introTl) {
     const title = $('.gfx-hero-h'); const host = title && (title.closest('.hero_title') || title.parentElement);
-    const para = $('.gfx-hero-p'), btns = $$('.gfx-hero-content .hero_buttons').concat($$('.gfx-hero-sec .hero_buttons')).filter((e, i, a) => a.indexOf(e) === i);
+    const para = $('.gfx-hero-p'), btns = $$('.gfx-hero-content .hero_buttons').concat($$('.gfx-hero-sec .hero_buttons'), $$('.gfx-hero-sec > .gfx-motion')).filter((e, i, a) => a.indexOf(e) === i);
     const late = !introTl && performance.now() > 3300;   // a slow connection: the fallback has shown the hero; set it finished
     let lines = [], started = late, first = true, tw = null;
     const rise = () => gsap.fromTo(lines, { yPercent: G.headline.yPercent }, { yPercent: 0, duration: G.headline.duration, stagger: G.headline.stagger, ease: G.SETTLE, paused: !started });
