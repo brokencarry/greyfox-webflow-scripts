@@ -967,6 +967,9 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
   function marqueeInit() {
     const lw = $('.gfx-logos'), track = lw && $('.gfx-marq-track', lw); if (!track) return;
     const logos = $$('img', track); if (!logos.length || track.querySelector('.gfx-marq-copy')) return;
+    // Webflow publishes the logos loading="lazy": in a moving line clipped by its window, a lazy image only starts loading
+    // once it slides into view, so a fresh visit could show the label over an empty line. The ten are small: load them now.
+    logos.forEach(l => { l.loading = 'eager'; l.decoding = 'async'; });
     // four sets: the line is always wider than its window, and moving it by exactly half returns it to the start
     for (let k = 1; k < 4; k++) logos.forEach(l => { const c = l.cloneNode(true); c.setAttribute('aria-hidden', 'true'); c.alt = ''; c.classList.add('gfx-marq-copy'); c.removeAttribute('id'); track.appendChild(c); });
     lw.classList.add('gfx-marq');
