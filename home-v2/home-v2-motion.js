@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · Home v2 motion (Webflow page script)
- * Version 1.0.1 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.2 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
  *
  * 1.0.1 (live QA on staging, hv2qa): the designer's IX3 page interactions (copied with the page; class-wide on
  *   .display-1/.heading-2/.paragraph/.divider/…) are held back on this page (they split and hid the hero, moved the
@@ -10,6 +10,13 @@
  *   the phone's compact ridge above the case studies (sbx7.js §4), the portal still's phone crops, the pause-motion
  *   control and the skip link, hover marks on the buttons, eager logos, Financial Services' panel on phones;
  *   ?gfm=0 turns the whole script off.
+ * 1.0.2 (final live verification, hv2fin): footer links keep their normal size above 1800 px (founder's call; v14
+ *   shrank them to 16); the nav's hover marks take the on-dark tone over the film (v14 .navigation_wrapper.regular);
+ *   the LinkedIn marks rise into their ↗ (.gfx-team-arw as the glyph); DM Sans 200 is loaded (the footer's small
+ *   links; the site's loader stops at 300); reduced motion / no motion library at ≥992: industries in two columns
+ *   (64/48 gaps, 64 top, hairline under the heading), the process stage one screen tall and centred, the case
+ *   stage's v14 gap, the team's 15vh hold margin (v14 html.gf-m1 keeps it); the close + footer fill the last
+ *   screen there too.
  *
  * WHAT IT IS
  *   The approved local prototype's motion (prototype/v14.html, "A+") ported onto the Webflow page Home v2
@@ -63,7 +70,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.1';
+  W.__gfxHomeV2 = '1.0.2';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -212,7 +219,6 @@ html.gfx-held .gfx-case-leader-c{height:26px}html.gfx-held .gfx-case-lbl-c{botto
 @media (min-width:992px) and (min-height:681px){html.gfx-held .gfx-pull.gfx-pull{row-gap:14px}}
 @media (min-width:992px) and (min-height:1100px){html.gfx-held .gfx-case-tl{justify-content:center}html.gfx-held .gfx-case-stage{flex:1 1 auto;max-height:760px}}
 @media (min-width:1800px){
-.footer_section_wrapper .footer-link.button-text:not(.small){font-size:16px}
 .gfx-pr .gfx-pr-draw{height:clamp(320px,40vh,480px)}
 .gfx-pr .gfx-pr-fig{font-size:56px}
 .gfx-pr .gfx-pr-fcap{font-size:16px}
@@ -282,19 +288,26 @@ html.gfx-m .gfx-case-ch{opacity:1;pointer-events:auto;padding:56px 0;border-top:
 html.gfx-m .gfx-pr-track{height:auto}html.gfx-m .gfx-pr-stage{position:relative;height:auto}
 }
 @media (prefers-reduced-motion:reduce){
-html .gfx-case-tl{height:auto}html .gfx-case-rail{display:none!important}html .gfx-case-stage{display:block;margin-top:0}
+html .gfx-case-tl{height:auto}html .gfx-case-rail{display:none!important}html .gfx-case-stage{display:block;margin-top:clamp(20px,4vh,40px)}
 html .gfx-case-ch{opacity:1!important;pointer-events:auto;padding:56px 0;border-top:1px solid rgba(255,255,255,.14)}
 html .gfx-pr-track{height:auto!important}html .gfx-pr-stage{position:relative!important;height:auto!important}
-html .gfx-ind{padding:96px 48px 120px}html .gfx-ind-reel{display:none!important}html .gfx-ind-mhead{display:block}
-html .gfx-ind-flat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:48px;row-gap:56px;margin-top:48px}
+html .gfx-ind-reel{display:none!important}html .gfx-ind-mhead{display:block}
 html .gfx-seam{transform:none}html .gfx-cap{transform:none}
+}
+@media (prefers-reduced-motion:reduce) and (min-width:992px) and (min-height:681px){html .gfx-team-sec{margin-bottom:calc(var(--gfx-hold-team,.15) * 100vh)}}
+@media (prefers-reduced-motion:reduce) and (min-width:992px){
+html .gfx-case-stage{margin-top:clamp(14px,2.6vh,28px)}
+html .gfx-pr-stage{min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+html .gfx-ind{padding:64px 48px clamp(144px,6.4vw,168px)}html .gfx-ind-mhead{padding-bottom:60px;border-bottom:1px solid rgba(255,255,255,.14)}
+html .gfx-ind-flat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px;row-gap:64px;margin-top:48px}
 }
 @media (prefers-reduced-motion:reduce) and (max-width:991px){html .gfx-ind{padding:64px 20px 96px}html .gfx-ind-flat{grid-template-columns:1fr}}
 html.gfx-static .gfx-case-tl{height:auto}html.gfx-static .gfx-case-rail{display:none!important}html.gfx-static .gfx-case-stage{display:block;margin-top:0}
 html.gfx-static .gfx-case-ch{opacity:1!important;pointer-events:auto;padding:56px 0;border-top:1px solid rgba(255,255,255,.14)}
 html.gfx-static .gfx-pr-track{height:auto!important}html.gfx-static .gfx-pr-stage{position:relative!important;height:auto!important}
 html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mhead{display:block}
-@media (min-width:992px){html.gfx-static .gfx-ind{padding:96px 48px 120px}html.gfx-static .gfx-ind-flat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:48px;row-gap:56px;margin-top:48px}}
+@media (min-width:992px) and (min-height:681px){html.gfx-static .gfx-team-sec{margin-bottom:calc(var(--gfx-hold-team,.15) * 100vh)}}
+@media (min-width:992px){html.gfx-static .gfx-pr-stage{min-height:100vh;display:flex;flex-direction:column;justify-content:center}html.gfx-static .gfx-ind{padding:64px 48px clamp(144px,6.4vw,168px)}html.gfx-static .gfx-ind-mhead{padding-bottom:60px;border-bottom:1px solid rgba(255,255,255,.14)}html.gfx-static .gfx-ind-flat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px;row-gap:64px;margin-top:48px}}
 `;
 
   safe('head', () => {
@@ -310,6 +323,12 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     if (!D.getElementById('gfx-motion-css')) {
       const st = D.createElement('style'); st.id = 'gfx-motion-css'; st.textContent = CSS;
       (D.head || H).appendChild(st);
+    }
+    // v14 loads DM Sans 200 (the footer's small links, city labels and clocks); the site's font loader stops at 300
+    if (!D.getElementById('gfx-dmsans-200')) {
+      const ln = D.createElement('link'); ln.id = 'gfx-dmsans-200'; ln.rel = 'stylesheet';
+      ln.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@200&display=swap';
+      (D.head || H).appendChild(ln);
     }
   });
 
@@ -697,10 +716,17 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
   });
 
   /* the settled page: reduced motion (v14: the static marks, the film at rest, no smooth scroll) */
+  // the close and the footer fill the last screen in the settled page too (v14 sbx11.js runs with reduced motion)
+  function closeFill() {
+    const c = $('.gfx-cta-sec'), f = $$('.footer_section_wrapper').filter(e => e.offsetHeight)[0];
+    if (!c || !f) return;
+    const fit = () => { c.style.minHeight = Math.max(0, W.innerHeight - f.offsetHeight) + 'px'; };
+    fit(); W.addEventListener('resize', fit);
+  }
   function reducedInit() {
     safe('reduced', () => {
       $$('.hero__video video, video[autoplay]').forEach(v => { v.removeAttribute('autoplay'); if (v.pause) v.pause(); });
-      settledMarks(); navTone(); portalCrops();
+      settledMarks(); navTone(); portalCrops(); closeFill();
       H.classList.add('gfx-ready');
     });
   }
@@ -709,7 +735,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     safe('static', () => {
       H.classList.remove('gfx-m', 'gfx-intro'); H.classList.add('gfx-static');
       const p = $('.page-wrapper'); p && p.removeAttribute('inert');
-      settledMarks(); navTone(); portalCrops();
+      settledMarks(); navTone(); portalCrops(); closeFill();
       H.classList.add('gfx-ready');
     });
   }
@@ -1717,12 +1743,13 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       el.classList.add('gfx-hm-host'); el.appendChild(svg);
       const place = () => safe('hover mark', () => {
         const er = el.getBoundingClientRect(); if (!er.width) return;
-        const dark = o.dark != null ? o.dark : onDark(el);
+        const dk = typeof o.dark === 'function' ? o.dark() : o.dark;
+        const dark = dk != null ? dk : onDark(el);
         let x0, x1, y, tipX, tipY;
         if (o.row) { y = er.height - 0.75; const rise = 14, run = rise / TAN; x0 = 0; tipX = er.width; x1 = tipX - run; tipY = y - rise; }
         else {
           const lr = textRect(label), h = lr.height, gap = Math.max(3, Math.round(h * 0.16));
-          const glyph = o.glyph !== false && $$('.gfx-arw, .gfx-btn-arw', el).filter(g => g.getClientRects().length)[0], gr = glyph ? glyph.getBoundingClientRect() : null;
+          const glyph = o.glyph !== false && $$('.gfx-arw, .gfx-btn-arw, .gfx-team-arw', el).filter(g => g.getClientRects().length)[0], gr = glyph ? glyph.getBoundingClientRect() : null;
           x0 = lr.left - er.left; y = lr.bottom - er.top + gap;
           if (gr && gr.width) { x1 = lr.right - er.left + 2; tipX = gr.right - er.left; const run = Math.max(6, tipX - x1); tipX = x1 + run; tipY = y - run * TAN; }
           else { x1 = lr.right - er.left + h * 0.06; const rise = Math.max(5, h * 0.42), run = rise / TAN; tipX = x1 + run; tipY = y - rise; }
@@ -1737,10 +1764,13 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       el.addEventListener('mouseenter', on); el.addEventListener('mouseleave', () => { if (D.activeElement !== el || !el.matches(':focus-visible')) off(); });
       el.addEventListener('focus', () => { if (el.matches(':focus-visible')) on(); }); el.addEventListener('blur', off);
     };
-    $$('.gfx-nav .nav_desktop > a.navigation-item').forEach(a => mark(a));
+    // v14 (sbx5.js DARK has .navigation_wrapper.regular): over the film the bar is transparent, so its marks take the
+    // on-dark tone; past the film the bar's own background decides (light, or dark over a dark room)
+    const navDark = () => (navTop ? true : null);
+    $$('.gfx-nav .nav_desktop > a.navigation-item').forEach(a => mark(a, { dark: navDark }));
     // v14 (sbx5.js): every button carries the mark too (label + its arrow); the nav's bordered button marks its label
     $$('.gfx-hero-content .button, .gfx-btn-end .button').forEach(b => mark(b, { label: '.button-text' }));
-    $$('.gfx-nav .nav_desktop .nav-button').forEach(a => mark(a, { label: '.navigation-item' }));
+    $$('.gfx-nav .nav_desktop .nav-button').forEach(a => mark(a, { label: '.navigation-item', dark: navDark }));
     $$('.gfx-team-sec .team_member_contacts a').forEach(a => mark(a, { label: a.matches('.team_member_contact_button') ? '.paragraph' : null }));
     $$('.footer_section_wrapper a').forEach(a => mark(a));
     $$('.gfx-door').forEach(d => mark(d, { label: '.heading-4', glyph: false }));
