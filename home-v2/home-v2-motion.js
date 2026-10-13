@@ -52,7 +52,9 @@
   'use strict';
   var W = window, D = document;
   if (W.__gfxHomeV2) return;
-  W.__gfxHomeV2 = '1.0.0';
+  // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
+  if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
+  W.__gfxHomeV2 = '1.0.1';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -255,7 +257,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
   // the failsafe: if the motion never takes the page (a blocked CDN, an error), everything shows (v14: sbx-failsafe)
   const failsafe = () => {
     if (H.classList.contains('gfx-ready')) return;
-    H.classList.add('gfx-failsafe'); H.classList.remove('gfx-intro');
+    H.classList.add('gfx-failsafe'); H.classList.remove('gfx-intro'); ix3Late();
     safe('failsafe', () => { const p = D.querySelector('.page-wrapper'); p && p.removeAttribute('inert'); });
   };
   setTimeout(failsafe, 6000);
@@ -322,6 +324,51 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     ixObs.observe(H, { childList: true, subtree: true });
     if (D.body) strip(D.body);
   });
+  /* ---------- Webflow Interactions 3 (html.w-mod-ix3): the designer's PAGE interactions were copied with the page, and
+     they are class-wide: on load the nav slides down, every .display-1 is split into lines that rise, the hero paragraph
+     and buttons rise; on scroll every .heading-2/.heading-3/.heading-4/.paragraph/.p fades up 20-100%, every .divider
+     grows over 3 s, the team members drift 60/120/180 px and the close's padding wrapper scales from 0.9. On Home v2 they
+     land on our rooms (which reuse those designer classes) and fight this script: the hero headline was split twice and
+     its paragraph left at 0.32, the arrows were measured mid-rise, and the dozen interactions aimed at the hidden
+     designer sections log "GSAP target not found". v14 never ran them. So, on this page only, the IX3 register call is
+     handed only the COMPONENT interactions (the designer's Button hovers, his hamburger); the page-scoped ones are held
+     back. His interactions themselves are untouched (every other page still runs them). Webflow publishes them as
+     Webflow.require('ix3').getInstance().register([...interactions], [...timelines]) inside webflow.js, after
+     `window.Webflow = <the core object>`: the global is trapped (as Lenis is) so its require() hands back a wrapped
+     ix3 module whose instance filters the list. ---------- */
+  const HELD_IX3 = [];
+  const patchIx3 = m => safe('ix3 patch', () => {
+    if (!m || m.__gfx || typeof m.getInstance !== 'function') return;
+    m.__gfx = true;
+    const gi = m.getInstance;
+    m.getInstance = function () {
+      const inst = gi.apply(this, arguments);
+      if (inst && !inst.__gfx && typeof inst.register === 'function') {
+        inst.__gfx = true;
+        const reg = inst.register;
+        inst.register = function (ints) {
+          const args = Array.prototype.slice.call(arguments);
+          if (Array.isArray(ints)) args[0] = ints.filter(x => { const page = !!(x && x.scope && x.scope.type === 'pages'); if (page) HELD_IX3.push(x.id); return !page; });
+          if (DEBUG && HELD_IX3.length) log('ix3: page interactions held back on Home v2', HELD_IX3.join(' '));
+          return reg.apply(this, args);
+        };
+      }
+      return inst;
+    };
+  });
+  const wrapWebflow = wf => safe('webflow wrap', () => {
+    if (!wf || Array.isArray(wf) || wf.__gfxWrapped || typeof wf.require !== 'function') return;
+    wf.__gfxWrapped = true;
+    const req = wf.require;
+    wf.require = function (name) { const m = req.apply(this, arguments); if (name === 'ix3') patchIx3(m); return m; };
+  });
+  safe('webflow trap', () => {
+    let cur = W.Webflow;
+    Object.defineProperty(W, 'Webflow', { configurable: true, enumerable: true, get: () => cur, set: v => { cur = v; wrapWebflow(v); } });
+    wrapWebflow(cur);
+  });
+  // his IX3 head style keeps the classes it animates hidden until html.w-mod-ix3; if IX3 never gets ready, show them
+  const ix3Late = () => { if (!H.classList.contains('w-mod-ix3')) H.classList.add('w-mod-ix3'); };
   const stopIX2 = () => safe('ix2', () => {
     const wf = W.Webflow; if (!wf || typeof wf.require !== 'function') return;
     const ix = wf.require('ix2'); if (ix && typeof ix.destroy === 'function') ix.destroy();
@@ -518,7 +565,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
   onReady(() => {
     safe('ix2 sweep', () => { strip(D.body); if (ixObs) ixObs.disconnect(); });
     stopIX2(); cleanIX();
-    W.addEventListener('load', () => { stopIX2(); }, { once: true });
+    W.addEventListener('load', () => { stopIX2(); setTimeout(ix3Late, 3000); }, { once: true });
     if (REDUCE) { reducedInit(); return; }
     Promise.all([ensureGsap(), ensureLenis()]).then(([ok]) => {
       if (!ok) { staticInit(); return; }
