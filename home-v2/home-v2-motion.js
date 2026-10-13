@@ -15,7 +15,8 @@
  *   the LinkedIn marks rise into their ↗ (.gfx-team-arw as the glyph); DM Sans 200 is loaded (the footer's small
  *   links; the site's loader stops at 300); reduced motion / no motion library at ≥992: industries in two columns
  *   (64/48 gaps, 64 top, hairline under the heading), the process stage one screen tall and centred, the case
- *   stage's v14 gap; the close + footer fill the last screen there too.
+ *   stage's v14 gap, the team's 15vh hold margin (v14 html.gf-m1 keeps it); the close + footer fill the last
+ *   screen there too.
  *
  * WHAT IT IS
  *   The approved local prototype's motion (prototype/v14.html, "A+") ported onto the Webflow page Home v2
@@ -69,7 +70,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.1';
+  W.__gfxHomeV2 = '1.0.2';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -293,6 +294,7 @@ html .gfx-pr-track{height:auto!important}html .gfx-pr-stage{position:relative!im
 html .gfx-ind-reel{display:none!important}html .gfx-ind-mhead{display:block}
 html .gfx-seam{transform:none}html .gfx-cap{transform:none}
 }
+@media (prefers-reduced-motion:reduce) and (min-width:992px) and (min-height:681px){html .gfx-team-sec{margin-bottom:calc(var(--gfx-hold-team,.15) * 100vh)}}
 @media (prefers-reduced-motion:reduce) and (min-width:992px){
 html .gfx-case-stage{margin-top:clamp(14px,2.6vh,28px)}
 html .gfx-pr-stage{min-height:100vh;display:flex;flex-direction:column;justify-content:center}
@@ -304,6 +306,7 @@ html.gfx-static .gfx-case-tl{height:auto}html.gfx-static .gfx-case-rail{display:
 html.gfx-static .gfx-case-ch{opacity:1!important;pointer-events:auto;padding:56px 0;border-top:1px solid rgba(255,255,255,.14)}
 html.gfx-static .gfx-pr-track{height:auto!important}html.gfx-static .gfx-pr-stage{position:relative!important;height:auto!important}
 html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mhead{display:block}
+@media (min-width:992px) and (min-height:681px){html.gfx-static .gfx-team-sec{margin-bottom:calc(var(--gfx-hold-team,.15) * 100vh)}}
 @media (min-width:992px){html.gfx-static .gfx-pr-stage{min-height:100vh;display:flex;flex-direction:column;justify-content:center}html.gfx-static .gfx-ind{padding:64px 48px clamp(144px,6.4vw,168px)}html.gfx-static .gfx-ind-mhead{padding-bottom:60px;border-bottom:1px solid rgba(255,255,255,.14)}html.gfx-static .gfx-ind-flat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:48px;row-gap:64px;margin-top:48px}}
 `;
 
