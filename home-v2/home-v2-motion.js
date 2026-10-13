@@ -345,17 +345,21 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
      detaches the designer's hero/close "Navbar Reset/Change" (they target .navigation_wrapper.solid, which our nav
      carries), the team "Reveal" and the "Divider Animation". The nav (hamburger) and component buttons keep theirs.
      The value is kept as data-gfx-wid. A destroy() of IX2 follows as a second line of defence. ---------- */
-  const NAV_VAR = 'w-variant-18cfdf2b-0142-5437-d0ed-5decbbc73cf7';   // the nav component's Dark variant (the solid bar)
+  // the Dark variant of OUR nav copy, 'gfx Navigation (Home v2)' (the solid bar). 1.0.0 named the designer's Navigation's
+  // Dark variant (18cfdf2b…), which our copy does not carry, so the bar never took its regular look over the film. The
+  // copy's variant class is read from its root (data-wf--gfx-navigation-home-v2--variant) as it is parsed.
+  let NAV_VAR = 'w-variant-6001bf23-3a7c-ba13-070d-00867ad512f5';
   const KEEP = '.navigation_wrapper, .button, [data-wf-component-id]';
   let navTop = true;   // the page opens at the top: the bar wears the regular look (no variant) over the film
   const strip = el => {
     if (!el || el.nodeType !== 1) return;
     const one = x => {
+      if (x.hasAttribute('data-wf--gfx-navigation-home-v2--variant')) { const c = Array.prototype.find.call(x.classList, k => k.indexOf('w-variant-') === 0); if (c) NAV_VAR = c; }
       if (x.hasAttribute('data-w-id') && !x.closest(KEEP)) { x.setAttribute('data-gfx-wid', x.getAttribute('data-w-id')); x.removeAttribute('data-w-id'); }
       if (navTop && x.classList.contains(NAV_VAR) && x.closest('.gfx-nav')) { x.classList.remove(NAV_VAR); x.setAttribute('data-gfx-var', ''); }
     };
     one(el);
-    if (el.firstElementChild) Array.prototype.forEach.call(el.querySelectorAll('[data-w-id], .' + NAV_VAR), one);
+    if (el.firstElementChild) Array.prototype.forEach.call(el.querySelectorAll('[data-w-id], [data-wf--gfx-navigation-home-v2--variant], .' + NAV_VAR), one);
   };
   let ixObs = null;
   safe('ix2 strip', () => {
