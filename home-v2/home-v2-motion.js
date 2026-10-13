@@ -166,11 +166,50 @@ html.gfx-held .gfx-case-content{min-height:calc(100vh + var(--gfx-hold-cases,1.7
 html.gfx-held .gfx-case-tl{position:sticky;top:0}
 html.gfx-held .gfx-pr-track{height:calc(100vh + var(--gfx-hold-pr,.7) * 100vh)}
 html.gfx-held .gfx-std-sec{margin-bottom:calc(var(--gfx-hold-std,.7) * 100vh)}
+html.gfx-held .gfx-std-sec.gfx-std-sec.gfx-std-sec{min-height:100vh;min-height:100svh;box-sizing:border-box;padding-top:96px;padding-bottom:64px}
+html.gfx-held .gfx-std-wrap.gfx-std-wrap{row-gap:48px}
 html.gfx-held .gfx-team-sec{margin-bottom:calc(var(--gfx-hold-team,.15) * 100vh)}
 html.gfx-held .gfx-std-sec::after,html.gfx-held .gfx-team-sec::after{content:"";position:absolute;left:0;right:0;top:100%;height:100vh;background:#fff;pointer-events:none}
 html.gfx-held .gfx-std-sec.gfx-capped,html.gfx-held .gfx-team-sec.gfx-capped{clip-path:inset(0 0 -100vh 0)}
 }
-html.gfx-m .gfx-case-fig,html.gfx-m .gfx-case-fig-lead{position:relative;border-top-color:transparent}
+@media (min-width:992px) and (min-height:681px) and (max-height:860px){html.gfx-held .gfx-std-sec.gfx-std-sec.gfx-std-sec{padding-top:64px;padding-bottom:48px}html.gfx-held .gfx-std-wrap.gfx-std-wrap{row-gap:32px}}
+.gfx-std-title .span-brand{display:inline-block}
+@media (max-width:991px){html.gfx-m .gfx-std-grid>.gfx-std-title{align-self:flex-start}html.gfx-m .gfx-case-when{text-wrap:wrap}}
+html.gfx-m .footer_section_wrapper{margin-top:-1px}
+.gfx-mini{display:none}
+@media (max-width:991px){
+html.gfx-m .gfx-mini{display:block;position:sticky;top:0;z-index:4;height:76px;margin:0 -20px;padding:16px 20px 0;box-sizing:border-box;background:linear-gradient(180deg,#0e0e0e 0%,#0e0e0e 78%,rgba(14,14,14,0) 100%)}
+.gfx-mini>svg:first-child{display:block;width:100%;height:44px;overflow:visible}
+.gfx-mini-track{fill:none;stroke:rgba(255,255,255,.3);stroke-width:1}
+.gfx-mini-fill{fill:none;stroke:#2f9a6c;stroke-width:2;stroke-linejoin:miter}
+.gfx-mini i{position:absolute;left:20px;top:16px;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#0e0e0e;border:1px solid rgba(255,255,255,.56);box-sizing:border-box;transition:background .5s,border-color .5s}
+.gfx-mini i.on{background:#2f9a6c;border-color:#2f9a6c}
+.gfx-mini-arrow{position:absolute;left:20px;top:16px;width:14px;height:14px;overflow:visible}
+.gfx-mini-arrow path{fill:none;stroke:#2f9a6c;stroke-width:1.5}
+}
+@media (min-width:992px) and (min-height:681px) and (max-height:800px){
+html.gfx-held .gfx-case-tl{padding-top:84px;padding-bottom:20px}
+html.gfx-held .gfx-case-rail{height:11vh!important;margin-top:6.5vh!important}
+html.gfx-held .gfx-case-stage{margin-top:12px!important}
+html.gfx-held .gfx-case-ch{row-gap:14px!important}
+html.gfx-held .gfx-case-num-lead{font-size:72px!important}
+html.gfx-held .gfx-case-when{font-size:48px!important}
+html.gfx-held .gfx-case-leader-a{height:56px}html.gfx-held .gfx-case-lbl-a{bottom:66px}
+html.gfx-held .gfx-case-leader-b{height:44px}html.gfx-held .gfx-case-lbl-b{bottom:54px}
+html.gfx-held .gfx-case-leader-c{height:26px}html.gfx-held .gfx-case-lbl-c{bottom:36px}
+}
+.gfx-pull .gfx-attr{margin-top:5px}
+@media (min-width:992px){.gfx-case-head .gfx-lead.gfx-lead.gfx-lead{margin-bottom:3.23px}}
+@media (min-width:992px) and (min-height:681px){html.gfx-held .gfx-pull.gfx-pull{row-gap:14px}}
+@media (min-width:992px) and (min-height:1100px){html.gfx-held .gfx-case-tl{justify-content:center}html.gfx-held .gfx-case-stage{flex:1 1 auto;max-height:760px}}
+@media (min-width:1800px){
+.footer_section_wrapper .footer-link.button-text:not(.small){font-size:16px}
+.gfx-pr .gfx-pr-draw{height:clamp(320px,40vh,480px)}
+.gfx-pr .gfx-pr-fig{font-size:56px}
+.gfx-pr .gfx-pr-fcap{font-size:16px}
+}
+@media (min-width:1800px) and (min-height:681px){html.gfx-held .gfx-case-tl{padding-top:clamp(92px,9vh,140px);padding-bottom:clamp(32px,4vh,64px)}html.gfx-held .gfx-case-ch{row-gap:clamp(40px,4.4vh,72px)}}
+html.gfx-m .gfx-case-fig,html.gfx-m .gfx-case-fig-lead{position:relative;border-top-width:0}
 html.gfx-m .gfx-case-fig::before,html.gfx-m .gfx-case-fig-lead::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:rgba(255,255,255,.18);transform-origin:0 50%;transform:scaleX(var(--r,1))}
 html.gfx-m .gfx-pr-f,html.gfx-m .gfx-pr-f-lead{position:relative;border-top-color:transparent}
 html.gfx-m .gfx-pr-f::before,html.gfx-m .gfx-pr-f-lead::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:rgba(255,255,255,.14);transform-origin:0 0;transform:scaleX(var(--pr-rule,1))}
@@ -331,8 +370,8 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
      land on our rooms (which reuse those designer classes) and fight this script: the hero headline was split twice and
      its paragraph left at 0.32, the arrows were measured mid-rise, and the dozen interactions aimed at the hidden
      designer sections log "GSAP target not found". v14 never ran them. So, on this page only, the IX3 register call is
-     handed only the COMPONENT interactions (the designer's Button hovers, his hamburger); the page-scoped ones are held
-     back. His interactions themselves are untouched (every other page still runs them). Webflow publishes them as
+     handed only the interactions of components that have a rendered instance on this page (none today: his Button
+     instances are display:none here, his Navigation is replaced by our copy); the page-scoped ones are held back. His interactions themselves are untouched (every other page still runs them). Webflow publishes them as
      Webflow.require('ix3').getInstance().register([...interactions], [...timelines]) inside webflow.js, after
      `window.Webflow = <the core object>`: the global is trapped (as Lenis is) so its require() hands back a wrapped
      ix3 module whose instance filters the list. ---------- */
@@ -350,9 +389,10 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
           const args = Array.prototype.slice.call(arguments);
           // kept: an interaction of a component that has an instance on this page (none of his do once his Button
           // instances sit in the hidden holder; his Button hovers aimed at no instance log the "target not found"s)
-          const onPage = x => { const sc = x && x.scope; if (!sc || sc.type !== 'component') return false; try { return !!D.querySelector('[data-wf-component-id="' + sc.componentId + '"]'); } catch (e) { return true; } };
+          // (rendered: his Button instances stay in the markup on Home v2 but the page's styles Embed sets them display:none)
+          const onPage = x => { const sc = x && x.scope; if (!sc || sc.type !== 'component') return false; try { return Array.prototype.some.call(D.querySelectorAll('[data-wf-component-id="' + sc.componentId + '"]'),e => e.getClientRects().length > 0); } catch (e) { return true; } };
           if (Array.isArray(ints)) args[0] = ints.filter(x => { const keep = onPage(x); if (!keep) HELD_IX3.push(x && x.id); return keep; });
-          if (DEBUG && HELD_IX3.length) log('ix3: page interactions held back on Home v2', HELD_IX3.join(' '));
+          if (DEBUG && HELD_IX3.length) log('ix3: interactions held back on Home v2', HELD_IX3.join(' '));
           return reg.apply(this, args);
         };
       }
@@ -512,6 +552,33 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     $$('.gfx-ins-go, .gfx-ins-go-row').forEach(g => { if (!g.querySelector('svg')) g.insertAdjacentHTML('beforeend', ARW); });
   });
 
+  /* the portal still's phone crops (sbx-process.js pic(): <picture> sources at 600 px and 479 px). Webflow's Image
+     element serves one picture at every width, so the narrow crops (uploaded to gfx-home) are swapped in here. */
+  const CDN = 'https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/';
+  const CROPS = {
+    head: [['6acea5e24c88849009a41b77_gfx-portal-head-440-dark.webp', 880, 722], ['6acea5e3ea6c7711b5aaaab8_gfx-portal-head-340-dark.webp', 1020, 900]],
+    note: [['6acea5e234eb64db176f2335_gfx-portal-note-440-dark.webp', 880, 1726], ['6acea5e39eb41a72b741b228_gfx-portal-note-340-dark.webp', 1020, 3057]],
+    rest: [['6acea5e395ce9bed5edef0f9_gfx-portal-rest-440-dark.webp', 880, 960], ['6acea5e334eb64db176f2367_gfx-portal-rest-340-dark.webp', 1020, 1440]]
+  };
+  let cropsOn = false;
+  const portalCrops = () => safe('portal crops', () => {
+    if (cropsOn) return; cropsOn = true;
+    const imgs = Object.keys(CROPS).map(k => [k, $('.gfx-pr-p-' + k)]).filter(x => x[1]);
+    if (!imgs.length) return;
+    const keep = imgs.map(([, im]) => ['src', 'srcset', 'sizes', 'width', 'height'].reduce((o, a) => { o[a] = im.getAttribute(a); return o; }, {}));
+    const apply = () => safe('portal crop', () => {
+      const tier = mq('(max-width: 479px)') ? 1 : mq('(max-width: 600px)') ? 0 : -1;
+      imgs.forEach(([k, im], i) => {
+        if (tier < 0) { Object.keys(keep[i]).forEach(a => { if (keep[i][a] == null) im.removeAttribute(a); else im.setAttribute(a, keep[i][a]); }); return; }
+        const [f, w, h] = CROPS[k][tier];
+        if (im.getAttribute('src') === CDN + f) return;
+        im.removeAttribute('srcset'); im.removeAttribute('sizes'); im.setAttribute('width', w); im.setAttribute('height', h); im.setAttribute('src', CDN + f);
+      });
+    });
+    apply();
+    ['(max-width: 479px)', '(max-width: 600px)'].forEach(q => { try { const m = W.matchMedia(q); if (m.addEventListener) m.addEventListener('change', apply); else m.addListener(apply); } catch (e) { /* old browsers */ } });
+  });
+
   /* the static marks of the settled page (reduced motion, or no motion library): drawn where their words rest */
   const settledMarks = () => safe('settled marks', () => {
     const hero = $('.gfx-hero-h'); if (hero) makeMark(hero.parentElement, rangeOf(hero, 'engage'), { low: true, dark: true, drawn: true });
@@ -580,7 +647,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
   function reducedInit() {
     safe('reduced', () => {
       $$('.hero__video video, video[autoplay]').forEach(v => { v.removeAttribute('autoplay'); if (v.pause) v.pause(); });
-      settledMarks(); navTone();
+      settledMarks(); navTone(); portalCrops();
       H.classList.add('gfx-ready');
     });
   }
@@ -589,7 +656,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     safe('static', () => {
       H.classList.remove('gfx-m', 'gfx-intro'); H.classList.add('gfx-static');
       const p = $('.page-wrapper'); p && p.removeAttribute('inert');
-      settledMarks(); navTone();
+      settledMarks(); navTone(); portalCrops();
       H.classList.add('gfx-ready');
     });
   }
@@ -616,6 +683,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     safe('hero', () => heroInit(intro));
     safe('nav', navInit);
     safe('marquee', marqueeInit);
+    portalCrops();
 
     fontsReady().then(() => setTimeout(() => {
       [joinsInit, capsInit, standardInit, casesInit, processInit, teamInit, industriesInit, insightsInit, closeInit, seamsInit,
@@ -1177,6 +1245,51 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
         ST.create({ start: y, end: () => y() + 1, onEnter: () => enter(i), onLeave: () => enter(i).progress(1) }); });
       return undefined;
     });
+    /* phones (sbx7.js §4): the desktop rail is hidden, so a compact ridge stays at the top of the screen while the three
+       periods scroll beneath it; it fills camp to camp as each period arrives, and its last pitch is the ear's 38.2° */
+    const stage = $('.gfx-case-stage', sec);
+    if (tlBox && stage && chs.length === 3) {
+      let mini = $('.gfx-mini', sec);
+      if (!mini) {
+        mini = D.createElement('div'); mini.className = 'gfx-mini'; mini.setAttribute('aria-hidden', 'true');
+        mini.innerHTML = '<svg><path class="gfx-mini-track"/><path class="gfx-mini-fill" pathLength="1"/></svg><i></i><i></i><i></i>' +
+          '<svg class="gfx-mini-arrow" viewBox="0 0 18 18"><path d="M0 17 L14 6"/><path d="M7.5 6 H14 V12.5"/></svg>';
+        stage.parentNode.insertBefore(mini, stage);
+      }
+      mm.add('(max-width: 991px)', () => {
+        const svg = $('svg', mini), track = $('.gfx-mini-track', mini), fill = $('.gfx-mini-fill', mini);
+        const dots = $$('i', mini), arrow = $('.gfx-mini-arrow', mini);
+        let L = 1, camps = [0, 0.5, 1], f = 0, lut = null, onDots = -1; const LUTN = 240;
+        const at = v => { if (!lut) { const p = track.getPointAtLength(v * L); return [p.x, p.y]; } const x = Math.min(LUTN, Math.max(0, v * LUTN)), i = Math.min(LUTN - 1, Math.floor(x)), u = x - i, a = lut[i], b = lut[i + 1]; return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u]; };
+        const set = v => {
+          f = v; gsap.set(fill, { strokeDasharray: '1 3', strokeDashoffset: 1 - v });
+          const [px, py] = at(v); gsap.set(arrow, { x: px, y: py - 14 * 17 / 18 });
+          const n = camps.filter(c => v >= c - 0.01).length; if (n !== onDots) { onDots = n; dots.forEach((d, k) => d.classList.toggle('on', v >= camps[k] - 0.01)); }
+        };
+        const draw = () => safe('mini ridge', () => {
+          const Wm = svg.getBoundingClientRect().width, Hm = 44, top = 8, bot = Hm - 4, span = bot - top; if (!Wm) return;
+          const lastV = 0.58, x1 = Wm - span * (1 - lastV) / TAN;
+          const pts = [[0, 0], [0.15, 0.06], [0.23, 0.075], [0.42, 0.23], [0.5, 0.25], [0.72, 0.44], [0.8, 0.46], [1, lastV]]
+            .map(([u, v]) => [u * x1, bot - v * span]).concat([[Wm, top]]);
+          const d = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L');
+          svg.setAttribute('viewBox', `0 0 ${Wm} ${Hm}`); track.setAttribute('d', d); fill.setAttribute('d', d);
+          L = track.getTotalLength(); lut = null;
+          let best = 0.5, dd = Infinity;
+          for (let i = 0; i <= 400; i++) { const t = i / 400, e = Math.abs(track.getPointAtLength(t * L).x - pts[4][0]); if (e < dd) { dd = e; best = t; } }
+          camps = [0, best, 1];
+          camps.forEach((t, k) => { const p = track.getPointAtLength(t * L); gsap.set(dots[k], { x: p.x, y: p.y }); });
+          onDots = -1; lut = []; for (let i = 0; i <= LUTN; i++) { const p = track.getPointAtLength(i / LUTN * L); lut.push([p.x, p.y]); }
+          set(f);
+        });
+        draw(); ST.addEventListener('refresh', draw);
+        // camp to camp: the fill reaches each camp as that period's title reaches the reading line
+        const made = [1, 2].map(k => ST.create({
+          trigger: chs[k - 1], start: 'top 55%', endTrigger: chs[k], end: 'top 55%', scrub: true,
+          onUpdate: s => set(camps[k - 1] + (camps[k] - camps[k - 1]) * s.progress)
+        }));
+        return () => { made.forEach(s => s.kill()); ST.removeEventListener('refresh', draw); };
+      });
+    }
   }
 
   /* ---------- the process room (sbx-process.js, "simpler"): one film, played in time once the room has locked ---------- */
@@ -1447,7 +1560,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     gsap.matchMedia().add('(max-width: 991px)', () => {
       const made = [];
       $$('.gfx-ind-item', sec).forEach(it => {
-        const pic = $('.gfx-ind-item-pic', it), im = pic && $('img', pic), words = $$('.gfx-ind-item-t, .gfx-ind-item-c', it);
+        const pic = $('.gfx-ind-item-pic', it), im = pic && ($('img', pic) || $('.gfx-ind-item-panel', pic)), words = $$('.gfx-ind-item-t, .gfx-ind-item-c', it);
         if (im) gsap.set(im, { clipPath: 'inset(100% 0% 0% 0%)' });
         if (words.length) { words.forEach(w => w.setAttribute('data-gfx-reveal', '')); gsap.set(words, { opacity: 0, y: 16 }); }
         const yp = () => flowY(it) - W.innerHeight * 0.88, yw = () => flowY(it) - W.innerHeight * 0.80;
