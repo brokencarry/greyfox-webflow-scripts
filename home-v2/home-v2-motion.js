@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · Home v2 motion (Webflow page script)
- * Version 1.0.5 · 2026-10-14 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.6 · 2026-10-14 · one bundle, one IIFE, front-end only (nothing secret).
  *
  * 1.0.1 (live QA on staging, hv2qa): the designer's IX3 page interactions (copied with the page; class-wide on
  *   .display-1/.heading-2/.paragraph/.divider/…) are held back on this page (they split and hid the hero, moved the
@@ -27,6 +27,12 @@
  *   back as the parser adds them (so the film is never fetched) and gives them back if the page has no still. The
  *   photograph settles once, 1.04 → 1 over 7 s on the SETTLE curve, from the headline's cue (heroIn); reduced motion,
  *   no library, ?gfm=0 and the failsafe: still at rest. The scroll breath stays on the portraits (not the hero).
+ * 1.0.6 (pausemv, 10/14, founder): "Pause motion" leaves the hero's bottom left for the standard room: it sits beside
+ *   "Firms we represent" (.gfx-logos-label), the logos' label, as on the Owners page (owners-v2-motion.js: a slot in
+ *   the label's row, 48 px on, centred = on the label's baseline, ink-2 / ink on hover, 44 px tall on phones; the slot
+ *   keeps the label's line, so nothing moves). It still pauses the logos (and a film, if one shows) and keeps the one
+ *   gfx-still choice with Owners and Investors. Focus on it brings the firms' row in if its beat has not come yet; the
+ *   hero-cover visibility rule for it is gone (it no longer belongs to the hero).
  *
  * WHAT IT IS
  *   The approved local prototype's motion (prototype/v14.html, "A+") ported onto the Webflow page Home v2
@@ -80,7 +86,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.5';
+  W.__gfxHomeV2 = '1.0.6';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -286,12 +292,14 @@ a:hover .gfx-arw{transform:translate(2px,-2px)}
 .gfx-hm-host:focus-visible{outline:none}
 .gfx-skip{position:fixed;left:16px;top:12px;z-index:10000;padding:10px 16px;background:#0e0e0e;color:#fff;font:500 14px/1 "DM Sans",sans-serif;text-decoration:none;transform:translateY(-160%);transition:transform .3s}
 .gfx-skip:focus,.gfx-skip:focus-visible{transform:none;outline:2px solid #2f9a6c;outline-offset:2px}
-.gfx-motion{position:absolute;left:48px;bottom:28px;z-index:5;display:inline-flex;align-items:center;gap:8px;padding:6px 0;background:none;border:0;cursor:pointer;font:400 14px/1 "DM Sans",sans-serif;letter-spacing:0;text-transform:none;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.gfx-logos-label.gfx-firms-head{display:flex;align-items:center;justify-content:flex-start;gap:48px}
+.gfx-motion-slot{display:inline-flex;align-items:center;min-width:9.5em;height:1.2em;height:1lh}
+.gfx-motion{display:inline-flex;align-items:center;gap:8px;margin:-5px 0;padding:6px 0;background:none;border:0;cursor:pointer;font:400 14px/1 "DM Sans",sans-serif;letter-spacing:0;text-transform:none;color:#585e6b}
+.gfx-motion:hover{color:#1e1e1e}
 .gfx-motion i{display:inline-block;width:8px;height:9px;border-left:2px solid currentColor;border-right:2px solid currentColor;box-sizing:border-box}
 .gfx-motion[data-still="true"] i{width:0;height:0;border:0;border-left:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent}
 html.gfx-still .gfx-marq-track{animation-play-state:paused!important}
-@media (max-width:991px){.gfx-motion{left:20px;bottom:auto;top:calc(100vh - 44px)}}
-@media (max-width:767px){html button.gfx-motion{min-height:44px;padding-top:15px;padding-bottom:15px;margin-top:-9px;margin-bottom:-9px;box-sizing:border-box;font-size:16px}html .gfx-skip{padding-top:15px;padding-bottom:15px}}
+@media (max-width:767px){.gfx-motion-slot{min-width:0}html button.gfx-motion{min-height:44px;padding-top:0;padding-bottom:0;margin-top:-12px;margin-bottom:-12px;box-sizing:border-box;font-size:16px}html .gfx-skip{padding-top:15px;padding-bottom:15px}}
 .gfx-nav .navigation-item.button-text:hover,.footer_section_wrapper .footer-link.button-text:hover{opacity:1!important}
 @media (min-width:992px) and (max-height:680px){
 html.gfx-m .gfx-case-tl{height:auto}html.gfx-m .gfx-case-stage{display:block}
@@ -677,9 +685,9 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     D.body.insertBefore(a, D.body.firstChild);
   });
   /* pause motion (sbx-content.js, WCAG 2.2.2): one quiet control stops the hero film and the client logos; it holds for
-     the visit. Reduced motion needs none. */
+     the visit. Reduced motion needs none. 1.0.6: it sits beside "Firms we represent", the logos' label, as on Owners. */
   const pauseControl = () => safe('pause', () => {
-    const hero = $('.gfx-hero-sec'); if (!hero || $('.gfx-motion', hero)) return null;
+    const label = $('.gfx-logos-label'); if (!label || $('.gfx-motion')) return null;
     const btn = D.createElement('button'); btn.type = 'button'; btn.className = 'gfx-motion';
     const vids = () => $$('.gfx-hero-sec video').filter(heroFilmOn);   // (1.0.5: the held film is left alone)
     const apply = still => {
@@ -690,7 +698,14 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       store.set('gfx-still', still ? '1' : '');
     };
     btn.addEventListener('click', () => apply(!H.classList.contains('gfx-still')));
-    hero.appendChild(btn);
+    const slot = D.createElement('span'); slot.className = 'gfx-motion-slot';
+    slot.appendChild(btn); label.classList.add('gfx-firms-head'); label.appendChild(slot);
+    // the row arrives with the room's beat (opacity 0 until then): a keyboard that reaches the control first brings the
+    // row in at once, so focus never lands on something unseen
+    btn.addEventListener('focus', () => {
+      const row = [label, $('.gfx-logos')].filter(e => e && +getComputedStyle(e).opacity < 1);
+      if (row.length) { if (gsap) gsap.to(row, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out', overwrite: 'auto' }); else row.forEach(e => { e.style.opacity = 1; e.style.transform = 'none'; }); }
+    });
     apply(store.get('gfx-still') === '1');
     vids().forEach(v => v.addEventListener('play', () => { if (H.classList.contains('gfx-still')) v.pause(); }));
     return btn;
@@ -805,10 +820,8 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     // the opening and the hero start as soon as the libraries are here (the fonts re-split the headline themselves)
     let intro = null;
     safe('intro', () => { intro = introInit(); });
-    const pause = pauseControl();
+    pauseControl();   // (1.0.6: beside the firms' label in the standard room, no longer hidden with the hero)
     safe('hero', () => heroInit(intro));
-    // the pause control belongs to the hero: once the hero is covered it leaves the reading order and the view (sbx-m1.js)
-    if (pause) ST.create({ start: () => W.innerHeight * 0.98, end: 'max', onToggle: s => { pause.style.visibility = s.isActive ? 'hidden' : ''; } });
     safe('nav', navInit);
     safe('marquee', marqueeInit);
     portalCrops();
