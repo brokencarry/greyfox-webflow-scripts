@@ -1,6 +1,18 @@
 /*!
  * Grey Fox · Business Owners v2 motion (Webflow page script)
- * Version 1.0.1 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.2 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ *
+ * 1.0.2 (retv): the final second-bite room ("The second bite depends on the partner.", ret-v; PORT-retained-v.md) is
+ *   built on the page, and its motion lives here (section 7, retainedV): the house head (headline, paragraph, hairline;
+ *   no mark), then the film at the lock (at 80% on phones and short desktops): each formula row's caption, its three
+ *   figures rolling left to right with "earnings" and the operators settling between them; the arrow drawing from $3M,
+ *   its head landing as $13.4M rolls; the total; the note (about 4.9 s). Held 0.5 screen before the questions arrive.
+ *   Reduced motion, no GSAP, no JavaScript: the room as built (the final frame). The odometer's reel rules are also
+ *   injected here (the page's "gfx Owners v2 styles 2" Embed carries the same). The hook stays: a page script that sets
+ *   window.gfxOwnersRetained (or calls gfxOwners.retained(fn)) before the rooms start replaces retainedV.
+ *   The questions (founder 10/13; local round n): no longer a whole held screen. The room is as tall as its content plus
+ *   its own 96 px padding, held or not, so the close rises into the bottom of the same screen as the questions lock; an
+ *   answer that opens grows the room in place and, if the locked room's stuck position changes, it glides there (regrow).
  *
  * 1.0.1 (batch1): the footer ("gfx Footer (Home v2)", shared with Home v2) as on Home v2 1.0.2: its links keep their
  *   normal size above 1800 px (the 16 px rule is gone, here and in the page's styles Embed; founder's call) and DM Sans 200
@@ -33,7 +45,8 @@
  *   av/av-k.js      the partnership room, K: Today and With the right partner, the company laid out (seeded,
  *                   illustrative), its words placed beside their marks, the film at the lock (hold 0.45 screen), each
  *                   lever 0.5 s apart; items and drawing linked both ways (hover / focus lights a lever)
- *   NOT PORTED      the retained-ownership room (being redesigned; a stub hook is below: retainedInit), the "Next" line
+ *   ret/ret-v.js    the second bite (1.0.2): the formula rows, the stake's arrow and figures, the total, the note
+ *   NOT PORTED      the "Next" line
  *                   (removed by the founder), the right-edge rail and the bar's progress line (both display:none on the
  *                   local page since 10/11), the buyer histories / timing / growth / people / work rooms (not on the page)
  *
@@ -63,7 +76,7 @@
   if (W.__gfxOwnersV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxOwnersV2 = 'off'; return; }
-  W.__gfxOwnersV2 = '1.0.1';
+  W.__gfxOwnersV2 = '1.0.2';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -204,6 +217,10 @@ html.gfx-marq-on [data-o~=ow-marq-track]>li{margin:0 clamp(120px,11vw,200px) 0 0
 @media (max-width:991px){[data-o~=ow-foot]>.gfx-ow-seam{left:20px;right:20px}}
 html.gfx-hold [data-o~=ow-foot]::before,html.gfx-seams-flat [data-o~=ow-foot]::before{display:none}
 .gfx-ow-dwell{display:block;height:calc(var(--d,.4) * 100vh);pointer-events:none}
+gfx-odo{display:inline-block;vertical-align:top;height:1em;line-height:1;overflow:hidden}
+gfx-reel{display:block;position:relative;line-height:1;will-change:transform}
+gfx-reel::before{content:attr(data-seq);position:absolute;left:0;right:0;bottom:100%;white-space:pre;text-align:center;line-height:1}
+@media (prefers-reduced-motion:reduce){gfx-reel{transform:none!important}}
 [data-o~=ow-acc] [data-o~=ow-acc-b]{background-color:transparent}
 [data-o~=ow-acc-i]::before,[data-o~=ow-acc-i]::after{transition:transform .6s cubic-bezier(.19,1,.22,1)}
 html.gfx-acc-js [data-o~=ow-acc-item]:not(.is-open) [data-o~=ow-acc-in] p{transition:visibility 0s linear .6s}
@@ -236,8 +253,7 @@ html.gfx-hold [data-o~=ow-av] [data-o~=av-stage]{position:sticky;top:0;height:10
 html.gfx-hold [data-o~=ow-av] [data-o~=av-in]{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center}
 html.gfx-hold [data-o~=ow-av] [data-o~=avh]{flex:1 1 auto;min-height:0;max-height:720px;display:flex;flex-direction:column}
 html.gfx-hold [data-o~=ow-av] [data-o~=avh] [data-o~=avh-fig]{flex:1 1 auto;height:auto;min-height:0}
-html.gfx-hold [data-o~=ow-qs][data-o~=ow-room]{min-height:100vh!important;min-height:100svh!important;display:flex;flex-direction:column;justify-content:flex-start;padding-top:clamp(112px,15vh,200px)!important;box-sizing:border-box}
-html.gfx-hold [data-o~=ow-qs]>[data-o~=ow-in],html.gfx-hold [data-o~=ow-close]>[data-o~=ow-in]{width:100%}
+html.gfx-hold [data-o~=ow-close]>[data-o~=ow-in]{width:100%}
 html.gfx-hold [data-o~=ow-close][data-o~=ow-room]{min-height:max(320px,calc(100vh - var(--gfx-foot-h,600px)))!important;min-height:max(320px,calc(100svh - var(--gfx-foot-h,600px)))!important;display:flex;flex-direction:column;justify-content:center;padding-top:clamp(48px,7vh,80px)!important;padding-bottom:clamp(28px,4vh,48px)!important;box-sizing:border-box}
 }
 @media (min-width:1800px) and (min-height:1000px){
@@ -507,6 +523,18 @@ html.gfx-hold [data-o~=ow-av] [data-o~=avh]{max-height:940px}
     $$('.footer_section_wrapper').forEach(f => { const tw = D.createTreeWalker(f, NodeFilter.SHOW_TEXT); for (let n; (n = tw.nextNode());) if (/©\s*20\d\d/.test(n.textContent)) n.textContent = n.textContent.replace(/20\d\d/, String(new Date().getFullYear())); });
   });
 
+  /* 1.0.2 (founder 10/13, local round n): the questions are as tall as their content plus their own 96 px padding, held or
+     not (no 100vh minimum). A held room is stuck at top min(0, screen - its height): shorter than the screen it locks at
+     the top and the close rises into the screen beneath it. When an answer opens or closes the room changes height; if it
+     is locked at that moment and its stuck position changes (grown past the screen, or shrunk back), it glides there
+     (0.5 s, Settle) instead of jumping; then every trigger is measured again (owners.js owRegrow). */
+  const regrow = room => safe('regrow', () => {
+    if (!room || !ST) return;
+    const cur = parseFloat(room.style.top) || 0, want = Math.min(0, W.innerHeight - room.offsetHeight);
+    if (room.hasAttribute('data-gfx-held') && Math.abs(want - cur) > 1 && room.getBoundingClientRect().top <= cur + 1) gsap.to(room, { top: want, duration: 0.5, ease: G.SETTLE, overwrite: true, onComplete: refresh });
+    else refresh();
+  });
+
   /* the owners' questions open and close in place (all open without JavaScript, and in print) */
   const accordion = () => safe('accordion', () => {
     $$(O('ow-acc-b')).forEach(b => {
@@ -515,8 +543,9 @@ html.gfx-hold [data-o~=ow-av] [data-o~=avh]{max-height:940px}
       b.addEventListener('click', () => {
         const open = !item.classList.contains('is-open');
         item.classList.toggle('is-open', open); b.setAttribute('aria-expanded', String(open));
-        // (the page's length changed: the holds and triggers are measured again once the answer has opened)
-        if (ST) setTimeout(refresh, 650);
+        // (the page's length changed: once the answer has opened the room settles where it is held and the holds and
+        // triggers are measured again; 1.0.2 regrow)
+        if (ST) setTimeout(() => regrow(item.closest(O('ow-room'))), 650);
       });
     });
     H.classList.add('gfx-acc-js');
@@ -1679,33 +1708,95 @@ html.gfx-hold [data-o~=ow-av] [data-o~=avh]{max-height:940px}
     refresh();
   }
 
-  /* ========================= 7 · retained ownership: TO COME =========================
-     The founder is redesigning this room. On Owners v2 it is a placeholder today: section[data-o~="ow-ret"]
-     #gfx-ow-retained[data-placeholder="retained-to-come"], only its cap ("gfx Owners retained (to come)" in the Navigator).
-     It already takes its place in the joins: held while the questions slide over it, dimmed .3 toward paper, a seam drawn
-     across the questions' top; no dwell and no film while it is a placeholder.
-     THE HOOK for the new room (either way works):
-       (a) fill retainedInit below, or
-       (b) ship the room's motion as its own script that defines window.gfxOwnersRetained = function (room, ctx) {...}
-           before DOMContentLoaded (a header script registered before this one), or calls window.gfxOwners.retained(fn)
-           at any later time (the rooms are measured again once it has run).
-     ctx (retainedCtx): live (false = reduced motion / no GSAP: draw the settled frame only), room, gsap, ScrollTrigger, G
-     (the grammar), O (a local class as a data-o selector), $, $$, held() (desktop with holds), flowY(el) (where an element
-     sits in the flow, whatever is held), addFF(room, fn) (settle-now, called once the next room covers it), filmAt(room,
-     el, build) (a film played at the lock / at 80%), roomHead(room, opts) (the house head: headline rise, words, rule,
-     arrow from data-mark), makeMark/drawMark/markDone (the arrow), ffTl, refresh(), hold(key, st) (register a held
-     ScrollTrigger so a resize keeps the reader's place), HOLDQ/FLATQ/STACK/SHORT (the media queries), TAN.
-     Dwell: once the section loses data-placeholder it holds G.hold.short (0.5 screen) before the questions arrive, as on
-     the local page; set data-gfx-dwell="<screens>" on the section to choose another (0 for none). */
+  /* ========================= 7 · retained ownership: the second bite (ret-v, 1.0.2) =========================
+     The final room (prototype/owners/ret/ret-v.js; PORT-retained-v.md): section[data-o~="ow-retv-v"]#gfx-ow-retained
+     ("gfx Owners retained" in the Navigator). The headline carries no mark (data-mark=""): the room's one arrow is the
+     stake's, an Embed svg.rv-arw (.rv-a1 the line, .rv-a2 the head) between $3M and $13.4M. The figures are aria-hidden;
+     each set has a screen-reader sentence ([data-o~=ow-sr]). Its CSS is the page's "gfx Owners v2 styles 2" Embed.
+     ORDER (gf-grammar): the house head as the headline reaches 82% (lines rise, the paragraph +0.2, the hairline +0.45);
+     then the film, at the lock on a held desktop or as the formula reaches 80% (phones, short desktops):
+       0 / 0.85      each row: its caption, then $2.5M / 6.0 / $15M (and $8M / 9.0 / $72M) roll left to right, "earnings",
+                     × and = settling between them (a row's six parts start 0.12 s or more apart)
+       1.75          the arrow's line draws (Draw curve) as $3M rolls (+0.15), its words (+0.35)
+       3.10 / 3.05   the arrow's head lands as $13.4M rolls, its words (+0.2)
+       3.75 / 4.00   the total, then the note; the film ends at about 4.9 s
+     Never more than two starts in any 100 ms. Scrolled past mid-film: the film jumps to its end (addFF). Reduced motion, no
+     GSAP, no JavaScript: nothing runs; the room as built is the final frame (every word shown, the arrow drawn).
+     Dwell: the room holds G.hold.short (0.5 screen) before the questions arrive; data-gfx-dwell="<screens>" on the section
+     chooses another (0 for none). A section that still has data-placeholder plays nothing.
+     THE HOOK stays: a page script that defines window.gfxOwnersRetained = function (room, ctx) {...} before the rooms start,
+     or calls window.gfxOwners.retained(fn), replaces retainedV. ctx (retainedCtx): live, room, gsap, ScrollTrigger, G, O,
+     $, $$, held(), flowY(el), addFF(room, fn), filmAt(room, el, build), roomHead(room, opts), makeMark/drawMark/markDone,
+     ffTl, refresh(), hold(key, st), track(name, getTl), HOLDQ/FLATQ/STACK/SHORT, TAN. */
   let retainedDone = false;
   const retainedCtx = live => ({
     live, room: R.ret, gsap, ScrollTrigger: ST, G, O, $, $$, held, flowY, addFF, filmAt, roomHead, makeMark, drawMark, markDone, ffTl, refresh,
-    hold: (key, st) => { HOLDS.push({ key, st }); }, HOLDQ, FLATQ, STACK, SHORT, TAN
+    hold: (key, st) => { HOLDS.push({ key, st }); }, track, HOLDQ, FLATQ, STACK, SHORT, TAN
   });
+  // the odometer (owners.js odo): each digit a reel; one tween per figure (one clock); the figures' containers are
+  // aria-hidden, so no spoken copy is added
+  const retOdo = b => {
+    const val = b.getAttribute('data-final') || b.textContent.trim(); b.setAttribute('data-final', val); b.textContent = '';
+    const reels = []; let k = 0;
+    for (let c = 0; c < val.length; c++) {
+      const ch = val[c];
+      if (!/\d/.test(ch)) { b.appendChild(D.createTextNode(ch)); continue; }
+      const d = +ch, n = 4 + k, seq = []; for (let j = n; j >= 1; j--) seq.push((d - j + 100) % 10);
+      const mask = D.createElement('gfx-odo'), reel = D.createElement('gfx-reel');
+      reel.textContent = ch; reel.setAttribute('data-seq', seq.join('\n')); mask.appendChild(reel); b.appendChild(mask);
+      reels.push([reel, n, k]); k++;
+    }
+    reels.forEach(r => gsap.set(r[0], { yPercent: r[1] * 100 }));
+    gsap.set(b, { opacity: 0 });
+    const settleE = gsap.parseEase(G.SETTLE), setY = reels.map(r => gsap.quickSetter(r[0], 'yPercent'));
+    return (tl, at) => {
+      tl.set(b, { opacity: 1 }, at); if (!reels.length) return;
+      const last = reels.length - 1, T = G.figure.duration, total = last * 0.07 + T + last * 0.1, clock = { t: 0 };
+      tl.fromTo(clock, { t: 0 }, { t: total, duration: total, ease: 'none', immediateRender: false, onUpdate: () => {
+        reels.forEach((r, i) => { const s = Math.min(1, Math.max(0, (clock.t - r[2] * 0.07) / (T + r[2] * 0.1))); setY[i](r[1] * 100 * (1 - settleE(s))); });
+      } }, at);
+    };
+  };
+  function retainedV(room, ctx) {
+    if (!room || !ctx || !ctx.live || !gsap) return;                       // the settled room, as built
+    // the house head: headline lines rise, the paragraph, the rule (no mark: data-mark is empty)
+    const hd = roomHead(room, { rule: $(O('ow-rule'), room) });
+    if (hd) track('gfx-ow-retained head', hd.tl);
+    const eq = $(O('rv-eq'), room), a1 = $('.rv-a1', room), a2 = $('.rv-a2', room);
+    if (!eq || !a1 || !a2) return;
+    const caps = $$(O('rv-cap'), room), vals = $$(O('rv-v'), room);
+    const wds = $$(O('rv-w') + ',' + O('rv-op'), eq);                       // per row: earnings, ×, = (document order)
+    const pv = $$(O('rv-pv'), room), keys = $$(O('rv-k'), room), tot = $(O('rv-tot'), room), note = $(O('rv-note'), room);
+    if (vals.length !== 6 || wds.length !== 6 || pv.length !== 2 || caps.length !== 2) return;
+    const rollV = vals.map(retOdo), rollP = pv.map(retOdo);
+    gsap.set([a1, a2], { strokeDasharray: 1, strokeDashoffset: 1 });
+    gset(caps.concat(wds, keys, [tot, note]), { opacity: 0, y: G.detail.y });
+    const settle = (tl, els, at) => { const a = list(els); if (a.length) tl.to(a, { opacity: 1, y: 0, duration: G.detail.duration, stagger: G.detail.stagger, ease: G.SETTLE }, at); };
+    const f = filmAt(room, eq, tl => {
+      // each row: its caption, then its three figures left to right, "earnings" and the operators settling between them
+      [0, 1].forEach(r => {
+        const t = r * 0.85;
+        settle(tl, caps[r], t);
+        rollV[r * 3](tl, t + 0.12); settle(tl, wds[r * 3], t + 0.3);
+        settle(tl, wds[r * 3 + 1], t + 0.42); rollV[r * 3 + 1](tl, t + 0.5);
+        settle(tl, wds[r * 3 + 2], t + 0.62); rollV[r * 3 + 2](tl, t + 0.7);
+      });
+      // the stake: the arrow's line (Draw curve) leaves $3M as it lands; its head lands as $13.4M rolls
+      const s = 1.75;
+      tl.to(a1, { strokeDashoffset: 0, autoRound: false, duration: G.hairline.duration, ease: G.DRAW, clearProps: 'strokeDasharray,strokeDashoffset' }, s);
+      rollP[0](tl, s + 0.15); settle(tl, keys[0], s + 0.35);
+      tl.to(a2, { strokeDashoffset: 0, autoRound: false, duration: G.arrow.duration, ease: G.SETTLE, clearProps: 'strokeDasharray,strokeDashoffset' }, s + G.hairline.duration - 0.15);
+      rollP[1](tl, s + 1.3); settle(tl, keys[1], s + 1.5);
+      // then the total, then the note
+      settle(tl, tot, s + 2.0); settle(tl, note, s + 2.25);
+    });
+    track('gfx-ow-retained film', f.tl);
+  }
   function retainedInit(live) {
     const room = R.ret; if (!room || retainedDone) return;
-    const fn = W.gfxOwnersRetained;
-    if (typeof fn !== 'function') return;   // the placeholder: nothing to play
+    if (room.hasAttribute('data-placeholder')) return;                  // a placeholder: nothing to play
+    const fn = typeof W.gfxOwnersRetained === 'function' ? W.gfxOwnersRetained : has(room, 'ow-retv-v') ? retainedV : null;
+    if (!fn) return;
     retainedDone = true;
     safe('retained', () => fn(room, retainedCtx(live)));
     if (live) refresh();
