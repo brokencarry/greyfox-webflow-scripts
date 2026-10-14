@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · Home v2 motion (Webflow page script)
- * Version 1.0.3 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.4 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
  *
  * 1.0.1 (live QA on staging, hv2qa): the designer's IX3 page interactions (copied with the page; class-wide on
  *   .display-1/.heading-2/.paragraph/.divider/…) are held back on this page (they split and hid the hero, moved the
@@ -21,6 +21,11 @@
  *   completes (hairline → odometer roll → caption: 92,631 at 0.62/1.05/1.28, 1 in 3 at 1.50/1.92/2.16, 10 days at
  *   2.30/2.70/2.94 s); phones: hairline 0, roll 0.3, caption 0.55 as each figure arrives (the right one of a pair
  *   G.group later). The figures' green (#2F9A6C) is set in Webflow styles, the reels' baseline in the styles Embed.
+ * 1.0.4 (10/13 arrow, founder: "i want my arrow"): the standard's left column carries OUR arrow at large scale (the
+ *   "gfx std arrow" Embed, svg.gfx-std-arrow: the mark's form, flat then up at 38.2°, the open square head). It draws
+ *   on the Draw curve at the held room's first beat with the quote, never before the mark under "standard" has
+ *   landed (room film ≥ arrow.at + line − 0.15 + head); phones: as it reaches the reading line. Its stroke is refitted
+ *   in the drawing's units so it is the mark's 2 px at every size (also reduced motion / no library: drawn).
  *
  * WHAT IT IS
  *   The approved local prototype's motion (prototype/v14.html, "A+") ported onto the Webflow page Home v2
@@ -74,7 +79,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.3';
+  W.__gfxHomeV2 = '1.0.4';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -654,12 +659,20 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     return btn;
   });
 
+  /* (1.0.4) the standard's big arrow: its stroke in the drawing's own units, so it is the mark's 2 px at any size (a
+     non-scaling stroke would break the pathLength dash that draws it); refitted whenever its height changes */
+  const bigArrowFit = () => safe('big arrow fit', () => {
+    const svg = $('.gfx-std-arrow'); if (!svg || svg._gfxFit) return;
+    const fit = () => { const h = svg.getBoundingClientRect().height; if (h) svg.style.setProperty('--gfx-sw', (2 * 104 / h).toFixed(3)); };
+    svg._gfxFit = fit; if (W.ResizeObserver) new W.ResizeObserver(fit).observe(svg); fit();
+  });
+
   /* the static marks of the settled page (reduced motion, or no motion library): drawn where their words rest */
   const settledMarks = () => safe('settled marks', () => {
     const hero = $('.gfx-hero-h'); if (hero) makeMark(hero.parentElement, rangeOf(hero, 'engage'), { low: true, dark: true, drawn: true });
     const std = $('.gfx-std-title'); if (std) makeMark(std, brandWord, { drawn: true });
     const ctaH = $('.gfx-cta-title .heading-2'); if (ctaH) { wrapWord(ctaH, 'human', 'gfx-w-human'); makeMark($('.gfx-cta-title'), elRange('.gfx-cta-title .gfx-w-human'), { dark: true, drawn: true }); }
-    coverRule(true); addArrows();
+    coverRule(true); addArrows(); bigArrowFit();
     if (D.fonts && D.fonts.ready) D.fonts.ready.then(() => W.dispatchEvent(new Event('resize')));
   });
 
@@ -1169,13 +1182,27 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       () => logos.length && gsap.to(logos, { opacity: 1, y: 0, duration: G.detail.duration, stagger: G.detail.stagger, ease: G.SETTLE })
     ];
     const beat = i => { if (played[i]) return; played[i] = true; safe('std beat', beats[i]); };
-    const all = () => { beat(0); beat(1); };
+    // (1.0.4) our big arrow in the left column (the "gfx std arrow" Embed): it draws with the quote's beat, on the Draw
+    // curve, the head settling over the line's last 0.15 s (as every mark), and never before the mark under "standard"
+    // has landed: it waits for the room's own film to reach the mark's settled head
+    bigArrowFit();
+    const big = $('.gfx-std-arrow', sec), bigP = big ? $$('path', big) : [];
+    let bigPlayed = bigP.length !== 2;
+    if (!bigPlayed) { bigP.forEach(p => p.setAttribute('pathLength', '1')); gsap.set(bigP, { strokeDasharray: 1, strokeDashoffset: 1 }); }
+    const bigDraw = () => { if (bigPlayed) return; bigPlayed = true; safe('std big arrow', () => {
+      const landed = G.arrow.at + G.hairline.duration - 0.15 + G.arrow.duration;
+      gsap.timeline({ delay: Math.max(0, landed - (stdRoom && stdRoom.tl ? stdRoom.tl.time() : landed)) })
+        .to(bigP[0], { strokeDashoffset: 0, autoRound: false, duration: G.hairline.duration, ease: G.DRAW }, 0)
+        .to(bigP[1], { strokeDashoffset: 0, autoRound: false, duration: G.arrow.duration, ease: G.SETTLE }, G.hairline.duration - 0.15);
+    }); };
+    const all = () => { bigDraw(); beat(0); beat(1); };
     if (mq(DESK)) {
       // held: the quote at the lock with the room's first beat, the firms at 45% of the hold (sbx4.js M1, W3)
       const s0 = () => flowY(sec);
       ST.create({ start: s0, end: () => s0() + W.innerHeight * HOLDS.standard,
-        onUpdate: s => { if (s.progress > 0.02) beat(0); if (s.progress > 0.45) beat(1); }, onLeave: all });
+        onUpdate: s => { if (s.progress > 0.02) { bigDraw(); beat(0); } if (s.progress > 0.45) beat(1); }, onLeave: all });
     } else {
+      if (big && !bigPlayed) { const y = () => flowY(big) - W.innerHeight * 0.85; ST.create({ start: y, end: () => y() + 1, onEnter: bigDraw, onLeave: bigDraw }); }
       [[pull, 0], [$('.testimonials_wrapper', sec) || logos[0], 1]].forEach(([el, i]) => {
         if (!el) return; const y = () => flowY(el) - W.innerHeight * 0.85;
         ST.create({ start: y, end: () => y() + 1, onEnter: () => beat(i), onLeave: () => beat(i) });
