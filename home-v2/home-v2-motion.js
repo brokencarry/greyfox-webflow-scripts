@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · Home v2 motion (Webflow page script)
- * Version 1.0.2 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.3 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
  *
  * 1.0.1 (live QA on staging, hv2qa): the designer's IX3 page interactions (copied with the page; class-wide on
  *   .display-1/.heading-2/.paragraph/.divider/…) are held back on this page (they split and hid the hero, moved the
@@ -17,6 +17,10 @@
  *   (64/48 gaps, 64 top, hairline under the heading), the process stage one screen tall and centred, the case
  *   stage's v14 gap, the team's 15vh hold margin (v14 html.gf-m1 keeps it); the close + footer fill the last
  *   screen there too.
+ * 1.0.3 (batch1, PORT-1013j): the process figures are part of the film: each lands as its part of the drawing
+ *   completes (hairline → odometer roll → caption: 92,631 at 0.62/1.05/1.28, 1 in 3 at 1.50/1.92/2.16, 10 days at
+ *   2.30/2.70/2.94 s); phones: hairline 0, roll 0.3, caption 0.55 as each figure arrives (the right one of a pair
+ *   G.group later). The figures' green (#2F9A6C) is set in Webflow styles, the reels' baseline in the styles Embed.
  *
  * WHAT IT IS
  *   The approved local prototype's motion (prototype/v14.html, "A+") ported onto the Webflow page Home v2
@@ -70,7 +74,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.2';
+  W.__gfxHomeV2 = '1.0.3';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -1476,10 +1480,16 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
         const pv = $('.gfx-pr-pv', shot); if (pv) film.fromTo(pv, { scale: 1.1, transformOrigin: '50% 0%' }, { scale: 1, duration: 0.9, ease: SETTLE }, 2.28);
       }
       noteOpen(film, room_, 2.40, 0.6);
-      // 5 · the hairlines draw ahead of the arrow; the three figures settle on them after it, then the words by the portal
-      rule(film, f.concat(capbox ? [capbox] : []), 1.86, 0.8, GG);
-      f.forEach((x, i) => settle(film, $$('p', x), 2.30 + i * GG, { d: 0.55, st: 0.05 }));
-      if (capbox) settle(film, $$('p', capbox), 2.60, { d: 0.54, st: 0.06 });
+      // 5 · (10/13 j, 1.0.3) the figures are part of the film: each lands as its part of the drawing completes, in the house
+      //     order: its hairline (Draw 0.8 s), the figure rolling on the odometer as that part's last stroke comes home, its caption
+      //       92,631 the market (wipe done 1.31) · 1 in 3 the engaged strands converge (2.10) · 10 days the arrow's head (2.88)
+      //     The words by the portal keep their moment (hairline 1.86 + 3 × G.group, words 2.60).
+      const FIG_AT = [[0.62, 1.05, 1.28], [1.50, 1.92, 2.16], [2.30, 2.70, 2.94]];
+      const figEls = f.map(x => $('.gfx-pr-fig', x));
+      f.forEach((x, i) => { const [r, n, c] = FIG_AT[i] || FIG_AT[2]; rule(film, [x], r, 0.8);
+        const fe = figEls[i]; if (fe) { gsap.set(fe, { opacity: 0 }); odo(fe, n, film); }
+        settle(film, $$('.gfx-pr-fcap', x), c, { d: 0.55 }); });
+      if (capbox) { rule(film, [capbox], 1.86 + 3 * GG, 0.8); settle(film, $$('p', capbox), 2.60, { d: 0.54, st: 0.06 }); }
       // scroll triggers, time plays: it starts at the lock; past the lock's end it fast-forwards (0.3 s) to the settled
       // frame; back up it stays settled; only a fresh arrival (the room off the screen below) plays it again
       const top = () => flowY(room_);
@@ -1487,13 +1497,14 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       let ffTw = null;
       const play = () => { if (film.progress() < 1 && !film.isActive() && !(ffTw && ffTw.isActive())) film.play(); };
       const ff = () => { if (film.progress() >= 1) return; film.pause(); ffTw = gsap.to(film, { progress: 1, duration: G.fastForward, ease: 'power1.out' }); };
-      const reset = () => { if (ffTw) ffTw.kill(); ffTw = null; film.pause(0, true); };
+      // (the figures hide again with the film's start, whatever a resize re-recorded through film.invalidate())
+      const reset = () => { if (ffTw) ffTw.kill(); ffTw = null; film.pause(0, true); gsap.set(figEls.filter(Boolean), { opacity: 0 }); };
       const sts = [ST.create({ start: () => top() - W.innerHeight * 0.05, end: () => top() - W.innerHeight * 0.05 + 1, onEnter: play }),
         ST.create({ start: () => top() + holdPx() + W.innerHeight, end: () => top() + holdPx() + W.innerHeight + 1, onEnter: ff }),
         ST.create({ start: () => top() - W.innerHeight, end: () => top() - W.innerHeight + 1, onLeaveBack: reset })];
       const re = () => { const tt = film.time(); film.invalidate().time(tt); };
       ST.addEventListener('refresh', re);
-      return () => { sts.forEach(t => t.kill()); if (ffTw) ffTw.kill(); film.progress(1).kill(); ST.removeEventListener('refresh', re); resetAttrs(); };
+      return () => { sts.forEach(t => t.kill()); if (ffTw) ffTw.kill(); film.progress(1).kill(); ST.removeEventListener('refresh', re); resetAttrs(); figEls.forEach(e => e && (e.style.opacity = '')); };
     });
     /* phones and small tablets: each part plays as it arrives (and reverses, quicker, when you scroll back above it) */
     gsap.matchMedia().add('(max-width: 991px)', () => {
@@ -1504,7 +1515,12 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
         ST.create({ start: y, end: () => y() + 1, onEnter: () => tl.timeScale(1).play(), onLeaveBack: () => tl.timeScale(2).reverse() });
       };
       if (map) part(map, tl => { let t = mapTrunkFan(tl, map, 0); t = mapRows(tl, map, t - 0.05); t = mapCols(tl, map, t - 0.05); mapLit(tl, map, t - 0.1); });
-      f.concat(capbox ? [capbox] : []).forEach(e => part(e, tl => { rule(tl, [e], 0); settle(tl, Array.prototype.slice.call(e.children), 0.1); }, 0.9));
+      // (10/13 j, 1.0.3) each figure as it arrives: its hairline, the figure rolling on the odometer, its caption after it
+      // (two side by side arrive together: the right one follows by G.group)
+      f.forEach(e => { const k = e.getBoundingClientRect().left - e.parentElement.getBoundingClientRect().left > 4 ? G.group : 0;
+        part(e, tl => { rule(tl, [e], k); const fe = $('.gfx-pr-fig', e); if (fe) { gsap.set(fe, { opacity: 0 }); odo(fe, k + 0.3, tl); }
+          settle(tl, $$('.gfx-pr-fcap', e), k + 0.55, { d: 0.9 }); }, 0.9); });
+      if (capbox) part(capbox, tl => { rule(tl, [capbox], 0); settle(tl, Array.prototype.slice.call(capbox.children), 0.1); }, 0.9);
       if (shot) part(shot, tl => { shotIn(tl, shot, 0); noteOpen(tl, room_, 0.9); });
       return () => { made.forEach(t => t.progress(1).kill()); resetAttrs(); };
     });
