@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · Home v2 motion (Webflow page script)
- * Version 1.0.4 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.5 · 2026-10-14 · one bundle, one IIFE, front-end only (nothing secret).
  *
  * 1.0.1 (live QA on staging, hv2qa): the designer's IX3 page interactions (copied with the page; class-wide on
  *   .display-1/.heading-2/.paragraph/.divider/…) are held back on this page (they split and hid the hero, moved the
@@ -21,11 +21,12 @@
  *   completes (hairline → odometer roll → caption: 92,631 at 0.62/1.05/1.28, 1 in 3 at 1.50/1.92/2.16, 10 days at
  *   2.30/2.70/2.94 s); phones: hairline 0, roll 0.3, caption 0.55 as each figure arrives (the right one of a pair
  *   G.group later). The figures' green (#2F9A6C) is set in Webflow styles, the reels' baseline in the styles Embed.
- * 1.0.4 (10/13 arrow, founder: "i want my arrow"): the standard's left column carries OUR arrow at large scale (the
- *   "gfx std arrow" Embed, svg.gfx-std-arrow: the mark's form, flat then up at 38.2°, the open square head). It draws
- *   on the Draw curve at the held room's first beat with the quote, never before the mark under "standard" has
- *   landed (room film ≥ arrow.at + line − 0.15 + head); phones: as it reaches the reading line. Its stroke is refitted
- *   in the drawing's units so it is the mark's 2 px at every size (also reduced motion / no library: drawn).
+ * 1.0.5 (herostill, 10/14; built on 1.0.3, since 1.0.4 = the big arrow, removed): the hero is a still photograph (the
+ *   founder's de-icing shot) in the Embed "gfx hero still" (.gfx-hero-still, first child of .hero__video, under
+ *   .gfx-hero-shade). The designer's film stays in his block, hidden by that Embed's CSS; this script holds its sources
+ *   back as the parser adds them (so the film is never fetched) and gives them back if the page has no still. The
+ *   photograph settles once, 1.04 → 1 over 7 s on the SETTLE curve, from the headline's cue (heroIn); reduced motion,
+ *   no library, ?gfm=0 and the failsafe: still at rest. The scroll breath stays on the portraits (not the hero).
  *
  * WHAT IT IS
  *   The approved local prototype's motion (prototype/v14.html, "A+") ported onto the Webflow page Home v2
@@ -79,7 +80,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.4';
+  W.__gfxHomeV2 = '1.0.5';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -254,6 +255,7 @@ html.gfx-m .gfx-team-pic{--fx-to:40px;clip-path:polygon(0 0,calc(100% - var(--fx
 @media (max-width:991px){html.gfx-m .gfx-team-pic{--fx-to:28px}}
 html.gfx-m .gfx-arriving .gfx-team-img{transition:filter .9s cubic-bezier(.19,1,.22,1)}
 html.gfx-breath .hero__video video,html.gfx-breath .gfx-team-img,html.gfx-breath .gfx-ind-img{transform-origin:50% 50%}
+@media (prefers-reduced-motion:no-preference){html.gfx-m:not(.gfx-failsafe):not(.gfx-static) .gfx-hero-still img{transform:scale(1.04)}}
 html.gfx-m .gfx-marq{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%)}
 html.gfx-m .gfx-marq .gfx-marq-track{flex-wrap:nowrap;width:max-content;animation:gfx-marq 44s linear infinite}
 .gfx-marq:hover .gfx-marq-track,.gfx-marq.gfx-off .gfx-marq-track{animation-play-state:paused}
@@ -333,6 +335,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       const st = D.createElement('style'); st.id = 'gfx-motion-css'; st.textContent = CSS;
       (D.head || H).appendChild(st);
     }
+    filmHold();
     // v14 loads DM Sans 200 (the footer's small links, city labels and clocks); the site's font loader stops at 300
     if (!D.getElementById('gfx-dmsans-200')) {
       const ln = D.createElement('link'); ln.id = 'gfx-dmsans-200'; ln.rel = 'stylesheet';
@@ -340,6 +343,40 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       (D.head || H).appendChild(ln);
     }
   });
+
+  /* 1.0.5 · the hero photograph: the designer's film is hidden by the "gfx hero still" Embed's CSS, so it must not load
+     either. Run from the header, before the body is parsed: an observer takes the film's sources away as the parser adds
+     them (its callback runs before the media element's own source selection, so nothing is fetched). At
+     DOMContentLoaded: no still on the page (the Embed removed) → the film gets its sources back and plays as before. */
+  function filmHold() {
+    if (!W.MutationObserver) return;
+    const held = [];
+    const strip = v => {
+      if (!v.hasAttribute('data-gfx-held')) { v.setAttribute('data-gfx-held', ''); v.removeAttribute('autoplay'); v.preload = 'none'; held.push(v); }
+      if (v.getAttribute('src')) { v.setAttribute('data-gfx-src', v.getAttribute('src')); v.removeAttribute('src'); }
+      Array.prototype.forEach.call(v.querySelectorAll('source[src]'), s => { s.setAttribute('data-gfx-src', s.getAttribute('src')); s.removeAttribute('src'); });
+    };
+    const scan = () => Array.prototype.forEach.call(D.querySelectorAll('.hero__video > video'), strip);
+    const mo = new MutationObserver(recs => {
+      for (const r of recs) for (const n of r.addedNodes) {
+        if (n.nodeName === 'VIDEO' || n.nodeName === 'SOURCE') { scan(); return; }
+      }
+    });
+    mo.observe(D.documentElement, { childList: true, subtree: true });
+    const done = () => {
+      mo.disconnect(); scan();
+      if (D.querySelector('.gfx-hero-still')) return;
+      held.forEach(v => {
+        v.removeAttribute('data-gfx-held');
+        if (v.getAttribute('data-gfx-src')) v.setAttribute('src', v.getAttribute('data-gfx-src'));
+        Array.prototype.forEach.call(v.querySelectorAll('source[data-gfx-src]'), s => s.setAttribute('src', s.getAttribute('data-gfx-src')));
+        v.setAttribute('autoplay', ''); v.preload = 'auto'; v.load();
+        const p = v.play && v.play(); if (p && p.catch) p.catch(() => {});
+      });
+    };
+    if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', done, { once: true }); else done();
+  }
+  const heroFilmOn = v => !!v && !v.hasAttribute('data-gfx-held') && getComputedStyle(v).display !== 'none';
 
   // the failsafe: if the motion never takes the page (a blocked CDN, an error), everything shows (v14: sbx-failsafe)
   const failsafe = () => {
@@ -644,7 +681,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
   const pauseControl = () => safe('pause', () => {
     const hero = $('.gfx-hero-sec'); if (!hero || $('.gfx-motion', hero)) return null;
     const btn = D.createElement('button'); btn.type = 'button'; btn.className = 'gfx-motion';
-    const vids = () => $$('.gfx-hero-sec video');
+    const vids = () => $$('.gfx-hero-sec video').filter(heroFilmOn);   // (1.0.5: the held film is left alone)
     const apply = still => {
       H.classList.toggle('gfx-still', still);
       btn.dataset.still = still ? 'true' : 'false';
@@ -659,20 +696,12 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     return btn;
   });
 
-  /* (1.0.4) the standard's big arrow: its stroke in the drawing's own units, so it is the mark's 2 px at any size (a
-     non-scaling stroke would break the pathLength dash that draws it); refitted whenever its height changes */
-  const bigArrowFit = () => safe('big arrow fit', () => {
-    const svg = $('.gfx-std-arrow'); if (!svg || svg._gfxFit) return;
-    const fit = () => { const h = svg.getBoundingClientRect().height; if (h) svg.style.setProperty('--gfx-sw', (2 * 104 / h).toFixed(3)); };
-    svg._gfxFit = fit; if (W.ResizeObserver) new W.ResizeObserver(fit).observe(svg); fit();
-  });
-
   /* the static marks of the settled page (reduced motion, or no motion library): drawn where their words rest */
   const settledMarks = () => safe('settled marks', () => {
     const hero = $('.gfx-hero-h'); if (hero) makeMark(hero.parentElement, rangeOf(hero, 'engage'), { low: true, dark: true, drawn: true });
     const std = $('.gfx-std-title'); if (std) makeMark(std, brandWord, { drawn: true });
     const ctaH = $('.gfx-cta-title .heading-2'); if (ctaH) { wrapWord(ctaH, 'human', 'gfx-w-human'); makeMark($('.gfx-cta-title'), elRange('.gfx-cta-title .gfx-w-human'), { dark: true, drawn: true }); }
-    coverRule(true); addArrows(); bigArrowFit();
+    coverRule(true); addArrows();
     if (D.fonts && D.fonts.ready) D.fonts.ready.then(() => W.dispatchEvent(new Event('resize')));
   });
 
@@ -979,7 +1008,9 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     if (!late) { if (para) gsap.set(para, { opacity: 0.32 }); if (btns.length) gsap.set(btns, { opacity: 0, y: G.detail.y }); }
     H.classList.add('gfx-ready');   // the motion has the hero: the pre-paint states and their fallback stand down
     const mk = title && host ? makeMark(host, rangeOf(title, 'engage'), { low: true, dark: true, cls: 'gfx-hero-mark' }) : null;
+    const still = $('.gfx-hero-still img');
     if (late) {
+      if (still) gsap.set(still, { scale: 1 });
       if (mk) { mk.place(); gsap.set([mk.p1, mk.p2], { strokeDashoffset: 0 }); }
       [para].concat(btns).filter(Boolean).forEach(e => { const o = +getComputedStyle(e).opacity; if (o < 1) gsap.fromTo(e, { opacity: o }, { opacity: 1, duration: 0.6, ease: G.SETTLE, clearProps: 'opacity' }); });
       return;
@@ -992,6 +1023,15 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       .to(mk.p1, { strokeDashoffset: 0, autoRound: false, duration: G.hairline.duration, ease: G.DRAW }, 'heroIn+=' + G.arrow.at)
       .to(mk.p2, { strokeDashoffset: 0, autoRound: false, duration: G.arrow.duration, ease: G.SETTLE }, 'heroIn+=' + (G.arrow.at + G.hairline.duration - 0.15));
     if (btns.length) tl.to(btns, { opacity: 1, y: 0, duration: G.detail.duration, stagger: G.detail.stagger, ease: G.SETTLE, clearProps: 'opacity,transform' }, 'heroIn+=' + G.detail.at);
+    // 1.0.5 · the photograph's breath: one slow settle, 1.04 → 1 over 7 s on SETTLE, with the headline (on a first visit
+    // heroIn is the curtain 60 % gone: started at the curtain's lift, the settle was all but over before it showed), or
+    // once the photograph has loaded if it arrives later (a settle played before the picture shows is a settle missed)
+    // ("Pause motion" chosen on an earlier visit: the photograph is simply at rest)
+    if (still && H.classList.contains('gfx-still')) gsap.set(still, { scale: 1 });
+    else if (still) tl.add(() => {
+      const go = () => gsap.fromTo(still, { scale: 1.04 }, { scale: 1, duration: 7, ease: G.SETTLE });
+      if (still.complete && still.naturalWidth) go(); else { still.addEventListener('load', go, { once: true }); still.addEventListener('error', () => gsap.set(still, { scale: 1 }), { once: true }); }
+    }, 'heroIn');
   }
 
   /* ---------- the nav (sbx.js): the bar steps aside while you read down past the film and returns when you scroll up;
@@ -1100,7 +1140,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
         const seam = mkSeam(R.std);
         const sw = gsap.fromTo(seam, { scaleX: 0 }, { scaleX: 1, ease: G.DRAW, scrollTrigger: { start: 0, end: () => W.innerHeight, scrub: true, invalidateOnRefresh: true } });
         // once covered, the film rests out of sight (v14's hero track let it scroll away)
-        const vid = $('video', R.hero);
+        const vid = [$('video', R.hero)].filter(heroFilmOn)[0];   // (1.0.5: none while the still is the hero)
         const cover = ST.create({ start: () => W.innerHeight + 2, end: 'max', onToggle: s => { R.hero.style.visibility = s.isActive ? 'hidden' : ''; if (vid) { if (s.isActive) vid.pause(); else if (vid.play) vid.play().catch(() => {}); } } });
         made.push(() => { tw.scrollTrigger && tw.scrollTrigger.kill(); tw.kill(); sw.scrollTrigger && sw.scrollTrigger.kill(); sw.kill(); cover.kill(); dim.remove(); seam.remove(); R.hero.style.position = ''; R.hero.style.top = ''; R.hero.style.visibility = ''; dropMark(R.hero); });
       }
@@ -1182,27 +1222,13 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
       () => logos.length && gsap.to(logos, { opacity: 1, y: 0, duration: G.detail.duration, stagger: G.detail.stagger, ease: G.SETTLE })
     ];
     const beat = i => { if (played[i]) return; played[i] = true; safe('std beat', beats[i]); };
-    // (1.0.4) our big arrow in the left column (the "gfx std arrow" Embed): it draws with the quote's beat, on the Draw
-    // curve, the head settling over the line's last 0.15 s (as every mark), and never before the mark under "standard"
-    // has landed: it waits for the room's own film to reach the mark's settled head
-    bigArrowFit();
-    const big = $('.gfx-std-arrow', sec), bigP = big ? $$('path', big) : [];
-    let bigPlayed = bigP.length !== 2;
-    if (!bigPlayed) { bigP.forEach(p => p.setAttribute('pathLength', '1')); gsap.set(bigP, { strokeDasharray: 1, strokeDashoffset: 1 }); }
-    const bigDraw = () => { if (bigPlayed) return; bigPlayed = true; safe('std big arrow', () => {
-      const landed = G.arrow.at + G.hairline.duration - 0.15 + G.arrow.duration;
-      gsap.timeline({ delay: Math.max(0, landed - (stdRoom && stdRoom.tl ? stdRoom.tl.time() : landed)) })
-        .to(bigP[0], { strokeDashoffset: 0, autoRound: false, duration: G.hairline.duration, ease: G.DRAW }, 0)
-        .to(bigP[1], { strokeDashoffset: 0, autoRound: false, duration: G.arrow.duration, ease: G.SETTLE }, G.hairline.duration - 0.15);
-    }); };
-    const all = () => { bigDraw(); beat(0); beat(1); };
+    const all = () => { beat(0); beat(1); };
     if (mq(DESK)) {
       // held: the quote at the lock with the room's first beat, the firms at 45% of the hold (sbx4.js M1, W3)
       const s0 = () => flowY(sec);
       ST.create({ start: s0, end: () => s0() + W.innerHeight * HOLDS.standard,
-        onUpdate: s => { if (s.progress > 0.02) { bigDraw(); beat(0); } if (s.progress > 0.45) beat(1); }, onLeave: all });
+        onUpdate: s => { if (s.progress > 0.02) beat(0); if (s.progress > 0.45) beat(1); }, onLeave: all });
     } else {
-      if (big && !bigPlayed) { const y = () => flowY(big) - W.innerHeight * 0.85; ST.create({ start: y, end: () => y() + 1, onEnter: bigDraw, onLeave: bigDraw }); }
       [[pull, 0], [$('.testimonials_wrapper', sec) || logos[0], 1]].forEach(([el, i]) => {
         if (!el) return; const y = () => flowY(el) - W.innerHeight * 0.85;
         ST.create({ start: y, end: () => y() + 1, onEnter: () => beat(i), onLeave: () => beat(i) });
@@ -1751,7 +1777,8 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
         onToggle: s => { pic.style.willChange = s.isActive ? 'transform' : ''; },
         onUpdate: s => set(s.progress), onRefresh: s => { q = 1 / Math.max(400, frame.offsetWidth || 400); set(s.progress); } });
     };
-    const film = R.hero && $('video', R.hero);
+    // (1.0.5: only a film that shows; the still has its own settle in heroInit)
+    const film = R.hero && [$('video', R.hero)].filter(heroFilmOn)[0];
     if (R.hero && film) breathe(film, R.hero, () => [0, Math.max(W.innerHeight, R.hero.offsetHeight)]);
     // the portraits: from the frame reaching the foot of the screen until the next room has covered it
     if (R.team) $$('.gfx-team-pic', R.team).forEach(fr => {
