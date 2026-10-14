@@ -921,10 +921,13 @@ html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flyin
       }
       H.classList.add('gfx-ftg-reveal');
       measure(); tl = film(true);
+      // p is read from the host's live box on every scroll (not from a trigger's cached range: on a live page a room can
+      // change height after the last refresh, and a stale range never reaches the page's end)
+      const live = () => { const r = host.getBoundingClientRect(); return Math.min(1, Math.max(0, (W.innerHeight - r.top) / (FH || 1))); };
       let first = true;
-      st = ST.create({ trigger: host, start: 'top bottom', end: 'bottom bottom', invalidateOnRefresh: true,
-        onRefresh: s => { measure(); step(s.progress, true); first = false; },
-        onUpdate: s => step(s.progress, first) });
+      st = ST.create({ start: 0, end: 'max',
+        onRefresh: () => { measure(); step(live(), true); first = false; },
+        onUpdate: () => { step(live(), first); first = false; } });
       ro = new ResizeObserver(() => { if (foot.offsetHeight !== FH) { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => ST.refresh()); } });
       ro.observe(foot);
       ST.refresh();
