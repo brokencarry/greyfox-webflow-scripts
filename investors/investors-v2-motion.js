@@ -1,6 +1,13 @@
 /*!
  * Grey Fox · Investors v2 motion (Webflow page script)
- * Version 1.0.1 · 2026-10-14 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.2 · 2026-10-14 · one bundle, one IIFE, front-end only (nothing secret).
+ *
+ * 1.0.2 (herotug, 10/14, founder-approved): the hero's photograph is the tug towing a container ship at blue hour, in
+ *       the Embed "gfx iv hero still" (.gfx-iv-hero-still, first child of the hero's window; its img carries
+ *       data-o="iv-hero-img iv-hero-tug"; the earlier native picture is hidden by the Embed's CSS). As the homepage's
+ *       hero still: the window opens as before, and the photograph's one move is a slow settle, 1.04 → 1 over 7 s on
+ *       SETTLE, from the opening (or once it has loaded, if later); no scroll breath on it; reduced motion, or "Pause
+ *       motion" chosen before (gfx-still): at rest. Without the Embed, the earlier photograph and its motion are unchanged.
  *
  * 1.0.1 (footg, 10/14, founder: "i love G", "go"): the footer is G, "the ending". The shared "gfx Footer (Home v2)"
  *       is restyled natively (four even columns, one 18 px size on 40 px rows, the gold fox + grey wordmark lockup on the
@@ -75,7 +82,7 @@
   if (W.__gfxInvestorsV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxInvestorsV2 = 'off'; return; }
-  W.__gfxInvestorsV2 = '1.0.1';
+  W.__gfxInvestorsV2 = '1.0.2';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -907,13 +914,15 @@ html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flyin
     const hm = makeMark(h1);
     const words = [$(O('ow-hero-k'), hero), $(O('ow-hero-lede'), hero), $(O('ow-actions'), hero)].filter(Boolean);
     const rule = $(O('ow-hero-foot') + ' ' + O('ow-rule'), hero);
-    const pic = $(O('ow-hero-pic'), hero), img = pic && $('img', pic), facet = !!pic && has(pic, 'ow-facet-in');
+    const pic = $(O('ow-hero-pic'), hero), facet = !!pic && has(pic, 'ow-facet-in');
+    // (1.0.2) the tug still, when its Embed is there; else the window's own picture
+    const tug = pic && $('img[data-o~=iv-hero-tug]', pic), img = tug || (pic && $('img', pic)), tugRest = !!tug && STILL();
     // the figures: in a share ("1 in 3") only the first number rolls, so the figure never passes through a false fraction
     const stats = $$(O('iv-stat'), hero), statK = stats.map(st => $(O('iv-stat-k'), st)).filter(Boolean);
     const statPlay = stats.map(st => roll($('[data-ow-odo]', st)));
     words.forEach(e => e.setAttribute('data-gfx-reveal', ''));
     gset(words, { opacity: 0, y: G.body.y }); gset(statK, { opacity: 0, y: G.detail.y }); gset(rule, { scaleX: 0, transformOrigin: '0% 50%' });
-    if (img) { gsap.set(img, { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom }); if (facet) gsap.set(pic, { '--gfx-fx': '0px' }); }
+    if (img) { gsap.set(img, { clipPath: G.picture.clipFrom, scale: tug ? (tugRest ? 1 : 1.04) : G.picture.scaleFrom }); if (facet) gsap.set(pic, { '--gfx-fx': '0px' }); }
     H.classList.add('gfx-hero-on', 'gfx-ready');   // the script holds them now; the pre-paint states and their fallback stand down
     tl = heroTl = gsap.timeline({ paused: true });
     setTimeout(heroGo, 1200);
@@ -924,7 +933,15 @@ html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flyin
     if (rule) tl.to(rule, { scaleX: 1, duration: G.hairline.duration, ease: G.DRAW }, G.hairline.at);
     // the photograph opens upward like a window (DRAW) and settles (a little longer than it opens)
     const PIC_AT = 0.15;
-    if (img) tl.to(img, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: G.DRAW }, PIC_AT)
+    if (img && tug) {
+      // (1.0.2) the tug still: the window opens as before; the photograph settles once, 1.04 → 1 over 7 s on SETTLE, from
+      // the opening, or once it has loaded if it arrives later ("Pause motion" chosen before: at rest)
+      tl.to(img, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: G.DRAW }, PIC_AT);
+      if (!tugRest) tl.add(() => {
+        const go = () => gsap.fromTo(img, { scale: 1.04 }, { scale: 1, duration: 7, ease: G.SETTLE });
+        if (img.complete && img.naturalWidth) go(); else { img.addEventListener('load', go, { once: true }); img.addEventListener('error', () => gsap.set(img, { scale: 1 }), { once: true }); }
+      }, PIC_AT);
+    } else if (img) tl.to(img, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: G.DRAW }, PIC_AT)
       .to(img, { scale: 1, duration: G.picture.duration + 0.5, ease: G.SETTLE }, PIC_AT + 0.34);
     drawMark(hm, tl, G.arrow.at);
     stats.forEach((st, i) => { const at = G.detail.at + i * 0.3; if (statPlay[i]) statPlay[i](tl, at); const k = $(O('iv-stat-k'), st); if (k) tl.to(k, { opacity: 1, y: 0, duration: G.detail.duration, ease: G.SETTLE }, at + 0.15); });
@@ -951,7 +968,8 @@ html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flyin
         onUpdate: s => set(s.progress), onRefresh: s => { q = 1 / Math.max(400, frame.offsetWidth || 400); set(s.progress); } });
     };
     const hero = R.hero, himg = hero && $(O('ow-hero-pic') + ' img', hero);
-    if (himg) breathe(himg, himg.closest(O('ow-hero-pic')) || himg.parentElement, () => [0, Math.max(W.innerHeight, hero.offsetHeight)]);
+    // (1.0.2: the tug still settles once instead; the cases' photographs keep the breath)
+    if (himg && !$(O('ow-hero-pic') + ' img[data-o~=iv-hero-tug]', hero)) breathe(himg, himg.closest(O('ow-hero-pic')) || himg.parentElement, () => [0, Math.max(W.innerHeight, hero.offsetHeight)]);
     $$(O('iv-case-bg')).forEach(bg => {
       const img = $('img', bg), rm = bg.closest(O('ow-room'));
       if (img && rm) breathe(img, bg, () => { const t = flowY(rm); return [Math.max(0, t - W.innerHeight), t + rm.offsetHeight]; });
