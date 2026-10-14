@@ -30,7 +30,8 @@
  * 1.0.6 (pausemv, 10/14, founder): "Pause motion" leaves the hero's bottom left for the standard room: it sits beside
  *   "Firms we represent" (.gfx-logos-label), the logos' label, as on the Owners page (owners-v2-motion.js: a slot in
  *   the label's row, 48 px on, centred = on the label's baseline, ink-2 / ink on hover, 44 px tall on phones; the slot
- *   keeps the label's line, so nothing moves). It still pauses the logos (and a film, if one shows) and keeps the one
+ *   keeps the label's line, so nothing moves; on a narrower row the gap gives way first, down to 16 px, the words never
+ *   break, and below that the control takes the next line). It still pauses the logos (and a film, if one shows) and keeps the one
  *   gfx-still choice with Owners and Investors. Focus on it brings the firms' row in if its beat has not come yet; the
  *   hero-cover visibility rule for it is gone (it no longer belongs to the hero).
  *
@@ -292,7 +293,7 @@ a:hover .gfx-arw{transform:translate(2px,-2px)}
 .gfx-hm-host:focus-visible{outline:none}
 .gfx-skip{position:fixed;left:16px;top:12px;z-index:10000;padding:10px 16px;background:#0e0e0e;color:#fff;font:500 14px/1 "DM Sans",sans-serif;text-decoration:none;transform:translateY(-160%);transition:transform .3s}
 .gfx-skip:focus,.gfx-skip:focus-visible{transform:none;outline:2px solid #2f9a6c;outline-offset:2px}
-.gfx-logos-label.gfx-firms-head{display:flex;align-items:center;justify-content:flex-start;gap:48px}
+.gfx-logos-label.gfx-firms-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;column-gap:clamp(16px,100% - 264px,48px);white-space:nowrap}
 .gfx-motion-slot{display:inline-flex;align-items:center;min-width:9.5em;height:1.2em;height:1lh}
 .gfx-motion{display:inline-flex;align-items:center;gap:8px;margin:-5px 0;padding:6px 0;background:none;border:0;cursor:pointer;font:400 14px/1 "DM Sans",sans-serif;letter-spacing:0;text-transform:none;color:#585e6b}
 .gfx-motion:hover{color:#1e1e1e}
