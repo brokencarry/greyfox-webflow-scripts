@@ -1,7 +1,12 @@
 /*!
  * Grey Fox · Business Owners v2 motion (Webflow page script)
- * Version 1.0.2 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.3 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
  *
+ * 1.0.3 (scr3; found by ivm on Investors v2): after a resize across 992 px (or a tablet turning) the finished rooms above
+ *   went back to hidden (the questions' rows, the close's doors, the whole second-bite room). Their films were made
+ *   inside a held/flat trigger's callback, so the gsap.matchMedia context recorded them and reverted them on the switch.
+ *   Now every room film (filmAt) is built at load, outside any context, and a fast-forward (ffTl) plays the existing
+ *   timeline on at a higher speed instead of making a new tween. Nothing else changes.
  * 1.0.2 (retv): the final second-bite room ("The second bite depends on the partner.", ret-v; PORT-retained-v.md) is
  *   built on the page, and its motion lives here (section 7, retainedV): the house head (headline, paragraph, hairline;
  *   no mark), then the film at the lock (at 80% on phones and short desktops): each formula row's caption, its three
@@ -76,7 +81,7 @@
   if (W.__gfxOwnersV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxOwnersV2 = 'off'; return; }
-  W.__gfxOwnersV2 = '1.0.2';
+  W.__gfxOwnersV2 = '1.0.3';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -456,7 +461,10 @@ html.gfx-hold [data-o~=ow-av] [data-o~=avh]{max-height:940px}
   const films = new Map();
   const addFF = (room, f) => { if (!room) return; if (!films.has(room)) films.set(room, []); films.get(room).push(f); };
   const ffRoom = room => { (films.get(room) || []).forEach(f => safe('ff', f)); if (room && room.__gfxFF) safe('ff room', room.__gfxFF); };
-  const ffTl = tl => { if (!tl || tl.progress() >= 1) return; tl.pause(); gsap.to(tl, { progress: 1, duration: G.fastForward, ease: 'power1.out', overwrite: true }); };
+  // (1.0.3, as Investors v2 1.0.0: no tween is made here: a fast-forward is usually called from a held join's trigger, and
+  // anything a gsap.matchMedia context records is reverted when the screen crosses the hold threshold, which would hide a
+  // finished room again; the timeline plays on at the speed that ends it in G.fastForward instead)
+  const ffTl = tl => { if (!tl || tl.progress() >= 1) return; const left = tl.duration() - tl.time(); tl.eventCallback('onComplete', () => tl.timeScale(1)); tl.timeScale(Math.max(1, left / G.fastForward)).play(); };
   const STATUS = [];   // { name, tl() } for the checks: every room's timeline completes
   const track = (name, get) => STATUS.push({ name, get });
 
@@ -971,7 +979,10 @@ html.gfx-hold [data-o~=ow-av] [data-o~=avh]{max-height:940px}
   // which arrives with the footer and is never held, plays as it reaches 40% (at the page's end it sits at the top)
   const filmAt = (room, el, build) => {
     let tl = null, done = false;
+    // (1.0.3: built now, outside any gsap.matchMedia context: a film made inside a held or flat trigger's callback would
+    // be recorded by that context and reverted, its room hidden again, when the screen crosses the hold threshold)
     const make = () => { if (!tl) { tl = gsap.timeline({ paused: true }); build(tl); } return tl; };
+    make();
     const go = skip => { if (done) return; done = true; const t = make(); if (skip) t.progress(1); else t.play(); };
     addFF(room, () => { if (!done) go(true); else ffTl(tl); });
     const mm = gsap.matchMedia();
