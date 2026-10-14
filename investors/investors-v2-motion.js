@@ -1,6 +1,13 @@
 /*!
  * Grey Fox · Investors v2 motion (Webflow page script)
- * Version 1.0.0 · 2026-10-13 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.1 · 2026-10-14 · one bundle, one IIFE, front-end only (nothing secret).
+ *
+ * 1.0.1 (footg, 10/14, founder: "i love G", "go"): the footer is G, "the ending". The shared "gfx Footer (Home v2)"
+ *       is restyled natively (four even columns, one 18 px size on 40 px rows, the gold fox + grey wordmark lockup on the
+ *       grid, two tones, gfx-ft-* classes); this script adds the motion (footG, the same module in all three scripts): on a
+ *       wide screen the footer waits fixed beneath the page, the last room lifts off it, the bar's fox flies into the
+ *       lockup, the columns settle, the base hairline draws, reversed on the way up; narrow/short screens: a gentle arrival
+ *       in the flow; reduced motion / no library: settled.
  *
  * WHAT IT IS
  *   The approved local Investors page's motion (prototype/investors/investors.js + the held layouts of investors.css and
@@ -68,7 +75,7 @@
   if (W.__gfxInvestorsV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxInvestorsV2 = 'off'; return; }
-  W.__gfxInvestorsV2 = '1.0.0';
+  W.__gfxInvestorsV2 = '1.0.1';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -647,12 +654,197 @@ html.gfx-hold [data-o~=iv-mc] [data-o~=iv-clip-win],html.gfx-hold [data-o~=iv-mc
       if (noLib) { H.classList.remove('gfx-m', 'gfx-hold'); H.classList.add('gfx-static'); }
       H.classList.remove('gfx-anchor-off');
       $$('h1[data-mark], h2[data-mark]').forEach(h => makeMark(h, true));
-      safe('stage', () => mcStage(false));
+      safe('stage', () => mcStage(false)); safe('footer G', () => footG({ close: '[data-o~=ow-close]', still: true }));
       H.classList.add('gfx-hero-on', 'gfx-ready', 'gfx-rooms');
       navWatch();
       if (D.fonts && D.fonts.ready) D.fonts.ready.then(placeMarks);
       let rz = 0; W.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(placeMarks, 150); });
     });
+  }
+
+  /* ========================= footer G, "the ending" (10/14; one module, the same in all three page scripts) =========================
+     Local source: prototype/foot/foot-g.js (+ foot-d.js). The footer is the shared "gfx Footer (Home v2)" component
+     (gfx-foot, gfx-ft-* classes). The site's ending is the inverse of its opening: on a wide screen the footer waits,
+     fixed, beneath the page; the page's last room (o.close) lifts off it like the opening curtain rising, the bar's gold
+     fox flies down into the lockup, the wordmark fades in beside it, then the columns arrive (rules draw down, contents
+     settle), the base hairline draws across, the bar last. Scrolling back up reverses it. Narrow screens, short screens
+     and a footer taller than 80 % of the screen: the footer follows the close in the flow with a gentle arrival.
+     Reduced motion / no library (o.still): settled, in the flow. The fox moves by transform only and is only ever in one
+     place (the bar, the air, the lockup). ---------- */
+  const FTG_CSS = `
+.gfx-ft-rule{position:absolute;left:-1px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.16);transform-origin:50% 0;pointer-events:none}
+html.gfx-ftg .gfx-ft-col,html.gfx-ftg .gfx-ft-brand{border-left-color:transparent}
+html.gfx-ftg .gfx-cta-sec .cta_content_wrapper>.divider.subtle:last-child{visibility:hidden}
+.footer_section_wrapper.gfx-foot a{text-decoration:underline;text-decoration-color:transparent;text-decoration-thickness:1px;text-underline-offset:.28em;transition:text-decoration-color .35s cubic-bezier(.19,1,.22,1)}
+.footer_section_wrapper.gfx-foot a:hover,.footer_section_wrapper.gfx-foot a:focus-visible{text-decoration-color:currentColor;opacity:1}
+.gfx-ft-time .realtime-clock,.gfx-ft-time .realtime-clock-2{font:inherit;color:inherit;width:auto;line-height:inherit;font-variant-numeric:tabular-nums}
+html.gfx-ftg-reveal .gfx-ftg-host{position:relative;z-index:4!important;height:var(--gfx-ftg-h,auto)}
+html.gfx-ftg-reveal .gfx-ftg-close{position:relative;z-index:5!important;box-shadow:inset 0 -1px 0 rgba(255,255,255,.09),0 32px 64px -16px rgba(0,0,0,.7)}
+html.gfx-ftg-reveal .footer_section_wrapper.gfx-foot{position:fixed!important;left:0;right:0;bottom:0;top:auto;z-index:0!important;margin-top:0!important}
+html.gfx-ftg-reveal.gfx-ftg-covered .footer_section_wrapper.gfx-foot{opacity:0}
+html.gfx-ftg-reveal .footer_section_wrapper.gfx-foot>.gfx-seam,html.gfx-ftg-reveal .gfx-ftg-host>.gfx-ow-seam,html.gfx-ftg-reveal .gfx-ftg-host::before{display:none!important}
+html.gfx-ftg-reveal .gfx-ft-head{visibility:hidden}
+html.gfx-ftg-reveal.gfx-ftg-home .gfx-ft-head{visibility:visible}
+html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flying .logo__navbar{visibility:hidden!important}
+.gfx-ftg-fly{position:fixed;left:0;top:0;z-index:1000;visibility:hidden;transform-origin:0 0;pointer-events:none;will-change:transform}
+.gfx-ftg-fly img{display:block;width:100%;height:100%;max-width:none}
+`;
+  function footG(o) {
+    const foot = $('.footer_section_wrapper.gfx-foot'); if (!foot || foot.__gfxFtg) return;
+    foot.__gfxFtg = true;
+    const host = foot.parentElement, close = o.close ? $(o.close) : null;
+    const head = $('.gfx-ft-head', foot), word = $('.gfx-ft-wordclip', foot), lockup = $('.gfx-ft-lockup', foot);
+    if (!$('#gfx-ftg-css')) { const st = D.createElement('style'); st.id = 'gfx-ftg-css'; st.textContent = FTG_CSS; (D.head || H).appendChild(st); }
+    // the column rules are drawn lines (the static border steps aside for them)
+    const cols = $$('.gfx-ft-brand, .gfx-ft-col', foot);
+    cols.forEach(c => { if (!$(':scope > .gfx-ft-rule', c)) { const r = D.createElement('i'); r.className = 'gfx-ft-rule'; r.setAttribute('aria-hidden', 'true'); c.insertBefore(r, c.firstChild); } });
+    H.classList.add('gfx-ftg');
+    host.classList.add('gfx-ftg-host'); if (close) close.classList.add('gfx-ftg-close');
+    if (o.still || !head || !word || !lockup) return;
+
+    const S = G.SETTLE || 'expo.out', DR = G.DRAW || 'power2.inOut', gp = G.group || 0.12;
+    const HL = (G.hairline && G.hairline.duration) || 1.5, BODY = G.body || { y: 16, duration: 1.1, at: 0.2 }, DET = G.detail || { y: 16, duration: 0.9, at: 1.2, stagger: 0.06 };
+    const LV = G.leave || { ease: 'power2.in', duration: 0.45 };
+    const FOX = head.currentSrc || head.src;
+    const wide = W.matchMedia('(min-width: 992px) and (min-height: 680px)');
+    const maxY = () => ST.maxScroll(W);
+    const scrollToEnd = () => (W.lenis && W.lenis.scrollTo ? W.lenis.scrollTo(maxY(), { duration: 1.2 }) : W.scrollTo({ top: maxY(), behavior: 'smooth' }));
+    const kids = c => [...c.children].filter(x => !x.classList.contains('gfx-ft-rule'));
+
+    // the columns' film: rules draw down left to right, each column's contents settle in behind its rule, the base
+    // hairline draws across, the bar. On the reveal the lockup arrives with the fox (not in the film). Opacity, not
+    // autoAlpha: the links stay in the tab order while they wait (focusing one glides the page to the end).
+    const film = reveal => {
+      const tl = gsap.timeline({ paused: true });
+      const at = reveal ? { rule: 0.12, cols: 0.3, base: 1.05, bar: 1.55 } : { rule: 0, cols: BODY.at, base: 0.65, bar: DET.at };
+      tl.fromTo($$('.gfx-ft-rule', foot), { scaleY: 0 }, { scaleY: 1, duration: HL, ease: DR, stagger: gp, immediateRender: true }, at.rule);
+      cols.forEach((c, i) => { if (reveal && c.classList.contains('gfx-ft-brand')) return;
+        tl.fromTo(kids(c), { opacity: 0, y: BODY.y }, { opacity: 1, y: 0, duration: BODY.duration, ease: S, immediateRender: true }, at.cols + (reveal ? i - 1 : i) * gp); });
+      tl.fromTo($$('.gfx-ft-base', foot), { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, duration: HL, ease: DR, immediateRender: true }, at.base)
+        .fromTo($$('.gfx-ft-bar > *', foot), { opacity: 0, y: DET.y }, { opacity: 1, y: 0, duration: DET.duration, ease: S, stagger: DET.stagger || 0.06, immediateRender: true }, at.bar);
+      return tl;
+    };
+
+    let mode = null, tl = null, st = null, fly = null, state = 'bar', flight = null, wordTw = null;
+    let FH = 0, lockR = null, lastNav = null, prog = 0, ro = null, raf = 0, CH = 0, K = -1;
+
+    /* the fox */
+    const navRect = () => {
+      const el = $$('.logo__navbar').find(i => {
+        const r = i.getBoundingClientRect(); if (!r.width || r.bottom <= 0) return false;
+        const wr = i.closest('.navigation_wrapper'); if (!wr) return true;
+        const cs = getComputedStyle(wr); return cs.visibility !== 'hidden' && cs.display !== 'none' && +cs.opacity > 0.5;
+      });
+      if (el) { const r = el.getBoundingClientRect(); lastNav = { left: r.left, top: r.top, width: r.width, height: r.height }; }
+      return lastNav || { left: 48, top: 17, width: 40, height: 40 };
+    };
+    const headRect = () => head.getBoundingClientRect();
+    const makeFly = () => {
+      if (fly) return;
+      fly = D.createElement('div'); fly.className = 'gfx-ftg-fly'; fly.setAttribute('aria-hidden', 'true');
+      const i = new Image(); i.alt = ''; i.src = FOX; fly.appendChild(i); D.body.appendChild(fly);
+    };
+    const flyAt = (r, scale) => { const n = navRect(); Object.assign(fly.style, { width: n.width + 'px', height: n.height + 'px', visibility: 'visible' }); gsap.set(fly, { x: r.left, y: r.top, scale }); };
+    const stopFlight = () => { if (flight) flight.kill(); flight = null; };
+    const showWord = on => {
+      if (wordTw) wordTw.kill();
+      wordTw = on ? gsap.fromTo(word, { autoAlpha: 0, x: -8 }, { autoAlpha: 1, x: 0, duration: BODY.duration, ease: S })
+        : gsap.to(word, { autoAlpha: 0, x: -8, duration: LV.duration, ease: LV.ease });
+    };
+    const setHome = () => {
+      stopFlight(); if (wordTw) wordTw.kill(); state = 'home';
+      H.classList.remove('gfx-ftg-flying'); H.classList.add('gfx-ftg-home'); if (fly) fly.style.visibility = 'hidden';
+      gsap.set(word, { autoAlpha: 1, x: 0 }); if (tl) tl.progress(1);
+    };
+    const setBar = () => {
+      stopFlight(); if (wordTw) wordTw.kill(); state = 'bar';
+      H.classList.remove('gfx-ftg-flying', 'gfx-ftg-home'); if (fly) fly.style.visibility = 'hidden';
+      gsap.set(word, { autoAlpha: 0, x: -8 });
+    };
+    // home: from the bar (or from mid-air) down to the lockup, on the divider curve; it grows to the lockup's size on the
+    // settle curve over the second half, so it arrives and settles as one move
+    const goHome = () => {
+      makeFly(); state = 'out';
+      const n = navRect(), b = headRect();
+      if (!flight) flyAt(n, 1); else stopFlight();
+      H.classList.add('gfx-ftg-flying');
+      flight = gsap.timeline({ onComplete: () => {
+        flight = null; state = 'home';
+        H.classList.add('gfx-ftg-home'); H.classList.remove('gfx-ftg-flying'); fly.style.visibility = 'hidden';
+        showWord(true); if (tl && tl.progress() < 1) tl.play();
+      } })
+        .to(fly, { x: b.left, y: b.top, duration: 1.3, ease: DR }, 0)
+        .to(fly, { scale: b.width / n.width, duration: 0.85, ease: S }, 0.45);
+    };
+    // back to the bar: the wordmark leaves first, the fox lifts out of the lockup and returns
+    const goBar = () => {
+      makeFly(); state = 'back';
+      const n = navRect();
+      if (H.classList.contains('gfx-ftg-home')) { const b = headRect(); flyAt(b, b.width / n.width); H.classList.add('gfx-ftg-flying'); H.classList.remove('gfx-ftg-home'); }
+      stopFlight(); showWord(false);
+      flight = gsap.timeline({ onComplete: () => {
+        flight = null; state = 'bar'; H.classList.remove('gfx-ftg-flying'); fly.style.visibility = 'hidden';
+        if (prog <= 0.001 && tl) tl.pause(0);
+      } }).to(fly, { x: n.left, y: n.top, scale: 1, duration: 1.2, ease: DR }, 0.1);
+    };
+
+    /* the reveal: p = how much of the footer the close has uncovered (0 covered, 1 at the page's end) */
+    const inner = () => [...foot.children].filter(x => !x.classList.contains('gfx-cap') && !x.classList.contains('gfx-seam'));
+    // the cut: the footer never shows above the close's top edge (where the held room above still shows)
+    const cut = k => { if (k === K) return; K = k; foot.style.transform = k ? `translate3d(0,${k}px,0)` : ''; inner().forEach(e => { e.style.transform = k ? `translate3d(0,${-k}px,0)` : ''; }); };
+    const measure = () => {
+      CH = close ? close.offsetHeight : 0;
+      cut(0);
+      FH = foot.offsetHeight;
+      host.style.setProperty('--gfx-ftg-h', FH + 'px');
+      const r = lockup.getBoundingClientRect(); lockR = { top: r.top, bottom: r.bottom };
+    };
+    const step = (p, instant) => {
+      prog = p;
+      const covered = p <= 0.001;
+      H.classList.toggle('gfx-ftg-covered', covered);
+      const edge = W.innerHeight - p * FH;
+      cut(close ? Math.max(0, Math.round(FH * (1 - p) - CH)) : 0);
+      const home = edge <= lockR.bottom + 2, away = edge > lockR.bottom + 72;
+      if (instant) { if (state === 'out' || state === 'home' ? !away : home) setHome(); else setBar(); }
+      else if (home && (state === 'bar' || state === 'back')) goHome();
+      else if (away && (state === 'home' || state === 'out')) goBar();
+      if (covered && state === 'bar' && tl && tl.progress() > 0) tl.pause(0);
+    };
+    const onFocus = () => { if (mode === 'reveal' && prog < 0.99) scrollToEnd(); };
+
+    const teardown = () => {
+      if (st) st.kill(); st = null; if (tl) tl.kill(); tl = null; stopFlight(); if (wordTw) wordTw.kill(); if (ro) ro.disconnect(); ro = null;
+      H.classList.remove('gfx-ftg-reveal', 'gfx-ftg-covered', 'gfx-ftg-home', 'gfx-ftg-flying');
+      cut(0); host.style.removeProperty('--gfx-ftg-h'); if (fly) fly.style.visibility = 'hidden'; state = 'bar';
+      gsap.set([word, ...$$('.gfx-ft-rule, .gfx-ft-base, .gfx-ft-bar > *', foot), ...cols.flatMap(kids)], { clearProps: 'opacity,visibility,transform' });
+    };
+    const fits = () => foot.offsetHeight <= W.innerHeight * 0.8;
+    const setup = () => {
+      const next = wide.matches && fits() ? 'reveal' : 'flow';
+      if (next === mode) return; const was = mode; if (was) teardown(); mode = next;
+      if (mode === 'flow') {
+        tl = film(false);
+        st = ST.create({ trigger: foot, start: 'top 92%', end: 'max', onEnter: () => tl.play(), onLeaveBack: () => tl.pause(0) });
+        if (was || foot.getBoundingClientRect().top < W.innerHeight) tl.progress(foot.getBoundingClientRect().top < W.innerHeight ? 1 : 0);
+        ST.refresh(); return;
+      }
+      H.classList.add('gfx-ftg-reveal');
+      measure(); tl = film(true);
+      let first = true;
+      st = ST.create({ trigger: host, start: 'top bottom', end: 'bottom bottom', invalidateOnRefresh: true,
+        onRefresh: s => { measure(); step(s.progress, true); first = false; },
+        onUpdate: s => step(s.progress, first) });
+      ro = new ResizeObserver(() => { if (foot.offsetHeight !== FH) { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => ST.refresh()); } });
+      ro.observe(foot);
+      ST.refresh();
+    };
+    foot.addEventListener('focusin', onFocus);
+    const re = () => safe('footer G', setup);
+    if (wide.addEventListener) wide.addEventListener('change', re); else wide.addListener(re);
+    let rz = 0; W.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(re, 180); });
+    setup();
+    W.gfxFootG = { get state() { return state; }, get mode() { return mode; }, get p() { return prog; }, get film() { return tl; } };   // (for the checks)
   }
 
   /* ========================= 4 · motion ========================= */
@@ -679,7 +871,7 @@ html.gfx-hold [data-o~=iv-mc] [data-o~=iv-clip-win],html.gfx-hold [data-o~=iv-mc
     fontsReady().then(() => setTimeout(() => {
       // (the joins first: they set html.gfx-hold, which the rooms' own held layouts read)
       [joinsInit, headsInit, researchInit, resultsInit, deliveryInit, mcInit, casesInit, careInit, closeInit, closeFox,
-        flatInit, footerInit, keyboardInit, anchorInit, measureInit].forEach(f => safe(f.name || 'room', f));
+        flatInit, () => footG({ close: '[data-o~=ow-close]' }), keyboardInit, anchorInit, measureInit].forEach(f => safe(f.name || 'room', f));
       H.classList.add('gfx-rooms');   // the room headings' pre-paint hold stands down (each is split and set by now)
       setTimeout(() => H.classList.remove('gfx-anchor-off'), 1500);
       refresh();
