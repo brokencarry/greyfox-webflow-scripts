@@ -1,6 +1,16 @@
 /*!
  * Grey Fox · Home v2 motion (Webflow page script)
- * Version 1.0.7 · 2026-10-14 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.8 · 2026-10-15 · one bundle, one IIFE, front-end only (nothing secret).
+ *
+ * 1.0.8 (insk, 10/15, founder: "headline is fine - build it into webflow"): the Insights room is K (local ?ins=k):
+ *       the opener "What we learn from the work." with the arrow under "work", the lede and a quiet "View all articles"
+ *       (.gfx-ink-r), the hairline; the lead (.gfx-ink-lead + the cover frame) and three cards (.gfx-ink-card), one
+ *       screen tall (native classes + the "gfx ins K (10/15)" Embed). On a desktop the room plays as ONE film when it
+ *       arrives (sbx-m1.js J/K): the headline rises and the arrow draws, the lede and link settle (the hairline with
+ *       them), the cover opens and its green outline draws, the lead's words, the hairline across, the three as a group
+ *       (each cover opens, then its words); then a 0.6-screen dwell (html.gfx-held margin) before the close slides over
+ *       with the house dim and seam. Phones: the opener, the lead, the three, each as it arrives. Reduced motion / no
+ *       library: settled, the mark drawn. Focus on an article before the film has played finishes it.
  *
  * 1.0.7 (footg, 10/14, founder: "i love G", "go"): the footer is G, "the ending". The shared "gfx Footer (Home v2)"
  *       is restyled natively (four even columns, one 18 px size on 40 px rows, the gold fox + grey wordmark lockup on the
@@ -94,7 +104,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.7';
+  W.__gfxHomeV2 = '1.0.8';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -209,6 +219,7 @@ html.gfx-held .gfx-std-sec{margin-bottom:calc(var(--gfx-hold-std,.7) * 100vh)}
 html.gfx-held .gfx-std-sec.gfx-std-sec.gfx-std-sec{min-height:100vh;min-height:100svh;box-sizing:border-box;padding-top:96px;padding-bottom:64px}
 html.gfx-held .gfx-std-wrap.gfx-std-wrap{row-gap:48px}
 html.gfx-held .gfx-team-sec{margin-bottom:calc(var(--gfx-hold-team,.15) * 100vh)}
+html.gfx-held .gfx-ins-sec.gfx-ins-sec{margin-bottom:calc(var(--gfx-hold-ins,.6) * 100vh)}
 html.gfx-held .gfx-std-sec::after,html.gfx-held .gfx-team-sec::after{content:"";position:absolute;left:0;right:0;top:100%;height:100vh;background:#fff;pointer-events:none}
 html.gfx-held .gfx-std-sec.gfx-capped,html.gfx-held .gfx-team-sec.gfx-capped{clip-path:inset(0 0 -100vh 0)}
 }
@@ -654,8 +665,19 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
 
   const ARW = '<svg class="gfx-arw" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 13 L15 2"/><path d="M8.5 2 H15 V8.5"/></svg>';
   const addArrows = () => safe('arrows', () => {
-    $$('.gfx-ins-go, .gfx-ins-go-row').forEach(g => { if (!g.querySelector('svg')) g.insertAdjacentHTML('beforeend', ARW); });
+    $$('.gfx-ins-go, .gfx-ins-go-row, .gfx-ink-go, .gfx-ink-cgo, .gfx-ink-all').forEach(g => { if (!g.querySelector('svg')) g.insertAdjacentHTML('beforeend', ARW); });
   });
+  /* 1.0.8 · Insights K: each article link is named by its title alone and described by its sentence (sbx13-ins.js) */
+  const insLinks = () => safe('ins links', () => {
+    let n = 0;
+    $$('.gfx-ink-lead, .gfx-ink-card').forEach(a => {
+      const t = $('h3', a), d = $('.gfx-ink-p, .gfx-ink-sum', a); if (!t) return;
+      t.id = t.id || 'gfx-ink-t-' + (++n); a.setAttribute('aria-labelledby', t.id);
+      if (d) { d.id = d.id || 'gfx-ink-d-' + n; a.setAttribute('aria-describedby', d.id); }
+    });
+  });
+  // the word under which the Insights opener's arrow draws (sbx13-ins.js OPENER.key)
+  const insWord = () => { const h = $('.gfx-ins-title .heading-2'); return h && $('.gfx-ink') ? rangeOf(h, 'work') : null; };
 
   /* the portal still's phone crops (sbx-process.js pic(): <picture> sources at 600 px and 479 px). Webflow's Image
      element serves one picture at every width, so the narrow crops (uploaded to gfx-home) are swapped in here. */
@@ -724,7 +746,8 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
     const hero = $('.gfx-hero-h'); if (hero) makeMark(hero.parentElement, rangeOf(hero, 'engage'), { low: true, dark: true, drawn: true });
     const std = $('.gfx-std-title'); if (std) makeMark(std, brandWord, { drawn: true });
     const ctaH = $('.gfx-cta-title .heading-2'); if (ctaH) { wrapWord(ctaH, 'human', 'gfx-w-human'); makeMark($('.gfx-cta-title'), elRange('.gfx-cta-title .gfx-w-human'), { dark: true, drawn: true }); }
-    coverRule(true); addArrows();
+    const iw = insWord(); if (iw) makeMark($('.gfx-ins-title'), iw, { drawn: true });
+    coverRule(true); addArrows(); insLinks();
     if (D.fonts && D.fonts.ready) D.fonts.ready.then(() => W.dispatchEvent(new Event('resize')));
   });
 
@@ -1941,6 +1964,7 @@ html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flyin
   function insightsInit() {
     const sec = $('.gfx-ins-sec'); if (!sec) return;
     addArrows();
+    if ($('.gfx-ink', sec)) { insightsK(sec); return; }
     const head = $('.gfx-ins-title .heading-2', sec);
     room({ trigger: head || sec, headline: head, body: $('.gfx-ins-title .button_wrapper', sec), hairline: $('.gfx-ins-rule', sec) });
     const top = $('.gfx-ins-top', sec);
@@ -1951,6 +1975,63 @@ html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flyin
     }
     if ($('.gfx-ins-rows', sec)) room({ trigger: $('.gfx-ins-rows', sec), start: 'top 88%', detail: $$('.gfx-ins-row', sec), group: true });
     if ($('.gfx-ins-more', sec)) room({ trigger: $('.gfx-ins-more', sec), start: 'top 92%', detail: $$('.gfx-ins-li', sec), group: false, stagger: G.tight });
+  }
+  /* 1.0.8 · Insights K (sbx13-ins.js ?ins=k + sbx-m1.js's J/K film). On a desktop the room is one screen (native classes)
+     and plays as ONE film as it arrives and locks:
+       0.00 the headline's lines rise            0.85 the arrow draws under "work"
+       1.00 the lede and the link settle, the opener's hairline draws
+       1.30 the lead's cover opens (clip) and settles; 1.75 its green outline draws; 1.90 the lead's words settle
+       2.45 the hairline across                  2.75 the three as one group: each cover opens, then its words (GROUP apart)
+       ~4.4 everything still: the dwell (html.gfx-held margin, 0.6 screen), then the close slides over (joinsInit).
+     Phones and short screens play it as the rooms below do: the opener, the lead, the three, each as it arrives. */
+  function insightsK(sec) {
+    insLinks();
+    const box = $('.gfx-ink', sec), head = $('.gfx-ins-title .heading-2', sec), word = insWord();
+    const arrow = word ? { host: '.gfx-ins-title', word } : null;
+    const cover = $$('.gfx-ins-pic-lead .gfx-ins-cvsvg', box).concat($$('.gfx-ins-pic-lead img', box));
+    const leadWords = $$('.gfx-ink-lead > *', box), cards = $$('.gfx-ink-card', box);
+    const rooms_ = [];
+    if (mq(DESK)) {
+      const T = W.GFX_INS_FILM = { lede: 1.0, cover: 1.3, rule: 1.75, lead: 1.9, hair: 2.45, cards: 2.75, words: 0.4 };
+      const lede = $$('.gfx-ink-r > *', sec), openRule = $$('.gfx-ins-rule', sec), midRule = $$('.gfx-ink-rule', box);
+      const thumbs = cards.map(c => $('.gfx-ins-thumb .gfx-ins-cvsvg, .gfx-ins-thumb img', c)).filter(Boolean);
+      const cardWords = cards.map(c => $$(':scope > :not(figure)', c));
+      const words = lede.concat(leadWords, [].concat.apply([], cardWords));
+      const rulePath = coverRule(false);
+      words.forEach(e => e.setAttribute('data-gfx-reveal', ''));
+      gsap.set(words, { opacity: 0, y: G.detail.y });
+      if (openRule.length + midRule.length) gsap.set(openRule.concat(midRule), { scaleX: 0, transformOrigin: '0% 50%' });
+      if (cover.length + thumbs.length) gsap.set(cover.concat(thumbs), { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom });
+      rooms_.push(room({ trigger: sec, start: 'top 55%', headline: head, arrow, arriving: box,
+        extra: tl => {
+          tl.to(lede, { opacity: 1, y: 0, duration: G.body.duration, stagger: GROUP, ease: G.SETTLE }, T.lede);
+          if (openRule.length) tl.to(openRule, { scaleX: 1, duration: G.hairline.duration, ease: G.DRAW }, T.lede);
+          if (cover.length) tl.to(cover, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: G.DRAW }, T.cover)
+            .to(cover, { scale: 1, duration: G.picture.settle, ease: G.SETTLE }, T.cover);
+          if (rulePath) tl.fromTo(rulePath, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: G.hairline.duration, ease: G.DRAW, immediateRender: false }, T.rule);
+          tl.to(leadWords, { opacity: 1, y: 0, duration: G.detail.duration, stagger: GROUP, ease: G.SETTLE }, T.lead);
+          if (midRule.length) tl.to(midRule, { scaleX: 1, duration: G.hairline.duration, ease: G.DRAW }, T.hair);
+          cards.forEach((c, i) => {
+            const th = $('.gfx-ins-thumb .gfx-ins-cvsvg, .gfx-ins-thumb img', c), at0 = T.cards + i * GROUP;
+            if (th) tl.to(th, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: G.DRAW }, at0).to(th, { scale: 1, duration: G.picture.settle, ease: G.SETTLE }, at0);
+            if (cardWords[i].length) tl.to(cardWords[i], { opacity: 1, y: 0, duration: G.detail.duration, stagger: G.detail.stagger, ease: G.SETTLE }, at0 + T.words);
+          });
+          // (nothing left behind: no clip on a picture, no transform on a word, once the film has finished)
+          tl.add(() => { if (cover.length + thumbs.length) gsap.set(cover.concat(thumbs), { clearProps: 'clipPath' }); gsap.set(words, { clearProps: 'transform' }); });
+        } }));
+    } else {
+      rooms_.push(room({ trigger: head || sec, headline: head, body: $('.gfx-ink-r', sec), hairline: $('.gfx-ins-rule', sec), arrow }));
+      const top = $('.gfx-ink-top', box), rulePath = top ? coverRule(false) : null;
+      if (top) rooms_.push(room({ trigger: top, start: 'top 80%', pictures: cover, detail: leadWords, arriving: box,
+        extra: (tl, at) => { if (rulePath) tl.fromTo(rulePath, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: G.hairline.duration, ease: G.DRAW, immediateRender: false }, at('picture') + G.hairline.at); } }));
+      const three = $('.gfx-ink-three', box);
+      if (three) rooms_.push(room({ trigger: three, start: 'top 88%', hairline: $('.gfx-ink-rule', box), detail: cards, group: true }));
+    }
+    // the keyboard: an article reached before its film has played is shown at once (its words sit inside the link,
+    // where the page-wide reveal, which walks up from the focused link, never looks)
+    box.addEventListener('focusin', () => safe('ins focus', () => rooms_.forEach(r => { if (r && r.tl.progress() < 1) r.tl.progress(1); })));
+    const all = $('.gfx-ink-all', sec);
+    if (all) all.addEventListener('focus', () => safe('ins focus', () => { const r = rooms_[0]; if (r && r.tl.progress() < 1) r.tl.progress(1); }));
   }
 
   /* ---------- the close (sbx-m1.js): the line, the button, the hairline, the arrow under "human"; the doors as a group.
@@ -2056,6 +2137,10 @@ html.gfx-ftg-reveal.gfx-ftg-home .logo__navbar,html.gfx-ftg-reveal.gfx-ftg-flyin
     $$('.gfx-ins-lead').forEach(a => mark(a, { label: '.gfx-ins-go' }));
     $$('.gfx-ins-row').forEach(a => mark(a, { label: '.gfx-ins-go-row' }));
     $$('.gfx-ins-text').forEach(a => mark(a, { row: true }));
+    // 1.0.8 · Insights K: the lead and the three on "Read the article", the quiet link on itself (sbx13-ins.js)
+    $$('.gfx-ink-lead').forEach(a => mark(a, { label: '.gfx-ink-go' }));
+    $$('.gfx-ink-card').forEach(a => mark(a, { label: '.gfx-ink-cgo' }));
+    $$('.gfx-ink-all').forEach(a => mark(a, { label: '.gfx-ink-all-t' }));
     $$('.gfx-ind-go').forEach(g => mark(g, { label: '.gfx-ind-go-t', glyph: false, dark: true }));
   }
 
