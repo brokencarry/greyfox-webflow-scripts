@@ -1,7 +1,9 @@
 /*!
  * Grey Fox · Home v2 motion (Webflow page script)
- * Version 1.0.8 · 2026-10-15 · one bundle, one IIFE, front-end only (nothing secret).
+ * Version 1.0.9 · 2026-10-16 · one bundle, one IIFE, front-end only (nothing secret).
  *
+ * 1.0.9 (portal still recapture, 10/16): the phone crops of the portal head point at the new 440/340 stills (the
+ *       Marrowby card dated 9/16, next action "Notes sent to Halden"); the 340 head is 963 px tall (the action wraps).
  * 1.0.8 (insk, 10/15, founder: "headline is fine - build it into webflow"): the Insights room is K (local ?ins=k):
  *       the opener "What we learn from the work." with the arrow under "work", the lede and a quiet "View all articles"
  *       (.gfx-ink-r), the hairline; the lead (.gfx-ink-lead + the cover frame) and three cards (.gfx-ink-card), one
@@ -104,7 +106,7 @@
   if (W.__gfxHomeV2) return;
   // ?gfm=0: the page exactly as Webflow serves it, with none of this script (for checks and for testing a new build)
   if (/[?&]gfm=0(&|$)/.test(location.search)) { W.__gfxHomeV2 = 'off'; return; }
-  W.__gfxHomeV2 = '1.0.8';
+  W.__gfxHomeV2 = '1.0.9';
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
 /* Grey Fox motion grammar (10/12 night): one source of timing for every room on every page.
@@ -683,7 +685,7 @@ html.gfx-static .gfx-ind-reel{display:none!important}html.gfx-static .gfx-ind-mh
      element serves one picture at every width, so the narrow crops (uploaded to gfx-home) are swapped in here. */
   const CDN = 'https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/';
   const CROPS = {
-    head: [['6acea5e24c88849009a41b77_gfx-portal-head-440-dark.webp', 880, 722], ['6acea5e3ea6c7711b5aaaab8_gfx-portal-head-340-dark.webp', 1020, 900]],
+    head: [['6ad260ad91ddde488fda9b0b_gfx-portal-head-440-dark-1016.webp', 880, 722], ['6ad260ad6a3c101d9d4d757b_gfx-portal-head-340-dark-1016.webp', 1020, 963]],
     note: [['6acea5e234eb64db176f2335_gfx-portal-note-440-dark.webp', 880, 1726], ['6acea5e39eb41a72b741b228_gfx-portal-note-340-dark.webp', 1020, 3057]],
     rest: [['6acea5e395ce9bed5edef0f9_gfx-portal-rest-440-dark.webp', 880, 960], ['6acea5e334eb64db176f2367_gfx-portal-rest-340-dark.webp', 1020, 1440]]
   };
