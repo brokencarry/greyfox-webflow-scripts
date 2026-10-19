@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
- * core 1.0.1 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone) · front-end only (nothing secret).
+ * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
  *
  * WHAT IT IS
  *   The parts of the approved local Flow 3 site (brand-motion-1008/prototype, "Flow 3") that every page shares, ported
@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.1';
+  const VERSION = '1.0.2';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -243,10 +243,36 @@
       set(o.at == null ? 0 : o.at);
       return { g: g, set: set, remove: function () { g.remove(); m.remove(); } };
     };
+    // (1.0.2, the founder: one brand arrow) the small glyph is the house mark at a link's size: an inked shaft at the fox's
+    // 38.2° and THE head (the two curved, tapering ears), filled in the link's colour; never a chevron on a stick
     var icon = function (cls, vb) {
-      vb = vb || 16; var s = vb / 16, tx = 13.2 * s, ty = 2.8 * s, len = 6.4 * s, d = '';
-      [1, -1].forEach(function (sg) { var ang = Math.atan2(-1, 1) + Math.PI + sg * SPREAD; d += '<path class="gfa-ib" pathLength="1" d="M' + f2(tx + Math.cos(ang) * len) + ' ' + f2(ty + Math.sin(ang) * len) + ' L' + f2(tx) + ' ' + f2(ty) + '"/>'; });
-      return '<svg class="gfa-icon' + (cls ? ' ' + cls : '') + '" viewBox="0 0 ' + vb + ' ' + vb + '" aria-hidden="true" focusable="false" data-gfa-head><path class="gfa-is" pathLength="1" d="M' + f2(2.4 * s) + ' ' + f2(13.6 * s) + ' L' + f2(tx) + ' ' + f2(ty) + '"/>' + d + '</svg>';
+      vb = vb || 16; var s = vb / 16, a = 38.2 * Math.PI / 180, ux = Math.cos(a), uy = -Math.sin(a);
+      var tx = 13.8 * s, ty = 3.4 * s, L = 14 * s, sx = tx - ux * L, sy = ty - uy * L, P = [], N = 18;
+      for (var i = 0; i <= N; i++) { var k = i / N, bow = Math.sin(Math.PI * k) * 0.3 * s;
+        P.push([sx + ux * L * k + uy * bow, sy + uy * L * k - ux * bow, 1.5 * s * (1 + 0.5 * Math.exp(-k * 5)) * (0.62 + 0.38 * (1 - k))]); }
+      var d = '<path class="gfa-if gfa-is" d="' + ribbon(P) + '"/>' + headPaths(tx, ty, ux, uy, 8.4 * s, 2.4 * s).map(function (h) { return '<path class="gfa-if gfa-ib" d="' + h + '"/>'; }).join('');
+      return '<svg class="gfa-icon' + (cls ? ' ' + cls : '') + '" viewBox="0 0 ' + vb + ' ' + vb + '" aria-hidden="true" focusable="false" data-gfa-head>' + d + '</svg>';
+    };
+    // the house timing at t seconds: the line 1.6 s expo-out, the head uncovered from its tip 0.5 s from 0.95 s
+    var timing = function (t) { return { l: 1 - expo(clamp(t / 1.6, 0, 1)), h: cubic(clamp((t - 0.95) / 0.5, 0, 1)) }; };
+    // (1.0.2) THE LINE on its own (the opening's line under the logo): the text device's ink and head, not under words.
+    // From (x0, y) to xr, then up at the fox's angle into the head; fs the size it is scaled to. at(t) draws it on the house
+    // timing. The mask's stroke is inline, so no page rule for its svg's paths can thin it
+    var line = function (svg, x0, y, xr, fs, o) {
+      o = o || {}; var withHead = o.head !== false, sz = sizes(fs), x2 = withHead ? xr + sz.run : xr, y2 = withHead ? y - sz.rise : y, id = 'gfa-n' + (++uid);
+      var g = ink(x0, y, xr, x2, y2, fs, withHead);
+      var defs = svg.querySelector('defs') || svg.insertBefore(D.createElementNS(NS, 'defs'), svg.firstChild);
+      var m = D.createElementNS(NS, 'mask'); m.setAttribute('id', id); m.setAttribute('maskUnits', 'userSpaceOnUse');
+      m.setAttribute('x', '-4000'); m.setAttribute('y', '-4000'); m.setAttribute('width', '12000'); m.setAttribute('height', '12000');
+      var mp = D.createElementNS(NS, 'path'); mp.setAttribute('class', 'gfa-m'); mp.setAttribute('d', g.centre); mp.setAttribute('pathLength', '1');
+      mp.setAttribute('style', 'fill:none;stroke:#fff;stroke-width:9px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1');
+      m.appendChild(mp); defs.appendChild(m);
+      var p = D.createElementNS(NS, 'path'); p.setAttribute('class', 'gfa-ink'); p.setAttribute('d', g.shape); p.setAttribute('mask', 'url(#' + id + ')'); svg.appendChild(p);
+      var hd = withHead ? head(svg, x2, y2, g.ux, g.uy, { len: sz.len, w: sz.w, at: 0 }) : null;
+      var set = function (l, h) { mp.style.strokeDashoffset = f2(clamp(l, 0, 1)); if (hd) hd.set(h); };
+      var at = function (t) { var k = timing(t); set(k.l, k.h); };
+      at(o.at == null ? 0 : o.at);
+      return { at: at, set: set, DUR: 1.6, tip: [x2, y2], remove: function () { p.remove(); m.remove(); if (hd) hd.remove(); } };
     };
     var restBox = function (range, host) {
       var rs = [].slice.call(range.getClientRects()).filter(function (q) { return q.width > 0.5; }); if (!rs.length) return null;
@@ -327,7 +353,7 @@
       }
       return { svg: svg, place: place, draw: draw, still: still };
     };
-    W.gfArrow = { TAN: TAN, SPREAD: SPREAD, CHART: 1.8, ribbon: ribbon, headPaths: headPaths, head: head, ink: ink, icon: icon, word: word, rangeOf: rangeOf, sizes: sizes };
+    W.gfArrow = { TAN: TAN, SPREAD: SPREAD, CHART: 1.8, ribbon: ribbon, headPaths: headPaths, head: head, ink: ink, icon: icon, word: word, rangeOf: rangeOf, sizes: sizes, line: line, timing: timing };
   })();
 
   /* ========================= 4 · the turn (gf-turn.js, verbatim) =========================

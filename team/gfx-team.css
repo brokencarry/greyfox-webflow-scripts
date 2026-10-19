@@ -6,3 +6,8 @@
    Contact's hero). Local: 900 / 900 at 1440 x 900, 800 / 800 at 1280 x 800; a phone: as tall as their content ---------- */
 html.gfx-pg-js:not(#gfx-o) :is([data-o~="t2-name"], [data-o~="t3-tri"]) { min-height: 100vh !important; min-height: 100svh !important; }
 @media (max-width: 991px) { html.gfx-pg-js:not(#gfx-o) :is([data-o~="t2-name"], [data-o~="t3-tri"]) { min-height: 0 !important; } }
+
+/* ---------- (team 1.0.1, one arrowhead per view at rest: "See open roles" and the close's arrow shared a 1440 x 900
+   screen) the hiring link's arrow steps aside at rest; focus still shows it (local team/final.css 10/20) ---------- */
+html:not(#gfx-o) [data-o~="pg-v-final"] [data-o~="t3-car-go"] .ow-arw { opacity: 0; transition: opacity .45s var(--ease), color .6s var(--ease); }
+html:not(#gfx-o) [data-o~="pg-v-final"] [data-o~="t3-car-go"] [data-o~="ow-tl"]:focus-visible:not(.hm-on) .ow-arw { opacity: 1; }

@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · gfx Owners (Flow 3), the Business Owners layer on the shared core (core/gfx-core.js).
- * owners 1.0.0 · 2026-10-20 · Webflow page "Business Owners v2" (/business-owners-v2, 6ace925aabbdb42421fe3cb6).
+ * owners 1.0.1 · 2026-10-20 (1.0.1: the call's arrow is the house head; the owner's words always fit their frame) · Webflow page "Business Owners v2" (/business-owners-v2, 6ace925aabbdb42421fe3cb6).
  *
  * WHAT IT IS
  *   The approved local Flow 3 Owners (prototype/owners/index.html, Flow 3 the default: ow-flow2.js + ow-flow2.css with
@@ -26,7 +26,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.0.0';
+  W.__gfxOwners = '1.0.1';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -147,9 +147,28 @@
     const ti = beats.map(b => $(O('pc-ti'), b)), ps = beats.map(b => $(O('pc-p'), b)), ws = beats.map(b => $(O('pc-w'), b));
     const P2 = (s, c) => s.querySelector('.' + c);
     const S = {};
+    const heads = new Map(); let waitA = false;
+    /* (owners 1.0.1, the founder at about 1910 px: the owner's words ran below the rule into "Conversation", their
+       attribution over its heading) the words and their attribution always sit inside the frame, between the upper line and
+       the rule: their box is the drawing's height below the upper line (gfx-owners.css), so where the words need more than
+       that (a large screen's larger size, another serif's metrics, a window's height) the drawing grows to hold them, with a
+       clear gap above and below; the drawing is measured after, so it scales with it */
+    const fitQuote = (stacked, laneF) => {
+      if (!pq) return; room.style.removeProperty('--pc-draw'); pq.style.removeProperty('top'); pq.style.removeProperty('height'); if (stacked) return;
+      const bq = $('blockquote', pq), fc = $('figcaption', pq), beat = pq.closest(O('pc-beat')), dEl = beat && $(O('pc-draw'), beat), wEl = beat && $(O('pc-w'), beat); if (!bq || !dEl || !wEl) return;
+      const need = bq.offsetHeight + (fc ? fc.offsetHeight + (parseFloat(getComputedStyle(fc).marginTop) || 0) : 0);
+      // the frame as it stands: from the upper line (the drawing's lane) down to the rule the beat hangs from
+      const frame = () => { const dr = dEl.getBoundingClientRect(), lane = dr.top + dr.height * laneF; return { dr, lane, rule: wEl.getBoundingClientRect().top }; };
+      let f = frame(); const gap = Math.max(20, f.dr.height * 0.06);
+      if (need + 2 * gap > f.rule - f.lane) { room.style.setProperty('--pc-draw', Math.ceil(f.dr.height + (need + 2 * gap - (f.rule - f.lane)) / (1 - laneF)) + 'px'); f = frame(); }
+      // and the words' box is set on that frame exactly (whatever offset the designer's class gives it), so they centre in it
+      const op = (pq.offsetParent || beat).getBoundingClientRect();
+      pq.style.setProperty('top', (f.lane - op.top).toFixed(1) + 'px', 'important'); pq.style.setProperty('height', (f.rule - f.lane).toFixed(1) + 'px', 'important');
+    };
     const layout = () => {
       const stacked = mq(STACK);
       const laneF = parseFloat(getComputedStyle(room).getPropertyValue('--pc-lane')) || 0.16;
+      fitQuote(stacked, laneF);
       const boxes = beats.map(b => { const d = $(O('pc-draw'), b); return d ? d.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 }; }), base = boxes[0];
       svgs.forEach((s, k) => { const r = boxes[k]; s.setAttribute('width', f1(r.width)); s.setAttribute('height', f1(r.height)); s.setAttribute('viewBox', `0 0 ${f1(r.width)} ${f1(r.height)}`); });
       const set = (s, c, d) => { const p = P2(s, c); if (p) p.setAttribute('d', d || ''); };
@@ -160,13 +179,18 @@
         ['pa-pulse', 'pa-ring', 'pa-you', 'pa-nring', 'pa-node', 'pa-xad', 'pa-xbd', 'pa-nu', 'pa-nb'].forEach(c => { const p = P2(s, c); if (p) p.style.display = 'none'; });
         const sw = P2(s, 'pa-sw'); if (sw) { sw.setAttribute('width', 0); sw.dataset.w = 0; }
         ['pa-lane', 'pa-gr'].forEach(c => { const p = P2(s, c); if (p) delete p.dataset.k; });
+        const hd = heads.get(s); if (hd) { hd.remove(); heads.delete(s); }
       };
       const splitAt = (s, c, tail) => { const p = P2(s, c); if (!p) return; const L = p.getTotalLength ? p.getTotalLength() : 0; if (L > tail) p.dataset.k = ((L - tail) / L).toFixed(4); };
       svgs.forEach(clear);
+      // (owners 1.0.1, one brand arrow) the head is THE head, the fox's ears (gfArrow.head), at the chart's weight, uncovered
+      // from its tip as the line arrives (channel hd), made at the channel's present value; the old corner (pa-hd) stays empty
       const arrow = (s, xj, yh, xEnd, Hh) => {
-        const rise = Math.max(18, Math.min(34, Hh * 0.11)), run = rise / TAN, tip = xEnd, xt = tip - run, hs = Math.round(rise * 0.36);
+        const rise = Math.max(18, Math.min(34, Hh * 0.11)), run = rise / TAN, tip = xEnd, xt = tip - run;
         set(s, 'pa-grt', `M${f1(xj)} ${yh}H${f1(xt)}L${f1(tip)} ${f1(yh - rise)}`);
-        set(s, 'pa-hd', `M${f1(tip - hs)} ${f1(yh - rise)}H${f1(tip)}V${f1(yh - rise + hs)}`);
+        const A = W.gfArrow; if (!A) { if (!waitA) { waitA = true; D.addEventListener('gf-arrow', () => relayout(), { once: true }); } return; }
+        const dl = Math.hypot(run, rise) || 1, hk = S['hd' + svgs.indexOf(s)];
+        heads.set(s, A.head(s, tip, yh - rise, run / dl, -rise / dl, { len: 12, w: A.CHART, cls: 'pa-head', at: c01(hk == null ? 1 : hk) }));
       };
       const exchange = (s, x, yl, yh) => {
         set(s, 'pa-xa', `M${x - 6} ${f1(yl + 7)}V${f1(yh - 7)}`); set(s, 'pa-xb', `M${x + 6} ${f1(yh - 7)}V${f1(yl + 7)}`);
@@ -236,7 +260,8 @@
         const pu = P2(s, 'pa-pulse'), pv = c01(v('pulse')); if (pu) { pu.setAttribute('r', f1(9 + 16 * pv)); pu.style.opacity = pv > 0 && pv < 1 ? ((1 - pv) * 0.7).toFixed(3) : 0; }
         pop(P2(s, 'pa-node'), v('node') * 1.4); dash(P2(s, 'pa-nring'), v('node'));
         const nb = P2(s, 'pa-nb'); if (nb) nb.style.opacity = c01(v('node') * 2 - 1);
-        ['reach', 'xa', 'xb', 'grt', 'hd'].forEach(c => dash(P2(s, 'pa-' + c), v(c)));
+        ['reach', 'xa', 'xb', 'grt'].forEach(c => dash(P2(s, 'pa-' + c), v(c)));
+        const hd = heads.get(s); if (hd) hd.set(c01(v('hd')));
         [['lane', 'lnd'], ['gr', 'grj']].forEach(([a, b]) => { const p = P2(s, 'pa-' + a); if (!p) return; const kk = +(p.dataset.k || 1); dash(p, kk >= 1 ? v(a) : kk * c01(v(a)) + (1 - kk) * c01(v(b))); });
         pop(P2(s, 'pa-xad'), (v('xa') - 0.85) / 0.15); pop(P2(s, 'pa-xbd'), (v('xb') - 0.85) / 0.15);
       });
@@ -256,7 +281,7 @@
       beat(1, 0.75); ch('node0', 1.05, 0.6, E); ch('reach0', 1.25, 0.7, Dr); ch('pulse0', 1.9, 1.0, E);
       ch('gr0', 1.5, 0.8, Dr); ch('lane0', 1.6, 0.8, Dr);
       beat(2, 1.4); ch('q', 1.7, B, E); ch('xa0', 1.85, 0.55, Dr); ch('qa', 2.0, G.detail.duration, E); ch('xb0', 2.05, 0.55, Dr);
-      beat(3, 2.05); ch('lnd0', 2.3, 0.6, Dr); ch('grj0', 2.35, 0.55, Dr); ch('grt0', 2.8, 0.45, Dr); ch('hd0', 2.8 + 0.45 - 0.15, A, E);
+      beat(3, 2.05); ch('lnd0', 2.3, 0.6, Dr); ch('grj0', 2.35, 0.55, Dr); ch('grt0', 2.8, 0.45, Dr); ch('hd0', 2.8 + 0.27, 0.5, 'power3.out');   // (1.0.1: the house head's uncover, 0.5 s cubic, from three fifths of the way up the line)
     };
     const parts = ch => {
       const Dr = G.DRAW, E = G.SETTLE, T = G.headline.duration, B = G.body.duration, L = G.hairline.duration, A = G.arrow.duration;
@@ -266,7 +291,7 @@
         [beats[1], () => { words(1); ch('gr1', 0.6, 0.7, Dr); ch('you1', 0.75, 0.5, E); ch('node1', 0.9, 0.5, E); ch('reach1', 1.05, 0.7, Dr); ch('pulse1', 1.7, 1.0, E); }],
         [beats[2], () => { words(2); ch('lane2', 0.6, 0.8, Dr); ch('gr2', 0.7, 0.8, Dr); ch('xa2', 1.25, 0.6, Dr); ch('xb2', 1.5, 0.6, Dr); }],
         [pq || beats[2], () => { ch('q', 0, B, E); ch('qa', 0.3, G.detail.duration, E); }],
-        [beats[3], () => { words(3); ch('lane3', 0.6, 0.8, Dr); ch('gr3', 0.6, 0.8, Dr); ch('grt3', 1.4, 0.5, Dr); ch('hd3', 1.4 + 0.5 - 0.15, A, E); }]
+        [beats[3], () => { words(3); ch('lane3', 0.6, 0.8, Dr); ch('gr3', 0.6, 0.8, Dr); ch('grt3', 1.4, 0.5, Dr); ch('hd3', 1.4 + 0.3, 0.5, 'power3.out'); }]
       ];
     };
     const one = () => names.forEach(c => { S[c] = 1; }), zero = () => names.forEach(c => { S[c] = 0; });
@@ -274,6 +299,9 @@
     one(); relayout();
     let rz = 0; W.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(relayout); });
     if (D.fonts && D.fonts.ready) D.fonts.ready.then(relayout);
+    // (1.0.1) the words' height changes with a late font or a new width: the frame is fitted again
+    if (pq && 'ResizeObserver' in W) { let qh = 0, rq = 0; const bq = $('blockquote', pq);
+      if (bq) new ResizeObserver(() => { const h = bq.offsetHeight; if (!h || h === qh) return; const first = !qh; qh = h; if (first) return; cancelAnimationFrame(rq); rq = requestAnimationFrame(relayout); }).observe(bq); }
     return { room, S, names, one, zero, relayout, paintDraw, film, parts, h2: $(O('pc-h'), room) };
   }
   function callInit() {
@@ -408,8 +436,14 @@
       q('ah-loc').forEach((r, i) => { const p = P.locs[i]; if (!p) { r.style.display = 'none'; return; } r.style.display = ''; r.setAttribute('x', f1(p[0] - P.sq / 2)); r.setAttribute('y', f1(p[1] - P.sq / 2)); r.setAttribute('width', P.sq); r.setAttribute('height', P.sq); });
       q('ah-tm').forEach((c, i) => pt(c, P.team[i]));
       pt(one('ah-fw'), [P.cx, P.cy]); pt(one('ah-pt'), [P.cx, P.cy]);
-      sd('ah-ln', P.ln); sd('ah-hd', P.hd);
+      sd('ah-ln', P.ln); sd('ah-hd', '');
+      // (owners 1.0.1, one brand arrow) the line's head is THE head, the fox's ears (gfArrow.head), at the chart's weight,
+      // uncovered from its tip on channel hd; made at the channel's last value, so a re-draw never hides a head already drawn
+      q('ah-hd').forEach(p => { const sv = p.ownerSVGElement, A = W.gfArrow; if (!sv) return; const old = AHD.get(sv); if (old) old.remove(); AHD.delete(sv); if (!A) return;
+        const dx = P.tip[0] - P.xt, dy = P.tip[1] - P.sy, dl = Math.hypot(dx, dy) || 1, k0 = AHDK.get(sv);
+        AHD.set(sv, A.head(sv, P.tip[0], P.tip[1], dx / dl, dy / dl, { len: 12, w: A.CHART, cls: 'ah-head', at: k0 == null ? 1 : k0 })); });
     };
+    const AHD = new WeakMap(), AHDK = new WeakMap();
     const ELS = new WeakMap(), MEMO = new WeakMap();
     const els = (box, sel) => { let m = ELS.get(box); if (!m) ELS.set(box, m = {}); return m[sel] || (m[sel] = $$(sel, box)); };
     const put = (el, k, val) => { if (!el) return; let m = MEMO.get(el); if (!m) MEMO.set(el, m = {}); if (m[k] !== val) { m[k] = val; el.style[k] = val; } };
@@ -444,7 +478,8 @@
       const bx = w0 * P.cx + w1 * P.hc[0] + w2 * P.succ[0] - P.cx, by = w0 * P.cy + w1 * P.hc[1] + w2 * P.succ[1] - P.cy;
       const gp = one('ah-pt'); if (c * 1.6 < 1 || mv <= 0) popM(gp, c * 1.6); else { put(gp, 'opacity', ''); put(gp, 'transform', `translate(${f1(bx)}px, ${f1(by)}px)`); }
       dashM(one('ah-ho'), mv); popM(one('ah-fw'), expo(win(mv, 0.3, 0.5)));
-      dashM(one('ah-ln'), v('ln')); dashM(one('ah-hd'), v('hd'));
+      dashM(one('ah-ln'), v('ln'));
+      { const k = c01(v('hd')); els(box, '.ah-hd').forEach(p => { const sv = p.ownerSVGElement; if (!sv) return; AHDK.set(sv, k); const h = AHD.get(sv); if (h) h.set(k); }); }
     };
     let hover = '', filmFocus = '', shownF = null;
     const applyFocus = () => { const f = filmFocus || hover; if (f === shownF) return; shownF = f; if (f) fig.setAttribute('data-focus', f); else fig.removeAttribute('data-focus'); };
@@ -560,19 +595,19 @@
       if (L === 'a') ch('a', b + 0.1, 1.0, 'none');
       if (L === 'l') ch('l', b + 0.1, 0.9, 'none');
       if (L === 's') ch('s', b + 0.1, 0.85, Dr);
-      if (L === 'u') { ch('u', b + 0.1, 0.75, 'none'); ch('ln', b + 0.6, 0.45, Dr); ch('hd', b + 0.9, A, E); }
+      if (L === 'u') { ch('u', b + 0.1, 0.75, 'none'); ch('ln', b + 0.6, 0.45, Dr); ch('hd', b + 0.9, 0.5, 'power3.out'); }
     };
     const words = (ch, k, b, ph) => { ch('t' + k, b, G.headline.duration, G.SETTLE); ch('p' + k, b + (ph ? 0.2 : 0.15), G.body.duration, G.SETTLE); ch('r' + k, b + 0.3, G.hairline.duration * 0.55, G.DRAW); };
     const film = ch => {
       const STEP = n > 4 ? 0.5 : 0.62, B0 = 0.5;
       ch('m', 0, 0.6, G.DRAW); ch('c', 0.2, 0.55, G.SETTLE);
       for (let k = 0; k < n; k++) { const b = B0 + STEP * k; words(ch, k, b); if (lev[k]) lever(ch, lev[k], b); }
-      if (lev.indexOf('u') < 0) { ch('ln', B0 + STEP * n, 0.45, G.DRAW); ch('hd', B0 + 0.3 + STEP * n, G.arrow.duration, G.SETTLE); }
+      if (lev.indexOf('u') < 0) { ch('ln', B0 + STEP * n, 0.45, G.DRAW); ch('hd', B0 + 0.3 + STEP * n, 0.5, 'power3.out'); }
       ch('z', B0 + STEP * (n - 1) + 1.0, 0.6, G.SETTLE);
     };
     const parts = () => [[$(O('avh-pair'), room) || draws[0], ch => { ch('m', 0, 0.6, G.DRAW); ch('c', 0.2, 0.55, G.SETTLE); }]]
       .concat(its.map((li, k) => [li, ch => { words(ch, k, 0, true); if (lev[k]) lever(ch, lev[k], 0);
-        if (k === n - 1 && lev.indexOf('u') < 0) { ch('ln', 0.6, 0.55, G.DRAW); ch('hd', 1.0, G.arrow.duration, G.SETTLE); } }]));
+        if (k === n - 1 && lev.indexOf('u') < 0) { ch('ln', 0.6, 0.55, G.DRAW); ch('hd', 1.0, 0.5, 'power3.out'); } }]));
     const one = () => names.forEach(c => { S[c] = 1; }), zero = () => names.forEach(c => { S[c] = 0; });
     const relayout = () => { safe('partnership layout', layout); paint(); };
     one(); relayout();

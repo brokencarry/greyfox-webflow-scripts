@@ -101,6 +101,19 @@ html:not(#gfx-o) [data-o~=ow-proc] :is(.pa-nring, .pa-reach, .pa-lane, .pa-xa) {
 html:not(#gfx-o) [data-o~=ow-proc] .pa-note { fill: var(--ow3-ink-3); }
 html:not(#gfx-o) [data-o~=ow-proc] .pa-nu { fill: var(--ow3-green); }
 html.gfx-js [data-o~=ow-proc] .pa-note:not([x]) { visibility: hidden; }
+/* (owners 1.0.1) the line's head is the house head (gfArrow.head: the fox's ears, filled) in the line's green */
+html:not(#gfx-o) [data-o~=ow-proc] svg.pa-svg { --gfa-c: var(--ow3-green); }
+html:not(#gfx-o) [data-o~=ow-proc] svg.pa-svg .gfa-b { fill: var(--ow3-green); stroke: none; }
+html:not(#gfx-o) [data-o~=ow-proc] svg mask circle { fill: #fff !important; stroke: none !important; }   /* (the head's uncovering mask: no circle rule may empty it) */
+/* (owners 1.0.1, the owner's words overflowed their frame at about 1910 px) the words' box follows the drawing's height
+   (--pc-draw, which the script grows when the words need more): the designer's class held a fixed calc of the default
+   clamp, so on a large screen (the words at 24 or 27 px) they ran below the rule. Large screens take the local sizes of
+   the drawing (proc.css), so the frame and the words grow together */
+@media (min-width: 992px) {
+  html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-q] { top: calc(var(--pc-draw) * var(--pc-lane)) !important; height: calc(var(--pc-draw) * (1 - var(--pc-lane))) !important; }
+}
+@media (min-width: 1800px) and (min-height: 1000px) { html:not(#gfx-o) [data-o~=ow-proc] { --pc-draw: clamp(340px, 38vh, 520px); } }
+@media (min-width: 2000px) and (min-height: 1100px) { html:not(#gfx-o) [data-o~=ow-proc] { --pc-draw: clamp(420px, 40vh, 600px); } }
 @media (min-width: 992px) and (max-height: 820px) {
   html:not(#gfx-o) [data-o~=ow-proc] { padding-top: clamp(96px, 15vh, 128px); --pc-draw: clamp(190px, 34vh, 280px); }
   html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-h] { font-size: clamp(40px, 3.3334vw, 52px); }
@@ -119,6 +132,9 @@ html.gfx-js [data-o~=ow-proc] .pa-note:not([x]) { visibility: hidden; }
 }
 @media (min-width: 2000px) and (min-height: 1100px) { html.gfx-hold [data-o~=ow-av] [data-o~=avh] { max-height: 940px; } }
 html.gfx-js [data-o~=avh-note]:not([style*="left"]) { visibility: hidden; }
+/* (owners 1.0.1) the partnership line's head is the house head (gfArrow.head), in the line's green; its mask kept whole */
+html:not(#gfx-o) [data-o~=ow-av] svg { --gfa-c: #2f9a6c; }
+html:not(#gfx-o) [data-o~=ow-av] svg mask circle { fill: #fff !important; stroke: none !important; }
 [data-o~=avh] .ah-lv { transition: opacity .35s cubic-bezier(.16, 1, .3, 1); }
 [data-o~=avh] [data-o~=avh-note] { transition: color .35s cubic-bezier(.16, 1, .3, 1); }
 [data-o~=avh] .ah-nl { transition: stroke .35s cubic-bezier(.16, 1, .3, 1); }

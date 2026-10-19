@@ -134,6 +134,8 @@ html.gfx-f3 svg.gfa { position: absolute; left: 0; top: 0; overflow: visible; po
 html.gfx-f3 svg :is(.gfa-ink, .gfa-b) { fill: var(--gfa-c, var(--gfx-green-d)) !important; stroke: none !important; }
 :where(svg.gfa-icon) { overflow: visible; }
 :where(svg.gfa-icon) path { fill: none; stroke: currentColor; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+/* (core 1.0.2) the glyph is the house mark, filled: its inked shaft and the two ears (gfArrow.icon) */
+html svg.gfa-icon path.gfa-if { fill: currentColor !important; stroke: none !important; }
 .gfx-arw { width: 12px; height: 12px; flex: none; margin-left: 8px; vertical-align: baseline; }
 
 /* ---------- LINK HOVER: a text link takes a quiet 1 px underline under its words ---------- */

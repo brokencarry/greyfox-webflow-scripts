@@ -1,7 +1,7 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.1 + home 1.1.0. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.2 + home 1.1.1. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
- * core 1.0.1 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone) · front-end only (nothing secret).
+ * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
  *
  * WHAT IT IS
  *   The parts of the approved local Flow 3 site (brand-motion-1008/prototype, "Flow 3") that every page shares, ported
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.1';
+  const VERSION = '1.0.2';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -244,10 +244,36 @@
       set(o.at == null ? 0 : o.at);
       return { g: g, set: set, remove: function () { g.remove(); m.remove(); } };
     };
+    // (1.0.2, the founder: one brand arrow) the small glyph is the house mark at a link's size: an inked shaft at the fox's
+    // 38.2° and THE head (the two curved, tapering ears), filled in the link's colour; never a chevron on a stick
     var icon = function (cls, vb) {
-      vb = vb || 16; var s = vb / 16, tx = 13.2 * s, ty = 2.8 * s, len = 6.4 * s, d = '';
-      [1, -1].forEach(function (sg) { var ang = Math.atan2(-1, 1) + Math.PI + sg * SPREAD; d += '<path class="gfa-ib" pathLength="1" d="M' + f2(tx + Math.cos(ang) * len) + ' ' + f2(ty + Math.sin(ang) * len) + ' L' + f2(tx) + ' ' + f2(ty) + '"/>'; });
-      return '<svg class="gfa-icon' + (cls ? ' ' + cls : '') + '" viewBox="0 0 ' + vb + ' ' + vb + '" aria-hidden="true" focusable="false" data-gfa-head><path class="gfa-is" pathLength="1" d="M' + f2(2.4 * s) + ' ' + f2(13.6 * s) + ' L' + f2(tx) + ' ' + f2(ty) + '"/>' + d + '</svg>';
+      vb = vb || 16; var s = vb / 16, a = 38.2 * Math.PI / 180, ux = Math.cos(a), uy = -Math.sin(a);
+      var tx = 13.8 * s, ty = 3.4 * s, L = 14 * s, sx = tx - ux * L, sy = ty - uy * L, P = [], N = 18;
+      for (var i = 0; i <= N; i++) { var k = i / N, bow = Math.sin(Math.PI * k) * 0.3 * s;
+        P.push([sx + ux * L * k + uy * bow, sy + uy * L * k - ux * bow, 1.5 * s * (1 + 0.5 * Math.exp(-k * 5)) * (0.62 + 0.38 * (1 - k))]); }
+      var d = '<path class="gfa-if gfa-is" d="' + ribbon(P) + '"/>' + headPaths(tx, ty, ux, uy, 8.4 * s, 2.4 * s).map(function (h) { return '<path class="gfa-if gfa-ib" d="' + h + '"/>'; }).join('');
+      return '<svg class="gfa-icon' + (cls ? ' ' + cls : '') + '" viewBox="0 0 ' + vb + ' ' + vb + '" aria-hidden="true" focusable="false" data-gfa-head>' + d + '</svg>';
+    };
+    // the house timing at t seconds: the line 1.6 s expo-out, the head uncovered from its tip 0.5 s from 0.95 s
+    var timing = function (t) { return { l: 1 - expo(clamp(t / 1.6, 0, 1)), h: cubic(clamp((t - 0.95) / 0.5, 0, 1)) }; };
+    // (1.0.2) THE LINE on its own (the opening's line under the logo): the text device's ink and head, not under words.
+    // From (x0, y) to xr, then up at the fox's angle into the head; fs the size it is scaled to. at(t) draws it on the house
+    // timing. The mask's stroke is inline, so no page rule for its svg's paths can thin it
+    var line = function (svg, x0, y, xr, fs, o) {
+      o = o || {}; var withHead = o.head !== false, sz = sizes(fs), x2 = withHead ? xr + sz.run : xr, y2 = withHead ? y - sz.rise : y, id = 'gfa-n' + (++uid);
+      var g = ink(x0, y, xr, x2, y2, fs, withHead);
+      var defs = svg.querySelector('defs') || svg.insertBefore(D.createElementNS(NS, 'defs'), svg.firstChild);
+      var m = D.createElementNS(NS, 'mask'); m.setAttribute('id', id); m.setAttribute('maskUnits', 'userSpaceOnUse');
+      m.setAttribute('x', '-4000'); m.setAttribute('y', '-4000'); m.setAttribute('width', '12000'); m.setAttribute('height', '12000');
+      var mp = D.createElementNS(NS, 'path'); mp.setAttribute('class', 'gfa-m'); mp.setAttribute('d', g.centre); mp.setAttribute('pathLength', '1');
+      mp.setAttribute('style', 'fill:none;stroke:#fff;stroke-width:9px;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1');
+      m.appendChild(mp); defs.appendChild(m);
+      var p = D.createElementNS(NS, 'path'); p.setAttribute('class', 'gfa-ink'); p.setAttribute('d', g.shape); p.setAttribute('mask', 'url(#' + id + ')'); svg.appendChild(p);
+      var hd = withHead ? head(svg, x2, y2, g.ux, g.uy, { len: sz.len, w: sz.w, at: 0 }) : null;
+      var set = function (l, h) { mp.style.strokeDashoffset = f2(clamp(l, 0, 1)); if (hd) hd.set(h); };
+      var at = function (t) { var k = timing(t); set(k.l, k.h); };
+      at(o.at == null ? 0 : o.at);
+      return { at: at, set: set, DUR: 1.6, tip: [x2, y2], remove: function () { p.remove(); m.remove(); if (hd) hd.remove(); } };
     };
     var restBox = function (range, host) {
       var rs = [].slice.call(range.getClientRects()).filter(function (q) { return q.width > 0.5; }); if (!rs.length) return null;
@@ -328,7 +354,7 @@
       }
       return { svg: svg, place: place, draw: draw, still: still };
     };
-    W.gfArrow = { TAN: TAN, SPREAD: SPREAD, CHART: 1.8, ribbon: ribbon, headPaths: headPaths, head: head, ink: ink, icon: icon, word: word, rangeOf: rangeOf, sizes: sizes };
+    W.gfArrow = { TAN: TAN, SPREAD: SPREAD, CHART: 1.8, ribbon: ribbon, headPaths: headPaths, head: head, ink: ink, icon: icon, word: word, rangeOf: rangeOf, sizes: sizes, line: line, timing: timing };
   })();
 
   /* ========================= 4 · the turn (gf-turn.js, verbatim) =========================
@@ -1101,7 +1127,7 @@
 
 /*!
  * Grey Fox · gfx Home (Flow 3), the Home layer on the shared core (core/gfx-core.js).
- * home 1.1.0 · 2026-10-20 · Webflow page "Home v2" (/home-v2, 6ace6f7b7422f227be0447ed).
+ * home 1.1.1 · 2026-10-20 (1.1.1: the opening's line is the house line, gfArrow.line) · Webflow page "Home v2" (/home-v2, 6ace6f7b7422f227be0447ed).
  *
  * WHAT IT IS
  *   The approved local Flow 3 Home (prototype/v14.html with Flow 3 on), its own rooms only; everything every page
@@ -1128,7 +1154,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.0';
+  W.__gfxHome = '1.1.1';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -1185,16 +1211,20 @@
     const page = $('.page-wrapper'); if (page) page.setAttribute('inert', '');
     const lenis = gfx.lenis; if (lenis && lenis.stop) lenis.stop();
     const tl = gsap.timeline();
-    const svg = D.createElementNS(NS, 'svg'); svg.setAttribute('class', 'gfx-mark gfx-intro-mark'); svg.setAttribute('aria-hidden', 'true');
-    const p1 = D.createElementNS(NS, 'path'), p2 = D.createElementNS(NS, 'path');
-    [p1, p2].forEach(p => { p.setAttribute('pathLength', '1'); p.style.strokeDasharray = '1'; p.style.strokeDashoffset = '1'; });
-    svg.appendChild(p1); svg.appendChild(p2); pre.appendChild(svg);
+    /* (home 1.1.1, the founder: the opening's green line is the approved line) the house line, gfArrow.line (core 1.0.2):
+       the ink gathers where the pen touches down, a faint bow, thinning as it lifts into the turn at the fox's angle, and the
+       fox-ear head uncovered from its tip; on the house timing (the line 1.6 s expo-out, the head 0.5 s from 0.95 s). Not
+       .gfx-mark (its stroke rule would reach the ink's mask); fixed in the preloader, on the black of the hero it opens on */
+    const svg = D.createElementNS(NS, 'svg'); svg.setAttribute('class', 'gfx-intro-mark gfx-intro-line'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
+    svg.style.cssText = 'position:fixed;left:0;top:0;overflow:visible;pointer-events:none;z-index:2;--gfa-c:#3aa678';
+    pre.appendChild(svg);
+    let mk = null; const lk = { t: 0 };
     const place = () => safe('intro mark', () => {
-      const b = logo.getBoundingClientRect(); if (!b.width) return;
-      const inset = b.width * 27 / 600, w = b.width - 2 * inset, rise = Math.max(16, b.height * 0.16), run = rise / TAN, hs = rise * 0.38;
-      svg.style.left = (b.left + inset) + 'px'; svg.style.top = (b.bottom + Math.max(18, b.height * 0.14)) + 'px';
-      svg.setAttribute('width', w + run + 4); svg.setAttribute('height', rise + 6);
-      p1.setAttribute('d', `M0 ${rise + 2} H${w} L${w + run} 2`); p2.setAttribute('d', `M${w + run - hs} 2 H${w + run} V${2 + hs}`);
+      const A = W.gfArrow, b = logo.getBoundingClientRect(); if (!b.width || !A || !A.line) return;
+      const inset = b.width * 27 / 600, w = b.width - 2 * inset, fs = Math.max(30, Math.min(60, b.height * 0.46)), S = A.sizes(fs), top = S.rise + 6;
+      svg.style.left = (b.left + inset) + 'px'; svg.style.top = (b.bottom + Math.max(18, b.height * 0.14) - 4) + 'px';
+      svg.setAttribute('width', Math.ceil(w + S.run + 12)); svg.setAttribute('height', Math.ceil(top + 8));
+      if (mk) mk.remove(); mk = A.line(svg, 0, top, w, fs, { at: lk.t });
     });
     const navFox = $$('.gfx-nav .logo__navbar').filter(i => i.offsetWidth || i.getClientRects().length)[0];
     const FLY = !!navFox;
@@ -1216,9 +1246,8 @@
     });
     tl.fromTo(logo, { autoAlpha: 0, scale: 0.96 }, { autoAlpha: 1, scale: 1, duration: G.detail.duration, ease: G.SETTLE }, 0);
     let t = 0.5;
-    tl.add(place, t).to(p1, { strokeDashoffset: 0, autoRound: false, duration: G.hairline.duration, ease: G.DRAW }, t)
-      .to(p2, { strokeDashoffset: 0, autoRound: false, duration: G.arrow.duration, ease: G.SETTLE }, t + G.hairline.duration - 0.15);
-    t += G.hairline.duration - 0.15 + G.arrow.duration;
+    tl.add(place, t).fromTo(lk, { t: 0 }, { t: 1.6, duration: 1.6, ease: 'none', immediateRender: false, onUpdate: () => { if (mk) mk.at(lk.t); } }, t);
+    t += 1.45;   // (the breath follows the head's arrival)
     tl.addLabel('out', t + 0.25);
     if (FLY) tl.add(flyOff, 'out');
     const CUR = G.seam.hairline;
@@ -1650,6 +1679,9 @@
     let n = 0;
     $$('.gfx-ink-lead, .gfx-ink-card').forEach(a => { const t = $('h3', a), d = $('.gfx-ink-p, .gfx-ink-sum', a); if (!t) return; t.id = t.id || 'gfx-ink-t-' + (++n); a.setAttribute('aria-labelledby', t.id); if (d) { d.id = d.id || 'gfx-ink-d-' + n; a.setAttribute('aria-describedby', d.id); } });
     $$('.gfx-ink-all').forEach(g => { if (!g.querySelector('svg')) g.insertAdjacentHTML('beforeend', ARW()); });
+    // (1.1.1, one brand arrow, as local gf-site.js glyphs()) the covers' own arrowheads come off, their lines stay: the room's
+    // arrow is its "View all articles" glyph
+    $$('svg[viewBox="0 0 1200 800"] path', sec).forEach(p => { const d = (p.getAttribute('d') || '').trim(); if (/^M[\d.]+ [\d.]+H[\d.]+V[\d.]+$/.test(d) || /^M708 390L718 400L708 410$/.test(d)) p.remove(); });
     const box = $('.gfx-ink', sec), head = $('.gfx-ins-title .heading-2', sec);
     gfx.room({ trigger: head || sec, headline: head, body: $('.gfx-ink-r', sec), hairline: $('.gfx-ins-rule', sec) });
     if (!box) return;

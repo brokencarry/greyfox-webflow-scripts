@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · gfx Team (Flow 3), the Team layer on the shared core + the inner-page layer (pages/gfx-pages.js).
- * team 1.0.0 · 2026-10-20 · Webflow page "Team v2 (Claude build)" (/team-v2).
+ * team 1.0.1 · 2026-10-20 (1.0.1: the hiring link's arrow steps aside at rest, one arrowhead per view) · Webflow page "Team v2 (Claude build)" (/team-v2).
  *
  * WHAT IT IS
  *   What the approved local Team (prototype/team/final.html: r2.js + r3.js + t-flow2.js, Flow 3 the default) adds to the
@@ -20,7 +20,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxTeam) return;
-  W.__gfxTeam = '1.0.0';
+  W.__gfxTeam = '1.0.1';
   const P = gfx.pages, O = P.O, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const SETTLE = G.SETTLE, DRAW = G.DRAW;
   // the local page's html classes the ported stylesheet reads (t2-once: the emblem draws once; tf-on: Team on the field)
