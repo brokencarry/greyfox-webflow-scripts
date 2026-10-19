@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipeline - Grey Fox Partners</title>
+  <meta name="theme-color" content="#EFF3F8">
+  <script>(function(){try{var t=localStorage.getItem("gf_theme");document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light")}catch(e){}})();</script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-brand.css">
+  
+  
+</head>
+<body>
+  <!-- Loading -->
+  <div id="loading" class="loading-screen">
+    <div class="loading-inner">
+      <div class="loading-wordmark">Grey Fox<span>Partners</span></div>
+      <div class="loading-bar"><div class="loading-fill"></div></div>
+      <div class="loading-text">Loading pipeline data</div>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app" class="app hidden">
+    <!-- Cover -->
+    <header class="cover-band">
+      <button class="theme-btn theme-btn-top" id="themeBtnTop" title="Light / dark">
+        <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" style="display:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <div class="band-inner">
+        <div class="band-top">
+          <div class="brand-wordmark">Grey Fox<span>Partners</span></div>
+          <div class="client-wordmark">
+            <span class="client-main" id="clientMain"></span>
+            <span class="client-sub" id="clientSub"></span>
+          </div>
+        </div>
+        <div class="band-divider"></div>
+        <h1 class="band-title" id="bandTitle"></h1>
+        <div class="band-subtitle" id="bandSubtitle"></div>
+      </div>
+    </header>
+
+    <!-- Meta -->
+    <section class="meta-section">
+      <div class="meta-inner">
+        <div class="meta-row">
+          <div class="meta-item">
+            <div class="meta-label">Sector</div>
+            <div class="meta-value" id="metaSector"></div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Active Pipeline</div>
+            <div class="meta-value" id="metaActive"></div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Total Tracked</div>
+            <div class="meta-value" id="metaTotal"></div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Report Date</div>
+            <div class="meta-value" id="metaDate"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sector Tabs -->
+    <section class="tabs-section hidden" id="sectorTabsSection">
+      <div class="tabs-inner">
+        <div class="sector-tabs" id="sectorTabs"></div>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="summary-section">
+      <div class="summary-inner">
+        <div class="summary-strip" id="summaryStrip"></div>
+      </div>
+    </section>
+
+    <!-- Movements -->
+    <section class="movements-section">
+      <div class="movements-inner">
+        <div class="section-label">Stage Movement — Last 7 Days</div>
+        <table class="mv-table">
+          <thead><tr><th>Company</th><th>Stage</th></tr></thead>
+          <tbody id="movementBody"></tbody>
+        </table>
+        <div class="no-movements hidden" id="noMovements">No stage movements in the last 7 days</div>
+      </div>
+    </section>
+
+    <!-- Active Pipeline — rendered into tiers by JS -->
+    <div id="tieredPipeline"></div>
+
+    <!-- Footer -->
+    <footer class="report-footer">
+      <div class="footer-inner">
+        <span class="footer-brand">Grey Fox Partners · Confidential & Proprietary</span>
+        <span class="footer-meta">
+          Generated <span id="footerTime"></span>
+          <button class="select-mode-btn" id="selectModeBtn" title="Select companies"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16"/><path d="m9 12 2 2 4-4"/></svg> Select</button>
+          <button class="theme-btn" id="themeBtn" title="Light / dark">
+            <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="icon-sun" style="display:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+          <button class="refresh-btn" id="refreshBtn" title="Refresh data">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </button>
+          <a class="logout-btn" href="/logout" title="Log out">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </a>
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Bulk Selection Bar -->
+  <div class="bulk-bar" id="bulkBar" style="display:none">
+    <span class="bulk-bar-count" id="bulkCount">0 selected</span>
+    <span class="bulk-bar-divider"></span>
+    <button class="bulk-bar-btn" id="selectAllPageBtn">Select All Visible</button>
+    <span class="bulk-bar-divider"></span>
+    <button class="bulk-bar-btn" id="bulkExportBtn">Export CSV</button>
+    <span class="bulk-bar-divider"></span>
+    <button class="bulk-bar-btn bulk-bar-btn-ghost" id="bulkClearBtn">Clear</button>
+    <span class="bulk-bar-divider"></span>
+    <button class="bulk-bar-btn bulk-bar-btn-ghost" id="bulkExitBtn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Exit</button>
+  </div>
+
+  <!-- Print -->
+  <div class="print-header">
+    <span class="print-brand">Grey Fox Partners</span>
+    <span class="print-client" id="printClient"></span>
+  </div>
+  <div class="print-footer">
+    <span>Grey Fox Partners · Confidential & Proprietary</span>
+  </div>
+
+  <script src="fixtures.js"></script><link rel="stylesheet" href="brand-gf.css"><script src="app.js"></script>
+</body>
+</html>

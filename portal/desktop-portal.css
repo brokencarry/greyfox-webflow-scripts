@@ -1,0 +1,48 @@
+/* Grey Fox · the client portal on a desktop, in one shared browser frame (desktop-portal.js). The frame: a quiet light
+   browser (the house greys), one tab, the client's own address, 1 px border, 10 px corners, no heavy shadow. The page:
+   the real portal's report layout in the house type and colours. Sizes follow the window (container units), so the
+   page is laid out at the window's own width, never scaled down from a bigger one: crisp and legible at any DPR */
+.dp-host { position: relative; container-type: size; container-name: dp; }
+.dp-win { position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 10px; background: #f6f5f2;
+  box-shadow: 0 0 0 1px rgba(28, 28, 29, .14), 0 18px 48px -28px rgba(17, 17, 18, .45); font-family: "DM Sans", system-ui, sans-serif; color: #1c1c1d;
+  -webkit-font-smoothing: antialiased; }
+/* the browser: the tab strip and the address bar */
+.dp-tabs { flex: none; display: flex; align-items: flex-end; height: 34px; padding: 0 10px 0 12px; background: #e6e4df; }
+.dp-tab { display: flex; align-items: center; gap: 8px; height: 27px; max-width: 46%; padding: 0 14px 0 11px; border-radius: 8px 8px 0 0; background: #f9f8f6;
+  font: 500 12px/1 "DM Sans", sans-serif; color: #3a3b3f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dp-wc { margin-left: auto; align-self: center; display: flex; gap: 16px; padding-right: 4px; }
+.dp-wc i { position: relative; width: 10px; height: 10px; opacity: .55; }
+.dp-wc i:nth-child(1)::after { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 1px; background: #55575d; }
+.dp-wc i:nth-child(2)::after { content: ""; position: absolute; inset: 0; border: 1px solid #55575d; }
+.dp-wc i:nth-child(3)::before, .dp-wc i:nth-child(3)::after { content: ""; position: absolute; left: -1px; right: -1px; top: 4.5px; height: 1px; background: #55575d; transform: rotate(45deg); }
+.dp-wc i:nth-child(3)::after { transform: rotate(-45deg); }
+.dp-bar { flex: none; display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 12px; background: #f9f8f6; border-bottom: 1px solid rgba(28, 28, 29, .1); }
+.dp-nav { display: flex; gap: 12px; }
+.dp-nav i { width: 8px; height: 8px; border-left: 1.4px solid #9a9b9f; border-bottom: 1.4px solid #9a9b9f; transform: rotate(45deg); }
+.dp-nav i + i { transform: rotate(-135deg); opacity: .5; }
+.dp-url { flex: 1; display: flex; align-items: center; gap: 7px; height: 26px; padding: 0 12px; border-radius: 13px; background: #efeeea; font: 400 12.5px/1 "DM Sans", sans-serif; color: #55575d; }
+.dp-url svg { width: 12px; height: 12px; color: #7a7b80; flex: none; }
+/* the page: the real portal, in a frame at the window's own width */
+.dp-view { position: relative; flex: 1; overflow: hidden; background: #F6F5F2; }
+.dp-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #F6F5F2; }
+.dp-shield { position: absolute; inset: 0; z-index: 2; }   /* (a demo, not a page to browse: the pointer and the scroll stay with the site) */
+.dp-fav { width: 14px; height: 14px; flex: none; display: block; }
+.dp-cur { position: absolute; left: 0; top: 0; width: 15px; height: 21px; opacity: 0; pointer-events: none; z-index: 3; transform-origin: 2px 2px; }
+.dp-cur svg { display: block; width: 100%; height: 100%; }
+.dp-cur.is-press svg { transform: scale(.86); transition: transform .12s ease-out; }
+.dp-view, .dp-win { background: #F6F5F2; }
+.dp-frame { transform-origin: 0 0; inset: auto; left: 0; top: 0; }
+.dp-win.is-dark, .dp-win.is-dark .dp-view { background: #111112; }
+/* (10/20, the founder) THE DARK WINDOW: the frame in the site's dark too, a step above the page's black so it reads as a
+   window on Home's black stage as on Investors' paper: the tab strip #1a1a1b, the tab and the bar #2a2a2b, the address
+   #1e1e20, a hairline edge; the page inside is #161617, its cards raised #1e1e20; the gold favicon as ever */
+.dp-win.is-dark { background: #161617; color: #f4f3f0; box-shadow: 0 0 0 1px rgba(244, 243, 240, .16), 0 24px 60px -30px rgba(0, 0, 0, .7); }
+.dp-win.is-dark .dp-tabs { background: #1a1a1b; }
+.dp-win.is-dark .dp-tab { background: #2a2a2b; color: #e4e2dd; }
+.dp-win.is-dark .dp-wc i::before, .dp-win.is-dark .dp-wc i::after { background: #a9a8a4 !important; }
+.dp-win.is-dark .dp-wc i:nth-child(2)::after { background: none !important; border-color: #a9a8a4 !important; }
+.dp-win.is-dark .dp-bar { background: #2a2a2b; border-bottom-color: rgba(244, 243, 240, .08); }
+.dp-win.is-dark .dp-nav i { border-color: #8e8d89; }
+.dp-win.is-dark .dp-url { background: #1e1e20; color: #b3b2ae; }
+.dp-win.is-dark .dp-url svg { color: #8e8d89; }
+.dp-win.is-dark .dp-view, .dp-win.is-dark .dp-frame { background: #161617; }

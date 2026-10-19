@@ -1,0 +1,34 @@
+/* The real portal in the site's colours (the founder: "the desktop actual pipeline we use today, with the new brand colors").
+   Only the portal's own colour tokens are remapped: its layout, type and spacing are the product's, untouched. The paper,
+   the ink, the green for money and for what is live; the cool navy accent becomes the house green. */
+:root, :root[data-theme="light"] {
+  --paper: #F6F5F2; --ink: #1C1C1D; --forest: #111112; --accent: #156946; --accent-soft: rgba(21, 105, 70, .08);
+  --steel: #A9A8A4; --steel-dim: rgba(169, 168, 164, .45); --putty: #E6E4DF; --putty-wash: #EFEEEA;
+  --hairline: #DDDCD7; --hairline-lt: #E6E5E1; --ink-70: rgba(28, 28, 29, .70); --ink-45: rgba(28, 28, 29, .50); --ink-30: rgba(28, 28, 29, .32);
+  --navy-light: #2A2A2B; --brand-wash: rgba(21, 105, 70, .04); --sky-hover: #0F5236; --sky-wash: rgba(21, 105, 70, .05);
+  --body: #3A3B3F; --bg: #FBFAF8;
+}
+::selection { background: rgba(21, 105, 70, .16); }
+/* (a demo: no loading screen, no theme or refresh controls, no scrollbar) */
+.loading-screen { display: none !important; }
+.app.hidden { display: block !important; } .app { opacity: 1 !important; }
+html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; }
+.theme-btn, #refreshBtn, .footer-actions, .logout-btn, .select-btn { visibility: hidden !important; }
+/* the portal's own dark theme (a client's remembered choice), in the house's black */
+:root[data-theme="dark"] {
+  --paper: #161617; --bg: #161617; --ink: #F4F3F0; --body: #CFCDC8; --forest: #1E1E20; --accent: #3AA678; --accent-soft: rgba(58, 166, 120, .14);
+  --steel: #8E8D89; --steel-dim: rgba(142, 141, 137, .45); --putty: rgba(244, 243, 240, .1); --putty-wash: #19191A;
+  --hairline: rgba(244, 243, 240, .14); --hairline-lt: rgba(244, 243, 240, .09); --ink-70: rgba(244, 243, 240, .72); --ink-45: rgba(244, 243, 240, .5); --ink-30: rgba(244, 243, 240, .34);
+  --navy-light: #2A2A2B; --brand-wash: rgba(58, 166, 120, .05); --sky-hover: #4DB98A; --sky-wash: rgba(58, 166, 120, .06);
+}
+/* (10/20, the founder: the pipeline windows go DARK, in the site's own dark, never the portal's navy) the portal's dark rules
+   that name a navy outright, re-set in the house's black: raised #1e1e20 / #252527, ink #f4f3f0, the green for money */
+html[data-theme="dark"] .co-hero-value, html[data-theme="dark"] .co-chip-value, html[data-theme="dark"] .mv-table .stage-advance { color: #e4e2dd; }
+html[data-theme="dark"] .co-next-action-text { color: #f4f3f0; }
+html[data-theme="dark"] .co-hero-value.co-money, html[data-theme="dark"] .co-chip-value.co-money, html[data-theme="dark"] .pass-table .financial { color: #5cbf8f; }
+html[data-theme="dark"] .co-expanded .company-card, html[data-theme="dark"] .co-expanded .company-card::before { background: #1e1e20 !important; }
+html[data-theme="dark"] .company-card:hover, html[data-theme="dark"] .company-card:hover::before, html[data-theme="dark"] .summary-cell:hover, html[data-theme="dark"] .sector-tab:hover { background: #252527 !important; }
+html[data-theme="dark"] .company-card { border-bottom-color: rgba(244, 243, 240, .14); }
+html[data-theme="dark"] .tabs-section::after { background: linear-gradient(90deg, transparent, #161617); }
+html[data-theme="dark"] ::selection { background: rgba(58, 166, 120, .28); }
+html[data-theme="dark"] { --pulse: rgba(58, 166, 120, .3); --alert-warm: #c9a26a; }

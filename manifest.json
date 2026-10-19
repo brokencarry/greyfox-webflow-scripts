@@ -1,0 +1,26 @@
+{
+ "home/gfx-home.bundle.min.js": {
+  "bytes": 99203,
+  "sri": "sha384-zXP5p7DLGp7kDSHDiIfnvl2gEGVohsUa/LUJDkFrD9O4Om77WKfQbUX2h0xgjbGi"
+ },
+ "core/gfx-core.min.css": {
+  "bytes": 20609,
+  "sri": "sha384-rsVx9MEJVzzGX3fMe4FkRike5wlq/sqUJRKUFesCd+BTezf/BMITf2PbrOQhLfQ9"
+ },
+ "home/gfx-home.min.css": {
+  "bytes": 20849,
+  "sri": "sha384-0rIqprJW9IhcDtstc/18vjWClgu9nzdAVuHYaueO7+eZ11buOz/nTZjLjlTachZ5"
+ },
+ "portal/desktop-portal.js": {
+  "bytes": 9150,
+  "sri": "sha384-IsGMnVfTJOCFKLIvUJ7Dozb3YOYqXd3M2Fxd6AVVfdFvmknOTsIBVp8JYCnZAmL9"
+ },
+ "portal/desktop-portal.css": {
+  "bytes": 4777,
+  "sri": "sha384-wGOwqAfyGMMFPf9OPRIbu+IPlSRwZP85820QSFNvE1BMLaNpQ73+LHzFUy6gipoV"
+ },
+ "_versions": {
+  "core": "1.0.0",
+  "home": "1.1.0"
+ }
+}

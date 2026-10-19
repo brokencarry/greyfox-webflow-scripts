@@ -1,0 +1,958 @@
+/* ═══════════════════════════════════════════════════════════════
+   GREY FOX — PIPELINE REPORT · BRAND UPLIFT · SHARED BASE
+   Luxury meets financial services. Paper, ink, one accent.
+   Rules instead of cards. Mono numerals. Stillness.
+   Loads AFTER styles.css and overrides it. No markup changes.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Type ── */
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url('assets/fonts/instrument-sans.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:italic;font-weight:400 700;font-display:swap;src:url('assets/fonts/instrument-sans-italic.woff2') format('woff2')}
+@font-face{font-family:'Fragment Mono';font-style:normal;font-weight:400;font-display:swap;src:url('assets/fonts/fragment-mono.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url('assets/fonts/instrument-sans-sym.woff2') format('woff2');unicode-range:U+2190,U+2192,U+2264-2265}
+@font-face{font-family:'Fragment Mono';font-style:normal;font-weight:400;font-display:swap;src:url('assets/fonts/fragment-mono-sym.woff2') format('woff2');unicode-range:U+2190,U+2192,U+2264-2265}
+
+/* ── Tokens ── */
+:root {
+  color-scheme: light;
+  --paper: #EFF3F8;           /* ice — deep cool white, zero warmth */
+  --ink: #0C1830;
+  --forest: #122141;          /* dark navy surface */
+  --accent: #21407A;          /* Admiralty — the ONLY accent. Means: live / touch this */
+  --accent-soft: rgba(33, 64, 122, 0.08);
+  --steel: #93A9C4;           /* on-dark secondary */
+  --steel-dim: rgba(147, 169, 196, 0.45);
+  --putty: #DDE3EE;
+  --putty-wash: #E8EDF4;
+  --hairline: #DBE1EA;        /* cool rule */
+  --hairline-lt: #E4E9F1;
+  --ink-70: rgba(12, 24, 48, 0.70);
+  --ink-45: rgba(12, 24, 48, 0.45);
+  --ink-30: rgba(12, 24, 48, 0.30);
+  --alert-warm: #96604A;      /* overdue / imminent */
+
+  /* Remap the legacy variables so every untouched rule inherits the system */
+  --navy: var(--forest);
+  --navy-deep: var(--ink);
+  --navy-mid: var(--forest);
+  --navy-light: #1B2F55;
+  --brand: var(--accent);
+  --brand-soft: var(--accent-soft);
+  --brand-wash: rgba(33, 64, 122, 0.04);
+  --taupe: var(--steel);
+  --taupe-dim: var(--steel-dim);
+  --sky: var(--accent);
+  --sky-soft: var(--accent-soft);
+  --sky-hover: #1A3462;
+  --sky-wash: rgba(33, 64, 122, 0.05);
+  --ink-color: var(--ink);
+  --body: #26324B;
+  --body-soft: var(--ink-70);
+  --muted: var(--ink-45);
+  --ghost: var(--ink-30);
+  --rule: var(--hairline);
+  --rule-lt: var(--hairline-lt);
+  --bg: #FFFFFF;
+  --cream: var(--paper);
+  --linen: var(--putty);
+  --cool-gray: var(--putty-wash);
+  --alert-muted: var(--alert-warm);
+
+  --font-serif: 'Instrument Sans', -apple-system, sans-serif;
+  --font-sans: 'Instrument Sans', -apple-system, sans-serif;
+  --font-mono: 'Fragment Mono', ui-monospace, monospace;
+
+  --radius: 0px;
+  --radius-lg: 0px;
+
+  /* Depth comes from rules and spacing, not shadows */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 12px 40px rgba(12, 24, 48, 0.18);
+  --shadow-lift: none;
+}
+
+::selection { background: rgba(33, 64, 122, 0.14); }
+body { color: var(--body); }
+
+/* ── Loading — engraved, still ── */
+.loading-wordmark { font-weight: 600; letter-spacing: 0.34em; }
+.loading-bar { background: rgba(147,169,196,0.14); }
+.loading-fill { background: var(--steel); }
+.loading-text { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; }
+
+/* ── Cover ── */
+.band-divider { background: var(--steel-dim); opacity: 0.35; height: 1px; }
+.band-title { font-family: var(--font-sans); font-weight: 550; font-size: 40px; letter-spacing: -0.015em; }
+.band-subtitle { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; }
+
+/* ── Meta strip — a ruled ledger row ── */
+.meta-label { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.22em; margin-bottom: 5px; }
+.meta-value { font-family: var(--font-mono); font-size: 13.5px; font-weight: 400; letter-spacing: 0.01em; }
+
+/* ── Sector tabs (multi-sector only) ── */
+.sector-tab { font-size: 12px; letter-spacing: 0.02em; border-radius: 0; }
+.sector-tab:hover { border-radius: 0; background: var(--putty-wash); }
+.sector-tab .tab-count { font-family: var(--font-mono); border-radius: 0; background: var(--putty-wash); }
+.sector-tab.active .tab-count { background: var(--accent-soft); }
+
+/* ── Summary — numbers on a rule, no cards ── */
+.summary-section { padding: 44px 0 38px; }
+.summary-cell {
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--hairline);
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  padding: 6px 8px 10px;
+  transition: background 0.2s var(--ease-smooth);
+}
+.summary-cell:first-child { border-left: none; }
+.summary-cell:hover {
+  background: var(--putty-wash);
+  box-shadow: none;
+  transform: none;
+  border-color: var(--hairline);
+}
+.summary-cell::after {
+  left: 0; right: auto; bottom: auto; top: 0;
+  width: 100%; height: 2px;
+  background: var(--accent);
+  border-radius: 0;
+}
+.summary-cell:hover::after { opacity: 0.9; }
+.summary-cell .num {
+  font-family: var(--font-mono);
+  font-size: 38px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.summary-cell .lbl {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  font-weight: 400;
+}
+.summary-cell.is-pass { background: transparent; border-color: var(--hairline); box-shadow: none; }
+.summary-cell.is-pass .num, .summary-cell.is-pass .lbl { color: var(--ink-30); }
+.summary-cell.is-pass:hover { background: transparent; }
+.summary-cell.summary-active { border-color: var(--hairline); box-shadow: none; }
+.summary-cell.summary-active::after { opacity: 1; }
+.summary-cell.summary-active .lbl { color: var(--accent); }
+
+/* ── Section labels — engraved kickers ── */
+.section-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.24em; color: var(--ink-45); }
+
+/* ── Movements ── */
+.mv-table th { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.18em; font-weight: 400; }
+.mv-table td { font-size: 13.5px; padding: 11px 0; }
+.mv-table .co-name { font-weight: 550; }
+.mv-table .stage-advance { color: var(--ink); font-weight: 450; }
+.mv-table .stage-pass { color: var(--ink-30); }
+@keyframes highlightPulse {
+  0% { box-shadow: 0 0 0 0 rgba(33, 64, 122, 0.25); }
+  50% { box-shadow: 0 0 0 4px rgba(33, 64, 122, 0.10); }
+  100% { box-shadow: none; }
+}
+.mv-highlight .company-card { border-color: rgba(33, 64, 122, 0.35); }
+
+/* ── Notes hint — document annotation, not app tooltip ── */
+.notes-hint {
+  background: var(--forest);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 6px 12px;
+}
+.notes-hint-arrow { border-right-color: var(--forest); }
+.notes-icon-pulse { color: var(--accent) !important; }
+
+/* ── Tiers ── */
+.pipeline-tier-nurture, .pipeline-tier-pass { background: var(--putty-wash); }
+
+/* ── Stage rhythm — chapters, not a wall ── */
+.stage-section { margin-bottom: 54px; }
+.stage-section:last-child { margin-bottom: 0; }
+.stage-header { margin-bottom: 16px; }
+
+/* ── Stage headers ── */
+.stage-header { border-bottom: 1px solid var(--ink-30); padding-bottom: 12px; }
+.stage-title { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+.stage-count { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-30); }
+.stage-header:hover .stage-title { color: var(--ink); }
+
+/* ── Company entries — ruled register, not floating cards ── */
+.company-row { margin-top: 0; }
+.company-card, .company-card.co-structured, .co-structured {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 27px 2px 25px;
+  transition: background 0.18s var(--ease-smooth);
+}
+.company-card:hover {
+  background: var(--putty-wash);
+  border-color: var(--hairline);
+  box-shadow: none;
+}
+.co-collapsible .company-card { border-left: none; }
+.co-collapsible:hover .company-card { border-left: none; }
+.co-expanded .company-card {
+  background: #FCFAF6;
+  border-left: none;
+  box-shadow: inset 2px 0 0 var(--accent);
+  padding-left: 18px;
+}
+.co-name { font-size: 17px; font-weight: 620; letter-spacing: -0.01em; }
+.co-url a { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--ink-45); }
+.co-url a:hover { color: var(--accent); }
+.co-notes-icon { color: var(--accent); opacity: 0.55; }
+.company-card:hover .co-notes-icon, .co-expanded .co-notes-icon { color: var(--accent); opacity: 1; }
+.co-chevron { color: var(--ink-30); }
+.company-card:hover .co-chevron, .co-expanded .co-chevron { color: var(--accent); }
+
+/* Hero metrics — the ledger columns */
+.co-hero { gap: 26px; }
+.co-hero-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  font-weight: 400;
+  color: var(--ink-30);
+  margin-bottom: 4px;
+}
+.co-hero-value {
+  font-family: var(--font-mono);
+  font-size: 14.5px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.co-hero-metric:first-child .co-hero-value { font-size: 15.5px; font-weight: 400; }
+.co-empty { opacity: 0.35; font-weight: 400; }
+
+/* Chips (pre-Qualified entries) */
+.co-chip-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.14em; color: var(--ink-30); }
+.co-chip-value { font-family: var(--font-mono); font-size: 12.5px; font-weight: 400; }
+
+/* Next action row */
+.co-next-action-row { border-top: 1px solid var(--hairline-lt); }
+.co-next-action-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  color: var(--ink-45);
+}
+.co-next-action-text { font-size: 14px; font-weight: 480; }
+.co-next-action-date { font-family: var(--font-mono); font-size: 11.5px; font-weight: 400; }
+
+/* Operational strip */
+.co-strip { border-top: 1px solid var(--hairline-lt); }
+.co-strip-item { border-left: 1px solid var(--hairline-lt); }
+.co-strip-label { font-family: var(--font-mono); font-size: 7.5px; letter-spacing: 0.18em; color: var(--ink-30); }
+.co-strip-value { font-size: 12.5px; font-weight: 480; }
+
+/* Date proximity — accent means "on schedule", warm ink means "attend to this" */
+.co-action-approaching { color: var(--accent) !important; }
+.co-action-imminent { color: var(--alert-warm) !important; }
+.co-action-overdue { color: var(--alert-warm) !important; }
+
+/* Notes */
+.co-notes {
+  border-top: 1px solid var(--hairline-lt);
+  border-left: 2px solid var(--putty);
+  font-size: 13.5px;
+  color: var(--ink-70);
+}
+
+/* ── Money — brand green. Green means money, nothing else does. ── */
+.co-money, .co-hero-value.co-money, .co-chip-value.co-money,
+.co-hero-metric .co-hero-value.co-money { color: #185540; }
+.pass-table .financial { color: #185540; }
+
+/* ── Pass registers ── */
+.pass-stage-section .stage-header { border-bottom-color: var(--hairline); }
+.pass-stage-section .stage-title { font-size: 11.5px; color: var(--ink-45); }
+.pass-table th { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.16em; font-weight: 400; }
+.pass-table td { font-size: 13px; border-bottom-color: var(--hairline-lt); }
+.pass-table .co { font-weight: 580; }
+.pass-table .state { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; }
+.pass-table .financial { font-family: var(--font-mono); font-weight: 400; font-size: 12.5px; }
+
+/* ── Footer — presence ── */
+.report-footer { padding: 34px 0; }
+.footer-brand { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.2em; font-weight: 400; }
+.footer-meta { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em; gap: 14px; }
+.select-mode-btn, .refresh-btn, .logout-btn {
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+}
+.refresh-btn, .logout-btn { padding: 8px 10px; }
+.select-mode-btn.active { border-radius: 0; }
+
+/* ── Select mode furniture ── */
+.bulk-bar {
+  background: var(--forest);
+  border: 1px solid rgba(147,169,196,0.28);
+  border-radius: 0;
+  box-shadow: var(--shadow-lg);
+  padding: 14px 22px;
+}
+.bulk-bar-count { font-family: var(--font-mono); font-weight: 400; color: var(--steel); }
+.bulk-bar-divider { background: rgba(147,169,196,0.22); }
+.bulk-bar-btn { font-family: var(--font-mono); font-weight: 400; letter-spacing: 0.1em; }
+.card-select-cb, .stage-select-cb { accent-color: var(--accent); border-radius: 0; }
+body.select-mode .company-card.card-selected {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+  background: var(--accent-soft);
+  border-radius: 0;
+}
+.select-mode-btn.active {
+  color: var(--steel);
+  border-color: var(--steel);
+  background: rgba(147,169,196,0.08);
+}
+.bulk-bar-count { min-width: 84px; }
+
+/* ── Admin furniture (team-only) ── */
+.admin-indicator-dot { background: var(--steel); box-shadow: 0 0 6px rgba(147,169,196,0.5); animation: none; opacity: 0.9; }
+.admin-indicator-label { font-family: var(--font-mono); color: var(--steel); letter-spacing: 0.22em; }
+.admin-stage-badge { border-radius: 0; font-family: var(--font-mono); font-weight: 400; letter-spacing: 0.1em; }
+.admin-edit-input, .admin-edit-select { border-radius: 0; }
+.admin-confirm-btn, .admin-cancel-btn { border-radius: 0; }
+.admin-toast { border-radius: 0; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.04em; }
+.admin-toast.admin-toast-success { border-left: 2px solid var(--accent); }
+.admin-toast.admin-toast-error { border-left: 2px solid var(--alert-warm); }
+
+/* ── Print ── */
+@media print {
+  .company-card { border: none; border-bottom: 1px solid #ddd; }
+}
+
+/* ── Tablet / Mobile — keep the existing flow, harmonize the type ── */
+@media (max-width: 768px) {
+  .band-title { font-size: 30px; }
+  .summary-cell .num { font-size: 30px; }
+  .stage-title { font-size: 18px; }
+  .co-hero { gap: 16px; }
+  .co-hero-value { font-size: 13px; }
+  .co-hero-metric:first-child .co-hero-value { font-size: 14px; }
+  .company-card, .co-structured { padding: 21px 2px 19px; }
+  .co-expanded .company-card { padding-left: 14px; }
+}
+@media (max-width: 480px) {
+  .band-title { font-size: 24px; }
+  .summary-strip { gap: 0; }
+  .summary-cell { flex: 1 1 33.3%; border-left: 1px solid var(--hairline); padding: 8px 6px; }
+  .summary-cell:nth-child(3n + 1) { border-left: none; }
+  .summary-cell .num { font-size: 24px; margin-bottom: 6px; }
+  .summary-cell .lbl { font-size: 7px; }
+  .co-name { font-size: 15px; }
+  .company-card, .co-structured { padding: 18px 2px 16px; }
+  .co-expanded .company-card { padding-left: 12px; }
+  .mv-table .stage-advance, .mv-table .stage-pass { font-size: 11px; }
+}
+/* ═══════════════════════════════════════════════════════════════
+   VARIANT B — "PRINT"
+   The full new canon: a privately printed document. Paper cover,
+   ink masthead, plate rule at the head of the page. Where
+   greyfoxpartners.com is going.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* The page is paper */
+body { background: var(--paper); }
+
+/* Cover — printed masthead: thick plate rule at the very top edge */
+.cover-band {
+  background: var(--paper);
+  border-top: 5px solid var(--ink);
+  border-bottom: 1px solid var(--hairline);
+  padding: 52px 40px 58px;
+}
+.cover-band::after { display: none; }   /* no grain on paper */
+.brand-wordmark { color: var(--ink); letter-spacing: 0.34em; }
+.brand-wordmark span { color: var(--ink-30); }
+.client-main { color: var(--ink-45); }
+.client-sub { color: var(--ink-30); }
+.band-divider { background: var(--hairline); opacity: 1; }
+.band-title { color: var(--ink); font-size: 46px; }
+.band-subtitle { color: var(--accent); opacity: 1; }
+
+/* Ruled paper surfaces throughout */
+.meta-section { background: var(--paper); border-bottom: 1px solid var(--hairline); box-shadow: none; }
+.tabs-section { background: var(--paper); }
+.summary-section { background: var(--paper); border-bottom: 1px solid var(--hairline); }
+.pipeline-tier-deep, .pipeline-tier-active { background: var(--paper); }
+.pipeline-tier-nurture, .pipeline-tier-pass { background: var(--putty-wash); }
+.summary-cell:hover { background: rgba(255, 255, 255, 0.7); }
+.company-card:hover { background: rgba(255, 255, 255, 0.75); }
+.co-expanded .company-card { background: #FFFFFF; }
+.sector-tab:hover { background: rgba(255, 255, 255, 0.7); }
+
+/* Mobile fade hint over paper, not white */
+@media (max-width: 480px) {
+  .tabs-section::after { background: linear-gradient(90deg, transparent, var(--paper)); }
+}
+
+/* Loading — paper, ink, a single line */
+.loading-screen { background: var(--paper); }
+.loading-wordmark { color: var(--ink); }
+.loading-wordmark span { color: var(--ink-30); }
+.loading-bar { background: var(--hairline); }
+.loading-fill { background: var(--accent); }
+.loading-text { color: var(--ink-30); }
+
+/* Footer — the document's colophon: hairline, ink, plate rule at the foot */
+.report-footer {
+  background: var(--paper);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 5px solid var(--ink);
+  padding: 30px 0 34px;
+}
+.footer-brand { color: var(--ink-45); }
+.footer-meta { color: var(--ink-30); }
+.select-mode-btn { border-color: var(--hairline); color: var(--ink-45); }
+.select-mode-btn:hover { border-color: var(--ink-45); color: var(--ink); background: rgba(255,255,255,0.7); }
+.select-mode-btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.refresh-btn, .logout-btn { border-color: var(--hairline); color: var(--ink-45); }
+.refresh-btn:hover, .logout-btn:hover { border-color: var(--ink-45); color: var(--ink); }
+
+/* Print header band prints as-is (already white) */
+
+/* ═══════════════════════════════════════════════════════════════
+   REFINEMENT PASS — the fox joins the document; ledger alignment;
+   keyboard focus in the accent. CSS only, no markup changes.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* The loading screen carries the fox; the report masthead stays purely
+   typographic so both sides of the cover hold equal weight */
+.loading-wordmark::before {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 44px;
+  background: url('assets/brand/fox-ink.png') center/contain no-repeat;
+  margin: 0 auto 18px;
+  opacity: 0.9;
+}
+
+/* True ledger columns — hero metrics align card-to-card, not per-card */
+.co-hero-metric { min-width: 76px; }
+.co-hero-metric:first-child { min-width: 84px; }
+
+/* Keyboard focus, engraved in the accent */
+.summary-cell:focus-visible,
+.sector-tab:focus-visible,
+.stage-header:focus-visible,
+.select-mode-btn:focus-visible,
+.refresh-btn:focus-visible,
+.logout-btn:focus-visible,
+.bulk-bar-btn:focus-visible,
+.co-url a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .co-hero-metric, .co-hero-metric:first-child { min-width: 0; }
+}
+
+/* Select-mode furniture never prints (button postdates the original print block) */
+@media print {
+  .select-mode-btn, .bulk-bar, .card-select-cb, .stage-select-cb { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK — follows the device (prefers-color-scheme). Deep ink page,
+   white names, plates dissolved (per Shivam). Same document, negative.
+   ═══════════════════════════════════════════════════════════════ */
+/* Dark = (device dark AND not forced light) OR forced dark via the footer toggle */
+@media screen and (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0A1322;
+    --bg: #0A1322;
+    --ink: #F5F3EC;
+    --ink-70: rgba(245, 243, 236, 0.74);
+    --ink-45: rgba(245, 243, 236, 0.48);
+    --ink-30: rgba(245, 243, 236, 0.32);
+    --body: #C9D1DE;
+    --forest: #24365C;
+    --accent: #86A9DE;
+    --accent-soft: rgba(134, 169, 222, 0.13);
+    --hairline: rgba(147, 169, 196, 0.27);
+    --hairline-lt: rgba(147, 169, 196, 0.18);
+    --putty: rgba(147, 169, 196, 0.16);
+    --putty-wash: #0E1930;
+    --alert-warm: #CE9A7C;
+    --navy-light: #24365C;
+  }
+  html:not([data-theme="light"]) .co-name, html:not([data-theme="light"]) .mv-table .co-name,  html:not([data-theme="light"]) .band-title,
+  html:not([data-theme="light"]) .summary-cell .num, html:not([data-theme="light"]) .pass-table .co { color: #FFFFFF; }
+  html:not([data-theme="light"]) .co-hero-value { color: #BFC9D9; }
+  html:not([data-theme="light"]) .co-hero-value.co-money, html:not([data-theme="light"]) .co-chip-value.co-money, html:not([data-theme="light"]) .pass-table .financial { color: #8CC9AD; }
+  html:not([data-theme="light"]) .co-chip-value { color: #BFC9D9; }
+  html:not([data-theme="light"]) .co-next-action-text { color: #CBD3E0; }
+  html:not([data-theme="light"]) .mv-table .stage-advance { color: #BFC9D9; }
+  html:not([data-theme="light"]) .meta-value { color: #FFFFFF; }
+  html:not([data-theme="light"]) .co-expanded .company-card { background: #13223C; }
+  html:not([data-theme="light"]) .company-card:hover { background: #101D33; }
+  html:not([data-theme="light"]) .summary-cell:hover { background: #101D33; }
+  html:not([data-theme="light"]) .sector-tab:hover { background: #101D33; }
+  html:not([data-theme="light"]) .admin-edit-input, html:not([data-theme="light"]) .admin-edit-select { background: #13223C; color: #F5F3EC; }
+  html:not([data-theme="light"]) .cover-band { border-top-color: transparent; }
+  html:not([data-theme="light"]) .report-footer { border-bottom-color: transparent; }
+  @media (max-width: 480px) {
+    html:not([data-theme="light"]) .tabs-section::after { background: linear-gradient(90deg, transparent, #0A1322); }
+  }
+}
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0A1322;
+    --bg: #0A1322;
+    --ink: #F5F3EC;
+    --ink-70: rgba(245, 243, 236, 0.74);
+    --ink-45: rgba(245, 243, 236, 0.48);
+    --ink-30: rgba(245, 243, 236, 0.32);
+    --body: #C9D1DE;
+    --forest: #24365C;
+    --accent: #86A9DE;
+    --accent-soft: rgba(134, 169, 222, 0.13);
+    --hairline: rgba(147, 169, 196, 0.27);
+    --hairline-lt: rgba(147, 169, 196, 0.18);
+    --putty: rgba(147, 169, 196, 0.16);
+    --putty-wash: #0E1930;
+    --alert-warm: #CE9A7C;
+    --navy-light: #24365C;
+  }
+  html[data-theme="dark"] .co-name, html[data-theme="dark"] .mv-table .co-name,  html[data-theme="dark"] .band-title,
+  html[data-theme="dark"] .summary-cell .num, html[data-theme="dark"] .pass-table .co { color: #FFFFFF; }
+  html[data-theme="dark"] .co-hero-value { color: #BFC9D9; }
+  html[data-theme="dark"] .co-hero-value.co-money, html[data-theme="dark"] .co-chip-value.co-money, html[data-theme="dark"] .pass-table .financial { color: #8CC9AD; }
+  html[data-theme="dark"] .co-chip-value { color: #BFC9D9; }
+  html[data-theme="dark"] .co-next-action-text { color: #CBD3E0; }
+  html[data-theme="dark"] .mv-table .stage-advance { color: #BFC9D9; }
+  html[data-theme="dark"] .meta-value { color: #FFFFFF; }
+  html[data-theme="dark"] .co-expanded .company-card { background: #13223C; }
+  html[data-theme="dark"] .company-card:hover { background: #101D33; }
+  html[data-theme="dark"] .summary-cell:hover { background: #101D33; }
+  html[data-theme="dark"] .sector-tab:hover { background: #101D33; }
+  html[data-theme="dark"] .admin-edit-input, html[data-theme="dark"] .admin-edit-select { background: #13223C; color: #F5F3EC; }
+html[data-theme="dark"] .cover-band { border-top-color: transparent; }
+html[data-theme="dark"] .report-footer { border-bottom-color: transparent; }
+@media (max-width: 480px) {
+  html[data-theme="dark"] .tabs-section::after { background: linear-gradient(90deg, transparent, #0A1322); }
+}
+
+
+/* ── Theme toggle — quiet override in the colophon ── */
+.theme-btn {
+  background: none;
+  border: 1px solid var(--hairline);
+  border-radius: 0;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--ink-45);
+  display: flex;
+  align-items: center;
+  transition: all 0.15s;
+}
+.theme-btn:hover { border-color: var(--ink-45); color: var(--ink); }
+@media print { .theme-btn { display: none !important; } }
+@media (max-width: 480px) {
+  .theme-btn { min-height: 44px; min-width: 44px; padding: 8px 10px; }
+}
+
+/* ── Movements: proportioned columns — no dead middle ── */
+.mv-table th:first-child, .mv-table td:first-child { width: 38%; padding-right: 24px; }
+
+/* ── Keyboard focus — visible, on-accent, never default-blue ── */
+.select-mode-btn:focus-visible, .refresh-btn:focus-visible, .logout-btn:focus-visible,
+.theme-btn:focus-visible, .sector-tab:focus-visible, .bulk-bar-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Dark text selection ── */
+@media screen and (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) ::selection { background: rgba(134, 169, 222, 0.28); }
+}
+html[data-theme="dark"] ::selection { background: rgba(134, 169, 222, 0.28); }
+
+/* ── Forced-dark must still PRINT light — cream on white is a blank page ── */
+@media print {
+  html[data-theme="dark"] {
+    color-scheme: light;
+    --paper: #FFFFFF; --bg: #FFFFFF; --ink: #0C1830;
+    --ink-70: rgba(12, 24, 48, 0.70); --ink-45: rgba(12, 24, 48, 0.45); --ink-30: rgba(12, 24, 48, 0.30);
+    --body: #26324B; --forest: #122141; --accent: #21407A; --accent-soft: rgba(33, 64, 122, 0.08);
+    --hairline: #E2E5EB; --hairline-lt: #ECEEF3; --putty: #E4E8EF; --putty-wash: #F0F2F6;
+    --alert-warm: #96604A; --navy-light: #1B2F55;
+  }
+  html[data-theme="dark"] .co-name, html[data-theme="dark"] .mv-table .co-name,
+   html[data-theme="dark"] .band-title,
+  html[data-theme="dark"] .summary-cell .num, html[data-theme="dark"] .pass-table .co,
+  html[data-theme="dark"] .meta-value { color: #0C1830; }
+  html[data-theme="dark"] .co-hero-value, html[data-theme="dark"] .co-chip-value,
+  html[data-theme="dark"] .co-next-action-text, html[data-theme="dark"] .mv-table .stage-advance { color: #0C1830; }
+  html[data-theme="dark"] .co-hero-value.co-money, html[data-theme="dark"] .co-chip-value.co-money, html[data-theme="dark"] .pass-table .financial { color: #185540; }
+  html[data-theme="dark"] .co-expanded .company-card,
+  html[data-theme="dark"] .company-card:hover { background: #FFFFFF; }
+  html[data-theme="dark"] .cover-band { border-top-color: var(--ink); }
+  html[data-theme="dark"] .report-footer { border-bottom-color: var(--ink); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPE SCALE — readability pass. The kicker/label system was set
+   below standard editorial sizes (8.5–11.5px); raised to the
+   readable end of the range. Same language: mono, tracked, quiet.
+   ═══════════════════════════════════════════════════════════════ */
+.stage-title { font-size: 14px; letter-spacing: 0.18em; }
+.pass-stage-section .stage-title { font-size: 14px; }
+.stage-count { font-size: 12px; }
+.section-label { font-size: 12px; letter-spacing: 0.2em; }
+.meta-label { font-size: 11px; letter-spacing: 0.18em; }
+.meta-value { font-size: 15px; }
+.band-subtitle { font-size: 12px; }
+.summary-cell .lbl { font-size: 10.5px; }
+.mv-table th, .pass-table th { font-size: 10px; }
+.co-hero-label, .co-chip-label { font-size: 9.5px; }
+.co-strip-label { font-size: 9px; }
+.co-next-action-label { font-size: 10px; }
+.loading-text { font-size: 11px; }
+.footer-brand { font-size: 10.5px; }
+.footer-meta { font-size: 11px; }
+@media (max-width: 768px) {
+  .stage-title, .pass-stage-section .stage-title { font-size: 13px; }
+  .co-hero-label, .co-chip-label { font-size: 9px; }
+}
+@media (max-width: 480px) {
+  /* release the desktop movements-column proportion — nowrap stage
+     transitions need the room on narrow screens */
+  .mv-table th:first-child, .mv-table td:first-child { width: auto; padding-right: 12px; }
+  /* footer controls wrap instead of pushing past the viewport */
+  .footer-meta { flex-wrap: wrap; justify-content: center; row-gap: 10px; }
+  .stage-title, .pass-stage-section .stage-title { font-size: 12.5px; }
+  .section-label { font-size: 11px; }
+  .meta-label { font-size: 10px; }
+  .meta-value { font-size: 14px; }
+  .summary-cell .lbl { font-size: 9px; }
+  .co-strip-label { font-size: 8.5px; }
+  .co-next-action-label { font-size: 9.5px; }
+  .mv-table th, .pass-table th { font-size: 9.5px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CRITIC PASS — four-expert review, applied as one pass.
+   Typography rungs, ledger alignment, dark parity, icon/copy craft.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Italic runs keep the same arrow glyph (movements pass rows) */
+@font-face{font-family:'Instrument Sans';font-style:italic;font-weight:400 700;font-display:swap;src:url('assets/fonts/instrument-sans-sym.woff2') format('woff2');unicode-range:U+2190,U+2192,U+2264-2265}
+@font-face{font-family:'Fragment Mono';font-style:italic;font-weight:400;font-display:swap;src:url('assets/fonts/fragment-mono-sym.woff2') format('woff2');unicode-range:U+2190,U+2192,U+2264-2265}
+
+/* ── Three kicker rungs, tracking widens as size falls ── */
+.stage-title, .pass-stage-section .stage-title { letter-spacing: 0.14em; }
+.section-label, .meta-label, .band-subtitle { font-size: 12px; letter-spacing: 0.16em; }
+.co-hero-label, .co-chip-label, .co-strip-label, .co-next-action-label,
+.mv-table th, .pass-table th, .summary-cell .lbl { font-size: 10.5px; letter-spacing: 0.18em; }
+.co-hero-label, .co-chip-label, .co-strip-label { color: var(--ink-45); }
+.pass-table td { font-size: 13.5px; }
+
+/* ── Mono is for figures and kickers; words are sans ── */
+.meta-value { font-family: var(--font-sans); font-weight: 500; letter-spacing: 0; }
+
+/* ── Name leading + weight consolidation; ledger value uniform ── */
+.co-name { line-height: 1.25; }
+.co-next-action-text, .co-strip-value { font-weight: 500; }
+.mv-table .co-name { font-weight: 500; }
+.pass-table .co { font-weight: 620; }
+.co-hero-metric:first-child .co-hero-value { font-size: 14.5px; }
+
+/* ── Masthead lockup: both wordmarks same tracking, edges compensated ── */
+.client-main { letter-spacing: 0.34em; margin-right: -0.34em; }
+.client-sub { letter-spacing: 0.36em; margin-right: -0.36em; }
+
+/* ── True ledger columns: reserve the chevron slot, fix column widths ── */
+.company-row:not(.co-collapsible) .co-header { padding-right: 28px; }
+.co-hero-metric { flex: 0 0 80px; min-width: 0; }
+.co-hero-metric:first-child { flex-basis: 88px; }
+.co-hero-metric:last-child { flex: 0 0 auto; min-width: 80px; }
+.co-chip { min-width: 80px; align-items: flex-end; }
+.co-chip-label, .co-chip-value { text-align: right; }
+
+/* ── Court/date strip hugs content; dates align card-to-card ── */
+.co-strip-item { flex: 0 0 auto; min-width: 0; }
+.co-strip-item:first-child { flex-basis: 200px; }
+.co-strip-item + .co-strip-item { padding-right: 32px; }
+
+/* ── Empty scaffolding recedes as a unit (dashes stay, per mandate) ── */
+.co-next-action-row:has(.co-empty), .co-strip-item:has(.co-empty) { opacity: 0.55; }
+
+/* ── Hint: flat document annotation, out of flow — never crushes the name ── */
+.co-top-line { position: relative; }
+.notes-hint {
+  position: absolute;
+  z-index: 6;
+  background: var(--putty-wash);
+  color: var(--ink-45);
+  border: 1px solid var(--hairline);
+  border-radius: 0;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
+}
+.notes-hint-arrow { display: none; }
+@media (max-width: 480px) {
+  .notes-hint { left: 0; top: calc(100% + 8px); max-width: 90%; white-space: normal; }
+}
+
+/* ── Reading measure for notes; movements ruling stops with content ── */
+.co-notes { max-width: 640px; }
+.mv-table { max-width: 760px; }
+
+/* ── Footer controls: one family (no lone hover wash; equal touch targets) ── */
+.select-mode-btn:hover { background: none; }
+@media (max-width: 480px) { .select-mode-btn { min-height: 44px; } }
+
+/* ── Radius leaks sealed ── */
+.admin-editable, .admin-editable::after { border-radius: 0; }
+
+/* ── Toast on a stable dark-safe surface ── */
+.admin-toast { background: var(--forest); }
+
+/* ── Movement highlight pulse via token (visible in dark) ── */
+:root { --pulse: rgba(33, 64, 122, 0.25); }
+@keyframes highlightPulse {
+  0% { box-shadow: 0 0 0 0 var(--pulse); }
+  50% { box-shadow: 0 0 0 4px var(--pulse); }
+  100% { box-shadow: none; }
+}
+.mv-highlight .company-card { border-color: var(--pulse); }
+
+/* ── Pass-tier summary numbers: quiet but never invisible ── */
+.summary-cell.is-pass .num { color: var(--ink-45); }
+
+/* ── Dark parity for everything above ── */
+@media screen and (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) { --pulse: rgba(134, 169, 222, 0.3); }
+  html:not([data-theme="light"]) .summary-cell.is-pass .num { color: var(--ink-45); }
+  html:not([data-theme="light"]) .company-card { border-bottom-color: rgba(147, 169, 196, 0.38); }
+}
+html[data-theme="dark"] { --pulse: rgba(134, 169, 222, 0.3); }
+html[data-theme="dark"] .summary-cell.is-pass .num { color: var(--ink-45); }
+html[data-theme="dark"] .company-card { border-bottom-color: rgba(147, 169, 196, 0.38); }
+
+/* ── Fixed-column ledger releases on small screens ── */
+@media (max-width: 768px) {
+  .co-hero-metric, .co-hero-metric:first-child, .co-hero-metric:last-child { flex: initial; min-width: 0; }
+  .co-strip-item, .co-strip-item:first-child { flex: 1; }
+  .company-row:not(.co-collapsible) .co-header { padding-right: 0; }
+  .co-chip { min-width: 0; align-items: flex-start; }
+  .co-chip-label, .co-chip-value { text-align: left; }
+}
+
+/* ── Stage chapter heads — Shivam's pick: larger than companies ── */
+.stage-title, .pass-stage-section .stage-title { font-size: 19px; letter-spacing: 0.08em; }
+.stage-header { padding-bottom: 14px; }
+@media (max-width: 768px) {
+  .stage-title, .pass-stage-section .stage-title { font-size: 17px; }
+}
+@media (max-width: 480px) {
+  .stage-title, .pass-stage-section .stage-title { font-size: 15.5px; letter-spacing: 0.09em; }
+}
+
+/* ── Bulk-bar buttons carry drawn icons ── */
+.bulk-bar-btn { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ── One rail. Cover, meta, summary, register, footer all hang from
+     the same 1060px left edge — a document, not three columns. ── */
+:root { --max-w-cover: 1060px; }
+.meta-inner, .summary-inner, .tabs-inner, .footer-inner { max-width: 1060px; }
+
+/* Cover joins the rail: inner carries the gutter like every sibling */
+.cover-band { padding-left: 0; padding-right: 0; }
+.band-inner { padding: 0 48px; }
+@media (max-width: 768px) { .band-inner { padding: 0 28px; } }
+@media (max-width: 480px) { .band-inner { padding: 0 20px; } }
+/* Register text sits exactly on the rail (expanded inset stays a state signal) */
+.company-card, .company-card.co-structured, .co-structured { padding-left: 0; padding-right: 0; }
+
+/* Summary cells may shrink — lets the label ellipsis actually engage */
+.summary-cell { min-width: 0; }
+
+/* Sector tabs scroll on any narrow screen, not just phones */
+@media (max-width: 768px) {
+  .tabs-section { position: relative; }
+  .tabs-section::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 32px;
+    background: linear-gradient(90deg, transparent, var(--paper));
+    pointer-events: none;
+    z-index: 1;
+  }
+  .sector-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; padding-right: 24px; }
+  .sector-tabs::-webkit-scrollbar { display: none; }
+  .sector-tab { flex-shrink: 0; }
+}
+
+/* ── Last touches — invisible until the moment they matter ── */
+* { -webkit-tap-highlight-color: transparent; }
+.stage-section, .pass-stage-section { scroll-margin-top: 28px; }
+@page { margin: 16mm; }
+/* Manual theme flip crossfades instead of snapping */
+html.theme-fading, html.theme-fading *,
+html.theme-fading *::before, html.theme-fading *::after {
+  transition: background-color 0.32s ease, color 0.32s ease, border-color 0.32s ease, opacity 0.32s ease, box-shadow 0.32s ease !important;
+}
+
+/* ═══ Hover bleed — text stays on the rail, the surface breathes past it ═══ */
+.company-card::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: -20px; right: -20px;
+  background: transparent;
+  transition: background 0.18s var(--ease-smooth);
+  pointer-events: none;
+  z-index: -1;
+}
+.company-card:hover { background: transparent; }
+.company-card:hover::before { background: var(--putty-wash); }
+/* Expanded: text stays put; the accent spine sits in the margin */
+.co-expanded .company-card { background: transparent; box-shadow: none; padding-left: 0; }
+.co-expanded .company-card::before { background: #FFFFFF; box-shadow: inset 2px 0 0 var(--accent); }
+/* Selection ring rides the bled surface */
+body.select-mode .company-card.card-selected { background: transparent; outline: none; }
+body.select-mode .company-card.card-selected::before { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+@media screen and (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .company-card:hover { background: transparent; }
+  html:not([data-theme="light"]) .company-card:hover::before { background: #101D33; }
+  html:not([data-theme="light"]) .co-expanded .company-card { background: transparent; }
+  html:not([data-theme="light"]) .co-expanded .company-card::before { background: #13223C; }
+}
+html[data-theme="dark"] .company-card:hover { background: transparent; }
+html[data-theme="dark"] .company-card:hover::before { background: #101D33; }
+html[data-theme="dark"] .co-expanded .company-card { background: transparent; }
+html[data-theme="dark"] .co-expanded .company-card::before { background: #13223C; }
+@media (max-width: 480px) {
+  .company-card::before { left: -12px; right: -12px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ARMY FIXES — 10 confirmed defects from the 42-agent verification
+   ═══════════════════════════════════════════════════════════════ */
+
+/* A: the surface layer must actually paint — card becomes its own
+   stacking context so the z:-1 pseudo sits above ancestor backgrounds */
+.company-card { isolation: isolate; }
+/* A2: the collapse clip widens so the 20px bleed and margin spine
+   escape it; margin/padding cancel so content position is unchanged */
+.stage-companies { margin-left: -24px; margin-right: -24px; padding-left: 24px; padding-right: 24px; }
+/* A3: surfaces never print */
+@media print { .company-card::before { background: transparent !important; box-shadow: none !important; } }
+
+/* B: dark hover keeps names white (light ink was leaking through) */
+@media screen and (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .co-collapsible .co-header:hover .co-name { color: #FFFFFF; }
+}
+html[data-theme="dark"] .co-collapsible .co-header:hover .co-name { color: #FFFFFF; }
+
+/* C: the hint floats in the whitespace band ABOVE the name — covers
+   nothing at any viewport */
+.notes-hint { left: 0; right: auto; top: auto; bottom: calc(100% + 4px); margin: 0; white-space: nowrap; max-width: none; }
+@media (max-width: 480px) {
+  .notes-hint { left: 0; right: auto; top: auto; bottom: calc(100% + 4px); white-space: nowrap; max-width: none; }
+}
+
+/* D: em-dashes dim ONCE (the row's 55%), not three times */
+.co-empty { opacity: 1; color: var(--ink-45); }
+
+/* E: summary labels wrap instead of truncating */
+.summary-cell .lbl { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.4; }
+
+/* I: pass-table rows can pulse when jumped to from movements */
+@keyframes rowPulse { 0% { background: var(--accent-soft); } 100% { background: transparent; } }
+tr.mv-highlight-row td { animation: rowPulse 1.8s var(--ease-out); }
+
+/* Mobile gutter is 20px — the bleed escape hatch must fit inside it */
+@media (max-width: 480px) {
+  .stage-companies { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+}
+
+/* ═══ THE MARK — engraved fox watermark, masthead right, site gesture ═══ */
+.cover-band { position: relative; overflow: hidden; }
+/* Dark's radial breath lives on its own layer so the theme flip can fade it */
+.cover-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(640px circle at 88% 50%, rgba(147, 169, 196, 0.055), transparent 68%);
+  opacity: 0;
+  transition: opacity 0.32s ease;
+}
+.cover-band::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: auto;
+  bottom: auto;
+  right: -90px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 440px;
+  height: 440px;
+  background-color: var(--ink);
+  -webkit-mask: url('assets/brand/fox-ink.png') no-repeat center / contain;
+  mask: url('assets/brand/fox-ink.png') no-repeat center / contain;
+  opacity: 0.04;
+  pointer-events: none;
+}
+@media screen and (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .cover-band::after { opacity: 0.055; }
+  html:not([data-theme="light"]) .cover-band::before { opacity: 1; }
+}
+html[data-theme="dark"] .cover-band::after { opacity: 0.055; }
+html[data-theme="dark"] .cover-band::before { opacity: 1; }
+@media (max-width: 768px) {
+  .cover-band::after { width: 240px; height: 240px; right: -45px; }
+}
+
+/* ═══ Masthead theme switch — discoverable where brightness is judged ═══ */
+.theme-btn-top {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  z-index: 5;
+  background: var(--paper);
+}
+@media (max-width: 480px) {
+  .theme-btn-top { top: 12px; right: 12px; }
+}
+
+/* ── Pass registers: domain under the name (house style); notes keep
+     their line breaks like the register above ── */
+.pass-table .reason { white-space: pre-wrap; line-height: 1.6; }
+.pass-table .pass-domain {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-45);
+  text-decoration: none;
+  margin-top: 3px;
+  transition: color 0.15s;
+}
+.pass-table .pass-domain:hover { color: var(--accent); }
