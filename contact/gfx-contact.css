@@ -1,0 +1,6 @@
+/* Grey Fox · gfx Contact (Flow 3) extras · contact 1.0.0 · what Webflow's page needs beyond the ported local rules
+   (gfx-contact.ported.css): the tug photograph as two native images (the local page's <picture> sources by width). */
+@media (max-width: 991px) { [data-o~="gfx-pg-desk"] { display: none !important; } }
+@media (min-width: 992px) { [data-o~="gfx-pg-phone"] { display: none !important; } }
+/* the native submit is an <input>: its words centred in the house button */
+[data-o~="r4-go"] { justify-content: center; text-align: center; }

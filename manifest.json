@@ -27,9 +27,19 @@
   "bytes": 30701,
   "sri": "sha384-yOMX6HOGEHrTGSRkdLRY3zU+gOblvBBck3EpDLVFQ9b54ZQM80y2Wg8+jV0IaFK4"
  },
+ "contact/gfx-contact.dist.js": {
+  "bytes": 82635,
+  "sri": "sha384-GIHvI4l2AekYM8nTlD4Zwh1pGSigVprl82V//TSQ6/HZAziMXwvJXSlY6jPekAOG"
+ },
+ "contact/gfx-contact.dist.css": {
+  "bytes": 41178,
+  "sri": "sha384-MyRWYJaRtDM3Wl5tidLzXplqVn5/TTXsPs+2iZV8+uj8pCRD075W/feFec41NOe/"
+ },
  "_versions": {
   "core": "1.0.0",
   "home": "1.1.0",
-  "owners": "1.0.0"
+  "owners": "1.0.0",
+  "pages": "1.0.0",
+  "contact": "1.0.0"
  }
 }

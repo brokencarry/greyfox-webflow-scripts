@@ -3,6 +3,7 @@
 // Served files carry no ".min." in their names: jsDelivr re-minifies any .min.js/.min.css that has a source sibling and the SRI then fails.
 // Outputs:  home/gfx-home.bundle.js (readable), home/gfx-home.dist.js, core/gfx-core.dist.css, home/gfx-home.dist.css,
 //           owners/gfx-owners.bundle.js (readable), owners/gfx-owners.dist.js, owners/gfx-owners.dist.css (10/20, owners 1.0.0),
+//           contact/gfx-contact.bundle.js, .dist.js, .dist.css; privacy/gfx-privacy.* (10/20, the inner pages: core + pages + page),
 //           manifest.json { file: { bytes, sri } }
 const fs = require('fs'), path = require('path'), crypto = require('crypto'), cp = require('child_process');
 const R = path.resolve(__dirname, '..');
@@ -31,10 +32,24 @@ const minCss = s => {
 wr('core/gfx-core.dist.css', `/*! Grey Fox · gfx core ${cv} stylesheet (minified core/gfx-core.css) */\n` + minCss(rd('core/gfx-core.css')));
 wr('home/gfx-home.dist.css', `/*! Grey Fox · gfx Home ${hv} stylesheet (minified home/gfx-home.css) */\n` + minCss(rd('home/gfx-home.css')));
 wr('owners/gfx-owners.dist.css', `/*! Grey Fox · gfx Owners ${ov} stylesheet (minified owners/gfx-owners.css) */\n` + minCss(rd('owners/gfx-owners.css')));
+// the inner pages (10/20): core + the shared inner-page layer (pages/gfx-pages.js) + the page's layer, one header script;
+// one stylesheet = pages/gfx-pages.css + the page's ported local rules (generated) + the page's extras
+const pages = rd('pages/gfx-pages.js'), pv = (/__gfxPages = '([\d.]+)'/.exec(pages) || [0, '?'])[1];
+const inner = [['contact', 'Contact v2', '__gfxContact'], ['privacy', 'Privacy v2', '__gfxPrivacy']].filter(([k]) => fs.existsSync(path.join(R, k, 'gfx-' + k + '.js')));
+const iv = {};
+inner.forEach(([k, name, flag]) => {
+  const src = rd(k + '/gfx-' + k + '.js'), v = (new RegExp(flag + " = '([\\d.]+)'").exec(src) || [0, '?'])[1]; iv[k] = v;
+  wr(k + '/gfx-' + k + '.bundle.js', `/* Grey Fox · ${name} (Flow 3) page script: core ${cv} + pages ${pv} + ${k} ${v}. Sources: core/gfx-core.js, pages/gfx-pages.js, ${k}/gfx-${k}.js */\n` + core + '\n' + pages + '\n' + src);
+  cp.execFileSync(process.execPath, [path.join(__dirname, 'minify.js'), path.join(R, k + '/gfx-' + k + '.bundle.js'), path.join(R, k + '/gfx-' + k + '.dist.js'),
+    `/*! Grey Fox · ${name} (Flow 3) · core ${cv} + pages ${pv} + ${k} ${v} · minified bundle of core/gfx-core.js + pages/gfx-pages.js + ${k}/gfx-${k}.js (read those for the notes) */`], { stdio: 'inherit' });
+  wr(k + '/gfx-' + k + '.dist.css', `/*! Grey Fox · gfx ${name} ${v} stylesheet (minified pages/gfx-pages.css ${pv} + ${k}/gfx-${k}.ported.css + ${k}/gfx-${k}.css) */\n` +
+    minCss(rd('pages/gfx-pages.css') + '\n' + rd(k + '/gfx-' + k + '.ported.css') + '\n' + rd(k + '/gfx-' + k + '.css')));
+});
 const man = {};
-['home/gfx-home.dist.js', 'core/gfx-core.dist.css', 'home/gfx-home.dist.css', 'portal/desktop-portal.js', 'portal/desktop-portal.css', 'owners/gfx-owners.dist.js', 'owners/gfx-owners.dist.css'].forEach(f => {
+['home/gfx-home.dist.js', 'core/gfx-core.dist.css', 'home/gfx-home.dist.css', 'portal/desktop-portal.js', 'portal/desktop-portal.css', 'owners/gfx-owners.dist.js', 'owners/gfx-owners.dist.css']
+  .concat(...inner.map(([k]) => [k + '/gfx-' + k + '.dist.js', k + '/gfx-' + k + '.dist.css'])).forEach(f => {
   const b = fs.readFileSync(path.join(R, f)); man[f] = { bytes: b.length, sri: 'sha384-' + crypto.createHash('sha384').update(b).digest('base64') };
 });
-man._versions = { core: cv, home: hv, owners: ov };
+man._versions = Object.assign({ core: cv, home: hv, owners: ov }, inner.length ? { pages: pv } : {}, iv);
 wr('manifest.json', JSON.stringify(man, null, 1) + '\n');
 console.log(JSON.stringify(man, null, 1));

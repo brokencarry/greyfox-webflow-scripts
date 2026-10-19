@@ -1,0 +1,32 @@
+/* Grey Fox · gfx pages (Flow 3) stylesheet · pages 1.0.0 · the shared inner-page rules that are NOT in the local
+   stylesheets because Webflow's page differs from the local one: the core's bar on the paper, the core's field rooms,
+   Webflow's form defaults. Each page's served stylesheet is this + its ported rules + its own extras (tools/build.js). */
+
+/* ---------- THE BAR: on the paper from the top (no film): ink links and the button at once (as Owners) ---------- */
+html.gfx-pg-js .gfx-nav.gfx-top .nav_desktop > a.navigation-item { color: #1c1c1d !important; text-shadow: none !important; }
+html.gfx-pg-js .gfx-nav.gfx-top .button_wrapper.show { display: block !important; }
+html.gfx-pg-js .gfx-nav.gfx-top [class*="hamburger_line"], html.gfx-pg-js .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #1c1c1d !important; }
+html.gfx-pg-js.gfx-tone-dark .gfx-nav [class*="hamburger_inner"] { background-color: #fff !important; }
+html.gfx-pg-js .gfx-nav .nav_desktop > a.navigation-item.gfx-current { background-size: 100% 1px !important; }
+
+/* ---------- the rooms on the core's field: the hero keeps its first screen (the core clears min-height on field rooms) ---------- */
+html.gfx-pg-js:not(#gfx-o) [data-o~="ow-hero"] { min-height: 100vh !important; min-height: 100svh !important; }
+@media (max-width: 991px) { html.gfx-pg-js:not(#gfx-o) [data-o~="ow-hero"] { min-height: 0 !important; } }
+/* the page's main is a box only for the rooms' order (display: contents, as local) */
+[data-o~="ow-main"] { display: contents; }
+
+/* ---------- the close: the core paints it (opaque over footer I); its fox is the core's fox step ---------- */
+html.gfx-pg-js [data-o~="ow-close"] [data-o~="gfc-fox"] { max-width: none; }
+
+/* ---------- Webflow's form defaults (webflow.css) set back to the house's ---------- */
+[data-o~="r4-form"].w-form { margin: 0; }
+/* (the fields' own rules, [data-o~=r4-in], follow webflow.css's .w-input at the same weight and win; what they leave:) */
+[data-o~="r4-form"] .w-input[disabled] { background-color: transparent; cursor: default; }
+[data-o~="r4-form"] .w-form-done, [data-o~="r4-form"] .w-form-fail { padding: 0; text-align: left; background-color: transparent; }
+[data-o~="r4-form"] .w-button, [data-o~="r4-form"] input[type="submit"] { -webkit-appearance: none; appearance: none; line-height: 1; }
+/* the form waits for the reader's choice (the script opens it; without the script it shows) */
+html.gfx-pg-js [data-o~="r4-form"]:not(.gfx-pg-open) { display: none !important; }
+/* a field shows its focus as the drawn line beneath it (final.css), not the core's focus box */
+html.gfx-f3 [data-o~="r4-in"]:focus-visible, html.gfx-f3 [data-o~="r4-in"]:focus { outline: none !important; box-shadow: none !important; }
+[data-o~="r4-fail"] p { margin: 0; }
+[data-o~="r4-fail"] a { color: inherit; text-decoration: underline; text-underline-offset: 4px; }
