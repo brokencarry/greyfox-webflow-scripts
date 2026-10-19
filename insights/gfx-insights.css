@@ -1,0 +1,13 @@
+/* Grey Fox · gfx Insights (Flow 3) extras · insights 1.0.0 · what the Webflow Insights pages need beyond the ported local
+   rules (gfx-insights.ported.css), for the index and the article alike. */
+
+/* ---------- the plates: each drawing is a Webflow Embed (div.w-embed) holding the local span.gi-plate-in + svg. The Embed's
+   box is the figure's (it never adds height: Webflow's clearfix ::before/::after on .w-embed stay out of the flow) ---------- */
+[data-o~="gi-plate"] > .w-embed { position: absolute; inset: 0; display: block; }
+[data-o~="gi-plate"] > .w-embed::before, [data-o~="gi-plate"] > .w-embed::after { display: none; }
+
+/* ---------- Webflow's list element carries its own list styles; the local lists set none ---------- */
+[data-o~="gi-list"], [data-o~="gi-toc-l"] { list-style: none; padding-left: 0; }
+
+/* ---------- the share marks are drawn by the layer (insights 1.0.0): the copy control may be a DOM button ---------- */
+[data-gi-copy] { cursor: pointer; }
