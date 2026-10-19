@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.0 + home 1.1.0 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.1 + home 1.1.0 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.0';
+const VERSION='1.0.1';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -223,7 +223,12 @@ var tn=nodes[nodes.length-1],mm= /(\S+)\s*$/.exec(tn.textContent);if(!mm)return 
 r.setStart(tn,mm.index);r.setEnd(tn,mm.index+mm[1].length);return r;
 };
 var word=function(o){
-var host=o.host,rng=o.range||(o.el&&rangeOf(o.el,o.key));if(!host||!rng)return null;
+var fixed=o.range&&typeof o.range!=='function'?o.range:null;
+var rng=typeof o.range==='function'?o.range:function(){
+if(fixed&&fixed.startContainer&&fixed.startContainer.isConnected)return fixed;
+return o.el?rangeOf(o.el,o.key):fixed;
+};
+var host=o.host;if(!host||!rng())return null;
 var withHead=o.head!==false,id='gfa-l'+(++uid),lAt=1,hAt=0,hd=null,drawn=false,raf=0;
 if(getComputedStyle(host).position==='static')host.style.position='relative';
 var svg=D.createElementNS(NS,'svg');svg.setAttribute('class','gfa'+(o.cls?' '+o.cls:''));svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
@@ -231,8 +236,7 @@ if(o.color)svg.style.setProperty('--gfa-c',o.color);
 host.appendChild(svg);
 var set=function(){var p=svg.querySelector('.gfa-m');if(p)p.style.strokeDashoffset=f2(lAt);if(hd)hd.set(hAt);};
 var place=function(){
-var rr=typeof rng==='function'?rng():rng;if(!rr)return;
-var b=restBox(rr,host);if(!b)return;
+var r0=rng();if(!r0)return;var b=restBox(r0,host);if(!b)return;
 var s=sizes(b.fs),y=b.bottom+2,x0=b.left,xr=b.right+3,x2=xr+s.run,y2=y-s.rise;
 var g=ink(x0,y,xr,withHead?x2:xr,withHead?y2:y,b.fs,withHead);
 svg.setAttribute('width',Math.ceil(Math.max(b.w,x2+16)));svg.setAttribute('height',Math.ceil(Math.max(b.h,y+16)));
@@ -247,14 +251,22 @@ var t0=performance.now()+(delay||0)*1000;
 var step=function(now){var t=(now-t0) / 1000;if(t<0){raf=requestAnimationFrame(step);return;}
 lAt=1-expo(clamp(t / 1.6,0,1));hAt=cubic(clamp((t-0.95) / 0.5,0,1));set();
 if(t<1.6)raf=requestAnimationFrame(step);};
+[0.7,1.7,2.8].forEach(function(s){setTimeout(re,s*1000+(delay||0)*1000);});
 raf=requestAnimationFrame(step);
 };
 var still=function(){drawn=true;lAt=0;hAt=1;place();};
 place();
-var re=function(){requestAnimationFrame(place);};
+var rq0=0,re=function(){if(!rq0)rq0=requestAnimationFrame(function(){rq0=0;place();});};
 addEventListener('resize',re);D.addEventListener('gfx:resplit',re);
 if(W.ScrollTrigger)ScrollTrigger.addEventListener('refresh',re);
 if(D.fonts&&D.fonts.ready)D.fonts.ready.then(re);
+if(o.el&&'MutationObserver'in W)new MutationObserver(re).observe(o.el,{childList:true,subtree:true,characterData:true});
+if(o.el){o.el.addEventListener('transitionend',re);o.el.addEventListener('animationend',re);}
+var zq=0,zoneOut=false,zone=function(){zq=0;var r0=rng();if(!r0)return;var rs=r0.getClientRects();if(!rs.length)return;
+var z=parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--gf-zone'))||74,top=rs[rs.length-1].top;
+var out=top<z-2;if(out!==zoneOut){zoneOut=out;svg.style.opacity=out?'0':'';}};
+addEventListener('scroll',function(){if(!zq)zq=requestAnimationFrame(zone);},{passive:true});
+if(W.lenis&&W.lenis.on)W.lenis.on('scroll',function(){if(!zq)zq=requestAnimationFrame(zone);});
 if(o.auto!==false){
 if('IntersectionObserver'in W){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.disconnect();draw(o.delay==null?0.35:o.delay);}});},{rootMargin:'0px 0px -28% 0px'});io.observe(host);}
 else still();
