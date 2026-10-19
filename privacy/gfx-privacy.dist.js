@@ -1,4 +1,4 @@
-/*! Grey Fox · Privacy v2 (Flow 3) · core 1.0.0 + pages 1.0.0 + privacy 1.0.0 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + privacy/gfx-privacy.js (read those for the notes) */
+/*! Grey Fox · Privacy v2 (Flow 3) · core 1.0.0 + pages 1.0.0 + privacy 1.0.1 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + privacy/gfx-privacy.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1155,7 +1155,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxPrivacy)return;
-W.__gfxPrivacy='1.0.0';
+W.__gfxPrivacy='1.0.1';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const zone=()=>(parseFloat(getComputedStyle(H).getPropertyValue('--gf-zone'))||74)+24;
 const go=(y,smooth,done)=>{y=Math.max(0,Math.round(y));const L=gfx.lenis;
@@ -1202,7 +1202,7 @@ W.addEventListener('hashchange',()=>{const t=secs.find(s=>'#'+s.id===decodeURICo
 toc.addEventListener('click',e=>{
 const a=e.target.closest('a[href*="#"]');if(!a)return;
 const i=links.indexOf(a),sec=secs[i];if(!sec)return;
-e.preventDefault();
+e.preventDefault();e.stopPropagation();
 sec.classList.add('pv-in');
 const h=$(O('pv-h'),sec)||sec;
 const arrive=()=>{if(!h.hasAttribute('tabindex'))h.setAttribute('tabindex','-1');h.focus({preventScroll:true});req();};

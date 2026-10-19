@@ -1,4 +1,4 @@
-/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.0 + pages 1.0.0 + privacy 1.0.0. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
+/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.0 + pages 1.0.0 + privacy 1.0.1. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.0 · 2026-10-20 · front-end only (nothing secret).
@@ -1308,7 +1308,7 @@
 
 /*!
  * Grey Fox · gfx Privacy (Flow 3), the Privacy layer on the shared core + the inner-page layer (pages/gfx-pages.js).
- * privacy 1.0.0 · 2026-10-20 · Webflow page "Privacy v2 (Claude build)" (/privacy-v2).
+ * privacy 1.0.1 · 2026-10-20 · Webflow page "Privacy v2 (Claude build)" (/privacy-v2).
  *
  * WHAT IT IS
  *   What the approved local Privacy (prototype/privacy/index.html + privacy.js) adds to the inner pages:
@@ -1324,7 +1324,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxPrivacy) return;
-  W.__gfxPrivacy = '1.0.0';
+  W.__gfxPrivacy = '1.0.1';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const zone = () => (parseFloat(getComputedStyle(H).getPropertyValue('--gf-zone')) || 74) + 24;
   const go = (y, smooth, done) => { y = Math.max(0, Math.round(y)); const L = gfx.lenis;
@@ -1376,7 +1376,8 @@
     toc.addEventListener('click', e => {
       const a = e.target.closest('a[href*="#"]'); if (!a) return;
       const i = links.indexOf(a), sec = secs[i]; if (!sec) return;
-      e.preventDefault();
+      // (and no further: the site's own smooth-scroll would take the anchor too and land the section under the bar)
+      e.preventDefault(); e.stopPropagation();
       sec.classList.add('pv-in');
       const h = $(O('pv-h'), sec) || sec;
       const arrive = () => { if (!h.hasAttribute('tabindex')) h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); req(); };
