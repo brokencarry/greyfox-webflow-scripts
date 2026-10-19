@@ -19,8 +19,17 @@
   "bytes": 4777,
   "sri": "sha384-wGOwqAfyGMMFPf9OPRIbu+IPlSRwZP85820QSFNvE1BMLaNpQ73+LHzFUy6gipoV"
  },
+ "owners/gfx-owners.dist.js": {
+  "bytes": 110918,
+  "sri": "sha384-xpFJW4ZnkjOPc11BcI51TGZBRFrEALrcrH5VxPpiab/5DC8ahmdeGry0XGDAQDKb"
+ },
+ "owners/gfx-owners.dist.css": {
+  "bytes": 30701,
+  "sri": "sha384-yOMX6HOGEHrTGSRkdLRY3zU+gOblvBBck3EpDLVFQ9b54ZQM80y2Wg8+jV0IaFK4"
+ },
  "_versions": {
   "core": "1.0.0",
-  "home": "1.1.0"
+  "home": "1.1.0",
+  "owners": "1.0.0"
  }
 }

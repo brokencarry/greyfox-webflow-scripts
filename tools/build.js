@@ -1,17 +1,21 @@
-// Build the hosted files: the Home bundle (core + Home layer, one header script), the minified stylesheets, and their
-// SRI hashes (manifest.json). Usage: node tools/build.js
+// Build the hosted files: each page's bundle (core + the page layer, one header script), the minified stylesheets, and
+// their SRI hashes (manifest.json). Usage: node tools/build.js
 // Served files carry no ".min." in their names: jsDelivr re-minifies any .min.js/.min.css that has a source sibling and the SRI then fails.
 // Outputs:  home/gfx-home.bundle.js (readable), home/gfx-home.dist.js, core/gfx-core.dist.css, home/gfx-home.dist.css,
+//           owners/gfx-owners.bundle.js (readable), owners/gfx-owners.dist.js, owners/gfx-owners.dist.css (10/20, owners 1.0.0),
 //           manifest.json { file: { bytes, sri } }
 const fs = require('fs'), path = require('path'), crypto = require('crypto'), cp = require('child_process');
 const R = path.resolve(__dirname, '..');
 const rd = f => fs.readFileSync(path.join(R, f), 'utf8');
 const wr = (f, s) => fs.writeFileSync(path.join(R, f), s);
-const core = rd('core/gfx-core.js'), home = rd('home/gfx-home.js');
-const cv = (/const VERSION = '([\d.]+)'/.exec(core) || [0, '?'])[1], hv = (/__gfxHome = '([\d.]+)'/.exec(home) || [0, '?'])[1];
+const core = rd('core/gfx-core.js'), home = rd('home/gfx-home.js'), owners = rd('owners/gfx-owners.js');
+const cv = (/const VERSION = '([\d.]+)'/.exec(core) || [0, '?'])[1], hv = (/__gfxHome = '([\d.]+)'/.exec(home) || [0, '?'])[1], ov = (/__gfxOwners = '([\d.]+)'/.exec(owners) || [0, '?'])[1];
 wr('home/gfx-home.bundle.js', `/* Grey Fox · Home v2 (Flow 3) page script: core ${cv} + home ${hv}. Sources: core/gfx-core.js, home/gfx-home.js */\n` + core + '\n' + home);
 cp.execFileSync(process.execPath, [path.join(__dirname, 'minify.js'), path.join(R, 'home/gfx-home.bundle.js'), path.join(R, 'home/gfx-home.dist.js'),
   `/*! Grey Fox · Home v2 (Flow 3) · core ${cv} + home ${hv} · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */`], { stdio: 'inherit' });
+wr('owners/gfx-owners.bundle.js', `/* Grey Fox · Business Owners v2 (Flow 3) page script: core ${cv} + owners ${ov}. Sources: core/gfx-core.js, owners/gfx-owners.js */\n` + core + '\n' + owners);
+cp.execFileSync(process.execPath, [path.join(__dirname, 'minify.js'), path.join(R, 'owners/gfx-owners.bundle.js'), path.join(R, 'owners/gfx-owners.dist.js'),
+  `/*! Grey Fox · Business Owners v2 (Flow 3) · core ${cv} + owners ${ov} · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */`], { stdio: 'inherit' });
 // CSS: comments out, whitespace squeezed (strings and url() kept as they are)
 const minCss = s => {
   let out = '', i = 0;
@@ -26,10 +30,11 @@ const minCss = s => {
 };
 wr('core/gfx-core.dist.css', `/*! Grey Fox · gfx core ${cv} stylesheet (minified core/gfx-core.css) */\n` + minCss(rd('core/gfx-core.css')));
 wr('home/gfx-home.dist.css', `/*! Grey Fox · gfx Home ${hv} stylesheet (minified home/gfx-home.css) */\n` + minCss(rd('home/gfx-home.css')));
+wr('owners/gfx-owners.dist.css', `/*! Grey Fox · gfx Owners ${ov} stylesheet (minified owners/gfx-owners.css) */\n` + minCss(rd('owners/gfx-owners.css')));
 const man = {};
-['home/gfx-home.dist.js', 'core/gfx-core.dist.css', 'home/gfx-home.dist.css', 'portal/desktop-portal.js', 'portal/desktop-portal.css'].forEach(f => {
+['home/gfx-home.dist.js', 'core/gfx-core.dist.css', 'home/gfx-home.dist.css', 'portal/desktop-portal.js', 'portal/desktop-portal.css', 'owners/gfx-owners.dist.js', 'owners/gfx-owners.dist.css'].forEach(f => {
   const b = fs.readFileSync(path.join(R, f)); man[f] = { bytes: b.length, sri: 'sha384-' + crypto.createHash('sha384').update(b).digest('base64') };
 });
-man._versions = { core: cv, home: hv };
+man._versions = { core: cv, home: hv, owners: ov };
 wr('manifest.json', JSON.stringify(man, null, 1) + '\n');
 console.log(JSON.stringify(man, null, 1));
