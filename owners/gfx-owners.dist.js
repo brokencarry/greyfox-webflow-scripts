@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.3 + owners 1.0.2 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.4 + owners 1.0.2 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.3';
+const VERSION='1.0.4';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -916,6 +916,14 @@ $$('.reveal_block').forEach(el=>clr(el,['display','opacity','transform','-webkit
 $$('.divider').forEach(el=>clr(el,['width','transform','-webkit-transform']));
 });
 const onReady=fn=>(D.readyState==='loading'?D.addEventListener('DOMContentLoaded',fn,{once:true}):fn());
+onReady(()=>{if(!W.__gfxHome)H.classList.remove('gfx-intro');});
+const STAGING= /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname);
+const toV2=a=>{const h=a.getAttribute('href');if(h&& /^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h))a.setAttribute('href',h.replace(/\/contact\/?/,'/contact-v2'));};
+if(STAGING){
+const sweep=()=>D.querySelectorAll('a[href]').forEach(toV2);
+onReady(sweep);W.addEventListener('load',()=>{sweep();setTimeout(sweep,1500);});
+D.addEventListener('click',e=>{const a=e.target&&e.target.closest&&e.target.closest('a[href]');if(a)toV2(a);},true);
+}
 const loadScript=src=>new Promise((res,rej)=>{const s=D.createElement('script');s.src=src;s.async=false;s.onload=res;s.onerror=rej;(D.head||H).appendChild(s);});
 const haveGsap=()=>!!(W.gsap&&W.ScrollTrigger&&W.SplitText);
 const ensureGsap=()=>new Promise(res=>{
