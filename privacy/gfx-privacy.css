@@ -1,0 +1,3 @@
+/* Grey Fox · gfx Privacy (Flow 3) extras · privacy 1.0.0 · what Webflow's page needs beyond the ported local rules
+   (gfx-privacy.ported.css). Webflow's list element carries its own list styles; the contents list sets them back. */
+[data-o~="pv-toc-l"] { list-style: none; padding-left: 0; }

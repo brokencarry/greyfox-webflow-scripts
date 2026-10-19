@@ -2,6 +2,10 @@
    (gfx-contact.ported.css). The Form Block's wrapper, success and error states take no custom attributes, so they are
    read by their gfx- classes: .gfx-pg-r4a-form (local .r4-form), .gfx-pg-r4-done (.r4-done), .gfx-pg-r4-fail (.r4-fail). */
 
+/* ---------- the hero keeps its first screen (the core clears min-height on field rooms; Contact's hero is a full screen) ---------- */
+html.gfx-pg-js:not(#gfx-o) [data-o~="r4f-hero"] { min-height: 100vh !important; min-height: 100svh !important; }
+@media (max-width: 991px) { html.gfx-pg-js:not(#gfx-o) [data-o~="r4f-hero"] { min-height: 0 !important; } }
+
 /* ---------- the tug photograph as two native images (the local page's <picture> sources by width) ---------- */
 @media (max-width: 991px) { [data-o~="gfx-pg-desk"] { display: none !important; } }
 @media (min-width: 992px) { [data-o~="gfx-pg-phone"] { display: none !important; } }

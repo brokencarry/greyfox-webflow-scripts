@@ -9,9 +9,6 @@ html.gfx-pg-js .gfx-nav.gfx-top [class*="hamburger_line"], html.gfx-pg-js .gfx-n
 html.gfx-pg-js.gfx-tone-dark .gfx-nav [class*="hamburger_inner"] { background-color: #fff !important; }
 html.gfx-pg-js .gfx-nav .nav_desktop > a.navigation-item.gfx-current { background-size: 100% 1px !important; }
 
-/* ---------- the rooms on the core's field: the hero keeps its first screen (the core clears min-height on field rooms) ---------- */
-html.gfx-pg-js:not(#gfx-o) [data-o~="ow-hero"] { min-height: 100vh !important; min-height: 100svh !important; }
-@media (max-width: 991px) { html.gfx-pg-js:not(#gfx-o) [data-o~="ow-hero"] { min-height: 0 !important; } }
 /* the page's main is a box only for the rooms' order (display: contents, as local) */
 [data-o~="ow-main"] { display: contents; }
 

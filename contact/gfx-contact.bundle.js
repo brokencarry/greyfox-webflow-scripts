@@ -1,4 +1,4 @@
-/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.0 + pages 1.0.0 + contact 1.0.1. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
+/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.0 + pages 1.0.0 + contact 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.0 · 2026-10-20 · front-end only (nothing secret).
@@ -1308,7 +1308,7 @@
 
 /*!
  * Grey Fox · gfx Contact (Flow 3), the Contact layer on the shared core + the inner-page layer (pages/gfx-pages.js).
- * contact 1.0.1 · 2026-10-20 · Webflow page "Contact v2 (Claude build)" (/contact-v2).
+ * contact 1.0.2 · 2026-10-20 · Webflow page "Contact v2 (Claude build)" (/contact-v2).
  *
  * WHAT IT IS
  *   What the approved local Contact (prototype/contact/final.html: r4.js + final.js) adds to the inner pages:
@@ -1326,7 +1326,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.1';
+  W.__gfxContact = '1.0.2';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
