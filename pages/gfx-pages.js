@@ -20,7 +20,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.0';
+  W.__gfxPages = '1.0.1';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;

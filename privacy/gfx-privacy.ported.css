@@ -3,7 +3,7 @@
    Local classes are read from data-o ([data-o~=x]); state classes the script sets stay classes; the field's paint is the core's.
    Do not edit by hand: change the local source or the extras file (gfx-privacy.css), then regenerate. */
 @property --fx { syntax: '<length>'; inherits: false; initial-value: 0px; }
-:root { --ink: #1e1e1e; --ink-2: #585e6b; --paper: #ffffff; --rule: #e7e8ea; --black: #0e0e0e; --charcoal: #161616; --deep: #0f3b2a; --green: #156946; --green-lit: #2f9a6c; --green-label-deep: #5cbf8f;   /* labels on deep green: 5.5:1 */ --on-dark: #ffffff; --on-dark-2: rgba(255,255,255,.72); --on-dark-3: rgba(255,255,255,.56); --rule-dark: rgba(255,255,255,.14); --t-display: 72px; --t-h2: 48px; --t-h3: 36px; --t-h4: 28px; --t-h5: 22px; --t-lead: 19px; --t-body: 16px; --t-small: 14px; --t-label: 12px; --wrap: 1400px; --gutter: 48px; --gap: 96px; --s-1: 8px; --s-2: 16px; --s-3: 24px; --s-4: 32px; --s-5: 48px; --s-6: 64px; --s-7: 96px; --s-8: 128px; --s-section: 144px; --tan: 0.78687;            /* tan(38.2°): the fox ear, the mark, the arrow, the facet */ --ease: cubic-bezier(.19, 1, .22, 1); --serif: Sentient, Georgia, serif; --sans: "DM Sans", "DM Sans Fallback", sans-serif; --nav-h: 72px; /* the container's width and the margin beside it: a picture that bleeds to the edge is measured from these */ --cw: min(calc(100vw - 2 * var(--gutter)), var(--wrap)); --side: calc((100vw - var(--cw)) / 2); }
+:root { --ink: #1e1e1e; --ink-2: #585e6b; --paper: #ffffff; --rule: #e7e8ea; --black: #0e0e0e; --charcoal: #161616; --deep: #0f3b2a; --green: #156946; --green-lit: #3aa678; --green-label-deep: #5cbf8f;   /* labels on deep green: 5.5:1 */ --on-dark: #ffffff; --on-dark-2: rgba(255, 255, 255, .72); --on-dark-3: #ffffff8a; --rule-dark: rgba(255,255,255,.14); --t-display: 72px; --t-h2: 48px; --t-h3: 36px; --t-h4: 28px; --t-h5: 22px; --t-lead: 19px; --t-body: 16px; --t-small: 14px; --t-label: 12px; --wrap: 1400px; --gutter: 48px; --gap: 96px; --s-1: 8px; --s-2: 16px; --s-3: 24px; --s-4: 32px; --s-5: 48px; --s-6: 64px; --s-7: 96px; --s-8: 128px; --s-section: 144px; --tan: 0.78687;            /* tan(38.2°): the fox ear, the mark, the arrow, the facet */ --ease: cubic-bezier(.19, 1, .22, 1); --serif: Sentient, Georgia, serif; --sans: "DM Sans", "DM Sans Fallback", sans-serif; --nav-h: 72px; /* the container's width and the margin beside it: a picture that bleeds to the edge is measured from these */ --cw: min(calc(100vw - 2 * var(--gutter)), var(--wrap)); --side: calc((100vw - var(--cw)) / 2); }
 @media (max-width: 991px) {
   :root { --gutter: 20px; --gap: 48px; --s-section: 96px; --t-display: 56px; --t-h2: 40px; --t-h3: 32px; --t-lead: 17px; }
 }
@@ -200,19 +200,19 @@ html:not(#gf-c) [data-o~="gfc-top"] { grid-column: 1 / -1; }
 html:not(#gf-c) [data-o~="gfc-top"] > :first-child { flex: 1 1 auto; min-width: 0; max-width: none !important; display: block !important; margin: 0 !important; }
 html:not(#gf-c) [data-o~="gfc-doors"] { grid-column: 1 / -1; }
 html:not(#gf-c) [data-o~="gfc-act"] { flex: none; padding-bottom: 6px; }
-html:not(#gf-c) [data-o~="gfc-btn"] { display: inline-flex; align-items: center; height: 56px; padding: 0 34px; border-radius: 999px; background: #f4f3f0; color: #156946 !important; font: 500 17px/1 "DM Sans", sans-serif; letter-spacing: 0; text-decoration: none; white-space: nowrap; transition: color .4s cubic-bezier(.16, 1, .3, 1), opacity .3s; }
+html:not(#gf-c) [data-o~="gfc-btn"] { display: inline-flex; align-items: center; height: 56px; padding: 0 34px; border-radius: 999px; background: #f4f3f0; color: #156946 !important; font: 500 18px/1 "DM Sans", sans-serif; letter-spacing: 0; text-decoration: none; white-space: nowrap; transition: color .4s cubic-bezier(.16, 1, .3, 1), opacity .3s; }
 @media (hover: hover) {
   html:not(#gf-c) [data-o~="gfc-btn"]:hover { opacity: .9; }
 }
 html:not(#gf-c) [data-o~="gfc-btn"]:focus-visible { outline: 1px solid #3aa678; outline-offset: 4px; }
 html:not(#gf-c) .gfc-mark { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; transition: opacity .4s cubic-bezier(.16, 1, .3, 1); }
 html:not(#gf-c) .gfc-rest .gfc-mark { opacity: 0; }
-html:not(#gf-c) .gfc-rest [data-o~="gfc-btn"] { color: #1c1c1d !important; }
+html:not(#gf-c) .gfc-rest [data-o~="gfc-btn"] { color: #1e1e1e !important; }
 html:not(#gf-c) [data-o~="gfc-doors"] { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; margin-top: clamp(56px, 8vh, 80px); padding-top: 24px; }
 html:not(#gf-c) [data-o~="gfc-rule"] { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: rgba(244, 243, 240, .16); }
-html:not(#gf-c) [data-o~="gfc-door"] { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 4px 24px; border-left: 1px solid rgba(244, 243, 240, .16); text-decoration: none; color: #f4f3f0; }
-html:not(#gf-c) [data-o~="gfc-door-t"] { font: 300 clamp(26px, 2.1vw, 32px)/1.15 Sentient, Georgia, serif; letter-spacing: -.005em; color: #f4f3f0; }
-html:not(#gf-c) [data-o~="gfc-door-l"] { font: 400 16px/1.5 "DM Sans", sans-serif; color: rgba(244, 243, 240, .68); }
+html:not(#gf-c) [data-o~="gfc-door"] { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 4px 24px; border-left: 1px solid rgba(244, 243, 240, .16); text-decoration: none; color: #ffffff; }
+html:not(#gf-c) [data-o~="gfc-door-t"] { font: 300 clamp(26px, 2.1vw, 32px)/1.15 Sentient, Georgia, serif; letter-spacing: -.005em; color: #ffffff; }
+html:not(#gf-c) [data-o~="gfc-door-l"] { font: 400 16px/1.5 "DM Sans", sans-serif; color: rgba(255, 255, 255, .72); }
 @media (hover: hover) {
   html:not(#gf-c) [data-o~="gfc-door"]:hover { border-left-color: #3aa678; }
 }
@@ -221,23 +221,23 @@ html:not(#gf-c) [data-o~="gfc-door-l"] { font: 400 16px/1.5 "DM Sans", sans-seri
   html:not(#gf-c) [data-o~="gfc-doors"] { grid-template-columns: 1fr; row-gap: 28px; }
 }
 html:not(#gf-c) .gfc-rest [data-o~="gfc-btn"] { opacity: 0 !important; pointer-events: none; transition: opacity .4s cubic-bezier(.16, 1, .3, 1); }
-html:not(#gf-c) [data-o~="gfc-door-e"] { font: 500 15px/1.4 "DM Sans", sans-serif; color: #f4f3f0; margin-top: 2px; }
+html:not(#gf-c) [data-o~="gfc-door-e"] { font: 500 16px/1.4 "DM Sans", sans-serif; color: #ffffff; margin-top: 2px; }
 html:not(#gf-c) :is(.pf-leave, [data-o~="ow-close"] [data-o~="ow-in"], .o2-stage-sec, .o2-dark, .tp-leave > *, .tp-arrive > *) { transition-duration: .15s !important; transition-delay: 0s !important; }
 html:not(#gf-c) svg.gfa { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; transition: opacity .4s cubic-bezier(.16, 1, .3, 1); }
 html:not(#gf-c) svg :is(.gfa-ink, .gfa-b) { fill: var(--gfa-c, #3aa678) !important; stroke: none !important; }
 html:not(#gf-c) .gfc-on [data-o~="gfc-act"] { transition: opacity .9s cubic-bezier(.16, 1, .3, 1) .2s, transform 1.1s cubic-bezier(.16, 1, .3, 1) .2s; }
 html:not(#gf-c) .gfc-on:not(.gfc-in) [data-o~="gfc-act"] { opacity: 0; transform: translate3d(0, 14px, 0); pointer-events: none; }
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c):not(#gf-d) :is(.ow-btn, .button:not(.w-nav-button), .iv-btn, .r4-go, .o2-btn, .gi-btn, .iv-close-a, [data-o~="gfc-btn"], .r4-door) { border-radius: 2px !important; }
-html:not(#gf-c):not(#gf-d) [data-o~="gfc-btn"] { height: 55px; padding: 0 24px; font: 500 16px/1 "DM Sans", sans-serif; background: #f4f3f0; color: #1c1c1d !important; transition: background-color .2s ease, color .2s ease, opacity .4s cubic-bezier(.16, 1, .3, 1); }
+html:not(#gf-c):not(#gf-d) [data-o~="gfc-btn"] { height: 55px; padding: 0 24px; font: 500 16px/1 "DM Sans", sans-serif; background: #f4f3f0; color: #1e1e1e !important; transition: background-color .2s ease, color .2s ease, opacity .4s cubic-bezier(.16, 1, .3, 1); }
 @media (hover: hover) {
   html:not(#gf-c):not(#gf-d) [data-o~="gfc-btn"]:hover { background: #fff; opacity: 1; }
 }
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c):not(#gf-d) :is(.navigation_wrapper .nav-button, .ow-btn, .o2-btn, .r4-go, [data-o~="gfc-btn"], .cta_section .button):focus-visible { outline: 2px solid #3aa678 !important; outline-offset: 3px !important; }
-html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on :is(h1, h2, h3, [data-o~="ow-h2"], [data-o~="gfc-door"], [data-o~="gfc-door-t"], [data-o~="gfc-door-e"]) { color: #1c1c1d !important; }
-html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on :is(p, [data-o~="gfc-door-l"], .gfc-lede) { color: #55575d !important; }
-html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on [data-o~="gfc-rule"] { background: #dddcd7; }
-html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on [data-o~="gfc-door"] { border-left-color: #dddcd7; }
-html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on [data-o~="gfc-btn"] { background: #1c1c1d !important; color: #f4f3f0 !important; }
+html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on :is(h1, h2, h3, [data-o~="ow-h2"], [data-o~="gfc-door"], [data-o~="gfc-door-t"], [data-o~="gfc-door-e"]) { color: #1e1e1e !important; }
+html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on :is(p, [data-o~="gfc-door-l"], .gfc-lede) { color: #585e6b !important; }
+html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on [data-o~="gfc-rule"] { background: #e7e8ea; }
+html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on [data-o~="gfc-door"] { border-left-color: #e7e8ea; }
+html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on [data-o~="gfc-btn"] { background: #1e1e1e !important; color: #ffffff !important; }
 html:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) .gfc-on { --gfa-c: #156946; }
 html.gf-flow3:not(#gf-c) .gfc-on :is(h1, h2, h3, [data-o~="ow-h2"], p, [data-o~="gfc-door"], [data-o~="gfc-door-t"], [data-o~="gfc-door-l"], [data-o~="gfc-door-e"], .gfc-lede, [data-o~="gfc-rule"]) { transition: color .15s linear, border-color .15s linear, background-color .15s linear; }
 html.gf-flow3:not(#gf-c):not(#gf-d) .gfc-on { position: relative; overflow: hidden; isolation: isolate; }
@@ -249,26 +249,31 @@ html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) body { overflow-anchor: 
 html.gf-flow3:not(#gf-c):not(#gf-d):not(#gf-e) :is(.gfc-on, .cta_section.ftg-close) { padding-bottom: 48px !important; min-height: 0 !important; }
 html.gf-flow3:not(#gf-c):not(#gf-d) :is(.gfc-on, .cta_section) :is([data-o~="gfc-fox"], .footer-logo-subtle) { filter: opacity(1); transition: filter .6s cubic-bezier(.65, 0, .35, 1); }
 html.gf-flow3:not(.gfx-tone-dark):not(#gf-c):not(#gf-d) :is(.gfc-on, .cta_section) :is([data-o~="gfc-fox"], .footer-logo-subtle) { filter: opacity(0); }
-html.gf-flow2 { --paper: #f6f5f2; --ink: #1c1c1d; --ink-2: #5a5c62; --rule: #e0dfdb; --charcoal: #111112; --black: #111112; --gf-ink-l1: #1c1c1d; --gf-ink-d1: #f4f3f0; }
+:root { --primary: #156946; --_text---primary: #1e1e1e; --_text---secondary: #ffffff8a; --_text---tertiary: #585e6b; --_text---golden: #9b8858; --_border---border-default: #e7e8ea; --subtle: #f3f3f5; --grey-transparent: #f5f5f7; --gf-paper: #f6f5f2; --gf-black: #111112; --gf-raised: #1e1e20; --gf-raised-2: #252527; --gf-green-dark: #3aa678; --gf-on: #ffffff; --gf-on-body: rgba(255, 255, 255, .72); --gf-body: 18px; --gf-body-long: 19px; --gf-small: 16px; --gf-caption: 14px; --gf-h3-display: 44px; --gf-h3-card: 28px; --gf-h3-item: 23px; --gf-h3-door: 28px; --gf-h3-label: 16px; --gf-btn: 16px; --gf-radius: 2px; }
+@media (min-width: 992px) {
+  html:not(#tk1):not(#tk2):not(#tk3) :is([data-o~="gfc-door-t"], .cta_section .cta_contact_item-wrapper .heading-4) { font-family: Sentient, Georgia, serif !important; font-weight: 300 !important; font-size: var(--gf-h3-door) !important; line-height: 1.15 !important; }
+}
+html:not(#tk1):not(#tk2) :is(.navigation-item.button-text, .team_member_contact_button, .o2-acc-b, .ow-acc-b, .iv2-mbb, .r4-qb, .gi-topic, .nav-button, [data-o~="gfc-btn"], .ow-btn, .o2-btn, .button) { border-radius: var(--gf-radius) !important; }
+html.gf-flow2 { --paper: #f6f5f2; --ink: #1e1e1e; --ink-2: #585e6b; --rule: #e7e8ea; --charcoal: #111112; --black: #111112; --gf-ink-l1: #1e1e1e; --gf-ink-d1: #ffffff; }
 html.gf-flow2 { --pf-field: #f6f5f2; }
 html.gf-flow2 .page-wrapper,
 html.gf-flow2 main,
 html.gf-flow2 [data-o~="ow-room"] { background-color: transparent !important; }
 html.gf-flow2 .pf-leave { transition: opacity .4s cubic-bezier(.65, 0, .35, 1); }
-html.gf-flow2.gfx-tone-dark .pf-leave[data-o~="ow-room"] { --c-ink: #f4f3f0; --c-ink-2: rgba(244, 243, 240, .72); --c-ink-3: rgba(244, 243, 240, .56); --c-rule: rgba(244, 243, 240, .16); --c-mark: #3aa678; --c-label: #3aa678; --ink: #f4f3f0; --ink-2: rgba(244, 243, 240, .72); --rule: rgba(244, 243, 240, .16); color: #f4f3f0; }
+html.gf-flow2.gfx-tone-dark .pf-leave[data-o~="ow-room"] { --c-ink: #ffffff; --c-ink-2: rgba(255, 255, 255, .72); --c-ink-3: #ffffff8a; --c-rule: rgba(244, 243, 240, .16); --c-mark: #3aa678; --c-label: #3aa678; --ink: #ffffff; --ink-2: rgba(255, 255, 255, .72); --rule: rgba(244, 243, 240, .16); color: #ffffff; }
 html.gf-flow2 .pf-leave[data-o~="ow-room"],
 html.gf-flow2 .pf-leave[data-o~="ow-room"] * { transition: color .15s linear, border-color .15s linear, background-color .15s linear; }
 html.gf-flow2 [data-o~="ow-close"] [data-o~="ow-in"] { transition: opacity .5s cubic-bezier(.65, 0, .35, 1) .1s; }
 html.gf-flow2:not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="ow-in"] { opacity: 0; }
 html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="ow-in"] { opacity: 1 !important; }
-html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] { --c-ink: #1c1c1d; --c-ink-2: #55575d; --c-ink-3: #686b72; --c-rule: #dddcd7; --c-mark: #156946; --c-label: #156946; --ink: #1c1c1d; --ink-2: #55575d; --rule: #dddcd7; color: #1c1c1d; }
-html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] :is(h1, h2, h3, [data-o~="ow-h2"], [data-o~="gfc-door"], [data-o~="gfc-door-t"], [data-o~="gfc-door-e"]) { color: #1c1c1d !important; }
-html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] :is(p, [data-o~="gfc-door-l"], .gfc-lede) { color: #55575d !important; }
-html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-rule"] { background: #dddcd7; }
-html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-door"] { border-left-color: #dddcd7; }
-html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-btn"] { background: #1c1c1d; color: #f4f3f0 !important; }
+html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] { --c-ink: #1e1e1e; --c-ink-2: #585e6b; --c-ink-3: #585e6b; --c-rule: #e7e8ea; --c-mark: #156946; --c-label: #156946; --ink: #1e1e1e; --ink-2: #585e6b; --rule: #e7e8ea; color: #1e1e1e; }
+html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] :is(h1, h2, h3, [data-o~="ow-h2"], [data-o~="gfc-door"], [data-o~="gfc-door-t"], [data-o~="gfc-door-e"]) { color: #1e1e1e !important; }
+html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] :is(p, [data-o~="gfc-door-l"], .gfc-lede) { color: #585e6b !important; }
+html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-rule"] { background: #e7e8ea; }
+html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-door"] { border-left-color: #e7e8ea; }
+html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-btn"] { background: #1e1e1e; color: #ffffff !important; }
 html.gf-flow2:not(.tp):not(#gf-c):not(.gfx-tone-dark) [data-o~="ow-close"] { --gfa-c: #156946; }
 html.gf-flow2 [data-o~="ow-close"] [data-o~="ow-in"],
 html.gf-flow2 [data-o~="ow-close"] [data-o~="ow-in"] * { transition: color .15s linear, border-color .15s linear, background-color .15s linear, fill .15s linear, opacity .4s cubic-bezier(.16, 1, .3, 1); }
 html.gf-flow2:not(.tp):not(#gf-c):not(#gf-d) [data-o~="ow-close"] [data-o~="gfc-btn"] { transition: opacity .4s cubic-bezier(.16, 1, .3, 1) !important; }
-html.gf-flow2:not(.tp):not(#gf-c):not(#gf-d):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-btn"] { background: #1c1c1d; color: #f4f3f0 !important; }
+html.gf-flow2:not(.tp):not(#gf-c):not(#gf-d):not(.gfx-tone-dark) [data-o~="ow-close"] [data-o~="gfc-btn"] { background: #1e1e1e; color: #ffffff !important; }

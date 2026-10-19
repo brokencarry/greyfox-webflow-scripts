@@ -20,7 +20,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxTeam) return;
-  W.__gfxTeam = '1.0.1';
+  W.__gfxTeam = '1.0.2';
   const P = gfx.pages, O = P.O, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const SETTLE = G.SETTLE, DRAW = G.DRAW;
   // the local page's html classes the ported stylesheet reads (t2-once: the emblem draws once; tf-on: Team on the field)

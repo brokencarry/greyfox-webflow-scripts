@@ -22,7 +22,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPerson) return;
-  W.__gfxPerson = '1.0.0';
+  W.__gfxPerson = '1.0.1';
   const H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE, G = gfx.G;
   const O = c => '[data-o~="' + c + '"]';
   // the local page's html classes, before the body is parsed (the ported stylesheet reads them); tp-m holds the arrival

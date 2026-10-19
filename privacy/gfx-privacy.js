@@ -16,7 +16,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxPrivacy) return;
-  W.__gfxPrivacy = '1.0.1';
+  W.__gfxPrivacy = '1.0.2';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const zone = () => (parseFloat(getComputedStyle(H).getPropertyValue('--gf-zone')) || 74) + 24;
   const go = (y, smooth, done) => { y = Math.max(0, Math.round(y)); const L = gfx.lenis;

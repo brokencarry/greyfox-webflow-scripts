@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.2 + pages 1.0.0 + team 1.0.1. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.3 + pages 1.0.1 + team 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.2';
+  const VERSION = '1.0.3';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1147,7 +1147,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.0';
+  W.__gfxPages = '1.0.1';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;
@@ -1373,7 +1373,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxTeam) return;
-  W.__gfxTeam = '1.0.1';
+  W.__gfxTeam = '1.0.2';
   const P = gfx.pages, O = P.O, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const SETTLE = G.SETTLE, DRAW = G.DRAW;
   // the local page's html classes the ported stylesheet reads (t2-once: the emblem draws once; tf-on: Team on the field)

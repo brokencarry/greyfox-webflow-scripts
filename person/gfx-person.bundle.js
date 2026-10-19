@@ -1,4 +1,4 @@
-/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.2 + person 1.0.0. Sources: core/gfx-core.js, person/gfx-person.js */
+/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.3 + person 1.0.1. Sources: core/gfx-core.js, person/gfx-person.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.2';
+  const VERSION = '1.0.3';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1149,7 +1149,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPerson) return;
-  W.__gfxPerson = '1.0.0';
+  W.__gfxPerson = '1.0.1';
   const H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE, G = gfx.G;
   const O = c => '[data-o~="' + c + '"]';
   // the local page's html classes, before the body is parsed (the ported stylesheet reads them); tp-m holds the arrival

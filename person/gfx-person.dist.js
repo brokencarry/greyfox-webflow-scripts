@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.2 + person 1.0.0 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.3 + person 1.0.1 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.2';
+const VERSION='1.0.3';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -1014,7 +1014,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxPerson)return;
-W.__gfxPerson='1.0.0';
+W.__gfxPerson='1.0.1';
 const H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE,G=gfx.G;
 const O=c=>'[data-o~="'+c+'"]';
 H.classList.add('gf-flow','gf-flow2','gf-flow3','gf-dark-black','ow-js','gfx-tp-js','tp','tp-v-a');

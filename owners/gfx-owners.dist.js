@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.2 + owners 1.0.1 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.3 + owners 1.0.2 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.2';
+const VERSION='1.0.3';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -1014,7 +1014,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.0.1';
+W.__gfxOwners='1.0.2';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';

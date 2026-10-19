@@ -7,14 +7,14 @@
 
 :root {
   --ow3-paper: #f6f5f2; --ow3-black: #111112;
-  --ow3-ink: #1c1c1d; --ow3-ink-2: #55575d; --ow3-ink-3: #686b72; --ow3-rule: #dddcd7; --ow3-green: #156946;
-  --ow3-d1: #f4f3f0; --ow3-d2: rgba(244, 243, 240, .7); --ow3-d3: rgba(244, 243, 240, .54); --ow3-rule-d: rgba(244, 243, 240, .16); --ow3-green-d: #2f9a6c;
+  --ow3-ink: #1e1e1e; --ow3-ink-2: #585e6b; --ow3-ink-3: #585e6b; --ow3-rule: #e7e8ea; --ow3-green: #156946;
+  --ow3-d1: #ffffff; --ow3-d2: rgba(255, 255, 255, .72); --ow3-d3: #ffffff8a; --ow3-rule-d: rgba(244, 243, 240, .16); --ow3-green-d: #3aa678;
   --ow3-serif: Sentient, Georgia, serif; --ow3-sans: "DM Sans", "DM Sans Fallback", system-ui, sans-serif;
   --ow3-gut: 48px; --ow3-gap: 24px;
   --ow3-std: clamp(112px, 17.8vh, 160px); --ow3-tight: clamp(88px, 14.2vh, 128px);
   --ow3-firms-h: clamp(140px, 18vh, 176px);
   /* (the core's paper body ink, as the local Owners page sets it: the close read on the paper takes it) */
-  --gfx-ink-l2: #55575d;
+  --gfx-ink-l2: #585e6b;
 }
 @media (max-width: 767px) { :root { --ow3-gut: 20px; --ow3-gap: 16px; } }
 
@@ -54,7 +54,7 @@ html:not(#gfx-o) [data-o~=ow-hero-foot] { position: relative; z-index: 2; flex: 
 html:not(#gfx-o) [data-o~=ow-hero-foot] > [data-o~=ow-rule] { position: absolute; left: 0; right: 0; top: 0; height: 1px; margin: 0; background: var(--ow3-rule); transform: none; }
 html:not(#gfx-o) [data-o~=ow-firms] { display: flex; align-items: center; gap: clamp(28px, 3vw, 48px); width: 100%; margin: 0; }
 html:not(#gfx-o) [data-o~=ow-firms-head] { flex: none; margin: 0; }
-html:not(#gfx-o) [data-o~=ow-firms] [data-o~=ow-label] { margin: 0; font: 400 15px/1.3 var(--ow3-sans); letter-spacing: 0; text-transform: none; color: var(--ow3-ink-2); }
+html:not(#gfx-o) [data-o~=ow-firms] [data-o~=ow-label] { margin: 0; font: 400 16px/1.3 var(--ow3-sans); letter-spacing: 0; text-transform: none; color: var(--ow3-ink-2); }
 html:not(#gfx-o) [data-o~=ow-marq] { flex: 1 1 auto; min-width: 0; margin: 0; overflow: visible; -webkit-mask-image: none; mask-image: none; }
 html:not(#gfx-o) [data-o~=ow-marq-track] { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 40px; row-gap: clamp(16px, 2.6vh, 24px); column-gap: clamp(16px, 2vw, 32px); align-items: center; justify-items: center; width: auto; margin: 0; padding: 0; list-style: none; animation: none !important; transform: none !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] > li { display: flex; align-items: center; justify-content: center; min-width: 0; max-width: 100%; height: 40px; margin: 0; padding: 0; overflow: visible; }
@@ -133,14 +133,14 @@ html:not(#gfx-o) [data-o~=ow-proc] svg mask circle { fill: #fff !important; stro
 @media (min-width: 2000px) and (min-height: 1100px) { html.gfx-hold [data-o~=ow-av] [data-o~=avh] { max-height: 940px; } }
 html.gfx-js [data-o~=avh-note]:not([style*="left"]) { visibility: hidden; }
 /* (owners 1.0.1) the partnership line's head is the house head (gfArrow.head), in the line's green; its mask kept whole */
-html:not(#gfx-o) [data-o~=ow-av] svg { --gfa-c: #2f9a6c; }
+html:not(#gfx-o) [data-o~=ow-av] svg { --gfa-c: #3aa678; }
 html:not(#gfx-o) [data-o~=ow-av] svg mask circle { fill: #fff !important; stroke: none !important; }
 [data-o~=avh] .ah-lv { transition: opacity .35s cubic-bezier(.16, 1, .3, 1); }
 [data-o~=avh] [data-o~=avh-note] { transition: color .35s cubic-bezier(.16, 1, .3, 1); }
 [data-o~=avh] .ah-nl { transition: stroke .35s cubic-bezier(.16, 1, .3, 1); }
 [data-o~=avh] [data-o~=avh-it][data-lv] { transition: opacity .35s cubic-bezier(.16, 1, .3, 1); }
 [data-o~=avh] [data-o~=avh-it][data-lv]:focus { outline: none; }
-[data-o~=avh] [data-o~=avh-it][data-lv]:focus-visible { outline: 1px solid #2f9a6c; outline-offset: 6px; }
+[data-o~=avh] [data-o~=avh-it][data-lv]:focus-visible { outline: 1px solid #3aa678; outline-offset: 6px; }
 [data-o~=avh-fig][data-focus=g] :not([data-o~=is-today]) > [data-o~=avh-draw] .ah-lv:not([data-lv=g]), [data-o~=avh-fig][data-focus=g] :not([data-o~=is-today]) > [data-o~=avh-draw] .ah-lv[data-lv=base],
 [data-o~=avh-fig][data-focus=a] :not([data-o~=is-today]) > [data-o~=avh-draw] .ah-lv:not([data-lv=a]), [data-o~=avh-fig][data-focus=a] :not([data-o~=is-today]) > [data-o~=avh-draw] .ah-lv[data-lv=base],
 [data-o~=avh-fig][data-focus=l] :not([data-o~=is-today]) > [data-o~=avh-draw] .ah-lv:not([data-lv=l]), [data-o~=avh-fig][data-focus=l] :not([data-o~=is-today]) > [data-o~=avh-draw] .ah-lv[data-lv=base],
@@ -183,7 +183,7 @@ html:not(#gfx-o) [data-o~=rv-pv] { display: block; font: 200 clamp(56px, 5.4vw, 
 html:not(#gfx-o) [data-o~=rv-k] { position: static; width: auto; text-wrap: wrap; white-space: normal; margin: 14px 0 0; max-width: 17em; font: 400 16px/1.5 var(--ow3-sans); color: var(--ow3-ink-2); }
 html:not(#gfx-o) [data-o~=rv-tot] { grid-column: 1 / span 6; margin: calc(clamp(64px, 9vh, 88px) + 33px) 0 0; max-width: 32em; font: 400 18px/1.6 var(--ow3-sans); color: var(--ow3-ink); text-wrap: pretty; }
 html:not(#gfx-o) [data-o~=rv-tot] strong { white-space: normal; font-weight: 500; color: var(--ow3-green); font-variant-numeric: tabular-nums; }
-html:not(#gfx-o) [data-o~=rv-note] { grid-column: 8 / span 5; margin: calc(clamp(64px, 9vh, 88px) + 33px) 0 0; max-width: none; font: 400 15px/1.6 var(--ow3-sans); color: var(--ow3-ink-3); text-wrap: pretty; }
+html:not(#gfx-o) [data-o~=rv-note] { grid-column: 8 / span 5; margin: calc(clamp(64px, 9vh, 88px) + 33px) 0 0; max-width: none; font: 400 16px/1.6 var(--ow3-sans); color: var(--ow3-ink-3); text-wrap: pretty; }
 html:not(#gfx-o) .gfx-ow3-pen { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; --gfa-c: var(--ow3-green); }
 html:not(#gfx-o) .gfx-ow3-pen-s { fill: var(--ow3-green); }
 html:not(#gfx-o) .gfx-ow3-pen-m { stroke-dasharray: 1; stroke-dashoffset: 1; }
@@ -251,8 +251,8 @@ html:not(#gfx-o) [data-o~=ow-door] { display: flex; flex-direction: column; alig
 html:not(#gfx-o) [data-o~=ow-door] :is(svg, .ow-door-a) { display: none !important; }
 @media (hover: hover) { html:not(#gfx-o) [data-o~=ow-door]:hover { border-left-color: #3aa678; } }
 html:not(#gfx-o) [data-o~=ow-door-t] { display: block; margin: 0; font: 300 clamp(26px, 2.1vw, 32px)/1.15 var(--ow3-serif); letter-spacing: -.005em; color: var(--ow3-d1); }
-html:not(#gfx-o) [data-o~=ow-door-l] { display: block; margin: 0; font: 400 16px/1.5 "DM Sans", sans-serif; color: rgba(244, 243, 240, .68); }
-html:not(#gfx-o) [data-o~=ow-door-e] { display: block; margin: 2px 0 0; font: 500 15px/1.4 "DM Sans", sans-serif; color: var(--ow3-d1); }
+html:not(#gfx-o) [data-o~=ow-door-l] { display: block; margin: 0; font: 400 16px/1.5 "DM Sans", sans-serif; color: rgba(255, 255, 255, .72); }
+html:not(#gfx-o) [data-o~=ow-door-e] { display: block; margin: 2px 0 0; font: 500 16px/1.4 "DM Sans", sans-serif; color: var(--ow3-d1); }
 /* the close's fox: the designer's line drawing, large and faint, cropped at the left edge; gone on the paper */
 html:not(#gfx-o) [data-o~=ow-close-fox] { display: block !important; position: absolute; left: calc(-0.618 * min(52vw, 760px)); top: 50%; right: auto; bottom: auto; width: min(52vw, 760px); height: auto; max-width: none; transform: translateY(-50%); opacity: .62; pointer-events: none; z-index: -1; filter: opacity(1); transition: filter .6s cubic-bezier(.65, 0, .35, 1); }
 html.gfx-tone-light:not(#gfx-o) [data-o~=ow-close-fox] { filter: opacity(0); }
@@ -291,7 +291,7 @@ html:not(#gfx-o) [data-o~=ow-close] :is(h2, p, [data-o~=ow-door], [data-o~=ow-do
   html:not(#gfx-o) [data-o~=ow-hero] { padding-top: 112px; }
   html:not(#gfx-o) [data-o~=ow-hero] [data-o~=ow-h1] { font-size: 40px; }
   html:not(#gfx-o) :is([data-o~=ow-proc], [data-o~=ow-ret], [data-o~=ow-qs], [data-o~=ow-close]) h2 { font-size: 32px; line-height: 1.12; }
-  html:not(#gfx-o) :is([data-o~=ow-hero-lede], [data-o~=ow-ret] [data-o~=ow-lead]) { font-size: 17px; }
+  html:not(#gfx-o) :is([data-o~=ow-hero-lede], [data-o~=ow-ret] [data-o~=ow-lead]) { font-size: 18px; }
   html:not(#gfx-o) [data-o~=rv-eq] { grid-template-columns: max-content max-content max-content max-content max-content max-content; column-gap: 8px; }
   html:not(#gfx-o) [data-o~=rv-cap] { grid-column: 1 / -1; margin-top: 12px !important; }
   html:not(#gfx-o) [data-o~=rv-v] { font-size: 34px; }
@@ -309,3 +309,41 @@ html:not(#gfx-o) [data-o~=ow-close] :is(h2, p, [data-o~=ow-door], [data-o~=ow-do
 /* ---------- reduced motion / failsafe: every room settled ---------- */
 html.gfx-failsafe :is([data-o~=ow-h1], [data-o~=ow-hero-lede], [data-o~=ow-hero] [data-o~=ow-actions], [data-o~=ow-hero-pic], [data-o~=ow-firms], .gfx-ow3-act) { opacity: 1 !important; transform: none !important; }
 @media print { html.gfx-acc-js [data-o~=ow-acc-p] { grid-template-rows: 1fr !important; } [data-o~=ow-acc-in] p { visibility: visible !important; opacity: 1 !important; } }
+
+/* >>> tokens 10/20 (generated section: audit/webflow-build/f3-tokens/tools/apply-layer.js) */
+/* ---------- TOKENS: the roles on Owners' own elements (owners 1.0.2, 10/20; local gf-flow2-base.css "THE TOKENS": the FAQ
+   questions = item title, the close's doors = door title, buttons = one corner) ---------- */
+@media (min-width: 992px) {
+  /* H3 · item title: the FAQ questions */
+  html:not(#tk1):not(#tk2):not(#tk3) [data-o~=ow-acc-b] { font-family: Sentient, Georgia, serif !important; font-weight: 300 !important; font-size: var(--gf-h3-item) !important; line-height: 1.25 !important; letter-spacing: -.005em !important; }
+  html:not(#tk1):not(#tk2):not(#tk3) [data-o~=ow-acc-h] { font-family: Sentient, Georgia, serif !important; font-weight: 300 !important; font-size: var(--gf-h3-item) !important; line-height: 1.25 !important; }
+  html:not(#tk1):not(#tk2):not(#tk3) [data-o~=ow-acc-q] { font-size: inherit !important; }
+  /* H3 · card title: the call drawing's four steps (local .pc-t) */
+  html:not(#tk1):not(#tk2):not(#tk3) [data-o~=pc-t] { font-family: Sentient, Georgia, serif !important; font-weight: 300 !important; font-size: var(--gf-h3-card) !important; line-height: 1.2 !important; letter-spacing: -.008em !important; }
+  /* H3 · door title */
+  html:not(#tk1):not(#tk2):not(#tk3) [data-o~=ow-door-t] { font-family: Sentient, Georgia, serif !important; font-weight: 300 !important; font-size: var(--gf-h3-door) !important; line-height: 1.15 !important; }
+}
+html:not(#tk1):not(#tk2) :is([data-o~=ow-acc-b], [data-o~=ow-btn], .gfx-ow3-act) { border-radius: var(--gf-radius) !important; }
+/* body 18: the second bite's summaries (local .o2-sr, ow-flow2.css: 18px with the FAQ answers) */
+@media (min-width: 992px) { html:not(#tk1):not(#tk2) [data-o~=ow-sr] { font-size: var(--gf-body) !important; } }
+/* ---------- TOKENS on the Webflow side (10/20, owners): the page's native gfx- class styles and styles Embeds hold values the
+   local snap changed; they cannot be edited without the Designer, so the changed declarations are overridden here (only those
+   in effect on the page; generated by audit/webflow-build/f3-tokens/tools/gen-overrides.js, do not hand-edit) ---------- */
+html .gfx-avh-p { color: #ffffff8a; }   /* was rgba(255,255,255,0.56) (native gfx- class styles) */
+html .avh-key .kk-sq, html .avh-key .kk-fill { fill: #3aa678; }   /* was #2f9a6c (Embed a93df8f9) */
+html .avh-key .kk-net { stroke: #3aa678; }   /* was #2f9a6c (Embed a93df8f9) */
+html .ah-svg .ah-net { stroke: #3aa678; }   /* was #2f9a6c (Embed a93df8f9) */
+html .ah-ter { stroke: #3aa678; }   /* was #2f9a6c (Embed a93df8f9) */
+html .ah-ar { stroke: #3aa678; }   /* was #2f9a6c (Embed a93df8f9) */
+html .ah-svg .ah-ad, html .ah-svg .ah-loc { fill: #3aa678; }   /* was #2f9a6c (Embed a93df8f9) */
+html .ah-ln, html .ah-hd { stroke: #3aa678; }   /* was #2f9a6c (Embed a93df8f9) */
+html .pa-note { font: 400 14px/1 "DM Sans", "DM Sans Fallback", sans-serif; }   /* was 400 13px/1 "DM Sans", "DM Sans Fallback", sans-serif (Embed a93df8f9) */
+@media screen and (max-width: 991px) {
+  html .gfx-ow-hero-lede { font-size: 18px; }   /* was 17px (native gfx- class styles) */
+  html .gfx-ow-lead-ret { font-size: 18px; }   /* was 17px (native gfx- class styles) */
+  html .gfx-ow-lead { font-size: 18px; }   /* was 17px (native gfx- class styles) */
+}
+@media (min-width:992px) and (max-height:820px) {
+  html [data-o~=pc-q] figcaption { font-size: 14px; }   /* was 13px (Embed a93df8f9) */
+}
+/* <<< tokens 10/20 */

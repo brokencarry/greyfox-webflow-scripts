@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.2 + home 1.1.1 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.3 + home 1.1.2 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.2';
+const VERSION='1.0.3';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -1014,7 +1014,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.1';
+W.__gfxHome='1.1.2';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
 const PIN='(min-width: 992px) and (min-height: 681.01px)',UNPIN='(max-width: 991px), (max-height: 680.99px)';

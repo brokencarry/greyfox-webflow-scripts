@@ -3,9 +3,9 @@
    Webflow's form defaults. Each page's served stylesheet is this + its ported rules + its own extras (tools/build.js). */
 
 /* ---------- THE BAR: on the paper from the top (no film): ink links and the button at once (as Owners) ---------- */
-html.gfx-pg-js .gfx-nav.gfx-top .nav_desktop > a.navigation-item { color: #1c1c1d !important; text-shadow: none !important; }
+html.gfx-pg-js .gfx-nav.gfx-top .nav_desktop > a.navigation-item { color: #1e1e1e !important; text-shadow: none !important; }
 html.gfx-pg-js .gfx-nav.gfx-top .button_wrapper.show { display: block !important; }
-html.gfx-pg-js .gfx-nav.gfx-top [class*="hamburger_line"], html.gfx-pg-js .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #1c1c1d !important; }
+html.gfx-pg-js .gfx-nav.gfx-top [class*="hamburger_line"], html.gfx-pg-js .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #1e1e1e !important; }
 html.gfx-pg-js.gfx-tone-dark .gfx-nav [class*="hamburger_inner"] { background-color: #fff !important; }
 html.gfx-pg-js .gfx-nav .nav_desktop > a.navigation-item.gfx-current { background-size: 100% 1px !important; }
 

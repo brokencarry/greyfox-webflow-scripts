@@ -113,7 +113,7 @@ html.gfx-m:not(.gfx-mk-still) .gfx-mk-ix.gfx-on .gfx-mk-ix-fill { opacity: 1; }
 html.gfx-f3 .gfx-mk-ix .gfx-mk-sn:not(#gfx-x) { color: var(--gfx-ink-d1) !important; transition: color .5s cubic-bezier(.16, 1, .3, 1); }
 html.gfx-f3 .gfx-mk-ix.gfx-on .gfx-mk-sn:not(#gfx-x) { color: var(--gfx-green-cta) !important; }
 .gfx-mk-gates { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-.gfx-mk-gate { position: absolute; top: calc(14vh - 34px); transform: translateX(-50%); font: 400 16px/1.3 var(--gfx-sans); color: color-mix(in srgb, var(--gfx-green-cta) calc(var(--g, 0) * 100%), rgba(244, 243, 240, .68)); white-space: nowrap; opacity: 0; transition: opacity .5s cubic-bezier(.16, 1, .3, 1), color .3s; }
+.gfx-mk-gate { position: absolute; top: calc(14vh - 34px); transform: translateX(-50%); font: 400 16px/1.3 var(--gfx-sans); color: color-mix(in srgb, var(--gfx-green-cta) calc(var(--g, 0) * 100%), rgba(255, 255, 255, .72)); white-space: nowrap; opacity: 0; transition: opacity .5s cubic-bezier(.16, 1, .3, 1), color .3s; }
 .gfx-mk-gate:nth-child(1) { left: calc(-4% + 106% * .6); } .gfx-mk-gate:nth-child(2) { left: calc(-4% + 106% * .71); } .gfx-mk-gate:nth-child(3) { left: calc(-4% + 106% * .82); }
 .gfx-mk-gates.gfx-on .gfx-mk-gate { opacity: 1; }
 html:not(.gfx-m):not(.gfx-mk-still) .gfx-mk-gates { display: none; }
@@ -144,8 +144,8 @@ html.gfx-f3 .gfx-team-hr { margin-top: 32px !important; margin-bottom: 16px !imp
 html.gfx-f3 .gfx-team-m { row-gap: 24px !important; }
 html.gfx-f3 .gfx-team-mail { white-space: nowrap; }
 html.gfx-f3 .gfx-grown .gfx-grown-h:not(#gfx-x):not(#gfx-y) { color: var(--gfx-ink-l1) !important; }
-html.gfx-f3 .gfx-grown .gfx-grown-p:not(#gfx-x):not(#gfx-y) { color: #55575d !important; }
-html.gfx-f3 .gfx-grown-rule:not(#gfx-x) { background: #dddcd7 !important; }
+html.gfx-f3 .gfx-grown .gfx-grown-p:not(#gfx-x):not(#gfx-y) { color: #585e6b !important; }
+html.gfx-f3 .gfx-grown-rule:not(#gfx-x) { background: #e7e8ea !important; }
 html:not(.gfx-m) .gfx-team-pic .reveal_block, html.gfx-failsafe .gfx-team-pic .reveal_block { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .gfx-team-pic .reveal_block { display: none !important; } }
 /* the statement: the paper's inks and its green; "its clients." takes the house underline, no head */
@@ -179,7 +179,7 @@ html.gfx-f3 .gfx-ins-cvsvg { background: #f6f5f2 !important; box-shadow: none !i
 html.gfx-f3 .gfx-ins-cvsvg [fill="#0e0e0e"] { fill: #f6f5f2; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#0e0e0e"] { stroke: #f6f5f2; }
 html.gfx-f3 .gfx-ins-cvsvg [fill="#ececea"] { fill: #111112; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#ececea"] { stroke: #111112; }
 html.gfx-f3 .gfx-ins-cvsvg [fill="#8a8a87"] { fill: #55575d; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#8a8a87"] { stroke: #55575d; }
-html.gfx-f3 .gfx-ins-cvsvg [stroke="#4b4b49"] { stroke: #a9a8a4; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#454543"] { stroke: #b3b2ae; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#252524"] { stroke: #dddcd7; }
+html.gfx-f3 .gfx-ins-cvsvg [stroke="#4b4b49"] { stroke: #a9a8a4; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#454543"] { stroke: #b3b2ae; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#252524"] { stroke: #e7e8ea; }
 html.gfx-f3 .gfx-ins-cvsvg [fill="#2f9a6c"] { fill: #156946; } html.gfx-f3 .gfx-ins-cvsvg [stroke="#2f9a6c"] { stroke: #156946; }
 html.gfx-f3 .gfx-ink-all .gfx-arw { color: currentColor; }
 
@@ -197,7 +197,7 @@ html.gfx-f3 .gfx-close-mark.gfx-cm-off { opacity: 0; }
 html.gfx-f3 .gfx-cta-sec .gfx-btn-arw { display: none !important; }
 html.gfx-f3 .gfx-cta-sec .gfx-cta-title .button { background: #f4f3f0 !important; border-radius: 2px !important; transition: background-color .2s ease, opacity .4s cubic-bezier(.16, 1, .3, 1) !important; }
 html.gfx-f3 .gfx-cta-sec .gfx-cta-title .button .button_overlap_frame { display: none !important; }
-html.gfx-f3 .gfx-cta-sec .gfx-cta-title .button :is(.button-text, .button-text *) { color: #1c1c1d !important; }
+html.gfx-f3 .gfx-cta-sec .gfx-cta-title .button :is(.button-text, .button-text *) { color: #1e1e1e !important; }
 @media (hover: hover) { html.gfx-f3 .gfx-cta-sec .gfx-cta-title .button:hover { background: #fff !important; } }
 html.gfx-f3 .gfx-cta-sec.gfx-cta-rest .gfx-cta-title .button { opacity: 0 !important; pointer-events: none; }
 html.gfx-f3 .gfx-cta-sec .gfx-cta-content > .divider.subtle:last-child { visibility: hidden; }
@@ -218,7 +218,7 @@ html.gfx-f3 .gfx-cta-sec .gfx-cta-content > .divider.subtle:last-child { visibil
 }
 @media (min-width: 992px) and (max-width: 1199px) and (min-height: 681px) and (max-height: 800px) {
   html.gfx-f3 .gfx-case-ch.gfx-case-ch { row-gap: 8px !important; }
-  html.gfx-f3 .gfx-case-ch .gfx-case-outcome { font-size: 17px !important; }
+  html.gfx-f3 .gfx-case-ch .gfx-case-outcome { font-size: 18px !important; }
 }
 /* the close and footer I share the last screen of a short desktop: the close starts under the bar's zone, gaps 16 px */
 @media (min-width: 992px) and (max-height: 820px) {
@@ -264,3 +264,47 @@ html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-ch { position: relative !
 html.gfx-mk-still .gfx-mk-gates { display: block; position: absolute; inset: 0; }
 html.gfx-mk-still .gfx-mk-gate { opacity: 1; }
 html.gfx-mk-still .gfx-mk-ix .gfx-mk-sn:not(#gfx-x) { color: var(--gfx-green-cta) !important; }
+
+/* >>> tokens 10/20 (generated section: audit/webflow-build/f3-tokens/tools/apply-layer.js) */
+/* ---------- TOKENS: the roles on Home's own elements (home 1.1.2, 10/20; local gf-flow2-base.css "THE TOKENS": .sbx-when and
+   .gl-grown-h = display, .i13-t2 = card title, .i13-t5 = item title) ---------- */
+@media (min-width: 992px) {
+  /* H3 · display */
+  html:not(#tk1):not(#tk2):not(#tk3) :is(.gfx-case-when, .gfx-grown-h) { font-family: Sentient, Georgia, serif !important; font-weight: 200 !important; font-size: var(--gf-h3-display) !important; line-height: 1.1 !important; letter-spacing: -.012em !important; }
+  /* H3 · card title */
+  html:not(#tk1):not(#tk2):not(#tk3) .gfx-ink-t2 { font-family: Sentient, Georgia, serif !important; font-weight: 300 !important; font-size: var(--gf-h3-card) !important; line-height: 1.2 !important; letter-spacing: -.008em !important; }
+  /* H3 · item title */
+  html:not(#tk1):not(#tk2):not(#tk3) .gfx-ink-t5 { font-family: Sentient, Georgia, serif !important; font-weight: 300 !important; font-size: var(--gf-h3-item) !important; line-height: 1.25 !important; letter-spacing: -.005em !important; }
+}
+/* the market's fourth caption: its box and paragraph are read as body ink by the core's native-ink pass; local .gl-cap p inherits the
+   caption's ink (as the three other captions) */
+html.gfx-f3 .gfx-mk :is(.gfx-mk-cap-d, .gfx-mk-capp):not(#gfx-x):not(#gfx-y) { color: var(--gf-on) !important; }
+/* ---------- TOKENS on the Webflow side (10/20, home): the page's native gfx- class styles and styles Embeds hold values the
+   local snap changed; they cannot be edited without the Designer, so the changed declarations are overridden here (only those
+   in effect on the page; generated by audit/webflow-build/f3-tokens/tools/gen-overrides.js, do not hand-edit) ---------- */
+html .gfx-ink-sum { font-size: 16px; }   /* was 15px (native gfx- class styles) */
+html .gfx-case-num { color: #3aa678; }   /* was #2f9a6c (native gfx- class styles) */
+html .gfx-case-num-lead { color: #3aa678; }   /* was #2f9a6c (native gfx- class styles) */
+html .gfx-mk { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles) */
+html .gfx-mk-h { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles) */
+html .gfx-mk-lede { color: rgba(255, 255, 255, .72); }   /* was rgba(244, 243, 240, 0.68) (native gfx- class styles) */
+html .gfx-mk-odo { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles) */
+html .gfx-mk-about { color: rgba(255, 255, 255, .72); }   /* was rgba(244, 243, 240, 0.68) (native gfx- class styles) */
+html .gfx-mk-unit { font-size: 16px; }   /* was 15px (native gfx- class styles) */
+html .gfx-mk-unit { color: rgba(255, 255, 255, .72); }   /* was rgba(244, 243, 240, 0.68) (native gfx- class styles) */
+html .gfx-mk-ub { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles) */
+html .gfx-mk-ix-fill { background-color: #3aa678; }   /* was #2f9a6c (native gfx- class styles) */
+html .gfx-mk-sn { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles) */
+html .gfx-mk-st { font-size: 18px; }   /* was 17px (native gfx- class styles) */
+html .gfx-mk-st { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles) */
+html .gfx-mk-cap { color: #ffffff; }   /* was rgba(244, 243, 240, 0.88) (native gfx- class styles) */
+html .gfx-mk-b { color: #3aa678; }   /* was #2f9a6c (native gfx- class styles) */
+html .gfx-mk-ill { color: #ffffff8a; }   /* was rgba(244, 243, 240, 0.52) (native gfx- class styles) */
+html .gfx-grown-h { color: #1e1e1e; }   /* was #1c1c1d (native gfx- class styles) */
+html .gfx-grown-p { color: #585e6b; }   /* was #55575d (native gfx- class styles) */
+html .gfx-door-e { font-size: 16px; }   /* was 15px (native gfx- class styles) */
+html .gfx-door-e { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles) */
+@media screen and (max-width: 767px) {
+  html .gfx-mk-cap { font-size: 16px; }   /* was 15px (native gfx- class styles) */
+}
+/* <<< tokens 10/20 */
