@@ -1,0 +1,8 @@
+/* Grey Fox · gfx Team (Flow 3) extras · team 1.0.0 · what the Webflow Team page needs beyond the ported local rules
+   (gfx-team.ported.css). Webflow's list element carries its own list styles; the band sets them back. */
+[data-o~="t2-band"] { list-style: none; padding-left: 0; }
+
+/* ---------- the name room and the people keep a full screen each (the core clears min-height on field rooms; as
+   Contact's hero). Local: 900 / 900 at 1440 x 900, 800 / 800 at 1280 x 800; a phone: as tall as their content ---------- */
+html.gfx-pg-js:not(#gfx-o) :is([data-o~="t2-name"], [data-o~="t3-tri"]) { min-height: 100vh !important; min-height: 100svh !important; }
+@media (max-width: 991px) { html.gfx-pg-js:not(#gfx-o) :is([data-o~="t2-name"], [data-o~="t3-tri"]) { min-height: 0 !important; } }

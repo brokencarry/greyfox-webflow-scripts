@@ -35,7 +35,7 @@ wr('owners/gfx-owners.dist.css', `/*! Grey Fox · gfx Owners ${ov} stylesheet (m
 // the inner pages (10/20): core + the shared inner-page layer (pages/gfx-pages.js) + the page's layer, one header script;
 // one stylesheet = pages/gfx-pages.css + the page's ported local rules (generated) + the page's extras
 const pages = rd('pages/gfx-pages.js'), pv = (/__gfxPages = '([\d.]+)'/.exec(pages) || [0, '?'])[1];
-const inner = [['contact', 'Contact v2', '__gfxContact'], ['privacy', 'Privacy v2', '__gfxPrivacy']].filter(([k]) => fs.existsSync(path.join(R, k, 'gfx-' + k + '.js')));
+const inner = [['contact', 'Contact v2', '__gfxContact'], ['privacy', 'Privacy v2', '__gfxPrivacy'], ['team', 'Team v2', '__gfxTeam']].filter(([k]) => fs.existsSync(path.join(R, k, 'gfx-' + k + '.js')));
 const iv = {};
 inner.forEach(([k, name, flag]) => {
   const src = rd(k + '/gfx-' + k + '.js'), v = (new RegExp(flag + " = '([\\d.]+)'").exec(src) || [0, '?'])[1]; iv[k] = v;
@@ -45,6 +45,18 @@ inner.forEach(([k, name, flag]) => {
   wr(k + '/gfx-' + k + '.dist.css', `/*! Grey Fox · gfx ${name} ${v} stylesheet (minified pages/gfx-pages.css ${pv} + ${k}/gfx-${k}.ported.css + ${k}/gfx-${k}.css) */\n` +
     minCss(rd('pages/gfx-pages.css') + '\n' + rd(k + '/gfx-' + k + '.ported.css') + '\n' + rd(k + '/gfx-' + k + '.css')));
 });
+// the person pages (10/20): core + the person layer (no inner-page layer: no hero/rooms/close of the inner pages), one header
+// script shared by the three person pages; one stylesheet = the ported local rules + the extras
+const personSrc = fs.existsSync(path.join(R, 'person/gfx-person.js')) ? rd('person/gfx-person.js') : null;
+if (personSrc) {
+  const v = (/__gfxPerson = '([\d.]+)'/.exec(personSrc) || [0, '?'])[1]; iv.person = v;
+  wr('person/gfx-person.bundle.js', `/* Grey Fox · person pages v2 (Flow 3) page script: core ${cv} + person ${v}. Sources: core/gfx-core.js, person/gfx-person.js */\n` + core + '\n' + personSrc);
+  cp.execFileSync(process.execPath, [path.join(__dirname, 'minify.js'), path.join(R, 'person/gfx-person.bundle.js'), path.join(R, 'person/gfx-person.dist.js'),
+    `/*! Grey Fox · person pages v2 (Flow 3) · core ${cv} + person ${v} · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */`], { stdio: 'inherit' });
+  wr('person/gfx-person.dist.css', `/*! Grey Fox · gfx person pages ${v} stylesheet (minified person/gfx-person.ported.css + person/gfx-person.css) */\n` +
+    minCss(rd('person/gfx-person.ported.css') + '\n' + rd('person/gfx-person.css')));
+  inner.push(['person']);
+}
 const man = {};
 ['home/gfx-home.dist.js', 'core/gfx-core.dist.css', 'home/gfx-home.dist.css', 'portal/desktop-portal.js', 'portal/desktop-portal.css', 'owners/gfx-owners.dist.js', 'owners/gfx-owners.dist.css']
   .concat(...inner.map(([k]) => [k + '/gfx-' + k + '.dist.js', k + '/gfx-' + k + '.dist.css'])).forEach(f => {

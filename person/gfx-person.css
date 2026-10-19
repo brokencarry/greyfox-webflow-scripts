@@ -1,0 +1,10 @@
+/* Grey Fox · gfx Person (Flow 3) extras · person 1.0.0 · what the Webflow person pages need beyond the ported local rules
+   (gfx-person.ported.css). The pages are black from the top: the core's bar keeps its call to action and its plain light
+   links at the top (the core's top look is Home's, over a film), as the local page shows them. */
+html.gfx-tp-js .gfx-nav.gfx-top .button_wrapper.show { display: block !important; }
+html.gfx-tp-js .gfx-nav.gfx-top .nav_desktop > a.navigation-item { text-shadow: none !important; }
+html.gfx-tp-js .gfx-nav .nav_desktop > a.navigation-item.gfx-current { background-size: 100% 1px !important; }
+/* the page's main is a box only for the order (display: contents, as local) */
+html.gfx-tp-js [data-o~="ow-main"] { display: contents; }
+/* Webflow's list defaults */
+[data-o~="tp-list"] { list-style: none; padding-left: 0; }

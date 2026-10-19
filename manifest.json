@@ -43,12 +43,30 @@
   "bytes": 22692,
   "sri": "sha384-j6nQf8bPgl548k11sNITZ6aUSOPblcYhh+ezc/e492Zx/WEb3O43KpAeF1fIc05f"
  },
+ "team/gfx-team.dist.js": {
+  "bytes": 83693,
+  "sri": "sha384-3Ax3TTIwQmfOUqg/7RtWWj0widg5VlCTKynnA2Y7I6l2u/pOc9+cUrqFWAZJQpdK"
+ },
+ "team/gfx-team.dist.css": {
+  "bytes": 32734,
+  "sri": "sha384-KX53Jc8pr6yJvG5t6WFxiMrAtdJ05mmtglIZwlpGXL+XRUZ6hjkQ9TneGM6DDU+J"
+ },
+ "person/gfx-person.dist.js": {
+  "bytes": 66528,
+  "sri": "sha384-g7u/cVMldajYEJFOHv4+wj6ff0DrQ0JIrUxImZpNWvyQ1b7QsvyOH+KW2mj9hlzo"
+ },
+ "person/gfx-person.dist.css": {
+  "bytes": 16451,
+  "sri": "sha384-cM6QM/uC0+zS6CJPgv/gbdK53ciK3QAyQYqmbnFZpuRIIm32ktS31du39L4y0NxX"
+ },
  "_versions": {
   "core": "1.0.1",
   "home": "1.1.0",
   "owners": "1.0.0",
   "pages": "1.0.0",
   "contact": "1.0.2",
-  "privacy": "1.0.1"
+  "privacy": "1.0.1",
+  "team": "1.0.0",
+  "person": "1.0.0"
  }
 }
