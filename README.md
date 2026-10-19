@@ -7,6 +7,6 @@ No secrets and no data: only front-end code that is already public on the site.
 ## Flow 3 layout (10/20)
 
 - `core/` is the shared layer every Flow 3 page loads: `gfx-core.css` (tokens, field inks, bar, footer I) and `gfx-core.js` (field engine, bar, room reveals, footer I, Lenis and Webflow plumbing). It exposes `window.gfx`.
-- `home/` is the Home layer. `tools/build.js` bundles core + home into `home/gfx-home.bundle.min.js` and minifies both stylesheets. `manifest.json` lists the SRI hash of each served file.
+- `home/` is the Home layer. `tools/build.js` bundles core + home into `home/gfx-home.dist.js` and minifies both stylesheets into `*.dist.css` (no `.min.` names: jsDelivr re-minifies those and breaks SRI). `manifest.json` lists the SRI hash of each served file.
 - `portal/` is the demo portal shown in the market room. It loads in an iframe through `srcdoc`, because jsDelivr serves `.html` as plain text.
-- Pages pin files by commit SHA: `https://cdn.jsdelivr.net/gh/brokencarry/greyfox-webflow-scripts@<sha>/home/gfx-home.bundle.min.js`.
+- Pages pin files by commit SHA: `https://cdn.jsdelivr.net/gh/brokencarry/greyfox-webflow-scripts@<sha>/home/gfx-home.dist.js`.

@@ -1,13 +1,13 @@
 {
- "home/gfx-home.bundle.min.js": {
+ "home/gfx-home.dist.js": {
   "bytes": 99203,
   "sri": "sha384-zXP5p7DLGp7kDSHDiIfnvl2gEGVohsUa/LUJDkFrD9O4Om77WKfQbUX2h0xgjbGi"
  },
- "core/gfx-core.min.css": {
+ "core/gfx-core.dist.css": {
   "bytes": 20609,
   "sri": "sha384-rsVx9MEJVzzGX3fMe4FkRike5wlq/sqUJRKUFesCd+BTezf/BMITf2PbrOQhLfQ9"
  },
- "home/gfx-home.min.css": {
+ "home/gfx-home.dist.css": {
   "bytes": 20849,
   "sri": "sha384-0rIqprJW9IhcDtstc/18vjWClgu9nzdAVuHYaueO7+eZ11buOz/nTZjLjlTachZ5"
  },
