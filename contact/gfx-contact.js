@@ -1,6 +1,6 @@
 /*!
  * Grey Fox · gfx Contact (Flow 3), the Contact layer on the shared core + the inner-page layer (pages/gfx-pages.js).
- * contact 1.0.0 · 2026-10-20 · Webflow page "Contact v2 (Claude build)" (/contact-v2).
+ * contact 1.0.1 · 2026-10-20 · Webflow page "Contact v2 (Claude build)" (/contact-v2).
  *
  * WHAT IT IS
  *   What the approved local Contact (prototype/contact/final.html: r4.js + final.js) adds to the inner pages:
@@ -18,7 +18,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.0';
+  W.__gfxContact = '1.0.1';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -107,13 +107,14 @@
   const navBottom = () => { const n = $('.navigation_wrapper'); if (!n) return 74; const b = Math.max(n.getBoundingClientRect().bottom, n.offsetHeight); return b > 0 && b < W.innerHeight / 2 ? b : 74; };
   const scrollTo = (target, offset) => { const y = target.getBoundingClientRect().top + W.scrollY + offset; gfx.scrollToY(y, 1.2); };
   function formWire() {
-    const box = $(O('r4-form')), form = box && $('form', box); if (!form) return;
+    // (Webflow's Form Block wrapper and its success/error states carry no data-o: they are found by class)
+    const box = $(O('r4-form')) || $('.gfx-pg-r4a-form') || $('.w-form'), form = box && $('form', box); if (!form) return;
     const room = box.closest(O('ow-room'));
     let copy = COPY; try { const c = JSON.parse(form.getAttribute('data-r4-copy') || 'null'); if (c && c.subject) copy = c; } catch (e) { /* the house's words */ }
     const SUBJECT = copy.subject || {}, FAIL = { lead: (copy.fail || [''])[0], end: (copy.fail || ['', ''])[1], to: copy.failTo || {} };
     form.noValidate = true;
     const radios = $$(O('r4-radio'), room);
-    const sayEl = $('[data-r4-say]', box) || $(O('ow-sr') + '[aria-live]', box), fieldsBox = $(O('r4-fields'), form), done = $(O('r4-done'), box), fail = $(O('r4-fail'), box);
+    const sayEl = $('[data-r4-say]', box) || $(O('ow-sr') + '[aria-live]', box), fieldsBox = $(O('r4-fields'), form), done = $(O('r4-done'), box) || $('.w-form-done', box), fail = $(O('r4-fail'), box) || $('.w-form-fail', box);
     const audience = form.elements.audience, subject = form.elements._subject, gotcha = form.elements._gotcha;
     const inputs = () => $$(O('r4-in'), form);
     // (the reader's own words never reach a session capture)

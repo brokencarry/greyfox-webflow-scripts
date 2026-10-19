@@ -1,4 +1,4 @@
-/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.0 + pages 1.0.0 + contact 1.0.0 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
+/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.0 + pages 1.0.0 + contact 1.0.1 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1155,7 +1155,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxContact)return;
-W.__gfxContact='1.0.0';
+W.__gfxContact='1.0.1';
 const P=gfx.pages,O=P.O,mk=P.mk,H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const GROUP=G.group;
 const el=(tag,cls,text)=>{const n=D.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
@@ -1234,13 +1234,13 @@ const okReach=v=>EMAIL.test(v)||(/^[\d\s()+.\-]+$/.test(v)&&v.replace(/\D/g,'').
 const navBottom=()=>{const n=$('.navigation_wrapper');if(!n)return 74;const b=Math.max(n.getBoundingClientRect().bottom,n.offsetHeight);return b>0&&b<W.innerHeight / 2?b:74;};
 const scrollTo=(target,offset)=>{const y=target.getBoundingClientRect().top+W.scrollY+offset;gfx.scrollToY(y,1.2);};
 function formWire(){
-const box=$(O('r4-form')),form=box&&$('form',box);if(!form)return;
+const box=$(O('r4-form'))||$('.gfx-pg-r4a-form')||$('.w-form'),form=box&&$('form',box);if(!form)return;
 const room=box.closest(O('ow-room'));
 let copy=COPY;try{const c=JSON.parse(form.getAttribute('data-r4-copy')||'null');if(c&&c.subject)copy=c;}catch(e){}
 const SUBJECT=copy.subject||{},FAIL={lead:(copy.fail||[''])[0],end:(copy.fail||['',''])[1],to:copy.failTo||{}};
 form.noValidate=true;
 const radios=$$(O('r4-radio'),room);
-const sayEl=$('[data-r4-say]',box)||$(O('ow-sr')+'[aria-live]',box),fieldsBox=$(O('r4-fields'),form),done=$(O('r4-done'),box),fail=$(O('r4-fail'),box);
+const sayEl=$('[data-r4-say]',box)||$(O('ow-sr')+'[aria-live]',box),fieldsBox=$(O('r4-fields'),form),done=$(O('r4-done'),box)||$('.w-form-done',box),fail=$(O('r4-fail'),box)||$('.w-form-fail',box);
 const audience=form.elements.audience,subject=form.elements._subject,gotcha=form.elements._gotcha;
 const inputs=()=>$$(O('r4-in'),form);
 $$('input, textarea',box).concat(radios).forEach(i=>i.classList.add('fs-exclude'));

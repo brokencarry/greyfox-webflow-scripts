@@ -1,6 +1,22 @@
 /* Grey Fox · gfx Contact (Flow 3) extras · contact 1.0.0 · what Webflow's page needs beyond the ported local rules
-   (gfx-contact.ported.css): the tug photograph as two native images (the local page's <picture> sources by width). */
+   (gfx-contact.ported.css). The Form Block's wrapper, success and error states take no custom attributes, so they are
+   read by their gfx- classes: .gfx-pg-r4a-form (local .r4-form), .gfx-pg-r4-done (.r4-done), .gfx-pg-r4-fail (.r4-fail). */
+
+/* ---------- the tug photograph as two native images (the local page's <picture> sources by width) ---------- */
 @media (max-width: 991px) { [data-o~="gfx-pg-desk"] { display: none !important; } }
 @media (min-width: 992px) { [data-o~="gfx-pg-phone"] { display: none !important; } }
+
+/* ---------- Webflow's form defaults (webflow.css) set back to the house's ---------- */
+.gfx-pg-r4a-form.w-form { margin-bottom: 0; }
+/* (the fields' own rules, [data-o~=r4-in], follow webflow.css's .w-input at the same weight and win; what they leave:) */
+.gfx-pg-r4a-form .w-input[disabled] { background-color: transparent; cursor: default; }
+.gfx-pg-r4a-form .w-form-done, .gfx-pg-r4a-form .w-form-fail { padding: 0; text-align: left; background-color: transparent; }
+.gfx-pg-r4a-form input[type="submit"] { -webkit-appearance: none; appearance: none; line-height: 1; }
 /* the native submit is an <input>: its words centred in the house button */
 [data-o~="r4-go"] { justify-content: center; text-align: center; }
+/* the form waits for the reader's choice (the script opens it; without the script it shows) */
+html.gfx-pg-js .gfx-pg-r4a-form:not(.gfx-pg-open) { display: none !important; }
+/* a field shows its focus as the drawn line beneath it (final.css), not the core's focus box */
+html.gfx-f3 [data-o~="r4-in"]:focus-visible, html.gfx-f3 [data-o~="r4-in"]:focus { outline: none !important; box-shadow: none !important; }
+.gfx-pg-r4-fail p { margin: 0; }
+.gfx-pg-r4-fail a { color: inherit; text-decoration: underline; text-underline-offset: 4px; }
