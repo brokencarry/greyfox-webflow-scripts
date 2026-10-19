@@ -1,0 +1,27 @@
+/* Grey Fox · gfx Investors (Flow 3) stylesheet, the extras · investors 1.0.0 · Webflow page "Investors v2" (6aceedf3e2088a6fa50541d9).
+   Read after investors/gfx-investors.ported.css (the local Flow 3 stylesheets, generated): what the Webflow DOM needs that the
+   local page never did. Every element carries data-o="<the local classes>". */
+
+/* the rooms' own caps stand aside (the core's bar has its own backing) */
+[data-o~=gf-cap] { display: none !important; }
+/* an Embed wrapper is not a box: its markup is a direct child of its parent (the films' window; the hero's arrow) */
+.gfx-emb { display: contents; }
+.gfx-emb.w-embed::before, .gfx-emb.w-embed::after { content: none; }
+
+/* ---------- THE BAR on the paper from the top (as Owners v2): ink links and the button at once; "Investors" underlined ---------- */
+html:not(#gfx-o) .gfx-nav.gfx-top .nav_desktop > a.navigation-item { color: #1e1e1e !important; text-shadow: none !important; }
+html:not(#gfx-o) .gfx-nav.gfx-top .button_wrapper.show { display: block !important; }
+html:not(#gfx-o) .gfx-nav.gfx-top [class*="hamburger_line"] { background-color: #1e1e1e !important; }
+html:not(#gfx-o).gfx-tone-dark .gfx-nav [class*="hamburger_line"] { background-color: #fff !important; }
+html:not(#gfx-o) .gfx-nav .nav_desktop > a.navigation-item.gfx-current { background-size: 100% 1px !important; }
+
+
+/* the hero is a full screen on a desktop (owners.css .ow-hero): the core's field resets a room's min-height (.gfx-fr) */
+@media (min-width: 992px) { html.gfx-f3 [data-o~=ow-hero].gfx-fr:not(#gfx-o) { min-height: 100vh !important; min-height: 100svh !important; } }
+
+/* ---------- STAGE 2 · Mission Control's window: the films sit in an Embed (display: contents), each video as local ---------- */
+[data-o~=iv2-mwin-in] > video { display: block; }
+
+
+/* reduced motion / no script: nothing waits for a reveal */
+html.gfx-failsafe [data-o~=iv2-num], html.gfx-failsafe [data-o~=iv2-k], html.gfx-failsafe [data-o~=iv2-mfoot] { opacity: 1 !important; transform: none !important; }
