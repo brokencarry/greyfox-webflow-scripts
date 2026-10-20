@@ -91,5 +91,5 @@
    order, just under each line's letters. */
 /* phones (no hover; the link keeps its block tap target) are unchanged */
 @media (min-width: 768px) {
-  :is([data-o~="gi-tlink"], [data-o~="gi-row-t"]) { display: inline; -webkit-box-decoration-break: slice; box-decoration-break: slice; background-position: 0 calc(100% - .3em); }
+  :is([data-o~="gi-tlink"], [data-o~="gi-row-t"]) { display: inline; -webkit-box-decoration-break: clone; box-decoration-break: clone; background-position: 0 calc(100% - .3em); }
 }
