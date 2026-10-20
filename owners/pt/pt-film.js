@@ -126,14 +126,18 @@ const c=[(x0+x1) / 2-Z.cx*vw,(y0+y1) / 2-Z.cy*vh,vw,vh];
 const vb=c.map(f1).join(' ');map.querySelectorAll('svg').forEach(v=>v.setAttribute('viewBox',vb));
 const k=vw / bw;scal.forEach(o=>o.el.setAttribute('transform',`translate(${o.x} ${o.y}) scale(${k.toFixed(4)})`));
 const box=lbls.map(el=>({el,half:(el.firstChild.getComputedTextLength()||0) / 2,sx:(+el.dataset.x-c[0]) / k,sy:(+el.dataset.y-c[1]) / k}));
-const hits=(a,b)=>Math.abs(a.sx-b.sx)<a.half+b.half+10&&Math.abs(a.sy-b.sy)<21;
 box.forEach(a=>{
 if(!a.half)return;
-const lo=bw*.06+6+a.half,hi=bw*.94-6-a.half;
-if(lo>hi||(a.sx>=lo&&a.sx<=hi))return;
-a.sx=Math.min(hi,Math.max(lo,a.sx));
-for(let n=0;n<3&&box.some(b=>b!==a&&b.half&&hits(a,b));n++)a.sy+=20;
-a.el.setAttribute('transform',`translate(${f1(c[0]+a.sx*k)} ${f1(c[1]+a.sy*k)}) scale(${k.toFixed(4)})`);
+const x0=a.sx,lo=bw*.06+6+a.half,hi=bw*.94-6-a.half;
+if(lo>hi||(x0>=lo&&x0<=hi))return;
+let x=Math.min(hi,Math.max(lo,x0));
+box.forEach(b=>{
+if(b===a||!b.half||Math.abs(a.sy-b.sy)>=21)return;
+const gap=a.half+b.half+10;
+if(x0>b.sx&&x<b.sx+gap)x=Math.min(x0,b.sx+gap);
+if(x0<b.sx&&x>b.sx-gap)x=Math.max(x0,b.sx-gap);
+});
+if(x!==x0)a.el.setAttribute('transform',`translate(${f1(c[0]+x*k)} ${a.el.dataset.y}) scale(${k.toFixed(4)})`);
 });
 };
 let mk=0;
