@@ -286,7 +286,7 @@ html body :is(.gfx-cta-sec .footer-logo-subtle, [data-o~="ow-close-fox"], [data-
 html.gfx-tone-light .gfx-nav [class*="hamburger_inner"] { background-color: #1e1e1e !important; }
 html.gfx-tone-dark .gfx-nav [class*="hamburger_inner"] { background-color: #ffffff !important; }
 html.gfx-tone-light:has(.gfx-hero-sec) .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #ffffff !important; }
-html body .w-nav-button.w--open [class*="hamburger_inner"] { background-color: #f6f5f2 !important; }
+html body .w-nav-button.w--open [class*="hamburger_inner"]:not(#gfx-mo) { background-color: #f6f5f2 !important; }   /* (1.0.9b: the id outranks the inner pages' gfx-top rule) */
 html body .w-nav:has(.w-nav-button.w--open) .w-nav-brand { position: relative; z-index: 3; }
 
 /* (core 1.0.8) footer I's lockup is a link home */
