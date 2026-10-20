@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.0';
+  W.__gfxInvestors = '1.0.1';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -454,11 +454,50 @@
       S2.bs.forEach((b, i) => { b.style.setProperty('--on', i === k ? '1' : '0'); const bar = $('b', b); if (bar) bar.style.transform = i === k ? 'scaleX(1)' : 'scaleX(0)'; });
       S2.play.dataset.state = 'play'; lab('Play', 'Play: ' + S2.bbs[k].querySelector(O('iv2-mw')).textContent);
     };
-    S2.vids.forEach(v => { v.poster = posterOf(v, 'last'); v.addEventListener('ended', () => { v.poster = posterOf(v, 'last'); S2.play.dataset.state = 'play'; S2.play.querySelector('span').textContent = 'Play'; }); });
+    const phone = mq('(max-width: 767px)');   // (1.0.1) a phone shows the stills (mcPhone), so the films' posters are not fetched
+    S2.vids.forEach(v => { if (!phone) v.poster = posterOf(v, 'last'); v.addEventListener('ended', () => { v.poster = posterOf(v, 'last'); S2.play.dataset.state = 'play'; S2.play.querySelector('span').textContent = 'Play'; }); });
     S2.play.hidden = false; S2.play.addEventListener('click', toggle);
     S2.bbs.forEach((b, i) => b.addEventListener('click', () => pick(i)));
     pick(0);
   };
+  /* (1.0.1, 10/20) MISSION CONTROL ON A PHONE: a still of the whole working area per tab (the founder's pick), not the film.
+     The film is a 2240px desktop screen; below 768px each tab shows a sharp still of the same screen (no left menu, 16:9),
+     the films are never fetched, and a tap opens the screen full size to slide across and read. Stills: investors/mc/. */
+  const MC_ALT = [
+    'Mission Control: the profile of Ambercote Elevator Co., an illustrative company, with this week’s calls and their notes.',
+    'Mission Control: the research on Ambercote Elevator Co., an illustrative company: founded 1988, Overland Park, Kansas, one branch, 60 to 75 employees.',
+    'Mission Control: the firm dashboard, with illustrative figures: 398 engaged, 137 qualified, 101 at handoff and 8 beyond handoff, and the effort across 14 sectors.'];
+  const MC_KEY = ['refined', 'efficient', 'transparent'];
+  function mcPhone() {
+    if (!S2.winIn || !S2.vids || S2.vids.length !== 3 || $('.gfx-mc-still', S2.winIn)) return;
+    const src = (i, k) => gfx.BASE + 'investors/mc/mc-' + MC_KEY[i] + '-' + k + '.webp';
+    let lb = null, opener = null;
+    const close = () => {
+      if (!lb) return; lb.hidden = true; H.classList.remove('gfx-mc-open');
+      if (gfx.lenis && gfx.lenis.start) gfx.lenis.start();
+      if (opener) opener.focus({ preventScroll: true });
+    };
+    const open = (i, btn) => {
+      if (!lb) {
+        lb = D.createElement('div'); lb.className = 'gfx-mc-lb'; lb.hidden = true;
+        lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Mission Control, full size');
+        lb.innerHTML = '<div class="gfx-mc-lb-sc"><img alt="" decoding="async"></div><button type="button" class="gfx-mc-lb-x" aria-label="Close">×</button><p class="gfx-mc-lb-cap">Slide sideways to read across</p>';
+        D.body.appendChild(lb);
+        $('.gfx-mc-lb-x', lb).addEventListener('click', close);
+        lb.addEventListener('click', e => { if (e.target === lb) close(); });
+        D.addEventListener('keydown', e => { if (e.key === 'Escape' && lb && !lb.hidden) close(); });
+      }
+      opener = btn; const img = $('img', lb); img.src = src(i, 'full'); img.alt = MC_ALT[i];
+      lb.hidden = false; $('.gfx-mc-lb-sc', lb).scrollLeft = 0; H.classList.add('gfx-mc-open');
+      if (gfx.lenis && gfx.lenis.stop) gfx.lenis.stop();
+      $('.gfx-mc-lb-x', lb).focus({ preventScroll: true });
+    };
+    S2.vids.forEach((v, i) => {
+      const name = S2.bbs[i] ? (S2.bbs[i].querySelector(O('iv2-mw')) || S2.bbs[i]).textContent.trim() : MC_KEY[i];
+      v.insertAdjacentHTML('afterend', `<button type="button" class="gfx-mc-still" aria-label="${esc('Open Mission Control full size: ' + name)}"><img src="${esc(src(i, 'phone'))}" alt="${esc(MC_ALT[i])}" width="1170" height="658" loading="lazy" decoding="async"></button>`);
+      v.nextElementSibling.addEventListener('click', e => open(i, e.currentTarget));
+    });
+  }
   function stagesLive() {
     if (S1.track) {
       ST.create({ trigger: S1.track, start: 'top bottom', end: 'top top', onUpdate: s => { E1 = s.progress; s1Render(); }, onRefresh: s => { E1 = s.progress; s1Render(); } });
@@ -511,6 +550,7 @@
     H.classList.add('ow-hero-on', 'ow-ready', 'gfx-ready');
     safe('stage 1 still', () => { s1Layout(); s1Still(); W.addEventListener('resize', () => { s1Layout(); s1Still(); }); });
     safe('stage 2 still', s2Static);
+    safe('mc phone', mcPhone);
     safe('pipe', pipe);
     safe('pairs', pairs);
     if (R.close) R.close.classList.add('gfc-in');
@@ -540,7 +580,7 @@
       safe('stage 1 layout', s1Layout);
       safe('pipe', pipe);
       if (live) safe('stages', stagesLive);
-      else { safe('stage 1 still', () => { s1Still(); W.addEventListener('resize', () => { s1Layout(); s1Still(); }); }); safe('stage 2 still', s2Static); }
+      else { safe('stage 1 still', () => { s1Still(); W.addEventListener('resize', () => { s1Layout(); s1Still(); }); }); safe('stage 2 still', s2Static); safe('mc phone', mcPhone); }
       H.classList.add('ow-ready');
       if (W.ivHeroGo) requestAnimationFrame(() => requestAnimationFrame(W.ivHeroGo));
       refresh();

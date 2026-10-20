@@ -25,3 +25,24 @@ html:not(#gfx-o) .gfx-nav .nav_desktop > a.navigation-item.gfx-current { backgro
 
 /* reduced motion / no script: nothing waits for a reveal */
 html.gfx-failsafe [data-o~=iv2-num], html.gfx-failsafe [data-o~=iv2-k], html.gfx-failsafe [data-o~=iv2-mfoot] { opacity: 1 !important; transform: none !important; }
+
+/* (1.0.1, 10/20) MISSION CONTROL ON A PHONE: a still of the whole working area per tab, never the film. The stills sit
+   where the films sit and follow the tabs the same way (the tab's film carries is-on, its still is the next sibling).
+   A tap opens the screen full size; slide sideways to read. Tablet and desktop keep the films. */
+.gfx-mc-still { display: none; }
+@media (max-width: 767px) {
+  html body [data-o~="iv2-mwin-in"] > video { display: none !important; }
+  html body [data-o~="iv2-mplay"] { display: none !important; }
+  html body [data-o~="iv2-mwin-in"] > .gfx-mc-still { display: block; position: absolute; inset: 0; margin: 0; padding: 0; border: 0; background: #1e1e1e; cursor: zoom-in; opacity: 0; transition: opacity .9s cubic-bezier(.19, 1, .22, 1); -webkit-tap-highlight-color: transparent; }
+  html body [data-o~="iv2-mwin-in"] > video.is-on + .gfx-mc-still { opacity: 1; z-index: 1; }
+  html body [data-o~="iv2-mwin-in"] > .gfx-mc-still img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 0 0; }
+  html body [data-o~="iv2-mwin-in"] > .gfx-mc-still:focus-visible { outline: 2px solid #2f9e6e; outline-offset: -2px; }
+}
+html.gfx-mc-open, html.gfx-mc-open body { overflow: hidden !important; }
+.gfx-mc-lb { position: fixed; inset: 0; z-index: 2147483000; background: #0b0b0c; }
+.gfx-mc-lb[hidden] { display: none; }
+.gfx-mc-lb-sc { position: absolute; inset: 0; display: flex; align-items: center; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.gfx-mc-lb-sc img { display: block; flex: 0 0 auto; height: min(560px, 72vh); width: auto; max-width: none; }
+.gfx-mc-lb-x { position: absolute; top: max(14px, env(safe-area-inset-top)); right: 14px; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 22px; background: rgba(40, 40, 40, .9); color: #fff; font: 400 24px/44px "DM Sans", sans-serif; text-align: center; cursor: pointer; }
+.gfx-mc-lb-x:focus-visible { outline: 2px solid #2f9e6e; outline-offset: 2px; }
+.gfx-mc-lb-cap { position: absolute; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); margin: 0; text-align: center; color: rgba(255, 255, 255, .7); font: 400 14px/1.4 "DM Sans", sans-serif; pointer-events: none; }
