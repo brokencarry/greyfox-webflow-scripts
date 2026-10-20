@@ -198,7 +198,9 @@ window.GF_PFIELD = {"pts":[[798.2,181.6],[708,303.5],[654.4,279.3],[818.4,294.3]
     };
 
     // the clock: plays once in view, pauses out of view, holds on the last frame
-    const T = [0, 2200, 4000, 5800, 7600, 9400, 11100, 12700], END = 15200, P0 = T[1], P1 = T[6];
+    // (pt 1.0.1, founder-approved 10/20) the tighter pace: payoff at about 9s, done at about 11.5s; each year 1.3s still holds
+    // the 1.2s territory spread and the 0.9s count
+    const T = [0, 1600, 2900, 4200, 5500, 6800, 8100, 9200], END = 11600, P0 = T[1], P1 = T[6];
     let t = 0, playing = false, last = 0, done = false;
     const paint = () => { const s = T.filter(x => t >= x).length - 1; setStep(s, false); tlFill.style.strokeDashoffset = 1 - clamp((t - P0) / (P1 - P0), 0, 1); };
     const loop = now => { if (!playing) return; t += Math.min(250, now - last); last = now; paint(); if (t >= END) { playing = false; done = true; sec.classList.add('is-done'); return; } requestAnimationFrame(loop); };

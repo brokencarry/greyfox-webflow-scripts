@@ -160,7 +160,7 @@ if(back)num.textContent='$'+EARN[Math.min(s,6)].toFixed(1)+'M';else if(s>=2&&s<=
 tlDots.forEach(c=>c.classList.toggle('is-in',s-1>=+c.dataset.i));
 sec.classList.toggle('is-later',s>=7);
 };
-const T=[0,2200,4000,5800,7600,9400,11100,12700],END=15200,P0=T[1],P1=T[6];
+const T=[0,1600,2900,4200,5500,6800,8100,9200],END=11600,P0=T[1],P1=T[6];
 let t=0,playing=false,last=0,done=false;
 const paint=()=>{const s=T.filter(x=>t>=x).length-1;setStep(s,false);tlFill.style.strokeDashoffset=1-clamp((t-P0) / (P1-P0),0,1);};
 const loop=now=>{if(!playing)return;t+=Math.min(250,now-last);last=now;paint();if(t>=END){playing=false;done=true;sec.classList.add('is-done');return;}requestAnimationFrame(loop);};
