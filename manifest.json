@@ -33,11 +33,11 @@
  },
  "contact/gfx-contact.dist.js": {
   "bytes": 89450,
-  "sri": "sha384-10vxEyOi1Xm/TYWa+24bg9OqWUqv6F7JH1K74bAit01OmweXnT3DTPcwlWeB0jsj"
+  "sri": "sha384-FAqXasxF9TnaXHdqoebDXAbWNrOR7Vawd7gkCd4JE9QoH1dsAO0eUOUW3H05QEef"
  },
  "contact/gfx-contact.dist.css": {
-  "bytes": 43471,
-  "sri": "sha384-JWd7iz4Y0pY4iI+Y3shFdb1oNtxdxjzg198Hb0BodhqanhKQNkDdOn28mqc09yIs"
+  "bytes": 43581,
+  "sri": "sha384-1WxxIDbXKf5Y+sCe3SG3MoEx4uzxF6O0Efn7O5kSq4QsM+QH/z1aVnTe8mX4jvdh"
  },
  "privacy/gfx-privacy.dist.js": {
   "bytes": 81107,
@@ -84,7 +84,7 @@
   "home": "1.1.6",
   "owners": "1.2.0",
   "pages": "1.0.1",
-  "contact": "1.0.6",
+  "contact": "1.0.7",
   "privacy": "1.0.2",
   "team": "1.0.2",
   "insights": "1.0.0",
