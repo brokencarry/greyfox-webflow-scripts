@@ -385,3 +385,10 @@ html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc
 @media (min-width: 768px) {
   html body:not(#gfx-ts1):not(#gfx-ts2) :is([data-o~="ow-lead"], .ow-lead, [data-o~="gi-dek"], .gfx-lead, [data-gf-role="intro"]) { font-size: var(--_desktop---intro, 19px) !important; line-height: 30px !important; }
 }
+/* (core 1.0.12, final audit) at the top of a page the bar is see-through and its box (120px on a phone) overlapped the
+   first link below it (the person pages' "Team"): its empty area lets a tap through; the logo, the links, the menu
+   button and the open menu stay tappable */
+@media (max-width: 991px) {
+  html.gfx-bar-top .navbar { pointer-events: none; }
+  html.gfx-bar-top .navbar :is(a, button, [role="button"], .w-nav-button, .w-nav-menu, .w-nav-overlay, [class*="menu"]) { pointer-events: auto; }
+}
