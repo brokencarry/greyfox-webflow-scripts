@@ -358,7 +358,7 @@ html.gfx-f3 a.gfx-fi-lockup:focus-visible { outline: 1px solid #3aa678; outline-
   html body:not(#gfx-ts1):not(#gfx-ts2) :is(.heading-2.gfx-open, .gfx-mk-h, [data-o~="ow-h2"], .ow-h2, [data-o~="iv2-h"], .iv2-h, [data-o~="gi-h2"], .gi-h2, .gfx-case-when, [data-gf-role="section-headline"], .gfx-hero-h, [data-o~="ow-h1"], .ow-h1, [data-gf-role="page-headline"]) :is(.gfx-line, .gfx-line-mask, .ow-line, .gfx-mk-hlt, .gfx-iv3-t, .iv2-cw) {
     font-size: inherit !important; line-height: inherit !important; }
   /* intro paragraph */
-  html body:not(#gfx-ts1):not(#gfx-ts2) :is(.gfx-lead, .gfx-case-outcome, .gfx-ink-lede, [data-o~="ow-lead"], .ow-lead, [data-gf-role="intro"]) {
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is(.gfx-lead, .gfx-case-outcome, .gfx-ink-lede, [data-o~="ow-lead"], .ow-lead, [data-o~="gi-dek"], [data-gf-role="intro"]) {
     font-size: var(--_phone---intro, 18px) !important; line-height: 1.6 !important; }
   /* rhythm: one gap between sections (the hero and the close keep their own) */
   html body:not(#gfx-ts1):not(#gfx-ts2) :is(.section-padding-large:not(.cta_section), .large-section.quote_section_wrapper, [data-o~="ow-room"]:not([data-o~="ow-hero"]):not([data-o~="ow-close"]), .ow-room:not(.ow-hero):not(.ow-close), [data-gf-role="section"]) {
@@ -374,3 +374,14 @@ html.gfx-f3 a.gfx-fi-lockup:focus-visible { outline: 1px solid #3aa678; outline-
 
 /* (core css, 10/20 night) running text never ends a paragraph on one stranded word (line breaks only; nothing moves) */
 :where(html.gfx-f3 body p) { text-wrap: pretty; }   /* zero specificity: any rule that already sets a wrap wins */
+
+/* (core css, 10/20 AM, founder's yes) ONE BUTTON, ONE INTRO SIZE.
+   Buttons: the ported buttons take the designer's Webflow button (Home) as the standard: regular weight (400), 55px tall
+   (the hero buttons were 48px and medium weight). Intro paragraphs: 19px on 30px lines from tablet up on every page, as on
+   Home (Investors, Contact and Insights were 18px); phones keep the phone variable (18px). */
+html body :is([data-o~="ow-btn"], [data-o~="gfc-btn"], .gfx-ow3-act, .gfx-pg-gfc-btn, .gfx-iv3-gfc-btn):not(#gfx-b1),
+html body :is([data-o~="ow-btn"], [data-o~="gfc-btn"], .gfx-ow3-act, .gfx-pg-gfc-btn, .gfx-iv3-gfc-btn):not(#gfx-b1) * { font-weight: 400 !important; }
+html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc-btn, .gfx-iv3-gfc-btn):not(#gfx-b1) { height: 55px !important; min-height: 55px !important; box-sizing: border-box; }
+@media (min-width: 768px) {
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is([data-o~="ow-lead"], .ow-lead, [data-o~="gi-dek"], .gfx-lead, [data-gf-role="intro"]) { font-size: var(--_desktop---intro, 19px) !important; line-height: 30px !important; }
+}
