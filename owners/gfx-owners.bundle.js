@@ -793,9 +793,33 @@
       if (!named) a.setAttribute('aria-label', 'Grey Fox Partners, home');
     });
   }
+  /* (1.0.12, final audit; the founder: a white bar above the logo on his iPhone) the browser's top strip (iPhone Safari's
+     status bar, Android's address bar, Safari's tab bar) takes the colour of what is at the top of the screen right now:
+     a photo or film reads as its dark, otherwise the first solid background under the bar (paper, the black, the menu).
+     Without it Safari painted the body's paper over Home's dark hero. Checked as the page scrolls and every 0.6 s. */
+  function topTint() {
+    let m = $('meta[name="theme-color"]'); if (!m) { m = D.createElement('meta'); m.name = 'theme-color'; D.head.appendChild(m); }
+    let last = '', raf = 0;
+    const solid = c => { const v = (c || '').match(/[\d.]+/g); return v && (v.length < 4 || +v[3] > 0.5) ? `rgb(${v[0]}, ${v[1]}, ${v[2]})` : null; };
+    const pick = () => {
+      const els = D.elementsFromPoint ? D.elementsFromPoint(W.innerWidth / 2, 1) : [];
+      for (const e of els) {
+        if (e.tagName === 'IMG' || e.tagName === 'VIDEO' || e.tagName === 'CANVAS') return 'rgb(20, 20, 21)';
+        const s = getComputedStyle(e); if (+s.opacity === 0 || s.visibility === 'hidden') continue;
+        if (s.backgroundImage !== 'none' && !/gradient/.test(s.backgroundImage)) return 'rgb(20, 20, 21)';
+        const c = solid(s.backgroundColor); if (c) return c;
+      }
+      return solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';
+    };
+    const run = () => { raf = 0; const c = pick(); if (c !== last) { m.setAttribute('content', c); last = c; } };
+    const soon = () => { if (!raf) raf = requestAnimationFrame(run); };
+    addEventListener('scroll', soon, { passive: true }); addEventListener('resize', soon); D.addEventListener('click', () => setTimeout(soon, 350), true);
+    setInterval(() => { if (!D.hidden) soon(); }, 600); run();
+  }
   function navInit() {
     safe('menu foot', menuFoot);
     safe('nav name', navName);
+    safe('top tint', topTint);
     const bar = $('.gfx-nav'); if (!bar) return;
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
@@ -1295,7 +1319,9 @@
   // a slide-over: the call comes over the hero at full speed; the hero travels at 0.6 of the scroll, its photograph under a
   // light shade (10/19: the shade on the photograph only)
   function slide(out, inn, dimMax, dimIn) {
-    if (!out || !inn) return;
+    // (1.2.0, final audit) a phone scrolls the hero away normally: the slide-over covered the hero's button before the
+    // reader could tap it (the founder, on Home); phones keep motion restrained
+    if (!out || !inn || W.matchMedia('(max-width: 767px)').matches) return;
     out.classList.add('gfx-ow3-out'); inn.classList.add('gfx-ow3-in');
     const dim = D.createElement('i'); dim.className = 'gfx-ow3-dim'; dim.setAttribute('aria-hidden', 'true'); (dimIn || out).appendChild(dim);
     let last = '';

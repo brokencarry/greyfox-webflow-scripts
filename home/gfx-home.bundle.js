@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.12 + home 1.1.5. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.12 + home 1.1.6. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -793,9 +793,33 @@
       if (!named) a.setAttribute('aria-label', 'Grey Fox Partners, home');
     });
   }
+  /* (1.0.12, final audit; the founder: a white bar above the logo on his iPhone) the browser's top strip (iPhone Safari's
+     status bar, Android's address bar, Safari's tab bar) takes the colour of what is at the top of the screen right now:
+     a photo or film reads as its dark, otherwise the first solid background under the bar (paper, the black, the menu).
+     Without it Safari painted the body's paper over Home's dark hero. Checked as the page scrolls and every 0.6 s. */
+  function topTint() {
+    let m = $('meta[name="theme-color"]'); if (!m) { m = D.createElement('meta'); m.name = 'theme-color'; D.head.appendChild(m); }
+    let last = '', raf = 0;
+    const solid = c => { const v = (c || '').match(/[\d.]+/g); return v && (v.length < 4 || +v[3] > 0.5) ? `rgb(${v[0]}, ${v[1]}, ${v[2]})` : null; };
+    const pick = () => {
+      const els = D.elementsFromPoint ? D.elementsFromPoint(W.innerWidth / 2, 1) : [];
+      for (const e of els) {
+        if (e.tagName === 'IMG' || e.tagName === 'VIDEO' || e.tagName === 'CANVAS') return 'rgb(20, 20, 21)';
+        const s = getComputedStyle(e); if (+s.opacity === 0 || s.visibility === 'hidden') continue;
+        if (s.backgroundImage !== 'none' && !/gradient/.test(s.backgroundImage)) return 'rgb(20, 20, 21)';
+        const c = solid(s.backgroundColor); if (c) return c;
+      }
+      return solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';
+    };
+    const run = () => { raf = 0; const c = pick(); if (c !== last) { m.setAttribute('content', c); last = c; } };
+    const soon = () => { if (!raf) raf = requestAnimationFrame(run); };
+    addEventListener('scroll', soon, { passive: true }); addEventListener('resize', soon); D.addEventListener('click', () => setTimeout(soon, 350), true);
+    setInterval(() => { if (!D.hidden) soon(); }, 600); run();
+  }
   function navInit() {
     safe('menu foot', menuFoot);
     safe('nav name', navName);
+    safe('top tint', topTint);
     const bar = $('.gfx-nav'); if (!bar) return;
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
@@ -1216,7 +1240,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.5';
+  W.__gfxHome = '1.1.6';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -1359,7 +1383,9 @@
   /* hero → standard (gf-line.js slide()): the hero travels at 0.6 of the scroll and takes a dim of at most 0.32, while
      the standard comes over it at full speed, on its own paper */
   function slide(out, inn, dimMax) {
-    if (!out || !inn) return;
+    // (1.1.6, final audit; the founder: on a phone the standard came up over "For investors" before it could be tapped)
+    // a phone scrolls the hero away normally; phones keep motion restrained
+    if (!out || !inn || W.matchMedia('(max-width: 767px)').matches) return;
     out.classList.add('gfx-out'); inn.classList.add('gfx-in');
     const dim = D.createElement('i'); dim.className = 'gfx-dim'; dim.setAttribute('aria-hidden', 'true'); out.appendChild(dim);
     let last = '';

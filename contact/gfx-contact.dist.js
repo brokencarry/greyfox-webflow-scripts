@@ -691,9 +691,29 @@ const named=(a.getAttribute('aria-label')||a.textContent||$$('img',a).map(i=>i.a
 if(!named)a.setAttribute('aria-label','Grey Fox Partners, home');
 });
 }
+function topTint(){
+let m=$('meta[name="theme-color"]');if(!m){m=D.createElement('meta');m.name='theme-color';D.head.appendChild(m);}
+let last='',raf=0;
+const solid=c=>{const v=(c||'').match(/[\d.]+/g);return v&&(v.length<4||+v[3]>0.5)?`rgb(${v[0]}, ${v[1]}, ${v[2]})`:null;};
+const pick=()=>{
+const els=D.elementsFromPoint?D.elementsFromPoint(W.innerWidth / 2,1):[];
+for(const e of els){
+if(e.tagName==='IMG'||e.tagName==='VIDEO'||e.tagName==='CANVAS')return'rgb(20, 20, 21)';
+const s=getComputedStyle(e);if(+s.opacity===0||s.visibility==='hidden')continue;
+if(s.backgroundImage!=='none'&&!/gradient/.test(s.backgroundImage))return'rgb(20, 20, 21)';
+const c=solid(s.backgroundColor);if(c)return c;
+}
+return solid(getComputedStyle(D.body).backgroundColor)||'rgb(246, 245, 242)';
+};
+const run=()=>{raf=0;const c=pick();if(c!==last){m.setAttribute('content',c);last=c;}};
+const soon=()=>{if(!raf)raf=requestAnimationFrame(run);};
+addEventListener('scroll',soon,{passive:true});addEventListener('resize',soon);D.addEventListener('click',()=>setTimeout(soon,350),true);
+setInterval(()=>{if(!D.hidden)soon();},600);run();
+}
 function navInit(){
 safe('menu foot',menuFoot);
 safe('nav name',navName);
+safe('top tint',topTint);
 const bar=$('.gfx-nav');if(!bar)return;
 let showing=true,upFrom=null,prevY=null;
 gsap.set(bar,{'--gfx-away':0});

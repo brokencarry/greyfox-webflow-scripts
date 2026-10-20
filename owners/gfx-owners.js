@@ -106,7 +106,9 @@
   // a slide-over: the call comes over the hero at full speed; the hero travels at 0.6 of the scroll, its photograph under a
   // light shade (10/19: the shade on the photograph only)
   function slide(out, inn, dimMax, dimIn) {
-    if (!out || !inn) return;
+    // (1.2.0, final audit) a phone scrolls the hero away normally: the slide-over covered the hero's button before the
+    // reader could tap it (the founder, on Home); phones keep motion restrained
+    if (!out || !inn || W.matchMedia('(max-width: 767px)').matches) return;
     out.classList.add('gfx-ow3-out'); inn.classList.add('gfx-ow3-in');
     const dim = D.createElement('i'); dim.className = 'gfx-ow3-dim'; dim.setAttribute('aria-hidden', 'true'); (dimIn || out).appendChild(dim);
     let last = '';

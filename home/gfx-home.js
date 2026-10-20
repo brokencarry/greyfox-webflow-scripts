@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.5';
+  W.__gfxHome = '1.1.6';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -170,7 +170,9 @@
   /* hero → standard (gf-line.js slide()): the hero travels at 0.6 of the scroll and takes a dim of at most 0.32, while
      the standard comes over it at full speed, on its own paper */
   function slide(out, inn, dimMax) {
-    if (!out || !inn) return;
+    // (1.1.6, final audit; the founder: on a phone the standard came up over "For investors" before it could be tapped)
+    // a phone scrolls the hero away normally; phones keep motion restrained
+    if (!out || !inn || W.matchMedia('(max-width: 767px)').matches) return;
     out.classList.add('gfx-out'); inn.classList.add('gfx-in');
     const dim = D.createElement('i'); dim.className = 'gfx-dim'; dim.setAttribute('aria-hidden', 'true'); out.appendChild(dim);
     let last = '';
