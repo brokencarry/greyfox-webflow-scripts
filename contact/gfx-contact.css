@@ -24,3 +24,6 @@ html.gfx-pg-js .gfx-pg-r4a-form:not(.gfx-pg-open) { display: none !important; }
 html.gfx-f3 [data-o~="r4-in"]:focus-visible, html.gfx-f3 [data-o~="r4-in"]:focus { outline: none !important; box-shadow: none !important; }
 .gfx-pg-r4-fail p { margin: 0; }
 .gfx-pg-r4-fail a { color: inherit; text-decoration: underline; text-underline-offset: 4px; }
+
+/* (1.0.4, 10/20) Webflow's default placeholder ("Example text") never shows: the fields carry their own labels */
+[data-o~="r4-in"]::placeholder { color: transparent !important; opacity: 0 !important; }
