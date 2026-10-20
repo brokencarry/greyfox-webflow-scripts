@@ -27,3 +27,15 @@ html.gfx-f3 [data-o~="r4-in"]:focus-visible, html.gfx-f3 [data-o~="r4-in"]:focus
 
 /* (1.0.4, 10/20) Webflow's default placeholder ("Example text") never shows: the fields carry their own labels */
 [data-o~="r4-in"]::placeholder { color: transparent !important; opacity: 0 !important; }
+
+/* (1.0.6, 10/20) THE TIMES AND THE TELEPHONE LINE UP. The telephone's 44px tap box made its line taller than the times
+   beside it (4px high on desktop), and stacked, each label followed its own value, so "Telephone" sat 31px right of the
+   cities. Now: the telephone keeps a 44px tap area that takes no room, and stacked, the values share one column so every
+   label starts at the same line. */
+html body [data-o~="r4-tel"]:not(#gfx-c6) { display: inline-block; min-height: 0; margin: 0; position: relative; }
+html body [data-o~="r4-tel"]:not(#gfx-c6)::after { content: ""; position: absolute; left: -4px; right: -4px; top: 50%; height: 44px; transform: translateY(-50%); }
+@media (max-width: 991px) {
+  html body [data-o~="r4-band"]:not(#gfx-c6) { grid-template-columns: max-content 1fr; column-gap: 24px; }
+  html body [data-o~="r4-band"]:not(#gfx-c6) > li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: baseline; gap: 0; }
+  html body [data-o~="r4-band"]:not(#gfx-c6) [data-o~="r4-time"], html body [data-o~="r4-band"]:not(#gfx-c6) [data-o~="r4-tel"] { min-width: 0; }
+}

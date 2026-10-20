@@ -364,3 +364,10 @@ html.gfx-f3 a.gfx-fi-lockup:focus-visible { outline: 1px solid #3aa678; outline-
   html body:not(#gfx-ts1):not(#gfx-ts2) :is(.section-padding-large:not(.cta_section), .large-section.quote_section_wrapper, [data-o~="ow-room"]:not([data-o~="ow-hero"]):not([data-o~="ow-close"]), .ow-room:not(.ow-hero):not(.ow-close), [data-gf-role="section"]) {
     padding-top: var(--_phone---section-gap, 80px) !important; padding-bottom: 0 !important; }
 }
+
+/* (core 1.0.11, 10/20) the footer's Terms and Privacy links keep their look but take a 44px tap area from tablet up
+   (below 768px they are already 44px boxes) */
+@media (min-width: 768px) {
+  html.gfx-f3 body .gfx-fi-legal .gfx-fi-link { position: relative; }
+  html.gfx-f3 body .gfx-fi-legal .gfx-fi-link::after { content: ""; position: absolute; left: -4px; right: -4px; top: -12px; bottom: -12px; }
+}

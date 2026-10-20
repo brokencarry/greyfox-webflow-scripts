@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.10';
+  const VERSION = '1.0.11';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -781,8 +781,16 @@
     const href = (cta && cta.getAttribute('href')) || '/contact';
     menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:owners@greyfoxpartners.com"><span>Business owners</span>owners@greyfoxpartners.com</a></li><li><a href="mailto:info@greyfoxpartners.com"><span>Investors</span>info@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
   }
+  /* (1.0.11) the logo link is two images with empty alt text, so it had no name for a screen reader: it is named here */
+  function navName() {
+    $$('a.w-nav-brand, a.logo-link').forEach(a => {
+      const named = (a.getAttribute('aria-label') || a.textContent || $$('img', a).map(i => i.alt).join('')).trim();
+      if (!named) a.setAttribute('aria-label', 'Grey Fox Partners, home');
+    });
+  }
   function navInit() {
     safe('menu foot', menuFoot);
+    safe('nav name', navName);
     const bar = $('.gfx-nav'); if (!bar) return;
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
