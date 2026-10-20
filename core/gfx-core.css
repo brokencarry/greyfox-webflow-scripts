@@ -341,3 +341,26 @@ html.gfx-f3 a.gfx-fi-lockup:focus-visible { outline: 1px solid #3aa678; outline-
   html.gfx-f3 body .gfx-fi-act { font-size: 22px !important; }
   html.gfx-f3 body .gfx-fi-actrow { margin-top: 12px; }
 }
+
+/* (core 1.0.11) THE PHONE TYPE SCALE AND RHYTHM, approved 10/20. Below 768px only; tablet and desktop unchanged.
+   The four numbers live in Webflow, Variables > phone (page-headline 40px, section-headline 32px, intro 18px,
+   section-gap 80px). Change a number there and every page follows; the px after each var() is only a fallback.
+   Roles: each line below names the existing elements that play that role. A NEW element takes a role by carrying the
+   custom attribute data-gf-role = page-headline | section-headline | intro | section. Body text (16px) is untouched.
+   Kept at their own sizes on purpose: the person pages' name band, the Insights title, small list heads (privacy, sources). */
+@media (max-width: 767px) {
+  /* page headline */
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is(.gfx-hero-h, [data-o~="ow-h1"], .ow-h1, [data-o~="gi-atitle"], .gi-atitle, [data-gf-role="page-headline"]) {
+    font-size: var(--_phone---page-headline, 40px) !important; line-height: 1.08 !important; }
+  /* section headline (the Home case titles, which outranked them at 48, join them) */
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is(.heading-2.gfx-open, .gfx-mk-h, [data-o~="ow-h2"], .ow-h2, [data-o~="iv2-h"], .iv2-h, [data-o~="gi-h2"], .gi-h2, [data-o~="gi-next-t"], .gi-next-t, .gfx-case-when, [data-gf-role="section-headline"]) {
+    font-size: var(--_phone---section-headline, 32px) !important; line-height: 1.12 !important; }
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is(.heading-2.gfx-open, .gfx-mk-h, [data-o~="ow-h2"], .ow-h2, [data-o~="iv2-h"], .iv2-h, [data-o~="gi-h2"], .gi-h2, .gfx-case-when, [data-gf-role="section-headline"], .gfx-hero-h, [data-o~="ow-h1"], .ow-h1, [data-gf-role="page-headline"]) :is(.gfx-line, .gfx-line-mask, .ow-line, .gfx-mk-hlt, .gfx-iv3-t, .iv2-cw) {
+    font-size: inherit !important; line-height: inherit !important; }
+  /* intro paragraph */
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is(.gfx-lead, .gfx-case-outcome, .gfx-ink-lede, [data-o~="ow-lead"], .ow-lead, [data-gf-role="intro"]) {
+    font-size: var(--_phone---intro, 18px) !important; line-height: 1.6 !important; }
+  /* rhythm: one gap between sections (the hero and the close keep their own) */
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is(.section-padding-large:not(.cta_section), .large-section.quote_section_wrapper, [data-o~="ow-room"]:not([data-o~="ow-hero"]):not([data-o~="ow-close"]), .ow-room:not(.ow-hero):not(.ow-close), [data-gf-role="section"]) {
+    padding-top: var(--_phone---section-gap, 80px) !important; padding-bottom: 0 !important; }
+}
