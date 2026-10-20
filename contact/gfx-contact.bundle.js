@@ -702,7 +702,8 @@
     // (a page may still name its own tierPhone); desktop keeps each room's own tier
     const auto = (o, i) => fieldDef && fieldDef.phoneRhythm && i && fieldRooms[i - 1].native !== 'M' ? (o.tone !== fieldRooms[i - 1].tone ? 'turn' : 'standard') : null;
     const writes = fieldRooms.map((o, i) => {
-      const tier = ph ? (o.tierPhone || o.tier || auto(o, i)) : o.tier;
+      const turnHere = fieldDef && fieldDef.phoneRhythm && i && fieldRooms[i - 1].native !== 'M' && o.tone !== fieldRooms[i - 1].tone;
+      const tier = ph ? (o.tierPhone || (turnHere ? 'turn' : o.tier || auto(o, i))) : o.tier;   // (a colour change is always the turn on a phone)
       if (!tier) { if (o._phPad) { o.el.style.removeProperty('padding-top'); o._phPad = false; S[i].pad = parseFloat(getComputedStyle(o.el).paddingTop) || 0; } return null; }
       if (tier !== o.tier) o._phPad = true;
       const prevTrail = i && fieldRooms[i - 1].native !== 'M' ? S[i - 1].trail : 0;
