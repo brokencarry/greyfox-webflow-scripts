@@ -651,6 +651,7 @@
     return s;
   };
   const SKIPSPAN = '.gfx-cap, .gfx-seam, .gfx-mark, .gfa, [data-gfx-skip], .gfx-sr, .gfx-mk-sr';
+  const DECOR = '[data-o~="ow-close-fox"], [data-o~="gfc-fox"], .gfc-fox, .gfx-ow-close-fox, .footer-logo-subtle, .gfx-dim';
   const spans = () => {
     const all = fieldRooms.map(o => [o.el].concat($$('*:not(svg *)', o.el)));
     const st = [], clip = new Set();
@@ -683,9 +684,8 @@
     const Y = W.scrollY || 0, r0 = e => { const r = e.getBoundingClientRect(); return { t: r.top + Y, b: r.bottom + Y, w: r.width, h: r.height }; };
     return fieldRooms.map(o => {
       const rm = o.el, c = $$('h1,h2,h3,h4,h5,p,a,li,blockquote,figcaption,.heading-2,.heading-4,.paragraph', rm).filter(e => e.offsetParent && e.offsetHeight > 2 && e.offsetWidth > 2 && !e.closest(SKIPSPAN));
-      // (a picture set over the room, like the close's fox, is decoration: it does not decide the room's edges)
-      const floats = e => { for (let n = e; n && n !== rm; n = n.parentElement) { const p = getComputedStyle(n).position; if (p === 'absolute' || p === 'fixed') return true; } return false; };
-      const media = $$('svg, canvas, video, img, .gfx-mk-portal', rm).filter(e => !(e.ownerSVGElement) && !e.closest('a, button') && !e.closest(SKIPSPAN) && !floats(e)).map(r0).filter(r => r.w > 8 && r.h > 8);
+      // (the close's fox watermark is decoration: it does not decide the room's edges)
+      const media = $$('svg, canvas, video, img, .gfx-mk-portal', rm).filter(e => !(e.ownerSVGElement) && !e.closest('a, button') && !e.closest(SKIPSPAN) && !e.closest(DECOR)).map(r0).filter(r => r.w > 8 && r.h > 8);
       const rt = top0(rm), pad = parseFloat(getComputedStyle(rm).paddingTop) || 0;
       if (!c.length && !media.length) return { pad, inner: 0, trail: 0 };
       const top = Math.min(...c.map(top0), ...media.map(r => r.t)), bot = Math.max(...c.map(e => top0(e) + e.offsetHeight), ...media.map(r => r.b));
