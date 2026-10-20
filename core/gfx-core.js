@@ -682,7 +682,8 @@
        room's foot was read as empty space and a phone gap came out 60 where it meant 256) */
     const Y = W.scrollY || 0, r0 = e => { const r = e.getBoundingClientRect(); return { t: r.top + Y, b: r.bottom + Y, w: r.width, h: r.height }; };
     return fieldRooms.map(o => {
-      const rm = o.el, c = $$('h1,h2,h3,h4,h5,p,a,li,blockquote,figcaption,.heading-2,.heading-4,.paragraph', rm).filter(e => e.offsetParent && e.offsetHeight > 2 && e.offsetWidth > 2 && !e.closest(SKIPSPAN));
+      // (every element that holds its own words: the case figures and their captions are plain blocks)
+      const rm = o.el, c = $$('*', rm).filter(e => !(e.ownerSVGElement) && e.tagName !== 'svg' && hasOwnText(e) && e.offsetParent && e.offsetHeight > 2 && e.offsetWidth > 2 && !e.closest(SKIPSPAN) && !e.closest(DECOR));
       // (the close's fox watermark is decoration: it does not decide the room's edges)
       const media = $$('svg, canvas, video, img, .gfx-mk-portal', rm).filter(e => !(e.ownerSVGElement) && !e.closest('a, button') && !e.closest(SKIPSPAN) && !e.closest(DECOR)).map(r0).filter(r => r.w > 8 && r.h > 8);
       const rt = top0(rm), pad = parseFloat(getComputedStyle(rm).paddingTop) || 0;

@@ -1,7 +1,7 @@
 {
  "home/gfx-home.dist.js": {
   "bytes": 107311,
-  "sri": "sha384-d7keUtdMb5wG+9Td4FYTkVaUZ8r7uGzv1Kg6tJLi5+gXWFFptG33BQkpcs7FKiFJ"
+  "sri": "sha384-fEBVp+TFkJLw0ZOcYf/2UtL6VLR5ExmJ3iMHz7M+4TfSg9HajEWh3VpDx1whjVvA"
  },
  "core/gfx-core.dist.css": {
   "bytes": 29395,
@@ -21,7 +21,7 @@
  },
  "owners/gfx-owners.dist.js": {
   "bytes": 93327,
-  "sri": "sha384-uqPLKmmxXLoJ5wbDMW2zBKfGGMM46nEnBrV2maFx9bNIHkzKEDSx68sLSnRGqZto"
+  "sri": "sha384-Ah18QyxCAxOCnfj85PNp6xJDS1jYNRQR6wA4uUhFA/XS/RxPRgvD/dwLZTDbm/5K"
  },
  "owners/gfx-owners.dist.css": {
   "bytes": 47238,
@@ -33,7 +33,7 @@
  },
  "contact/gfx-contact.dist.js": {
   "bytes": 90209,
-  "sri": "sha384-lPFyPwrP2VxXfWCvFMKx/nJFurZNPdQz8VDvTznb2QBd335GL1FtIOBgWDuvtzSN"
+  "sri": "sha384-Kdf5CB4pzVKbESMmkXNacZElQuh8frrrHlg0gEobgeEMT3Pq1Q44Qq2BOvV2O1Wk"
  },
  "contact/gfx-contact.dist.css": {
   "bytes": 43581,
@@ -41,7 +41,7 @@
  },
  "privacy/gfx-privacy.dist.js": {
   "bytes": 81866,
-  "sri": "sha384-o9OjwuLRzb9RAc3UbesiTRgONTlPvTaZhAev611Pjs0UCUGigK3ZtfpWigq6KKA/"
+  "sri": "sha384-FUfxmZXa09zLyzJQNOsziziKiNTzCS+mnqHkXEzfSt+oyLVEPJfwc8eKtMYwDWcj"
  },
  "privacy/gfx-privacy.dist.css": {
   "bytes": 23737,
@@ -49,7 +49,7 @@
  },
  "team/gfx-team.dist.js": {
   "bytes": 90053,
-  "sri": "sha384-q5hCZWA2T3cApBRwag9ZWLEeZ12SnkP/CB7sJYe76lFmUFBuObxkVN3PDC9vu1F0"
+  "sri": "sha384-b6H7egLPMJDcKNMAVvDmOq+EGM5VzPvbOnydymzyg8P8Zaqwo6sgv69ziEoQpvrB"
  },
  "team/gfx-team.dist.css": {
   "bytes": 34622,
@@ -57,7 +57,7 @@
  },
  "insights/gfx-insights.dist.js": {
   "bytes": 89694,
-  "sri": "sha384-uyrVgHmXuYLzDsTBuCii2ybkDnYd2p2/q2pczAFExFiCIoxL9WUL0Ki5SdSwvCGB"
+  "sri": "sha384-Y7bOIv2KyxDwH/F78oAcLFhpzbf7YK4VNukMohe7euivpbSsmDBj0huszKoghaGT"
  },
  "insights/gfx-insights.dist.css": {
   "bytes": 48495,
@@ -65,7 +65,7 @@
  },
  "person/gfx-person.dist.js": {
   "bytes": 72853,
-  "sri": "sha384-lN9Ol52eZQKBKFtaq12CMkGhOzJmMqhunvP841u+UA2OLXoys06m53Rclmw9uvtK"
+  "sri": "sha384-cshljIbJaMqIjxYmpxxLNMde09UGTWVvJf4AHPsDdSs0XmYIgGWdVLkhBiEi6Mvm"
  },
  "person/gfx-person.dist.css": {
   "bytes": 16986,
@@ -73,7 +73,7 @@
  },
  "investors/gfx-investors.dist.js": {
   "bytes": 102958,
-  "sri": "sha384-yeQbtC7mHlqvB3dWF3lP+eFRtOWfG9tp7iipB2UwB9T33EEzXfgEs3cruTETDL3v"
+  "sri": "sha384-ASrxP5FyF6c3Ns7+6JRHHtucQBEvjB3/IVsbbxmEoJRrAYkU81Cpvo89RYROGY4X"
  },
  "investors/gfx-investors.dist.css": {
   "bytes": 56697,
