@@ -1,4 +1,4 @@
-/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.6 + pages 1.0.1 + contact 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
+/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.7 + pages 1.0.1 + contact 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.6';
+  const VERSION = '1.0.7';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1049,7 +1049,15 @@
   // reaches Contact v2 instead (the closes' "Start a conversation", footer I's action, the nav). Inert once the v2 pages
   // replace the originals at launch (no page path carries "-v2" then): delete this block at launch
   const STAGING = /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname);
-  const toV2 = a => { const h = a.getAttribute('href'); if (h && /^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/\/contact\/?/, '/contact-v2')); };
+  // (core 1.0.7) and the other built pages the shared nav and footer can't reach yet: Insights (it pointed at the live
+  // site), the footer's Team (Home's #team) and Privacy Policy ("#"). Terms of Service has no page; it stays as it is.
+  const toV2 = a => {
+    const h = a.getAttribute('href') || '', t = (a.textContent || '').trim();
+    if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/\/contact\/?/, '/contact-v2'));
+    else if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?$/.test(h)) a.setAttribute('href', '/insights-v2');
+    else if (t === 'Team' && /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h)) a.setAttribute('href', '/team-v2');
+    else if (/^privacy( policy)?$/i.test(t) && (h === '#' || /^\/privacy(-policy)?\/?$/.test(h))) a.setAttribute('href', '/privacy-v2');
+  };
   if (STAGING) {
     const sweep = () => D.querySelectorAll('a[href]').forEach(toV2);
     onReady(sweep); W.addEventListener('load', () => { sweep(); setTimeout(sweep, 1500); });
