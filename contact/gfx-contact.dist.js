@@ -595,7 +595,7 @@ const seen=e=>!e.checkVisibility||e.checkVisibility({visibilityProperty:true});
 const Y=W.scrollY||0,r0=e=>{const r=e.getBoundingClientRect();return{t:r.top+Y,b:r.bottom+Y,w:r.width,h:r.height};};
 return fieldRooms.map(o=>{
 const rm=o.el,c=$$('*',rm).filter(e=>!(e.ownerSVGElement)&&e.tagName!=='svg'&&hasOwnText(e)&&e.offsetParent&&e.offsetHeight>2&&e.offsetWidth>2&&!e.closest(SKIPSPAN)&&!e.closest(DECOR)&&seen(e));
-const media=$$('svg, canvas, video, img, .gfx-mk-portal',rm).filter(e=>!(e.ownerSVGElement)&&!e.closest('a, button')&&!e.closest(SKIPSPAN)&&!e.closest(DECOR)&&seen(e)).map(r0).filter(r=>r.w>8&&r.h>8);
+const media=$$('svg, canvas, video, img, .gfx-mk-portal',rm).filter(e=>!(e.ownerSVGElement)&&!e.closest(SKIPSPAN)&&!e.closest(DECOR)&&seen(e)).map(e=>Object.assign(r0(e),{inLink:!!e.closest('a, button')})).filter(r=>r.w>8&&r.h>8&&!(r.inLink&&r.w<48&&r.h<48));
 const rt=top0(rm),pad=parseFloat(getComputedStyle(rm).paddingTop)||0;
 if(!c.length&&!media.length)return{pad,inner:0,trail:0,rtop:rt,rbot:rt+rm.offsetHeight};
 const top=Math.min(...c.map(top0),...media.map(r=>r.t)),bot=Math.max(...c.map(e=>top0(e)+e.offsetHeight),...media.map(r=>r.b));
