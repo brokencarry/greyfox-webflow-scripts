@@ -15,3 +15,68 @@
 /* (css, 10/20 night) the archive's titles break into even lines (they are inline for their hover underline, so the line
    balancing sits on the heading that holds them): no more "...Miss the / Best Companies" */
 :is(h2, h3, h4, p, div):has(> [data-o~="gi-row-t"]) { text-wrap: balance; }
+
+/* ==================== (insights 1.1, 10/20) the CMS template: /insights/<slug> ====================
+   The layer rebuilds the template's one Rich Text ([data-o~="gi-rt"]) into the built article's body (intro, sections, pull
+   quotes, sources); everything above reads that DOM. These rules add only what the 23 bodies hold beyond the built
+   article's paragraphs (third-level heads, lists, bold in a head), the Rich Text as it reads before the layer runs (or with
+   scripts off: the same type scale), and the hidden list of every item. No rule here matches the static pages. */
+
+/* the list of every item the layer reads (Next, More from Grey Fox); never shown */
+[data-o~="gi-feed"] { display: none !important; }
+
+/* a third-level head and the lists, on the body's measure and type */
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(h3, ul, ol) { max-width: 34em; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > h3 { margin: 2.2em 0 .75em; padding: 0; font: 300 clamp(22px, 1.75vw, 27px)/1.22 var(--gi-serif); letter-spacing: -.006em; text-transform: none; color: var(--gi-ink); text-wrap: balance; }
+:is([data-o~="gi-sec-h"], [data-o~="gi-rt"] > h2) + h3,
+:is([data-o~="gi-intro"], [data-o~="gi-rt"]) > h3:first-child { margin-top: 0; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(ul, ol) { margin: 1.05em 0 0; padding: 0 0 0 1.3em; font: 400 19px/1.6 var(--gi-sans); color: var(--gi-ink); list-style-position: outside; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > ul { list-style-type: disc; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > ol { list-style-type: decimal; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(ul, ol) > li { margin: 0; padding-left: .2em; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(ul, ol) > li + li { margin-top: .5em; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(ul, ol) > li::marker { color: var(--gi-ink-3); font-variant-numeric: tabular-nums; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(ul, ol) + p,
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > h3 + :is(ul, ol) { margin-top: 1.05em; }
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > h3 + p { margin-top: 0; }
+/* a link in the reading text: the sources' underline */
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(p, ul, ol, h3) a:not([data-o]):not(sup a) { color: var(--gi-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: var(--gi-rule-2); transition: text-decoration-color .3s var(--gi-ease); overflow-wrap: anywhere; }
+@media (hover: hover) {
+  :is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(p, ul, ol, h3) a:not([data-o]):not(sup a):hover { text-decoration-color: currentColor; }
+}
+/* a head is already set apart: the bold some bodies carry inside their heads reads as the head's own weight */
+:is([data-o~="gi-sec-h"], [data-o~="gi-src-h"]) :is(strong, b),
+:is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(h2, h3) :is(strong, b) { font-weight: inherit; }
+@media (max-width: 767px) {
+  :is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > :is(ul, ol) { font-size: 18px; line-height: 1.62; }
+  :is([data-o~="gi-sec"], [data-o~="gi-intro"], [data-o~="gi-rt"]) > h3 { font-size: 22px; }
+}
+
+/* the Rich Text before the layer runs (or with scripts off, when the page's tokens are not set: hence the fallbacks): the
+   body's type scale, the section heads' rule */
+[data-o~="gi-rt"] { max-width: 40.5rem; font-family: var(--gi-sans, "DM Sans", sans-serif); color: var(--gi-ink, #1e1e1e); }
+[data-o~="gi-rt"] > p { max-width: 34em; margin: 0; font: 400 19px/1.6 var(--gi-sans, "DM Sans", sans-serif); color: var(--gi-ink, #1e1e1e); }
+[data-o~="gi-rt"] > :is(p, ul, ol, h3, blockquote) + p { margin-top: 1.05em; }
+[data-o~="gi-rt"] > :is(ul, ol) { font-family: var(--gi-sans, "DM Sans", sans-serif); color: var(--gi-ink, #1e1e1e); }
+[data-o~="gi-rt"] > h3 { font-family: var(--gi-serif, Sentient, Georgia, serif); color: var(--gi-ink, #1e1e1e); }
+[data-o~="gi-rt"] > h2 { max-width: 20em; margin: clamp(80px, 10vh, 112px) 0 28px; padding-top: 36px; border-top: 1px solid var(--gi-rule, #e7e8ea); font: 300 clamp(30px, 2.5vw, 40px)/1.12 var(--gi-serif, Sentient, Georgia, serif); letter-spacing: -.008em; text-transform: none; color: var(--gi-ink, #1e1e1e); text-wrap: balance; }
+[data-o~="gi-rt"] > blockquote { max-width: 17em; margin: clamp(64px, 8vh, 88px) 0; padding: 24px 0 0; border: 0; border-top: 1px solid var(--gi-ink, #1e1e1e); font: 200 clamp(36px, 3.3vw, 54px)/1.1 var(--gi-serif, Sentient, Georgia, serif); letter-spacing: -.012em; color: var(--gi-ink, #1e1e1e); }
+[data-o~="gi-rt"] > h2 + ol { margin: 0; padding: 0 0 0 1.6em; font: 400 16px/1.55 var(--gi-sans, "DM Sans", sans-serif); color: var(--gi-ink-2, #585e6b); }
+[data-o~="gi-rt"] sup { position: relative; top: -.5em; margin-left: 2px; font: 400 12px/0 var(--gi-sans, "DM Sans", sans-serif); vertical-align: baseline; }
+@media (max-width: 991px) {
+  [data-o~="gi-rt"] > blockquote { font-size: 30px; }
+}
+@media (max-width: 767px) {
+  [data-o~="gi-rt"] > p { font-size: 18px; line-height: 1.62; }
+  [data-o~="gi-rt"] > h2 { margin-top: 56px; font-size: 26px; }
+}
+
+/* the contents: an article without section heads has none to show */
+:is([data-o~="gi-toc"], [data-o~="gi-toc-m"])[hidden] { display: none !important; }
+/* before the layer fills them (or with scripts off): Next and More stay out of the page until they hold an article */
+[data-o~="gi-next"]:not(:has([data-o~="gi-next-txt"])),
+[data-o~="gi-more"]:not(:has([data-o~="gi-mcard"])) { display: none; }
+
+/* the typographic plate (an article without a drawing) on the article's larger plates: the title set a size up */
+:is([data-o~="gi-plate-hero"], [data-o~="gi-plate-next"])[data-o~="gi-plate-type"] [data-o~="gi-type-t"] { left: 10%; right: 10%; font-size: clamp(22px, 2.3vw, 40px); line-height: 1.18; }
+[data-o~="gi-mcard-l"] [data-o~="gi-plate-type"] [data-o~="gi-type-t"] { font-size: clamp(18px, 1.5vw, 24px); }

@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.13 + pages 1.0.1 + insights 1.0.0. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.13 + pages 1.0.1 + insights 1.1.0. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1486,13 +1486,24 @@
  *   Nothing in the reading text ever moves.
  * THE DOM: Webflow's own (native elements, one gfx- class each, data-o = the local classes; covers = Embeds holding the
  *   local span.gi-plate-in + svg). See audit/webflow-build/f3-insights/PLAN-writes.md.
+ * THE CMS TEMPLATE (insights 1.1, 10/20): the collection page "Insights Template" (/insights/<slug>) holds the article's
+ *   fields bound to the Insights collection and ONE Rich Text bound to Body ([data-o~="gi-rt"]; its presence is how the
+ *   layer knows the page). Before anything else runs, that page becomes the built article's DOM (template() below): the
+ *   Body's H2s open the sections (ids kept, else the heading's slug), the contents lists are drawn from them, a blockquote
+ *   becomes a pull quote, the "Sources" H2 and its list become the sources; the title, date, reading time and topic are
+ *   set as the built article sets them; the drawn cover is fetched from this same pinned commit (insights/covers/<key>.svg,
+ *   SRI-checked; no key = the index's typographic plate); "Next article" (the one published before this one, the newest
+ *   after the oldest) and "More from Grey Fox" (three of the same topic, then the newest others) come from a hidden list
+ *   of every item ([data-o~="gi-feed"]). The static article and the index never take this path.
  * Reduced motion: everything settled, the turn a 0.15 s step; the contents and the progress still follow the reading.
  */
 (function () {
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.0.0';
+  W.__gfxInsights = '1.1.0';
+  // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
+  const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const eo = t => 1 - Math.pow(1 - t, 3);
@@ -1573,9 +1584,12 @@
   }
 
   /* ========================= the scroll: plates settle, the tiles, the progress, the contents ========================= */
-  let req = () => {};
+  let req = () => {}, rescan = () => {};
   function scroll() {
-    const plates = $$(O('gi-plate-in')), frames = plates.map(p => p.closest(O('gi-plate')) || p.parentElement);
+    let plates = [], frames = [];
+    // (1.1) the template's covers arrive after the fetch: each arrival reads the plates again
+    rescan = () => { plates = $$(O('gi-plate-in')); frames = plates.map(p => p.closest(O('gi-plate')) || p.parentElement); req(); };
+    plates = $$(O('gi-plate-in')); frames = plates.map(p => p.closest(O('gi-plate')) || p.parentElement);
     const tiles = $$('[data-gi-tile]');
     const progs = $$(O('gi-progress') + ' > i, ' + O('gi-aprog') + ' > i'), body = D.getElementById('gi-body');
     const lists = $$(O('gi-toc-l')).map(l => $$('a[href^="#"]', l));
@@ -1691,12 +1705,198 @@
     }
   }
 
+  /* ========================= the CMS template (insights 1.1) =========================
+     The template's Rich Text ([data-o~="gi-rt"]) is rebuilt as the built article's body; the rest of the page is set from
+     the bound fields and the hidden list of every item. Markup = the static article's (audit/webflow-build/f3-insights/
+     native/article-wf.html), so the ported stylesheet reads it the same way. */
+  const BASE = (SRC || (($('script[src*="/insights/gfx-insights"]') || {}).src) || '').replace(/insights\/[^/]*$/, '');
+  // the drawn covers on this commit (insights/covers/<key>.svg, written by f3-insights/tools/covers-pack.js); a key not
+  // listed here is not fetched (the typographic plate stands in)
+  const COVER_SRI = {
+    'buyability-gap': 'sha384-HVSVbVFZ6GKiVmSpPQ+o6U1LSeiZ8jpAu3+UPCOjQMHFRYs9aegbH/daaFn+epFL',
+    'buyer-financials': 'sha384-UGXC22PJYJjHkh5iL4B/JGRD/WlkWrl+3HN+T2zKK0mq77q1n0eq0hOaHz4gKRTk',
+    'cold-call': 'sha384-K6ixKY/zEtbf6WyCHEWWhyMw6uXQ65OQZJDYyZsHUFHwEdYa20tjNT7/0xAxwJWY',
+    'company-problem': 'sha384-kk/NKIJvUOB8I1evJoaPdWjZsNz5o5szPVWx008ofs/xd4Q32tPTZvWGvcXlph6V',
+    'exit-timeline': 'sha384-33YuPYaEbtWq0ex7nNk+FZplz6sxv6zxnOJi2ReB/PYNkTiBWaGh03leSc/qfOn0',
+    'field-margin': 'sha384-HJKzCuVq3394L8uokafJZV1nrFFqoR7s0QxoFG9zMTu9rZhsgR5DuZCRdNdoSiRo',
+    'fifty-email': 'sha384-3ntOLDx7YzSLeqtWH9n65uEZa+hHAip/VYrgM7Ku0O+kS4gobMBqnqOWnRhIUYZJ',
+    'fire-twenty': 'sha384-oCsqhyHIACfKxr5K73OrRA7DvvyLcctIMR/SIoUZax/B7m9uKg4xoKfbiQftl2DR',
+    'first-five-minutes': 'sha384-/OQug0DzaaJvpUCrHI/Fap7WGhy6VtOokNwXKaytFPmzIRzQp6Gc1eURu2E5s7Bc',
+    'five-metrics': 'sha384-gQ2RBQNSXyIJ4S0bEPQfS2zQ/D4A8F7gZuOWcezvJPy1Rnb0CtTAUblU/0N4ZX3e',
+    'founder-dependency': 'sha384-gzcbLXTH8ECdU3E9JiPQtvuRwAFj5J1mdzl57uVHaI16uIn0LbJdq/46bWfiQRwa',
+    'hidden-forty': 'sha384-VDofMCeeokXxgehzPZMGE0sTUQSfdNflgsxd0iz7US3Nkvwqbzs4tDquO7WzeV0a',
+    'hoa-exit-value': 'sha384-0nZxdzWtwi/0nL/dZW07X0Z9/SOMx+pqCdIvzgHOYYNly4UAwHjYcKNkNiaIof+m',
+    'judge-partner': 'sha384-q0xPNsWSD0WN4S/Rw1MgJmXyUoWzC59w+o3zo8pt8n5X6HoGW6GqvBjP+tbd6k9i',
+    'leadership-infra': 'sha384-w07uMMqi3bNIT4qVOlNlKVn3WZI2HQODo9Uk2YzdtyvEyuxYFtjGy8K2wo9tNaGq',
+    'manager-retention': 'sha384-C756Hzkc8c4+bRz6dzTAh3Ht16KLu1j8ZckBwRjcctpegpsjS/maRBFg7AxHl03Y',
+    'plausible-list': 'sha384-gpP82BllNxgz3CpDQkU5bCh9BsC1voM/tBzs4aKJgLvyAo6UMw2qHA3z6Bn65mGh',
+    'repeatability': 'sha384-GvstzaG/aW9YKY9Q5+6m7Nen/SpFmSEJyKmcktlAGGuJ7R1w1eMDCISG8tYgd25A',
+    'right-twenty': 'sha384-DawDoElTiUKcio0ltuAubq4RdG9Yi+TR8sELqGcogbCNAIvjpvjvG1OT4qJYDU8k',
+    'sales-before-hire': 'sha384-54bSmTQ2s5RlkkqpZjx6pVsnVTMyv/Z7Da8N69tBHJbUvTPY78UFpuxKoR9IrEia',
+    'service-complexity': 'sha384-34WsVX/HPc6S+uMTuRT8AQX589bVsTdj0LjDChA4HvGjOBp+fp3AiR0WZUlJIRo3',
+    'value-leaks': 'sha384-e7cfHyADER+q7wU6rddlToAxGwhH9e/+1tlgd0NZyDLqmiU3Bu7h/nmb090YbVCB',
+    'what-inning': 'sha384-/SUk/cdWwPXOCeZrgj9Z1yQjL4PIYWjM+Wn6yqZqZBVvzk+0eXNxK8VBHKjTzaaA'
+  };
+  const SITE = 'https://www.greyfoxpartners.com';
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const escH = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  // (build.js) a hyphenated word never breaks; a title's part after ": " is its own line on a desktop (gi-sub)
+  const nb = t => escH(t).replace(/(\S+-\S+)/g, '<span class="gfx-pg-gi-nb" data-o="gi-nb">$1</span>');
+  const titleHtml = t => t.includes(': ') ? nb(t.split(': ')[0]) + ':<span class="gfx-pg-gi-sub" data-o="gi-sub"> ' + nb(t.split(': ').slice(1).join(': ')) + '</span>' : nb(t);
+  const slugify = s => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  // the contents: the section heads in sentence case (the headings themselves stay as written; build.js's rule, which kept
+  // an all-capitals word, here also keeps a word part with two capitals (P&L, AI), "I", a capital after a full stop, and the
+  // house's name)
+  const sentenceHead = t => {
+    let cap = true;
+    return t.split(' ').map(w => {
+      const out = w.split('-').map((p, i) => ((cap && !i) || /[A-Z].*[A-Z]/.test(p) || /^I(['’]\w+)?$/.test(p) ? p : p.toLowerCase())).join('-');
+      cap = /[.?!]$/.test(w); return out;
+    }).join(' ').replace(/\bgrey fox\b/gi, 'Grey Fox');
+  };
+  const pad = n => (n < 10 ? '0' : '') + n;
+  // a date as Webflow writes it (or an ISO date) -> { iso, label }: "2026-02-17", "February 17, 2026"
+  const parseDate = s => {
+    s = (s || '').trim(); if (!s) return null;
+    let y, m, d; const iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+    if (iso) { y = +iso[1]; m = +iso[2]; d = +iso[3]; } else { const t = Date.parse(s); if (isNaN(t)) return null; const x = new Date(t); y = x.getFullYear(); m = x.getMonth() + 1; d = x.getDate(); }
+    return { iso: `${y}-${pad(m)}-${pad(d)}`, label: `${MONTHS[m - 1]} ${d}, ${y}` };
+  };
+  const mkEl = (tag, o, attrs) => { const n = D.createElement(tag); if (o) { n.className = 'gfx-pg-' + o.split(' ').pop(); n.setAttribute('data-o', o); } Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+  const SEP = '<span class="gfx-pg-gi-sep" aria-hidden="true" data-o="gi-sep"></span>';
+  const mi = h => `<span class="gfx-pg-gi-mi" data-o="gi-mi">${h}</span>`;
+  const timeH = a => a.date ? `<time datetime="${a.date.iso}">${a.date.label}</time>` : '';
+  const metaH = (a, topic) => { const parts = [timeH(a), topic && a.topicName ? escH(a.topicName) : '', a.mins ? escH(a.mins) + ' min read' : ''].filter(Boolean); return `<p class="gfx-pg-gi-meta" data-o="gi-meta">${parts.map((p, i) => mi((i ? SEP : '') + p)).join('')}</p>`; };
+  const hrefOf = a => '/insights/' + encodeURIComponent(a.slug);
+  const figH = (cls, o, a) => `<figure class="${cls}" data-gi-settle="" data-o="${o}" data-gi-cover="${escH(a.cover)}" data-gi-title="${escH(a.name)}"></figure>`;
+
+  /* covers: fetched once per key, SRI-checked, their ids made unique per plate (build.js uniq) */
+  const coverReq = {}; let plateN = 0;
+  const coverText = key => coverReq[key] || (coverReq[key] = fetch(BASE + 'insights/covers/' + key + '.svg', { integrity: COVER_SRI[key], mode: 'cors' }).then(r => (r.ok ? r.text() : Promise.reject(new Error('cover ' + r.status)))));
+  const uniq = svg => { const n = 'c' + (++plateN); return svg.replace(/id="([^"]+)"/g, (m, id) => `id="${id}-${n}"`).replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}-${n})`).replace(/href="#([^"]+)"/g, (m, id) => `href="#${id}-${n}"`); };
+  const typeIn = title => `<span class="gi-plate-in" data-o="gi-plate-in"><svg viewBox="0 0 1200 750" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M84 78V64H98M1102 64H1116V78M1116 672V686H1102M98 686H84V672" fill="none" stroke="#a9a8a4" stroke-width="1" vector-effect="non-scaling-stroke"></path></svg><span class="gi-type-t" data-o="gi-type-t">${nb(title)}</span></span>`;
+  const putIn = (fig, inner) => { const e = D.createElement('div'); e.className = 'w-embed'; e.innerHTML = inner; fig.textContent = ''; fig.appendChild(e); rescan(); };
+  const asType = (fig, title) => { const o = (fig.getAttribute('data-o') || '').split(/\s+/).filter(Boolean); if (!o.includes('gi-plate-type')) o.push('gi-plate-type'); fig.setAttribute('data-o', o.join(' ')); fig.classList.add('gfx-pg-gi-plate-type'); putIn(fig, typeIn(title)); };
+  const plate = (fig, key, title) => {
+    if (!fig || fig.__gi) return; fig.__gi = 1;
+    key = (key || '').trim();
+    if (!key || !COVER_SRI[key] || !BASE || !W.fetch) { asType(fig, title); return; }
+    coverText(key).then(svg => putIn(fig, `<span class="gi-plate-in" data-o="gi-plate-in">${uniq(svg)}</span>`), () => asType(fig, title));
+  };
+
+  /* the body: one Rich Text -> the intro, the sections, the pull quotes, the sources */
+  function body(rt) {
+    const out = D.createDocumentFragment(), secs = []; let into = null, sources = null;
+    const blank = n => n.nodeType === 3 ? !n.textContent.trim() : n.nodeType !== 1;
+    const empty = n => n.tagName === 'P' && !n.querySelector('img, svg, iframe, video') && !n.textContent.replace(/[\s​-‍﻿]/g, '');
+    const free = id => { let k = id || 'section', i = 2; while (D.getElementById(k)) k = id + '-' + i++; return k; };
+    const pq = bq => {
+      const f = mkEl('figure', 'gi-pq', { 'data-gi-pq': '' }), r = mkEl('div', 'gi-pq-rule', { 'aria-hidden': 'true' });
+      if (!$(':scope > p', bq)) { const p = D.createElement('p'); while (bq.firstChild) p.appendChild(bq.firstChild); bq.appendChild(p); }
+      f.append(r, bq); return f;
+    };
+    const kids = [...rt.childNodes];
+    kids.forEach((n, i) => {
+      if (blank(n) || empty(n)) return;
+      if (n.tagName === 'H2') {
+        const text = n.textContent.replace(/\s+/g, ' ').trim(), next = kids.slice(i + 1).find(k => k.nodeType === 1);
+        const own = n.id; n.removeAttribute('id');
+        if (/^sources$/i.test(text) && next && /^(OL|UL)$/.test(next.tagName)) {
+          const id = free(own || 'sources');
+          sources = into = mkEl('section', 'gi-sources', { id, 'aria-labelledby': id + '-h' });
+          n.className = 'gfx-pg-gi-src-h'; n.setAttribute('data-o', 'gi-src-h'); n.id = id + '-h';
+          into.appendChild(n); out.appendChild(into); return;
+        }
+        const id = free(own || slugify(text));
+        into = mkEl('section', 'gi-sec', { id, 'aria-labelledby': id + '-h' });
+        n.className = 'gfx-pg-gi-sec-h'; n.setAttribute('data-o', 'gi-sec-h'); n.id = id + '-h';
+        into.appendChild(n); out.appendChild(into); secs.push({ id, text }); return;
+      }
+      if (!into) { into = mkEl('div', 'gi-intro'); out.appendChild(into); }
+      into.appendChild(n.tagName === 'BLOCKQUOTE' ? pq(n) : n);
+    });
+    // the source references: the built article's (a number in the margin's ink, its source named for a screen reader)
+    $$('sup', out).forEach(s => { const a = $('a[href^="#src-"]', s); if (!a) return; s.className = 'gfx-pg-gi-ref'; s.setAttribute('data-o', 'gi-ref'); if (!a.hasAttribute('aria-label')) a.setAttribute('aria-label', 'Source ' + a.textContent.trim()); });
+    rt.replaceWith(out);
+    return { secs, sources };
+  }
+
+  /* the contents (both lists: the sidebar's and the phone's) */
+  function tocFill(entries) {
+    [[O('gi-toc'), 'nav'], [O('gi-toc-m'), 'details']].forEach(([sel]) => $$(sel).forEach(box => {
+      let ol = $(O('gi-toc-l'), box);
+      if (!ol) { ol = mkEl('ol', 'gi-toc-l'); box.appendChild(ol); }
+      ol.innerHTML = entries.map(e => `<li><a href="#${e.id}">${escH(e.text)}</a></li>`).join('');
+      if (!entries.length) box.hidden = true;
+    }));
+  }
+
+  function template() {
+    const rt = $(O('gi-rt')); if (!rt) return false;
+    H.classList.add('gi-cms');
+    // the hidden list of every item (newest first), then out of the page
+    const feed = $$(O('gi-feed-i')).map(e => ({
+      slug: (e.getAttribute('data-slug') || '').trim(), name: (e.getAttribute('data-name') || '').trim(), summary: (e.getAttribute('data-summary') || '').trim(),
+      date: parseDate(e.getAttribute('data-date')), mins: (e.getAttribute('data-mins') || '').trim(), topic: (e.getAttribute('data-topic') || '').trim(),
+      topicName: (e.getAttribute('data-topic-name') || '').trim(), cover: (e.getAttribute('data-cover') || '').trim()
+    })).filter(a => a.slug && a.name);
+    feed.sort((a, b) => (b.date ? b.date.iso : '').localeCompare(a.date ? a.date.iso : ''));
+    $$(O('gi-feed')).forEach(e => e.remove());
+    const story = $(O('gi-story'));
+    const slug = ((story && story.getAttribute('data-gi-slug')) || location.pathname.replace(/\/+$/, '').split('/').pop() || '').trim();
+    const me = feed.find(a => a.slug === slug) || null;
+
+    // the header: the title's lines, the date, the reading time, the topic's address
+    const h1 = $('#gi-h1') || $(O('gi-atitle')), title = h1 ? h1.textContent.replace(/\s+/g, ' ').trim() : (me ? me.name : '');
+    if (h1 && title) h1.innerHTML = titleHtml(title);
+    const ameta = $(O('gi-ameta'));
+    if (ameta) {
+      const t = $('time', ameta), d = (t && parseDate(t.textContent)) || (me && me.date);
+      if (t && d) { t.setAttribute('datetime', d.iso); t.textContent = d.label; }
+      const m = $('[data-gi-mins]', ameta), mm = m && m.closest(O('gi-mi'));
+      if (mm) { const n = m.textContent.trim() || (me ? me.mins : ''); mm.innerHTML = SEP + escH(n) + ' min read'; }
+      const cat = $(O('gi-acat'), ameta);
+      if (cat) { const ts = (cat.getAttribute('data-gi-topic') || '').trim() || (me && me.topic) || slugify(cat.textContent); cat.setAttribute('href', '/insights-v2' + (ts ? '?topic=' + encodeURIComponent(ts) : '') + '#all'); cat.removeAttribute('data-gi-topic'); }
+    }
+    // the body, the contents
+    const b = body(rt);
+    tocFill(b.secs.map(s => ({ id: s.id, text: sentenceHead(s.text) })).concat(b.sources ? [{ id: b.sources.id, text: 'Sources' }] : []));
+    // share: the article's address on the site
+    const url = SITE + '/insights/' + slug;
+    const SH = { in: 'https://www.linkedin.com/sharing/share-offsite/?url=', x: 'https://x.com/intent/post?url=', fb: 'https://www.facebook.com/sharer/sharer.php?u=' };
+    $$('a[data-gi-ico]').forEach(a => { const k = a.getAttribute('data-gi-ico'); if (SH[k]) a.setAttribute('href', SH[k] + encodeURIComponent(url)); });
+    $$('[data-gi-copy]').forEach(c => c.setAttribute('data-gi-copy', url));
+    // the hero's cover (the key bound on the plate)
+    const hero = $(O('gi-plate-hero'));
+    if (hero) plate(hero, hero.getAttribute('data-gi-cover') || (me ? me.cover : ''), title);
+
+    // Next: the piece published before this one (after the oldest, the newest); More: three of the same topic, then the newest others
+    const at = me ? feed.indexOf(me) : -1, others = feed.filter(a => a !== me);
+    const next = others.length ? (at >= 0 && feed[at + 1]) || others[0] : null;
+    const topic = (me && me.topic) || '';
+    const rest = others.filter(a => a !== next), more = rest.filter(a => topic && a.topic === topic).slice(0, 3);
+    rest.forEach(a => { if (more.length < 3 && !more.includes(a)) more.push(a); });
+    const nextSec = $(O('gi-next'));
+    if (nextSec && next) {
+      let grid = $(O('gi-next-grid'), nextSec); if (!grid) { grid = mkEl('div', 'gi-wrap gi-next-grid'); grid.className = 'gfx-pg-gi-next-grid'; nextSec.appendChild(grid); }
+      grid.innerHTML = `<div class="gfx-pg-gi-next-txt" data-o="gi-next-txt"><p class="gfx-pg-gi-next-k" data-o="gi-next-k">Next article</p><h2 id="gi-next-h" class="gfx-pg-gi-next-t" data-gi-rise="" data-o="gi-next-t"><a class="gfx-pg-gi-tlink" href="${hrefOf(next)}" data-o="gi-tlink">${nb(next.name)}</a></h2>${next.summary ? `<p class="gfx-pg-gi-dek" data-o="gi-dek">${escH(next.summary)}</p>` : ''}${metaH(next, true)}</div><a class="gfx-pg-gi-next-pic" href="${hrefOf(next)}" tabindex="-1" aria-hidden="true" data-o="gi-next-pic">${figH('gfx-pg-gi-plate-next', 'gi-plate gi-plate-next', next)}</a>`;
+    }
+    const moreSec = $(O('gi-more')), mgrid = moreSec && $(O('gi-more-grid'), moreSec);
+    if (mgrid && more.length) {
+      const card = (a, l) => `<article class="gfx-pg-gi-mcard-${l ? 'l' : 's'}" data-o="gi-mcard gi-mcard-${l ? 'l' : 's'}"><a class="gfx-pg-gi-card-pic" href="${hrefOf(a)}" tabindex="-1" aria-hidden="true" data-o="gi-card-pic">${figH('gfx-pg-gi-plate', 'gi-plate', a)}</a><div class="gfx-pg-gi-mcard-txt" data-o="gi-mcard-txt">${metaH(a, l)}<h3 class="gfx-pg-gi-card-t" data-o="gi-card-t"><a class="gfx-pg-gi-tlink" href="${hrefOf(a)}" data-o="gi-tlink">${nb(a.name)}</a></h3>${l && a.summary ? `<p class="gfx-pg-gi-dek-s" data-o="gi-dek gi-dek-s">${escH(a.summary)}</p>` : ''}</div></article>`;
+      mgrid.innerHTML = card(more[0], true) + (more.length > 1 ? `<div class="gfx-pg-gi-more-side" data-o="gi-more-side">${more.slice(1).map(a => card(a, false)).join('')}</div>` : '');
+    }
+    $$('figure[data-gi-cover]').forEach(f => { if (f !== hero) plate(f, f.getAttribute('data-gi-cover'), f.getAttribute('data-gi-title') || ''); });
+    return true;
+  }
+
   /* ========================= the page ========================= */
   const orig = gfx.page;
   gfx.page = def => { FIELD = def.field; orig(def); };
   P.run({
     current: 'Insights',
     dom: () => {
+      safe('cms template', template);   // (1.1) the template page only: before the rooms, the contents and share are read
       if (FIELD) { FIELD.rooms = rooms(); FIELD.drawnCovers = true; }   // (final audit) the cards' drawn covers count for the tablet rhythm
       safe('share', share); safe('contents', contents); safe('topics', topics);
     },
