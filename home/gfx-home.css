@@ -89,7 +89,9 @@ html.gfx-m [class*="gfx-case-stop-"] { cursor: pointer; outline: none; }
 
 /* ---------- the market stage (gf-line.css + gf-flow3.css): the native still page becomes the held stage ---------- */
 html.gfx-f3 .gfx-mk.gfx-fr { background-color: transparent !important; }
-html.gfx-m:not(.gfx-mk-still) .gfx-mk { height: calc(100vh + 115vh); height: calc(100svh + 115svh); padding-bottom: 0; }
+/* (home 1.1.5) the hold is 175% of a screen (was 115%), so each step's change of the strands takes 220 to 280px of scroll
+   on a laptop and follows the wheel rather than jumping with one flick */
+html.gfx-m:not(.gfx-mk-still) .gfx-mk { height: calc(100vh + 175vh); height: calc(100svh + 175svh); padding-bottom: 0; }
 html.gfx-m:not(.gfx-mk-still) .gfx-mk-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 html.gfx-m:not(.gfx-mk-still) .gfx-mk-col { height: 100%; }
 .gfx-mk-threads { position: absolute; inset: 0; pointer-events: none; }

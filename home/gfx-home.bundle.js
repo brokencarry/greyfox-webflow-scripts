@@ -1536,7 +1536,7 @@
   }
 
   /* ========================= the market stage (gf-line.js) =========================
-     A sticky stage of about 2.15 screens on the black. The scroll decides which beat the reader is in; each beat plays
+     A sticky stage of about 2.75 screens (1.1.5; was 2.15) on the black. The scroll decides which beat the reader is in; each beat plays
      as a short committed film and holds its true state; the strands, the method lines' green and the active step's
      hairline are drawn with the scroll. Step 04 opens the client's live pipeline (the real portal, fictional data). */
   function marketInit() {
@@ -1569,7 +1569,7 @@
     const drawStage = () => {
       dirty = false; ctx.clearRect(0, 0, Wd, Hd);
       const F = fieldR(), fh = F.bot - F.top, yc = phone() ? F.top + fh * 0.5 : Hd * 0.5;
-      const a = ss(seg(P, 0.0, 0.16)), b = ss(seg(P, 0.22, 0.38)), c = eio(seg(P, 0.42, 0.56)), d = eio(seg(P, 0.6, 0.76));
+      const a = ss(seg(P, 0.0, 0.16)), b = ss(seg(P, 0.22, 0.36)), c = eio(seg(P, 0.42, 0.56)), d = eio(seg(P, 0.6, 0.78));
       const birthK = eo(clamp(E * 1.25, 0, 1));
       const uEnd = lerp(lerp(1, PORTAL_U(), d), 1, ss(X)) * birthK, SEG = phone() ? 14 : 28;
       const laneY = k => yc + (k - 5.5) * fh * 0.052 * (1 - d * 0.85);

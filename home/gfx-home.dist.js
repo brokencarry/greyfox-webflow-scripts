@@ -1373,7 +1373,7 @@ let X=0;
 const drawStage=()=>{
 dirty=false;ctx.clearRect(0,0,Wd,Hd);
 const F=fieldR(),fh=F.bot-F.top,yc=phone()?F.top+fh*0.5:Hd*0.5;
-const a=ss(seg(P,0.0,0.16)),b=ss(seg(P,0.22,0.38)),c=eio(seg(P,0.42,0.56)),d=eio(seg(P,0.6,0.76));
+const a=ss(seg(P,0.0,0.16)),b=ss(seg(P,0.22,0.36)),c=eio(seg(P,0.42,0.56)),d=eio(seg(P,0.6,0.78));
 const birthK=eo(clamp(E*1.25,0,1));
 const uEnd=lerp(lerp(1,PORTAL_U(),d),1,ss(X))*birthK,SEG=phone()?14:28;
 const laneY=k=>yc+(k-5.5)*fh*0.052*(1-d*0.85);
