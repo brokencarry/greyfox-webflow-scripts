@@ -70,8 +70,14 @@ if (personSrc) {
     minCss(rdo(k + '/gfx-' + k + '.ported.css') + '\n' + rd(k + '/gfx-' + k + '.css')));
   inner.push([k]);
 });
+// the Owners partnership film (10/20, B v7): the map data + the engine, one file the Owners layer loads as the room nears
+if (fs.existsSync(path.join(R, 'owners/pt/pt-film.src.js'))) {
+  wr('owners/pt/pt-film.bundle.js', rd('owners/pt/geo4.js') + '\n' + rd('owners/pt/pt-film.src.js'));
+  cp.execFileSync(process.execPath, [path.join(__dirname, 'minify.js'), path.join(R, 'owners/pt/pt-film.bundle.js'), path.join(R, 'owners/pt/pt-film.js'),
+    `/*! Grey Fox · Owners partnership film (B v7) · minified owners/pt/geo4.js (US Census map data) + owners/pt/pt-film.src.js */`], { stdio: 'inherit' });
+}
 const man = {};
-['home/gfx-home.dist.js', 'core/gfx-core.dist.css', 'home/gfx-home.dist.css', 'portal/desktop-portal.js', 'portal/desktop-portal.css', 'owners/gfx-owners.dist.js', 'owners/gfx-owners.dist.css']
+['home/gfx-home.dist.js', 'core/gfx-core.dist.css', 'home/gfx-home.dist.css', 'portal/desktop-portal.js', 'portal/desktop-portal.css', 'owners/gfx-owners.dist.js', 'owners/gfx-owners.dist.css', 'owners/pt/pt-film.js']
   .concat(...inner.map(([k]) => [k + '/gfx-' + k + '.dist.js', k + '/gfx-' + k + '.dist.css'])).forEach(f => {
   const b = fs.readFileSync(path.join(R, f)); man[f] = { bytes: b.length, sri: 'sha384-' + crypto.createHash('sha384').update(b).digest('base64') };
 });
