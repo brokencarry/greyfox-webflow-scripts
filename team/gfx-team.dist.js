@@ -1214,7 +1214,7 @@ W.addEventListener('scroll',ask,{passive:true});W.addEventListener('resize',ask)
 }
 function run(def){
 def=def||{};
-const field={rooms:[]};
+const field={phoneRhythm:true,rooms:[]};
 gfx.page({
 field,
 foot:{close:O('ow-close')},

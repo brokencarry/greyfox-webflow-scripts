@@ -190,7 +190,7 @@
   function run(def) {
     def = def || {};
     // (the header runs before the body is parsed: the rooms are read once the DOM is there, before the field starts)
-    const field = { rooms: [] };
+    const field = { phoneRhythm: true, rooms: [] };   // (final audit) the house phone rhythm on every inner page
     gfx.page({
       field,
       foot: { close: O('ow-close') },
