@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.13 + home 1.1.6 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.13 + home 1.1.7 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1084,7 +1084,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.6';
+W.__gfxHome='1.1.7';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
 const PIN='(min-width: 992px) and (min-height: 681.01px)',UNPIN='(max-width: 991px), (max-height: 680.99px)';
@@ -1500,6 +1500,22 @@ if(portalK.k!==k){portalK.k=k;setPortal(k);}if(portal._o!==o){portal.style.opaci
 if(k>0.5&&!portalK.played){portalK.played=true;demoDo('play');}else if(k===0)portalK.played=false;
 }
 };
+const fig=$('.gfx-mk-fig',sec),col=$('.gfx-mk-col',sec),odos=[oA,oC].filter(Boolean),nums=[nA,nC].filter(Boolean);
+const fitCount=()=>safe('market count fit',()=>{
+if(!fig||!lede||!col||!odos.length)return;
+odos.forEach(o=>o.style.removeProperty('font-size'));col.style.removeProperty('padding-top');
+if(phone())return;
+for(let i=0;i<3;i++){
+const nh=Math.max.apply(null,nums.map(n=>n.offsetHeight)),numTop=fig.offsetTop+fig.offsetHeight-nh;
+const need=Math.ceil(lede.offsetTop+lede.offsetHeight+20-numTop);if(need<=0)return;
+const fs=parseFloat(getComputedStyle(odos[0]).fontSize),cut=Math.min(need,Math.max(0,fs-72));
+if(cut>0)odos.forEach(o=>o.style.setProperty('font-size',(fs-cut)+'px','important'));
+const rest=need-cut;
+if(rest>0){const pad=parseFloat(getComputedStyle(col).paddingTop);col.style.setProperty('padding-top',Math.max(48,pad-rest)+'px','important');}
+}
+});
+fitCount();ST.addEventListener('refresh',fitCount);
+if(D.fonts&&D.fonts.ready)D.fonts.ready.then(fitCount);
 hls.forEach(h=>{h.style.transform='translate3d(0, 105%, 0)';});
 [lede,nA,nC].concat(capList).forEach(e=>{if(e)e.style.opacity='0';});
 setPortal(0);odoSet(oC,100);

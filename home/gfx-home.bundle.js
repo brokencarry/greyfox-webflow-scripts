@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.13 + home 1.1.6. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.13 + home 1.1.7. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1264,7 +1264,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.6';
+  W.__gfxHome = '1.1.7';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -1719,6 +1719,27 @@
         if (k > 0.5 && !portalK.played) { portalK.played = true; demoDo('play'); } else if (k === 0) portalK.played = false;
       }
     };
+    /* (final audit, Tony's laptop) on a short screen (under ~780px tall: 1366x768, 1536 at 125% with the browser bar)
+       the column runs out of height: the flex column squeezes the figure box and the count (16vh tall, pinned to the
+       box's bottom) rises into the lede. Only when it would come within 20px of the lede: shrink the count just enough
+       (not under 72px), then take the rest from the column's top padding. Screens that fit (1440x900, 1920x1080) are
+       untouched: nothing is written. */
+    const fig = $('.gfx-mk-fig', sec), col = $('.gfx-mk-col', sec), odos = [oA, oC].filter(Boolean), nums = [nA, nC].filter(Boolean);
+    const fitCount = () => safe('market count fit', () => {
+      if (!fig || !lede || !col || !odos.length) return;
+      odos.forEach(o => o.style.removeProperty('font-size')); col.style.removeProperty('padding-top');
+      if (phone()) return;
+      for (let i = 0; i < 3; i++) {
+        const nh = Math.max.apply(null, nums.map(n => n.offsetHeight)), numTop = fig.offsetTop + fig.offsetHeight - nh;
+        const need = Math.ceil(lede.offsetTop + lede.offsetHeight + 20 - numTop); if (need <= 0) return;
+        const fs = parseFloat(getComputedStyle(odos[0]).fontSize), cut = Math.min(need, Math.max(0, fs - 72));
+        if (cut > 0) odos.forEach(o => o.style.setProperty('font-size', (fs - cut) + 'px', 'important'));
+        const rest = need - cut;
+        if (rest > 0) { const pad = parseFloat(getComputedStyle(col).paddingTop); col.style.setProperty('padding-top', Math.max(48, pad - rest) + 'px', 'important'); }
+      }
+    });
+    fitCount(); ST.addEventListener('refresh', fitCount);
+    if (D.fonts && D.fonts.ready) D.fonts.ready.then(fitCount);
     hls.forEach(h => { h.style.transform = 'translate3d(0, 105%, 0)'; });
     [lede, nA, nC].concat(capList).forEach(e => { if (e) e.style.opacity = '0'; });
     setPortal(0); odoSet(oC, 100);
