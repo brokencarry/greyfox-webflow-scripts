@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.15 + home 1.1.8 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.16 + home 1.1.8 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.15';
+const VERSION='1.0.16';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -985,12 +985,21 @@ const STAGING= /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname)||
 const toV2=a=>{
 const h=a.getAttribute('href')||'',t=(a.textContent||'').trim();
 if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h))a.setAttribute('href',h.replace(/\/contact\/?/,'/contact-v2'));
-else if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?$/.test(h))a.setAttribute('href','/insights-v2');
-else if(/^https?:\/\/(www\.)?greyfoxpartners\.com\/insights\/[a-z0-9-]+\/?$/.test(h))a.setAttribute('href',h.replace(/^https?:\/\/(www\.)?greyfoxpartners\.com/,'').replace(/\/$/,''));
+else if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?([?#].*)?$/.test(h))a.setAttribute('href','/insights-v2'+(h.match(/[?#].*$/)||[''])[0]);
 else if(t==='Team'&& /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h))a.setAttribute('href','/team-v2');
 else if(/^privacy( policy)?$/i.test(t)&&(h==='#'|| /^\/privacy(-policy)?\/?$/.test(h)))a.setAttribute('href','/privacy-v2');
 else if(h==='/'||h==='/#')a.setAttribute('href','/home-v2');
 };
+const ART='/articles/',PLAUSIBLE='ai-deal-origination-structural-risk-plausible-list-problem';
+const toArticle=a=>{
+const h=a.getAttribute('href')||'',m=h.match(/^(?:https?:\/\/(?:www\.)?greyfoxpartners\.com)?\/insights\/([a-z0-9-]+)\/?([?#].*)?$/);
+if(m&&m[1]!=='category'&&m[1]!=='tag')a.setAttribute('href',ART+m[1]+(m[2]||''));
+else if(/^\/insights-v2-article\/?([?#].*)?$/.test(h))a.setAttribute('href',ART+PLAUSIBLE);
+else if(!STAGING&& /^\/insights-v2\/?([?#].*)?$/.test(h))a.setAttribute('href',h.replace(/^\/insights-v2\/?/,'/insights'));
+};
+{const sweepA=()=>D.querySelectorAll('a[href*="insights"]').forEach(toArticle);
+onReady(sweepA);W.addEventListener('load',()=>{sweepA();setTimeout(sweepA,1500);});
+D.addEventListener('click',e=>{const a=e.target&&e.target.closest&&e.target.closest('a[href]');if(a)toArticle(a);},true);}
 if(STAGING){
 const sweep=()=>D.querySelectorAll('a[href]').forEach(toV2);
 onReady(sweep);W.addEventListener('load',()=>{sweep();setTimeout(sweep,1500);});

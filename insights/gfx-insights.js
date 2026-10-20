@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.1.0';
+  W.__gfxInsights = '1.2.0';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -201,6 +201,37 @@
 
   /* ========================= the index: topics ========================= */
   const topicOf = r => r.getAttribute('data-topic') || '';
+  /* (insights 1.2.0, founder 10/20) ONLY THE PE PIECES STAY: Shivam keeps the 8 origination / PE-strategy articles; the 15
+     owner-facing ones go back to draft in the CMS (review: audit/final-1020/ARTICLE-KEEP.txt). The index is a static
+     page, so it drops their rows here, then every count on the page is taken from the rows that are left (topic buttons,
+     the opening's "N articles · N topics · Since <month>"); a topic left empty leaves the filter. To bring one back:
+     publish it in the CMS and take its slug off this list. */
+  const DRAFTED = ['what-drives-hoa-management-exit-value', 'hoa-community-manager-retention-challenge',
+    'leadership-infrastructure-enterprise-value', 'service-complexity-enterprise-value', 'sales-infrastructure-before-talent',
+    'exit-preparation-timeline-value', 'buyers-quantify-founder-dependency', 'operational-metrics-scalable-growth',
+    'buyability-gap-transferable-value', 'value-leaks-in-service-businesses', 'repeatability-diagnostic-valuation-multiples',
+    'how-buyers-analyze-financials', 'field-margin-erosion', 'fire-20-percent-revenue', 'growtheright20'];
+  const slugOfRow = r => { const a = $('a[href*="/insights/"], a[href*="/articles/"]', r); const m = a && (a.getAttribute('href') || '').match(/\/(?:insights|articles)\/([a-z0-9-]+)/); return m ? m[1] : ''; };
+  function prune() {
+    const list = $(O('gi-list')); if (!list) return;
+    $$(O('gi-row'), list).forEach(r => { if (DRAFTED.indexOf(slugOfRow(r)) >= 0) r.remove(); });
+    $$(O('gi-tile')).forEach(t => { if (DRAFTED.indexOf(slugOfRow(t)) >= 0) t.remove(); });
+    const rws = $$(O('gi-row'), list), by = {};
+    rws.forEach(r => { const t = topicOf(r); by[t] = (by[t] || 0) + 1; });
+    $$(O('gi-topic')).forEach(b => { const t = b.getAttribute('data-topic') || '', n = t ? (by[t] || 0) : rws.length, c = $(O('gi-topic-c'), b); if (c) c.textContent = String(n); if (t && !n) b.remove(); });
+    const note = $('[data-gi-note]'); if (note) note.textContent = `Showing all ${rws.length} articles.`;
+    const cnt = $(O('gi-open-count'));
+    if (cnt) {
+      const k = Object.keys(by).filter(Boolean).length, first = $('.gfx-pg-t', cnt), mis = $$(O('gi-mi'), cnt);
+      const dates = rws.map(r => ($('time[datetime]', r) || { getAttribute: () => '' }).getAttribute('datetime')).filter(Boolean).sort();
+      if (first) first.textContent = `${rws.length} ${rws.length === 1 ? 'article' : 'articles'}`;
+      const set = (el, s) => { if (!el) return; const sep = $(O('gi-sep'), el); el.textContent = s; if (sep) el.insertBefore(sep, el.firstChild); };
+      mis.forEach(el => {
+        if (/topic/i.test(el.textContent)) set(el, `${k} ${k === 1 ? 'topic' : 'topics'}`);
+        else if (/^\s*since\b/i.test(el.textContent) && dates[0]) { const d = new Date(dates[0] + 'T12:00:00'); set(el, 'Since ' + d.toLocaleString('en-US', { month: 'long', year: 'numeric' })); }
+      });
+    }
+  }
   function topics() {
     const list = $(O('gi-list')); if (!list) return;
     const btns = $$(O('gi-topic')), rws = $$(O('gi-row'), list), arch = D.getElementById('all'), note = $('[data-gi-note]');
@@ -303,7 +334,7 @@
   const mi = h => `<span class="gfx-pg-gi-mi" data-o="gi-mi">${h}</span>`;
   const timeH = a => a.date ? `<time datetime="${a.date.iso}">${a.date.label}</time>` : '';
   const metaH = (a, topic) => { const parts = [timeH(a), topic && a.topicName ? escH(a.topicName) : '', a.mins ? escH(a.mins) + ' min read' : ''].filter(Boolean); return `<p class="gfx-pg-gi-meta" data-o="gi-meta">${parts.map((p, i) => mi((i ? SEP : '') + p)).join('')}</p>`; };
-  const hrefOf = a => '/insights/' + encodeURIComponent(a.slug);
+  const hrefOf = a => '/articles/' + encodeURIComponent(a.slug);   // (1.2.0) the collection lives at /articles
   const figH = (cls, o, a) => `<figure class="${cls}" data-gi-settle="" data-o="${o}" data-gi-cover="${escH(a.cover)}" data-gi-title="${escH(a.name)}"></figure>`;
 
   /* covers: fetched once per key, SRI-checked, their ids made unique per plate (build.js uniq) */
@@ -392,13 +423,13 @@
       const m = $('[data-gi-mins]', ameta), mm = m && m.closest(O('gi-mi'));
       if (mm) { const n = m.textContent.trim() || (me ? me.mins : ''); mm.innerHTML = SEP + escH(n) + ' min read'; }
       const cat = $(O('gi-acat'), ameta);
-      if (cat) { const ts = (cat.getAttribute('data-gi-topic') || '').trim() || (me && me.topic) || slugify(cat.textContent); cat.setAttribute('href', '/insights-v2' + (ts ? '?topic=' + encodeURIComponent(ts) : '') + '#all'); cat.removeAttribute('data-gi-topic'); }
+      if (cat) { const ts = (cat.getAttribute('data-gi-topic') || '').trim() || (me && me.topic) || slugify(cat.textContent); cat.setAttribute('href', '/insights' + (ts ? '?topic=' + encodeURIComponent(ts) : '') + '#all'); cat.removeAttribute('data-gi-topic'); }
     }
     // the body, the contents
     const b = body(rt);
     tocFill(b.secs.map(s => ({ id: s.id, text: sentenceHead(s.text) })).concat(b.sources ? [{ id: b.sources.id, text: 'Sources' }] : []));
     // share: the article's address on the site
-    const url = SITE + '/insights/' + slug;
+    const url = SITE + '/articles/' + slug;
     const SH = { in: 'https://www.linkedin.com/sharing/share-offsite/?url=', x: 'https://x.com/intent/post?url=', fb: 'https://www.facebook.com/sharer/sharer.php?u=' };
     $$('a[data-gi-ico]').forEach(a => { const k = a.getAttribute('data-gi-ico'); if (SH[k]) a.setAttribute('href', SH[k] + encodeURIComponent(url)); });
     $$('[data-gi-copy]').forEach(c => c.setAttribute('data-gi-copy', url));
@@ -433,6 +464,7 @@
     current: 'Insights',
     dom: () => {
       safe('cms template', template);   // (1.1) the template page only: before the rooms, the contents and share are read
+      safe('prune', prune);   // (1.2.0) the index: the drafted rows go before the rooms are read
       if (FIELD) { FIELD.rooms = rooms(); FIELD.drawnCovers = true; }   // (final audit) the cards' drawn covers count for the tablet rhythm
       safe('share', share); safe('contents', contents); safe('topics', topics);
     },

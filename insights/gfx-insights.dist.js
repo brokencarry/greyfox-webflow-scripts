@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.15 + pages 1.0.1 + insights 1.1.0 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.16 + pages 1.0.1 + insights 1.2.0 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.15';
+const VERSION='1.0.16';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -985,12 +985,21 @@ const STAGING= /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname)||
 const toV2=a=>{
 const h=a.getAttribute('href')||'',t=(a.textContent||'').trim();
 if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h))a.setAttribute('href',h.replace(/\/contact\/?/,'/contact-v2'));
-else if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?$/.test(h))a.setAttribute('href','/insights-v2');
-else if(/^https?:\/\/(www\.)?greyfoxpartners\.com\/insights\/[a-z0-9-]+\/?$/.test(h))a.setAttribute('href',h.replace(/^https?:\/\/(www\.)?greyfoxpartners\.com/,'').replace(/\/$/,''));
+else if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?([?#].*)?$/.test(h))a.setAttribute('href','/insights-v2'+(h.match(/[?#].*$/)||[''])[0]);
 else if(t==='Team'&& /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h))a.setAttribute('href','/team-v2');
 else if(/^privacy( policy)?$/i.test(t)&&(h==='#'|| /^\/privacy(-policy)?\/?$/.test(h)))a.setAttribute('href','/privacy-v2');
 else if(h==='/'||h==='/#')a.setAttribute('href','/home-v2');
 };
+const ART='/articles/',PLAUSIBLE='ai-deal-origination-structural-risk-plausible-list-problem';
+const toArticle=a=>{
+const h=a.getAttribute('href')||'',m=h.match(/^(?:https?:\/\/(?:www\.)?greyfoxpartners\.com)?\/insights\/([a-z0-9-]+)\/?([?#].*)?$/);
+if(m&&m[1]!=='category'&&m[1]!=='tag')a.setAttribute('href',ART+m[1]+(m[2]||''));
+else if(/^\/insights-v2-article\/?([?#].*)?$/.test(h))a.setAttribute('href',ART+PLAUSIBLE);
+else if(!STAGING&& /^\/insights-v2\/?([?#].*)?$/.test(h))a.setAttribute('href',h.replace(/^\/insights-v2\/?/,'/insights'));
+};
+{const sweepA=()=>D.querySelectorAll('a[href*="insights"]').forEach(toArticle);
+onReady(sweepA);W.addEventListener('load',()=>{sweepA();setTimeout(sweepA,1500);});
+D.addEventListener('click',e=>{const a=e.target&&e.target.closest&&e.target.closest('a[href]');if(a)toArticle(a);},true);}
 if(STAGING){
 const sweep=()=>D.querySelectorAll('a[href]').forEach(toV2);
 onReady(sweep);W.addEventListener('load',()=>{sweep();setTimeout(sweep,1500);});
@@ -1268,7 +1277,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.1.0';
+W.__gfxInsights='1.2.0';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1409,6 +1418,32 @@ const scta=$('[data-gi-scta]'),closeSec=$(O('gi-close'));
 if(scta&&closeSec&&'IntersectionObserver'in W)new IntersectionObserver(es=>es.forEach(e=>scta.classList.toggle('is-away',e.isIntersecting))).observe(closeSec);
 }
 const topicOf=r=>r.getAttribute('data-topic')||'';
+const DRAFTED=['what-drives-hoa-management-exit-value','hoa-community-manager-retention-challenge',
+'leadership-infrastructure-enterprise-value','service-complexity-enterprise-value','sales-infrastructure-before-talent',
+'exit-preparation-timeline-value','buyers-quantify-founder-dependency','operational-metrics-scalable-growth',
+'buyability-gap-transferable-value','value-leaks-in-service-businesses','repeatability-diagnostic-valuation-multiples',
+'how-buyers-analyze-financials','field-margin-erosion','fire-20-percent-revenue','growtheright20'];
+const slugOfRow=r=>{const a=$('a[href*="/insights/"], a[href*="/articles/"]',r);const m=a&&(a.getAttribute('href')||'').match(/\/(?:insights|articles)\/([a-z0-9-]+)/);return m?m[1]:'';};
+function prune(){
+const list=$(O('gi-list'));if(!list)return;
+$$(O('gi-row'),list).forEach(r=>{if(DRAFTED.indexOf(slugOfRow(r))>=0)r.remove();});
+$$(O('gi-tile')).forEach(t=>{if(DRAFTED.indexOf(slugOfRow(t))>=0)t.remove();});
+const rws=$$(O('gi-row'),list),by={};
+rws.forEach(r=>{const t=topicOf(r);by[t]=(by[t]||0)+1;});
+$$(O('gi-topic')).forEach(b=>{const t=b.getAttribute('data-topic')||'',n=t?(by[t]||0):rws.length,c=$(O('gi-topic-c'),b);if(c)c.textContent=String(n);if(t&&!n)b.remove();});
+const note=$('[data-gi-note]');if(note)note.textContent=`Showing all ${rws.length} articles.`;
+const cnt=$(O('gi-open-count'));
+if(cnt){
+const k=Object.keys(by).filter(Boolean).length,first=$('.gfx-pg-t',cnt),mis=$$(O('gi-mi'),cnt);
+const dates=rws.map(r=>($('time[datetime]',r)||{getAttribute:()=>''}).getAttribute('datetime')).filter(Boolean).sort();
+if(first)first.textContent=`${rws.length} ${rws.length===1?'article':'articles'}`;
+const set=(el,s)=>{if(!el)return;const sep=$(O('gi-sep'),el);el.textContent=s;if(sep)el.insertBefore(sep,el.firstChild);};
+mis.forEach(el=>{
+if(/topic/i.test(el.textContent))set(el,`${k} ${k===1?'topic':'topics'}`);
+else if(/^\s*since\b/i.test(el.textContent)&&dates[0]){const d=new Date(dates[0]+'T12:00:00');set(el,'Since '+d.toLocaleString('en-US',{month:'long',year:'numeric'}));}
+});
+}
+}
 function topics(){
 const list=$(O('gi-list'));if(!list)return;
 const btns=$$(O('gi-topic')),rws=$$(O('gi-row'),list),arch=D.getElementById('all'),note=$('[data-gi-note]');
@@ -1498,7 +1533,7 @@ const SEP='<span class="gfx-pg-gi-sep" aria-hidden="true" data-o="gi-sep"></span
 const mi=h=>`<span class="gfx-pg-gi-mi" data-o="gi-mi">${h}</span>`;
 const timeH=a=>a.date?`<time datetime="${a.date.iso}">${a.date.label}</time>`:'';
 const metaH=(a,topic)=>{const parts=[timeH(a),topic&&a.topicName?escH(a.topicName):'',a.mins?escH(a.mins)+' min read':''].filter(Boolean);return`<p class="gfx-pg-gi-meta" data-o="gi-meta">${parts.map((p,i)=>mi((i?SEP:'')+p)).join('')}</p>`;};
-const hrefOf=a=>'/insights/'+encodeURIComponent(a.slug);
+const hrefOf=a=>'/articles/'+encodeURIComponent(a.slug);
 const figH=(cls,o,a)=>`<figure class="${cls}" data-gi-settle="" data-o="${o}" data-gi-cover="${escH(a.cover)}" data-gi-title="${escH(a.name)}"></figure>`;
 const coverReq={};let plateN=0;
 const coverText=key=>coverReq[key]||(coverReq[key]=fetch(BASE+'insights/covers/'+key+'.svg',{integrity:COVER_SRI[key],mode:'cors'}).then(r=>(r.ok?r.text():Promise.reject(new Error('cover '+r.status)))));
@@ -1576,11 +1611,11 @@ if(t&&d){t.setAttribute('datetime',d.iso);t.textContent=d.label;}
 const m=$('[data-gi-mins]',ameta),mm=m&&m.closest(O('gi-mi'));
 if(mm){const n=m.textContent.trim()||(me?me.mins:'');mm.innerHTML=SEP+escH(n)+' min read';}
 const cat=$(O('gi-acat'),ameta);
-if(cat){const ts=(cat.getAttribute('data-gi-topic')||'').trim()||(me&&me.topic)||slugify(cat.textContent);cat.setAttribute('href','/insights-v2'+(ts?'?topic='+encodeURIComponent(ts):'')+'#all');cat.removeAttribute('data-gi-topic');}
+if(cat){const ts=(cat.getAttribute('data-gi-topic')||'').trim()||(me&&me.topic)||slugify(cat.textContent);cat.setAttribute('href','/insights'+(ts?'?topic='+encodeURIComponent(ts):'')+'#all');cat.removeAttribute('data-gi-topic');}
 }
 const b=body(rt);
 tocFill(b.secs.map(s=>({id:s.id,text:sentenceHead(s.text)})).concat(b.sources?[{id:b.sources.id,text:'Sources'}]:[]));
-const url=SITE+'/insights/'+slug;
+const url=SITE+'/articles/'+slug;
 const SH={in:'https://www.linkedin.com/sharing/share-offsite/?url=',x:'https://x.com/intent/post?url=',fb:'https://www.facebook.com/sharer/sharer.php?u='};
 $$('a[data-gi-ico]').forEach(a=>{const k=a.getAttribute('data-gi-ico');if(SH[k])a.setAttribute('href',SH[k]+encodeURIComponent(url));});
 $$('[data-gi-copy]').forEach(c=>c.setAttribute('data-gi-copy',url));
@@ -1610,6 +1645,7 @@ P.run({
 current:'Insights',
 dom:()=>{
 safe('cms template',template);
+safe('prune',prune);
 if(FIELD){FIELD.rooms=rooms();FIELD.drawnCovers=true;}
 safe('share',share);safe('contents',contents);safe('topics',topics);
 },

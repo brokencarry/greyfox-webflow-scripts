@@ -1,4 +1,4 @@
-/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.15 + pages 1.0.1 + contact 1.0.7. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
+/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.16 + pages 1.0.1 + contact 1.0.7. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.15';
+  const VERSION = '1.0.16';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1141,14 +1141,26 @@
   const toV2 = a => {
     const h = a.getAttribute('href') || '', t = (a.textContent || '').trim();
     if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/\/contact\/?/, '/contact-v2'));
-    else if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?$/.test(h)) a.setAttribute('href', '/insights-v2');
-    // (1.0.14) an article on the old site -> the same article in the Webflow CMS (same slug); at launch the absolute
-    // greyfoxpartners.com/insights/<slug> address is the CMS page itself
-    else if (/^https?:\/\/(www\.)?greyfoxpartners\.com\/insights\/[a-z0-9-]+\/?$/.test(h)) a.setAttribute('href', h.replace(/^https?:\/\/(www\.)?greyfoxpartners\.com/, '').replace(/\/$/, ''));
+    else if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?([?#].*)?$/.test(h)) a.setAttribute('href', '/insights-v2' + (h.match(/[?#].*$/) || [''])[0]);
     else if (t === 'Team' && /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h)) a.setAttribute('href', '/team-v2');
     else if (/^privacy( policy)?$/i.test(t) && (h === '#' || /^\/privacy(-policy)?\/?$/.test(h))) a.setAttribute('href', '/privacy-v2');
     else if (h === '/' || h === '/#') a.setAttribute('href', '/home-v2');   // (1.0.8) home links: the logos
   };
+  /* (1.0.16, founder 10/20) THE ARTICLES MOVED: the list page keeps /insights and the CMS articles live at
+     /articles/<slug> (Webflow won't let a page and a collection share "insights"). Every page still holds the old
+     address (greyfoxpartners.com/insights/<slug>, and the static /insights-v2-article for the Plausible List); a link
+     goes straight to the article, on every host, so nobody rides the launch 301 (/insights/(.*) -> /articles/%1). */
+  const ART = '/articles/', PLAUSIBLE = 'ai-deal-origination-structural-risk-plausible-list-problem';
+  const toArticle = a => {
+    const h = a.getAttribute('href') || '', m = h.match(/^(?:https?:\/\/(?:www\.)?greyfoxpartners\.com)?\/insights\/([a-z0-9-]+)\/?([?#].*)?$/);
+    if (m && m[1] !== 'category' && m[1] !== 'tag') a.setAttribute('href', ART + m[1] + (m[2] || ''));
+    else if (/^\/insights-v2-article\/?([?#].*)?$/.test(h)) a.setAttribute('href', ART + PLAUSIBLE);
+    // after launch the list page is /insights: a link still naming the staging slug (the template's way back) goes there
+    else if (!STAGING && /^\/insights-v2\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/^\/insights-v2\/?/, '/insights'));
+  };
+  { const sweepA = () => D.querySelectorAll('a[href*="insights"]').forEach(toArticle);
+    onReady(sweepA); W.addEventListener('load', () => { sweepA(); setTimeout(sweepA, 1500); });
+    D.addEventListener('click', e => { const a = e.target && e.target.closest && e.target.closest('a[href]'); if (a) toArticle(a); }, true); }
   if (STAGING) {
     const sweep = () => D.querySelectorAll('a[href]').forEach(toV2);
     onReady(sweep); W.addEventListener('load', () => { sweep(); setTimeout(sweep, 1500); });
