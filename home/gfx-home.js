@@ -299,8 +299,9 @@
       setHold(); ST.addEventListener('refreshInit', setHold);
       const camps = [0, 0.5, 1];
       let cF = 0, midX = 0;
+      let ridgeTop = 14;   // (1.1.7) raised only when a stop's label would meet the header text (fitRidge)
       const ridge = () => {
-        const Wr = rail.offsetWidth, Hr = rail.offsetHeight, top = 14, bot = Hr - 10, span = bot - top;
+        const Wr = rail.offsetWidth, Hr = rail.offsetHeight, top = ridgeTop, bot = Hr - 10, span = bot - top;
         const lastV = 0.86, x1 = Wr - span * (1 - lastV) / TAN;
         const pts = [[0, 0], [0.15, 0.12], [0.23, 0.145], [0.42, 0.37], [0.5, 0.40], [0.72, 0.66], [0.8, 0.69], [1, lastV]].map(([u, v]) => [u * x1, bot - v * span]).concat([[Wr, top]]);
         const d = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L');
@@ -329,7 +330,22 @@
         camps.forEach((_, k) => campReveal(k, f));
         stops.forEach((s, k) => s.classList.toggle('gfx-dot-on', f >= camps[k] - 0.015));
       };
-      const placeClimb = () => safe('climb', () => { ridge(); snapMid(); camps.forEach((t, k) => { const p = cPt(t); stops[k].style.left = p.x + 'px'; stops[k].style.top = p.y + 'px'; }); drawClimb(cF); });
+      const placeStops = () => { ridge(); snapMid(); camps.forEach((t, k) => { const p = cPt(t); stops[k].style.left = p.x + 'px'; stops[k].style.top = p.y + 'px'; }); };
+      /* (1.1.7, final audit) on a short desktop (the rail is 11vh) the summit's label ("14 years later") rose into the
+         header's lede. Only when a label (in its settled place) would come within 16px of a header line it overlaps
+         sideways: lower the ridge's top inside the rail by that much (at most half the rail). Nothing else moves. */
+      const headText = $$('.gfx-case-head .heading-2, .gfx-case-head .paragraph', sec);
+      const fitRidge = () => {
+        let need = 0;
+        labels.forEach(l => { if (!l) return; const y = +gsap.getProperty(l, 'y') || 0, q = l.getBoundingClientRect(), lt = q.top - y;
+          headText.forEach(h => { const r = h.getBoundingClientRect(); if (Math.min(q.right, r.right) - Math.max(q.left, r.left) > 0) need = Math.max(need, r.bottom + 16 - lt); }); });
+        return Math.ceil(need);
+      };
+      const placeClimb = () => safe('climb', () => {
+        ridgeTop = 14; placeStops();
+        const need = fitRidge(); if (need > 0) { ridgeTop = Math.min(14 + need, Math.max(14, (rail.offsetHeight - 10) * 0.5)); placeStops(); }
+        drawClimb(cF);
+      });
       placeClimb(); ST.addEventListener('refresh', placeClimb);
       const flowF = { f: 0 };
       const st = ST.create({ trigger: content, start: 'top top', end: () => '+=' + W.innerHeight * hc, invalidateOnRefresh: true,
