@@ -523,6 +523,7 @@
   const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
   const fieldListeners = [];
   const setupRooms = () => {
+    if (fieldDef.phoneRhythm) H.classList.add('gfx-ph-rhythm');
     fieldRooms = (fieldDef.rooms || []).map(o => Object.assign({}, o, { el: typeof o.el === 'string' ? $(o.el) : o.el })).filter(o => o.el);
     fieldRooms.forEach((o, i) => {
       const r = o.el; r.classList.add('gfx-fr'); r.setAttribute('data-gfx-native', o.native);
