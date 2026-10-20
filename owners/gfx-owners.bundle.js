@@ -1411,7 +1411,8 @@
           if (k === 0) {
             const u = market(s, { x0: 0, x1: Wk - 8, y0: 6.5, y1: Math.round(Hh * 0.66) + 0.5, sp: 17, dx: 13, ux: 0.74, urow: -1, seed: 11, fit: 0.12, H: Hh });
             note(s, 'pa-nu', u.x - 20, Math.round(Hh * 0.66) + 30, 'end');
-            set(s, 'pa-gr', `M${f1(u.x)} ${f1(u.y + 9)}V${f1(yh - 14)}Q${f1(u.x)} ${yh} ${f1(u.x + 14)} ${yh}H${f1(Wk)}`);
+            // (1.2.0) on a phone the next drawings are words only, so the line drops straight into the rule below it
+            set(s, 'pa-gr', mq('(max-width: 767px)') ? `M${f1(u.x)} ${f1(u.y + 9)}V${yh}` : `M${f1(u.x)} ${f1(u.y + 9)}V${f1(yh - 14)}Q${f1(u.x)} ${yh} ${f1(u.x + 14)} ${yh}H${f1(Wk)}`);
           }
           if (k === 1) {
             const ux = Wk * 0.24, uy = yh, nx = Wk * 0.72, ny = yl;
