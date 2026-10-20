@@ -48,3 +48,8 @@ html.gfx-mc-open, html.gfx-mc-open body { overflow: hidden !important; }
 .gfx-mc-lb-x { position: absolute; top: max(14px, env(safe-area-inset-top)); right: 14px; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 22px; background: rgba(40, 40, 40, .9); color: #fff; font: 400 24px/44px "DM Sans", sans-serif; text-align: center; cursor: pointer; }
 .gfx-mc-lb-x:focus-visible { outline: 2px solid #2f9e6e; outline-offset: 2px; }
 .gfx-mc-lb-cap { position: absolute; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); margin: 0; text-align: center; color: rgba(255, 255, 255, .7); font: 400 14px/1.4 "DM Sans", sans-serif; pointer-events: none; }
+/* (investors 1.0.2, final audit) on a phone the rooms sit on the house rhythm (tierPhone): the rhythm sets each gap from
+   the room above's last line, so the rooms above hand over without bottom padding of their own (the close keeps its foot) */
+@media (max-width: 767px) {
+  html:not(#gfx-iv) :is([data-o~="ow-hero"], [data-o~="iv-fun"], [data-o~="iv-client"], [data-o~="iv-mc"], [data-o~="iv-cases"], [data-o~="iv-std"]) { padding-bottom: 0 !important; }
+}
