@@ -4,8 +4,8 @@
   "sri": "sha384-821Xt3cbkQuVF+b0M0Ihev3gh1XkPjJ+GSdksRGgOGgT09BoZl40SF3TbZFIoNYy"
  },
  "core/gfx-core.dist.css": {
-  "bytes": 28261,
-  "sri": "sha384-Qvx4nY46XW9qLQoEOopuRMVkglMoh8QgxpfPGIWZzoeNK/509fpdomnRS261RB4/"
+  "bytes": 28305,
+  "sri": "sha384-drN9eth/h1tCL4RRyiMOk9LydxikL+51uL0O4pzFQOYUumdd+etYW368R+4gCMTr"
  },
  "home/gfx-home.dist.css": {
   "bytes": 26336,
@@ -56,8 +56,8 @@
   "sri": "sha384-iKyln+32IUY6CMIFITirGjBoZCz+3XwouX/EukBefRlg4oxIGd3VchzmOgDSk5HB"
  },
  "insights/gfx-insights.dist.css": {
-  "bytes": 48430,
-  "sri": "sha384-dls8q96Q53LyBMSDriklnEihofKj6xoeF/UKn8+B/0LQWXUUW6QoqUj5tFccLGTW"
+  "bytes": 48495,
+  "sri": "sha384-aPxzGG1KRNr5Dt7dkO4N9aghRPEgdTpzVEJ02XZNZfYoW5idANLygeMpDVUUswq3"
  },
  "person/gfx-person.dist.js": {
   "bytes": 70751,

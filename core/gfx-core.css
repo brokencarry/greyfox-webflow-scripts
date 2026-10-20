@@ -371,3 +371,6 @@ html.gfx-f3 a.gfx-fi-lockup:focus-visible { outline: 1px solid #3aa678; outline-
   html.gfx-f3 body .gfx-fi-legal .gfx-fi-link { position: relative; }
   html.gfx-f3 body .gfx-fi-legal .gfx-fi-link::after { content: ""; position: absolute; left: -4px; right: -4px; top: -12px; bottom: -12px; }
 }
+
+/* (core css, 10/20 night) running text never ends a paragraph on one stranded word (line breaks only; nothing moves) */
+:where(html.gfx-f3 body p) { text-wrap: pretty; }   /* zero specificity: any rule that already sets a wrap wins */

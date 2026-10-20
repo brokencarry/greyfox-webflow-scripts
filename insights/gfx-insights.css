@@ -11,3 +11,7 @@
 
 /* ---------- the share marks are drawn by the layer (insights 1.0.0): the copy control may be a DOM button ---------- */
 [data-gi-copy] { cursor: pointer; }
+
+/* (css, 10/20 night) the archive's titles break into even lines (they are inline for their hover underline, so the line
+   balancing sits on the heading that holds them): no more "...Miss the / Best Companies" */
+:is(h2, h3, h4, p, div):has(> [data-o~="gi-row-t"]) { text-wrap: balance; }
