@@ -1905,7 +1905,9 @@
       safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-std-sec'), 0.32));
     },
     rooms: () => { [standardInit, casesInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
-    late: () => { [marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
+    // (1.1.7) a window under 680px tall (a 1366x768 laptop with the browser's bars) has no room for the pinned market stage
+    // even with the count fitted: it gets the still stage (every step shown, as with reduced motion). Decided at load.
+    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 680; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
     still: () => {
       gsap = W.gsap || null; ST = W.ScrollTrigger || null;
       $$('.gfx-case-ch').forEach(c => c.classList.add('gfx-on'));

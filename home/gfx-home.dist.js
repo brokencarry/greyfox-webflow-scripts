@@ -1658,7 +1658,7 @@ safe('marquee',marqueeInit);
 safe('slide',()=>slide($('.gfx-hero-sec'),$('.gfx-std-sec'),0.32));
 },
 rooms:()=>{[standardInit,casesInit,teamInit,insightsInit,closeInit].forEach(f=>safe(f.name,f));},
-late:()=>{[marketInit,grownInit,()=>closeMarkInit(false)].forEach(f=>safe(f.name||'late',f));},
+late:()=>{const short=W.innerWidth>767&&W.innerHeight<680;[short?marketStill:marketInit,grownInit,()=>closeMarkInit(false)].forEach(f=>safe(f.name||'late',f));},
 still:()=>{
 gsap=W.gsap||null;ST=W.ScrollTrigger||null;
 $$('.gfx-case-ch').forEach(c=>c.classList.add('gfx-on'));
