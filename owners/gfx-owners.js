@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.1.0';
+  W.__gfxOwners = '1.1.1';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -67,8 +67,10 @@
     rooms: [
       { el: O('ow-hero'), native: 'L', tone: 'L', noInk: true },
       { el: O('ow-proc'), native: 'L', tone: 'L', noInk: true },
-      { el: O('ow-pt'), native: 'L', tone: 'L', noInk: true },
-      { el: O('ow-qs'), native: 'L', tone: 'L', noInk: true },
+      // (1.1.1) the partnership and the questions take the house rhythm (the visible gap from the last thing seen in the
+      // room before to the first thing seen in this one is the standard tier: 160px on a 900px-tall screen, 80px on a phone)
+      { el: O('ow-pt'), native: 'L', tone: 'L', noInk: true, tier: 'standard' },
+      { el: O('ow-qs'), native: 'L', tone: 'L', noInk: true, tier: 'standard' },
       { el: O('ow-close'), native: 'D', tone: 'D', opaque: true, foot: true, turnAt: (ym, c) => {
         const room = c.room.el, top = c.docTop(room); let at = top - c.vh * 0.6;
         const lb = c.lastBottom(c.prev.el); if (Number.isFinite(lb)) at = Math.max(at, lb - c.vh * 0.12);

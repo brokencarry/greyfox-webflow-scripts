@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.11 + owners 1.1.0 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.11 + owners 1.1.1 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1050,7 +1050,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.1.0';
+W.__gfxOwners='1.1.1';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1081,8 +1081,8 @@ const field={
 rooms:[
 {el:O('ow-hero'),native:'L',tone:'L',noInk:true},
 {el:O('ow-proc'),native:'L',tone:'L',noInk:true},
-{el:O('ow-pt'),native:'L',tone:'L',noInk:true},
-{el:O('ow-qs'),native:'L',tone:'L',noInk:true},
+{el:O('ow-pt'),native:'L',tone:'L',noInk:true,tier:'standard'},
+{el:O('ow-qs'),native:'L',tone:'L',noInk:true,tier:'standard'},
 {el:O('ow-close'),native:'D',tone:'D',opaque:true,foot:true,turnAt:(ym,c)=>{
 const room=c.room.el,top=c.docTop(room);let at=top-c.vh*0.6;
 const lb=c.lastBottom(c.prev.el);if(Number.isFinite(lb))at=Math.max(at,lb-c.vh*0.12);

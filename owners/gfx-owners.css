@@ -360,9 +360,9 @@ html .pa-note { font: 400 14px/1 "DM Sans", "DM Sans Fallback", sans-serif; }   
 html:not(#gfx-o) [data-o~="ow-pt"] {
   --pt-ink: #1e1e1e; --pt-muted: #585e6b; --pt-quiet: #8b8e96; --pt-green: #156946; --pt-paper: #f6f5f2; --pt-hair: #dcdcd7;
   --pt-serif: Sentient, Georgia, serif; --pt-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  position: relative; display: grid; box-sizing: border-box; max-width: 1560px; margin: 0 auto; min-height: 100vh;
+  position: relative; display: grid; box-sizing: border-box; max-width: 1560px; margin: 0 auto;
   grid-template-columns: minmax(380px, .95fr) minmax(0, 1.3fr); grid-template-areas: "head film" "para film" "ledger film" "note note";
-  column-gap: clamp(48px, 5vw, 88px); row-gap: 0; align-content: center; padding: 128px 48px 128px; background: var(--pt-paper); color: var(--pt-ink);
+  column-gap: clamp(48px, 5vw, 88px); row-gap: 0; align-content: center; padding: 128px 48px 0; background: var(--pt-paper); color: var(--pt-ink);   /* the top gap is the house rhythm (Owners layer, tier standard) */
 }
 @media (min-width: 1101px) { html:not(#gfx-o) [data-o~="ow-pt"] { grid-template-columns: minmax(480px, .95fr) minmax(0, 1.4fr); } }
 @media (min-width: 768px) and (max-width: 1100px) { html:not(#gfx-o) [data-o~="ow-pt"] { padding-left: 40px; padding-right: 40px; } }
@@ -464,7 +464,6 @@ html:not(#gfx-o) [data-o~="pt-t"] tfoot td[data-o~="pt-k"] { font-size: 64px; le
 
 /* short laptop screens (768 and up, 820px tall or less): everything on one screen */
 @media (min-width: 768px) and (max-height: 820px) {
-  html:not(#gfx-o) [data-o~="ow-pt"] { padding-top: 72px; padding-bottom: 72px; }
   html:not(#gfx-o) [data-o~="pt-h2"] { font-size: 42px; }
   html:not(#gfx-o) [data-o~="pt-para"] { font-size: 17px; margin-top: 16px; }
   html:not(#gfx-o) [data-o~="pt-map"] { aspect-ratio: 1.45 / 1; }
