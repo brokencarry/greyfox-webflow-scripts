@@ -447,6 +447,7 @@ fieldRooms.forEach((o,i)=>{
 const r=o.el;r.classList.add('gfx-fr');r.setAttribute('data-gfx-native',o.native);
 if(o.tier)r.setAttribute('data-gfx-tier',o.tier);
 if(o.opaque)r.setAttribute('data-gfx-opaque','');
+if(o.foot)r.setAttribute('data-gfx-foot','');if(i===fieldRooms.length-1)r.setAttribute('data-gfx-last','');
 if(i&&o.tone!==fieldRooms[i-1].tone&&fieldRooms[i-1].native!=='M')r.setAttribute('data-gfx-turn','');
 });
 };
@@ -602,8 +603,9 @@ const rhythm=()=>{
 const T=TIERS(),S=lastSpans=W.innerWidth<=767?spansLite():spans();
 let changed=false;
 const ph=W.innerWidth<=767;
+const auto=(o,i)=>i&&fieldRooms[i-1].native!=='M'?(o.tone!==fieldRooms[i-1].tone?'turn':'standard'):null;
 const writes=fieldRooms.map((o,i)=>{
-const tier=ph&&o.tierPhone?o.tierPhone:o.tier;
+const tier=ph?(o.tierPhone||o.tier||auto(o,i)):o.tier;
 if(!tier){if(o._phPad){o.el.style.removeProperty('padding-top');o._phPad=false;S[i].pad=parseFloat(getComputedStyle(o.el).paddingTop)||0;}return null;}
 if(tier!==o.tier)o._phPad=true;
 const prevTrail=i&&fieldRooms[i-1].native!=='M'?S[i-1].trail:0;

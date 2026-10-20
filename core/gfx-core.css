@@ -392,3 +392,8 @@ html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc
   html.gfx-bar-top :is(.navigation_wrapper, .navbar) { pointer-events: none; }
   html.gfx-bar-top :is(.navigation_wrapper, .navbar) :is(a, button, [role="button"], .w-nav-button, .w-nav-menu, .w-nav-overlay, [class*="menu"], [class*="hamburger"]) { pointer-events: auto; }
 }
+/* (core 1.0.12, final audit) on a phone the rooms hand over without their own bottom padding: the house rhythm sets each
+   gap from the room above's last word or picture (the room before the footer keeps its foot) */
+@media (max-width: 767px) {
+  html.gfx-f3 .gfx-fr:not([data-gfx-foot]):not([data-gfx-last]):not(#gfx-ph) { padding-bottom: 0 !important; }
+}
