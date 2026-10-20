@@ -233,7 +233,7 @@
   P.run({
     current: 'Insights',
     dom: () => {
-      if (FIELD) FIELD.rooms = rooms();
+      if (FIELD) { FIELD.rooms = rooms(); FIELD.drawnCovers = true; }   // (final audit) the cards' drawn covers count for the tablet rhythm
       safe('share', share); safe('contents', contents); safe('topics', topics);
     },
     start: api => { gsap = api.gsap; anim = !!gsap && !REDUCE; if (anim) H.classList.add('gi-anim'); safe('opening', opening); safe('scroll', scroll); },
