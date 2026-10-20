@@ -53,7 +53,7 @@ html.gfx-mc-open, html.gfx-mc-open body { overflow: hidden !important; }
 @media (max-width: 767px) {
   html:not(#gfx-iv) :is([data-o~="ow-hero"], [data-o~="iv-fun"], [data-o~="iv-client"], [data-o~="iv-mc"], [data-o~="iv-cases"], [data-o~="iv-std"]) { padding-bottom: 0 !important; }
 }
-@media (max-width: 767px) {
-  /* (1.0.2) the results room's desktop hold kept a 119px top inside it on a phone: the rhythm sets that gap */
+@media (max-width: 991px) {
+  /* (1.0.2) the results room's desktop hold (live from 992) kept a 119px top inside it on a phone or tablet: the rhythm sets that gap */
   html:not(#gfx-iv) [data-o~="iv2-stage"] { padding-top: 0 !important; padding-bottom: 0 !important; }
 }
