@@ -672,7 +672,7 @@
           top = Math.min(top, t); bot = Math.max(bot, b + stickyShift(e, rm));
         });
         const rt = top0(rm), pad = parseFloat(getComputedStyle(rm).paddingTop) || 0;
-        return { pad, inner: Number.isFinite(top) ? top - (rt + pad) : 0, trail: Number.isFinite(bot) ? Math.max(0, rt + rm.offsetHeight - bot) : 0, top, bot };
+        return { pad, inner: Number.isFinite(top) ? top - (rt + pad) : 0, trail: Number.isFinite(bot) ? Math.max(0, rt + rm.offsetHeight - bot) : 0, top, bot, rtop: rt, rbot: rt + rm.offsetHeight };
       });
     } finally { STICKY = new Set(); st.forEach((e, i) => keep[i].forEach(([p, v, pr]) => { if (v) e.style.setProperty(p, v, pr); else e.style.removeProperty(p); })); }
   };
@@ -690,9 +690,9 @@
       // (the close's fox watermark is decoration: it does not decide the room's edges)
       const media = $$('svg, canvas, video, img, .gfx-mk-portal', rm).filter(e => !(e.ownerSVGElement) && !e.closest('a, button') && !e.closest(SKIPSPAN) && !e.closest(DECOR) && seen(e)).map(r0).filter(r => r.w > 8 && r.h > 8);
       const rt = top0(rm), pad = parseFloat(getComputedStyle(rm).paddingTop) || 0;
-      if (!c.length && !media.length) return { pad, inner: 0, trail: 0 };
+      if (!c.length && !media.length) return { pad, inner: 0, trail: 0, rtop: rt, rbot: rt + rm.offsetHeight };
       const top = Math.min(...c.map(top0), ...media.map(r => r.t)), bot = Math.max(...c.map(e => top0(e) + e.offsetHeight), ...media.map(r => r.b));
-      return { pad, inner: top - (rt + pad), trail: Math.max(0, rt + rm.offsetHeight - bot), top, bot };
+      return { pad, inner: top - (rt + pad), trail: Math.max(0, rt + rm.offsetHeight - bot), top, bot, rtop: rt, rbot: rt + rm.offsetHeight };
     });
   };
   const rhythm = () => {
@@ -708,7 +708,8 @@
       const tier = ph ? (o.tierPhone || (turnHere ? 'turn' : o.tier || auto(o, i))) : o.tier;   // (a colour change is always the turn on a phone)
       if (!tier) { if (o._phPad) { o.el.style.removeProperty('padding-top'); o._phPad = false; S[i].pad = parseFloat(getComputedStyle(o.el).paddingTop) || 0; } return null; }
       if (tier !== o.tier) o._phPad = true;
-      const prevTrail = i && fieldRooms[i - 1].native !== 'M' ? S[i - 1].trail : 0;
+      // (final audit) whatever sits between two rooms (a block outside the field) counts toward the gap
+      const prevTrail = i && fieldRooms[i - 1].native !== 'M' ? S[i - 1].trail + (ph ? Math.max(0, (S[i].rtop || 0) - (S[i - 1].rbot || 0)) : 0) : 0;   // (phones only: desktop keeps its approved gaps)
       const want = Math.max(0, Math.round(T[tier] - S[i].inner - prevTrail));
       return Math.abs(want - S[i].pad) > 1 ? want : null;
     });
