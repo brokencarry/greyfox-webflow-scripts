@@ -1,4 +1,4 @@
-/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.10 + pages 1.0.1 + contact 1.0.4 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
+/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.10 + pages 1.0.1 + contact 1.0.5 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1216,7 +1216,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxContact)return;
-W.__gfxContact='1.0.4';
+W.__gfxContact='1.0.5';
 const P=gfx.pages,O=P.O,mk=P.mk,H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const GROUP=G.group;
 const el=(tag,cls,text)=>{const n=D.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
@@ -1304,8 +1304,8 @@ const radios=$$(O('r4-radio'),room);
 const sayEl=$('[data-r4-say]',box)||$(O('ow-sr')+'[aria-live]',box),fieldsBox=$(O('r4-fields'),form),done=$(O('r4-done'),box)||$('.w-form-done',box),fail=$(O('r4-fail'),box)||$('.w-form-fail',box);
 const audience=form.elements.audience,subject=form.elements._subject,gotcha=form.elements._gotcha;
 const inputs=()=>$$(O('r4-in'),form);
-$('input, textarea',box).concat(radios).forEach(i=>i.classList.add('fs-exclude'));
-$('input[placeholder="Example text"], textarea[placeholder="Example text"]',form).forEach(i=>i.removeAttribute('placeholder'));
+$$('input, textarea',box).concat(radios).forEach(i=>i.classList.add('fs-exclude'));
+$$('input[placeholder="Example text"], textarea[placeholder="Example text"]',form).forEach(i=>i.removeAttribute('placeholder'));
 inputs().forEach(i=>{if(i.getAttribute('data-kind')==='reach'){i.setAttribute('inputmode','email');i.spellcheck=false;i.setAttribute('autocapitalize','off');}});
 let path=null,sent=false;
 const setFail=k=>{if(!fail)return;const to=FAIL.to[k]||FAIL.to.investor;const p=$('p',fail)||fail;p.textContent='';p.append(FAIL.lead);const a=el('a','',to);a.href='mailto:'+to;p.append(a,FAIL.end);};
