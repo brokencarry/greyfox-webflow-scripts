@@ -1742,6 +1742,10 @@
       const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { ensureDemo(); demoDo('play'); io.disconnect(); } }), { threshold: 0.35 });
       io.observe(portal);
     });
+    // (1.1.6, final audit: mounting the client's window as the market arrived dropped 3-4 frames on a phone) the window is
+    // built in the first idle moment after load, long before the reader reaches it
+    const idleMount = () => (W.requestIdleCallback ? W.requestIdleCallback(() => safe('mk idle', ensureDemo), { timeout: 3000 }) : setTimeout(() => safe('mk idle', ensureDemo), 1500));
+    if (D.readyState === 'complete') idleMount(); else W.addEventListener('load', idleMount, { once: true });
     W.gfxMarket = { state: () => ({ P, E, step }), redraw: rd };
   }
   // the reduced page: every part in its final, true state at once (the still stage shows all four steps)

@@ -1521,6 +1521,8 @@ if(phone()&&portal&&'IntersectionObserver'in W)safe('mk phone',()=>{
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){ensureDemo();demoDo('play');io.disconnect();}}),{threshold:0.35});
 io.observe(portal);
 });
+const idleMount=()=>(W.requestIdleCallback?W.requestIdleCallback(()=>safe('mk idle',ensureDemo),{timeout:3000}):setTimeout(()=>safe('mk idle',ensureDemo),1500));
+if(D.readyState==='complete')idleMount();else W.addEventListener('load',idleMount,{once:true});
 W.gfxMarket={state:()=>({P,E,step}),redraw:rd};
 }
 function marketStill(){
