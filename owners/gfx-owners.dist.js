@@ -591,10 +591,11 @@ return{pad,inner:Number.isFinite(top)?top-(rt+pad):0,trail:Number.isFinite(bot)?
 };
 const spansLite=()=>{
 const memo=new Map(),top0=el=>{if(!el)return 0;let v=memo.get(el);if(v==null){v=el.offsetTop+top0(el.offsetParent);memo.set(el,v);}return v;};
+const seen=e=>!e.checkVisibility||e.checkVisibility({visibilityProperty:true});
 const Y=W.scrollY||0,r0=e=>{const r=e.getBoundingClientRect();return{t:r.top+Y,b:r.bottom+Y,w:r.width,h:r.height};};
 return fieldRooms.map(o=>{
-const rm=o.el,c=$$('*',rm).filter(e=>!(e.ownerSVGElement)&&e.tagName!=='svg'&&hasOwnText(e)&&e.offsetParent&&e.offsetHeight>2&&e.offsetWidth>2&&!e.closest(SKIPSPAN)&&!e.closest(DECOR));
-const media=$$('svg, canvas, video, img, .gfx-mk-portal',rm).filter(e=>!(e.ownerSVGElement)&&!e.closest('a, button')&&!e.closest(SKIPSPAN)&&!e.closest(DECOR)).map(r0).filter(r=>r.w>8&&r.h>8);
+const rm=o.el,c=$$('*',rm).filter(e=>!(e.ownerSVGElement)&&e.tagName!=='svg'&&hasOwnText(e)&&e.offsetParent&&e.offsetHeight>2&&e.offsetWidth>2&&!e.closest(SKIPSPAN)&&!e.closest(DECOR)&&seen(e));
+const media=$$('svg, canvas, video, img, .gfx-mk-portal',rm).filter(e=>!(e.ownerSVGElement)&&!e.closest('a, button')&&!e.closest(SKIPSPAN)&&!e.closest(DECOR)&&seen(e)).map(r0).filter(r=>r.w>8&&r.h>8);
 const rt=top0(rm),pad=parseFloat(getComputedStyle(rm).paddingTop)||0;
 if(!c.length&&!media.length)return{pad,inner:0,trail:0};
 const top=Math.min(...c.map(top0),...media.map(r=>r.t)),bot=Math.max(...c.map(e=>top0(e)+e.offsetHeight),...media.map(r=>r.b));

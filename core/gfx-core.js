@@ -681,12 +681,14 @@
     /* (1.0.12, final audit) every word and every picture counts, and the room's edges are its true first and last ones
        (before: the first 6 and last 12 in code order, words only, so a drawing, a film or the client's window at a
        room's foot was read as empty space and a phone gap came out 60 where it meant 256) */
+    // (hidden items, like a list's later pages, take no part: visibility counts, not only display)
+    const seen = e => !e.checkVisibility || e.checkVisibility({ visibilityProperty: true });
     const Y = W.scrollY || 0, r0 = e => { const r = e.getBoundingClientRect(); return { t: r.top + Y, b: r.bottom + Y, w: r.width, h: r.height }; };
     return fieldRooms.map(o => {
       // (every element that holds its own words: the case figures and their captions are plain blocks)
-      const rm = o.el, c = $$('*', rm).filter(e => !(e.ownerSVGElement) && e.tagName !== 'svg' && hasOwnText(e) && e.offsetParent && e.offsetHeight > 2 && e.offsetWidth > 2 && !e.closest(SKIPSPAN) && !e.closest(DECOR));
+      const rm = o.el, c = $$('*', rm).filter(e => !(e.ownerSVGElement) && e.tagName !== 'svg' && hasOwnText(e) && e.offsetParent && e.offsetHeight > 2 && e.offsetWidth > 2 && !e.closest(SKIPSPAN) && !e.closest(DECOR) && seen(e));
       // (the close's fox watermark is decoration: it does not decide the room's edges)
-      const media = $$('svg, canvas, video, img, .gfx-mk-portal', rm).filter(e => !(e.ownerSVGElement) && !e.closest('a, button') && !e.closest(SKIPSPAN) && !e.closest(DECOR)).map(r0).filter(r => r.w > 8 && r.h > 8);
+      const media = $$('svg, canvas, video, img, .gfx-mk-portal', rm).filter(e => !(e.ownerSVGElement) && !e.closest('a, button') && !e.closest(SKIPSPAN) && !e.closest(DECOR) && seen(e)).map(r0).filter(r => r.w > 8 && r.h > 8);
       const rt = top0(rm), pad = parseFloat(getComputedStyle(rm).paddingTop) || 0;
       if (!c.length && !media.length) return { pad, inner: 0, trail: 0 };
       const top = Math.min(...c.map(top0), ...media.map(r => r.t)), bot = Math.max(...c.map(e => top0(e) + e.offsetHeight), ...media.map(r => r.b));
