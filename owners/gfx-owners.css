@@ -508,3 +508,12 @@ html:not(#gfx-o) [data-o~="pt-mearn"] [data-o~="pt-yr"]::before { content: "Year
 @keyframes gfx-pt-halo8 { 0% { stroke-width: 7px; opacity: .3; } 100% { stroke-width: 26px; opacity: 0; } }
 [data-o~="ow-pt"] [data-o~="pt-map"] .p3-halo.is-pulse { animation: gfx-pt-halo8 1.1s cubic-bezier(.16, 1, .3, 1) both; }
 [data-o~="ow-pt"].is-done [data-o~="pt-map"] .p8-r.is-short { opacity: .35; }
+/* (owners 1.2.0, final audit 10/20; the founder: the four drawings "shot" on a phone) on a phone the call reads as one
+   short sequence: Research keeps its drawing (your company found inside the market), Outreach and Conversation are their
+   words alone (their drawings only make sense joined across the desktop line), and Introduction keeps a short line that
+   turns up into the house arrow. Desktop and tablet unchanged. */
+@media (max-width: 767px) {
+  html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-beat]:is([data-o~=is-k1], [data-o~=is-k2]) [data-o~=pc-draw] { display: none; }
+  html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-beat][data-o~=is-k0] [data-o~=pc-draw] { height: 236px; }
+  html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-beat][data-o~=is-k3] [data-o~=pc-draw] { height: 112px; }
+}
