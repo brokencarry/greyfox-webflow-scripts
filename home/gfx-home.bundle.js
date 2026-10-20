@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.11 + home 1.1.4. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.11 + home 1.1.5. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1212,7 +1212,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.4';
+  W.__gfxHome = '1.1.5';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -1561,16 +1561,20 @@
     const fieldR = () => phone() ? { x0: -8, x1: Wd + 8, top: Hd * 0.36, bot: Hd * 0.6 } : { x0: -Wd * 0.04, x1: Wd * 1.02, top: Hd * 0.14, bot: Hd * 0.9 };
     const PORTAL_U = () => (phone() ? 1.02 : 0.575);
     const GATES = [0.6, 0.71, 0.82];
-    const gateIn = () => ss(seg(P, 0.23, 0.26)), gateReach = i => ss(seg(P, 0.26 + i * 0.035, 0.29 + i * 0.035));
+    /* (home 1.1.5, founder 10/20: "feels like your scroll is moving the lines") each step's change runs across the first
+       two thirds of its window, so the strands move for as long as the reader scrolls and rest once the step has said
+       its piece (windows 0–.22, .22–.42, .42–.6, .6–1; before: 3% to 14% bursts that a flick of the wheel jumped) */
+    const gateIn = () => ss(seg(P, 0.2, 0.28)), gateReach = i => ss(seg(P, 0.25 + i * 0.045, 0.31 + i * 0.045));
+    let X = 0;   // the stage's exit, 0 → 1 as it releases (the portal fades; the gathered line runs on to the edge)
     const drawStage = () => {
       dirty = false; ctx.clearRect(0, 0, Wd, Hd);
       const F = fieldR(), fh = F.bot - F.top, yc = phone() ? F.top + fh * 0.5 : Hd * 0.5;
-      const a = ss(seg(P, 0.0, 0.1)), b = ss(seg(P, 0.24, 0.4)), c = eio(seg(P, 0.5, 0.64)), d = eio(seg(P, 0.76, 0.9));
+      const a = ss(seg(P, 0.0, 0.16)), b = ss(seg(P, 0.22, 0.38)), c = eio(seg(P, 0.42, 0.56)), d = eio(seg(P, 0.6, 0.76));
       const birthK = eo(clamp(E * 1.25, 0, 1));
-      const uEnd = lerp(1, PORTAL_U(), d) * birthK, SEG = phone() ? 14 : 28;
+      const uEnd = lerp(lerp(1, PORTAL_U(), d), 1, ss(X)) * birthK, SEG = phone() ? 14 : 28;
       const laneY = k => yc + (k - 5.5) * fh * 0.052 * (1 - d * 0.85);
       if (!phone()) {
-        const gIn = gateIn(), gA = gIn * (1 - c * 0.85) * (portal ? +(portal.style.opacity || 1) : 1);
+        const gIn = gateIn(), gA = gIn * (1 - c * 0.85);
         if (gA > 0.01) GATES.forEach((g, i) => { const r = gateReach(i), x = F.x0 + (F.x1 - F.x0) * g, y1 = F.top + fh * gIn; ctx.lineWidth = 1;
           if (r < 0.99) { ctx.globalAlpha = gA * 0.45 * (1 - r); ctx.strokeStyle = ink(0.4); ctx.beginPath(); ctx.moveTo(x, F.top); ctx.lineTo(x, y1); ctx.stroke(); }
           if (r > 0.01) { ctx.globalAlpha = gA * 0.8 * r; ctx.strokeStyle = '#2f9a6c'; ctx.beginPath(); ctx.moveTo(x, F.top); ctx.lineTo(x, y1); ctx.stroke(); } });
@@ -1627,8 +1631,9 @@
       if (s >= 2 && from < 2) { odoSet(oC, 100); fadeTo(nA, 0, 0.3); fadeTo(nC, 1, 0.6, 0.15); }
       if (s < 2 && from >= 2) { fadeTo(nC, 0, 0.35); fadeTo(nA, 1, 0.6, 0.2); odoSet(oA, 92631); }
       if (phone() && nC) { if (s === 3) fadeTo(nC, 0, 0.4); else if (s === 2 && from === 3) fadeTo(nC, 1, 0.5); }
-      if (s === 3 && from < 3) { ensureDemo(); tw(portalK, { k: 1, duration: 1.0, ease: 'power3.inOut', onUpdate: () => setPortal(portalK.k) }); demoDo('play'); }
-      if (s < 3 && from === 3) tw(portalK, { k: 0, duration: 0.5, ease: 'power2.in', onUpdate: () => setPortal(portalK.k) });
+      // (1.1.5) from a tablet up the window opens with the scroll, in step with the line gathering into it (words())
+      if (s === 3 && from < 3) { ensureDemo(); if (phone()) tw(portalK, { k: 1, duration: 1.0, ease: 'power3.inOut', onUpdate: () => setPortal(portalK.k) }); demoDo('play'); }
+      if (s < 3 && from === 3 && phone()) tw(portalK, { k: 0, duration: 0.5, ease: 'power2.in', onUpdate: () => setPortal(portalK.k) });
     };
     const lead = on => {
       led = on;
@@ -1652,6 +1657,7 @@
       if (arrived) { const s = stepOf(P); if (s !== step) { const from = step; step = s; enterStep(s, from); } }
       ixs.forEach((li, i) => { const f = `scaleX(${clamp(seg(P, WIN[i][0], WIN[i][1] - 0.01), 0, 1).toFixed(4)})`; if (li._f !== f && li._bar) { li._bar.style.transform = f; li._f = f; } });
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
+      if (!phone() && portal) { const k = arrived ? eio(seg(P, 0.6, 0.74)) : 0, o = (1 - eo(X)).toFixed(3); if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; } }
     };
     hls.forEach(h => { h.style.transform = 'translate3d(0, 105%, 0)'; });
     [lede, nA, nC].concat(capList).forEach(e => { if (e) e.style.opacity = '0'; });
@@ -1665,9 +1671,11 @@
     ST.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: s => { stageOn = s.isActive; if (stageOn) { dirty = true; wake(); } } });
     ST.addEventListener('refresh', () => { size(); words(); dirty = true; wake(); });
     W.addEventListener('resize', build);
-    // THE PORTAL LEAVES WITH THE STAGE (gf-flow3.js): as the stage's hold ends it fades out (0.45 s), the method lines with it
+    // THE PORTAL LEAVES WITH THE STAGE: (1.1.5) with the scroll, as the stage releases; the lines stay (the method lines
+    // no longer fade with it) and the gathered line runs on past the window to the edge, so nothing cuts off
     const rd = () => { dirty = true; wake(); };
-    ST.create({ trigger: sec, start: 'bottom 95%', onEnter: () => gsap.to(portal, { opacity: 0, duration: 0.45, ease: 'power2.in', overwrite: 'auto', onUpdate: rd, onComplete: rd }),
+    if (!phone()) ST.create({ trigger: sec, start: 'bottom bottom', end: 'bottom 55%', onUpdate: s => { X = s.progress; dirty = true; words(); wake(); }, onRefresh: s => { X = s.progress; } });
+    else ST.create({ trigger: sec, start: 'bottom 95%', onEnter: () => gsap.to(portal, { opacity: 0, duration: 0.45, ease: 'power2.in', overwrite: 'auto', onUpdate: rd, onComplete: rd }),
       onLeaveBack: () => gsap.to(portal, { opacity: 1, duration: 0.6, ease: 'expo.out', overwrite: 'auto', onUpdate: rd, onComplete: rd }) });
     words(); wake();
     // (home 1.1.3) on a phone the room is a plain stack (gfx-home.css, "THE MARKET ROOM ON A PHONE"): the client's window
