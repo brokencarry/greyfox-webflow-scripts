@@ -676,11 +676,16 @@
   };
   const spansLite = () => {
     const memo = new Map(), top0 = el => { if (!el) return 0; let v = memo.get(el); if (v == null) { v = el.offsetTop + top0(el.offsetParent); memo.set(el, v); } return v; };
+    /* (1.0.12, final audit) every word and every picture counts, and the room's edges are its true first and last ones
+       (before: the first 6 and last 12 in code order, words only, so a drawing, a film or the client's window at a
+       room's foot was read as empty space and a phone gap came out 60 where it meant 256) */
+    const Y = W.scrollY || 0, r0 = e => { const r = e.getBoundingClientRect(); return { t: r.top + Y, b: r.bottom + Y, w: r.width, h: r.height }; };
     return fieldRooms.map(o => {
-      const rm = o.el, c = $$('h1,h2,h3,h4,p,a,li,img,.heading-2,.heading-4,.paragraph', rm).filter(e => e.offsetParent && e.offsetHeight > 2 && e.offsetWidth > 2 && !e.closest(SKIPSPAN));
+      const rm = o.el, c = $$('h1,h2,h3,h4,h5,p,a,li,img,blockquote,figcaption,.heading-2,.heading-4,.paragraph', rm).filter(e => e.offsetParent && e.offsetHeight > 2 && e.offsetWidth > 2 && !e.closest(SKIPSPAN));
+      const media = $$('svg, canvas, video, .gfx-mk-portal', rm).filter(e => !(e.ownerSVGElement) && !e.closest('a, button') && !e.closest(SKIPSPAN)).map(r0).filter(r => r.w > 8 && r.h > 8);
       const rt = top0(rm), pad = parseFloat(getComputedStyle(rm).paddingTop) || 0;
-      if (!c.length) return { pad, inner: 0, trail: 0 };
-      const top = Math.min.apply(null, c.slice(0, 6).map(top0)), bot = Math.max.apply(null, c.slice(-12).map(e => top0(e) + e.offsetHeight));
+      if (!c.length && !media.length) return { pad, inner: 0, trail: 0 };
+      const top = Math.min(...c.map(top0), ...media.map(r => r.t)), bot = Math.max(...c.map(e => top0(e) + e.offsetHeight), ...media.map(r => r.b));
       return { pad, inner: top - (rt + pad), trail: Math.max(0, rt + rm.offsetHeight - bot), top, bot };
     });
   };
