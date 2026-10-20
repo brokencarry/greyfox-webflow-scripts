@@ -1,4 +1,4 @@
-/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.4 + pages 1.0.1 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
+/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.5 + pages 1.0.1 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.4';
+  const VERSION = '1.0.5';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -121,6 +121,14 @@
       shared = W.lenis = inst;
       const loop = () => { if (tickerOn) return; sharedRaf(performance.now()); tempLoop = requestAnimationFrame(loop); };
       tempLoop = requestAnimationFrame(loop);
+      // (core 1.0.5) Webflow sets html to the viewport height, so Lenis's own content observer never fires and its scroll
+      // limit stays at the load-time page height; a page that grows afterwards (Investors, +54px) could not reach its
+      // footer. Watch the body instead and refresh the limit whenever the page height changes.
+      if ('ResizeObserver' in W) {
+        let lastH = 0, rz = 0;
+        const watch = () => new ResizeObserver(() => { const h = D.body.scrollHeight; if (Math.abs(h - lastH) < 1) return; lastH = h; cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { try { inst.resize(); } catch (e) { /* ignore */ } }); }).observe(D.body);
+        if (D.body) watch(); else D.addEventListener('DOMContentLoaded', watch, { once: true });
+      }
     } catch (e) { log('lenis', e); }
     return shared;
   };
