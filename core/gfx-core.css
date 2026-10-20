@@ -389,6 +389,6 @@ html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc
    first link below it (the person pages' "Team"): its empty area lets a tap through; the logo, the links, the menu
    button and the open menu stay tappable */
 @media (max-width: 991px) {
-  html.gfx-bar-top .navbar { pointer-events: none; }
-  html.gfx-bar-top .navbar :is(a, button, [role="button"], .w-nav-button, .w-nav-menu, .w-nav-overlay, [class*="menu"]) { pointer-events: auto; }
+  html.gfx-bar-top :is(.navigation_wrapper, .navbar) { pointer-events: none; }
+  html.gfx-bar-top :is(.navigation_wrapper, .navbar) :is(a, button, [role="button"], .w-nav-button, .w-nav-menu, .w-nav-overlay, [class*="menu"], [class*="hamburger"]) { pointer-events: auto; }
 }
