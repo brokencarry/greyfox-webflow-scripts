@@ -659,6 +659,7 @@
     const keep = st.map(e => ['position', 'top', 'bottom'].map(p => [p, e.style.getPropertyValue(p), e.style.getPropertyPriority(p)]));
     st.forEach(e => { e.style.setProperty('position', 'relative', 'important'); e.style.setProperty('top', 'auto', 'important'); e.style.setProperty('bottom', 'auto', 'important'); }); STICKY = new Set(st);
     const memo = new Map(), top0 = el => { if (!el) return 0; let v = memo.get(el); if (v == null) { v = el.offsetTop + top0(el.offsetParent); memo.set(el, v); } return v; };
+    const tabHid = W.innerWidth <= 991;
     try {
       return fieldRooms.map((o, k) => {
         const rm = o.el; let top = Infinity, bot = -Infinity;
@@ -666,6 +667,7 @@
           if (e === rm) return;
           if (!(e.tagName === 'IMG' || e.tagName === 'VIDEO' || hasOwnText(e))) return;
           if (!e.offsetParent || e.offsetWidth < 3 || e.offsetHeight < 3 || e.closest(SKIPSPAN)) return;
+          if (tabHid && e.checkVisibility && !e.checkVisibility({ visibilityProperty: true })) return;   // (final audit) a tablet skips hidden items, like the phone
           let t = top0(e), b = t + e.offsetHeight;
           for (let n = e.parentElement; n && n !== rm; n = n.parentElement) if (clip.has(n)) { const nt = top0(n); t = Math.max(t, nt); b = Math.min(b, nt + n.offsetHeight); break; }
           if (b - t < 2) return;
@@ -696,8 +698,7 @@
     });
   };
   const rhythm = () => {
-    // (final audit) a tablet on a full-rhythm page reads its rooms the phone's way (every word and picture, hidden items skipped)
-    const T = TIERS(), S = lastSpans = (W.innerWidth <= 767 || (W.innerWidth <= 991 && fieldDef && fieldDef.phoneRhythm === true)) ? spansLite() : spans();
+    const T = TIERS(), S = lastSpans = W.innerWidth <= 767 ? spansLite() : spans();
     let changed = false;
     // (1.0.12, final audit) tierPhone: a room that keeps its own desktop spacing joins the house rhythm on a phone only
     const ph = W.innerWidth <= 767;
