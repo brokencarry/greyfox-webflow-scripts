@@ -36,6 +36,8 @@ html.gfx-failsafe [data-o~=iv2-num], html.gfx-failsafe [data-o~=iv2-k], html.gfx
   html body [data-o~="iv2-mwin-in"] > .gfx-mc-still { display: block; position: absolute; inset: 0; margin: 0; padding: 0; border: 0; background: #1e1e1e; cursor: zoom-in; opacity: 0; transition: opacity .9s cubic-bezier(.19, 1, .22, 1); -webkit-tap-highlight-color: transparent; }
   html body [data-o~="iv2-mwin-in"] > video.is-on + .gfx-mc-still { opacity: 1; z-index: 1; }
   html body [data-o~="iv2-mwin-in"] > .gfx-mc-still img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 0 0; }
+  /* the cue that it opens: a small expand mark in the corner */
+  html body [data-o~="iv2-mwin-in"] > .gfx-mc-still::after { content: ""; position: absolute; right: 10px; bottom: 10px; width: 32px; height: 32px; border-radius: 16px; background: rgba(20, 20, 20, .78) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M14 5h5v5M10 19H5v-5M19 5l-6 6M5 19l6-6'/%3E%3C/svg%3E") center / 16px no-repeat; }
   html body [data-o~="iv2-mwin-in"] > .gfx-mc-still:focus-visible { outline: 2px solid #2f9e6e; outline-offset: -2px; }
 }
 html.gfx-mc-open, html.gfx-mc-open body { overflow: hidden !important; }
