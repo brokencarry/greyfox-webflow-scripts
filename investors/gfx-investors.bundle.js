@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.8 + investors 1.0.0. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.9 + investors 1.0.0. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.8';
+  const VERSION = '1.0.9';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -770,7 +770,17 @@
     $$('.' + NAV_VAR + ', [data-gfx-var]', bar).forEach(e => { e.setAttribute('data-gfx-var', ''); e.classList.toggle(NAV_VAR, !top); });
     bar.classList.toggle('gfx-top', top); H.classList.toggle('gfx-bar-top', top);
   });
+  /* (core 1.0.9) THE PHONE MENU'S FOOT: the open menu on phones and tablets was four links on a dark panel. Under them,
+     quietly: the house action and the direct lines (the owners' and investors' addresses, the telephone), so a reader
+     reaches the firm in one tap. Shown only where the menu is the overlay (CSS, max-width 991px). */
+  function menuFoot() {
+    const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
+    const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
+    const href = (cta && cta.getAttribute('href')) || '/contact';
+    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:owners@greyfoxpartners.com"><span>Business owners</span>owners@greyfoxpartners.com</a></li><li><a href="mailto:info@greyfoxpartners.com"><span>Investors</span>info@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+  }
   function navInit() {
+    safe('menu foot', menuFoot);
     const bar = $('.gfx-nav'); if (!bar) return;
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
