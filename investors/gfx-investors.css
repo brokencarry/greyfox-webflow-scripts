@@ -55,5 +55,5 @@ html.gfx-mc-open, html.gfx-mc-open body { overflow: hidden !important; }
 }
 @media (max-width: 767px) {
   /* (1.0.2) the results room's desktop hold kept a 119px top inside it on a phone: the rhythm sets that gap */
-  html:not(#gfx-iv) [data-o~="iv2-stage"] { padding-top: 0 !important; }
+  html:not(#gfx-iv) [data-o~="iv2-stage"] { padding-top: 0 !important; padding-bottom: 0 !important; }
 }
