@@ -270,3 +270,13 @@ html.gfx-ftg-lock-in:not(.gfx-ftg-reveal) .gfx-nav .logo-link { opacity: 0 !impo
 html:not(#tk1):not(#tk2) :is(.navigation-item.button-text, .team_member_contact_button, .nav-button, .button) { border-radius: var(--gf-radius) !important; }
 /* (the Webflow base's own link ink, #1a1b1f, under the dark-key buttons' labels: the designer's primary) */
 html a.nav-button, html .cta_title_wrapper a.button { color: var(--_text---primary); }
+
+/* (core 1.0.6) THE CLOSE'S FOX, one rule for every page. The designer's line drawing sits behind the close headline with
+   38.2% of it showing at the left edge (the golden cut), WHOLE top to bottom: it is sized to the close it sits in (88% of
+   its height, at most 744px), so a short close never crops it flat. Opacity, the light/dark switch and the dissolve as
+   the footer arrives stay as each page has them. */
+html body :is(.gfx-cta-sec .footer-logo-subtle, [data-o~="ow-close-fox"], [data-o~="gfc-fox"], .gfc-fox) {
+  position: absolute !important; top: 50% !important; bottom: auto !important; left: 0 !important; right: auto !important;
+  height: min(88%, 744px) !important; width: auto !important; max-width: none !important; max-height: none !important;
+  aspect-ratio: 487 / 477; transform: translate(-61.8%, -50%) !important;
+}

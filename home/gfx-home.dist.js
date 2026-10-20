@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.5 + home 1.1.2 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.6 + home 1.1.2 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.5';
+const VERSION='1.0.6';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -891,7 +891,8 @@ const y=scrollNow(),vh=W.innerHeight,r=sec.getBoundingClientRect(),top=r.top+y,b
 const max=D.documentElement.scrollHeight-vh,ft=$('.footer_section_wrapper'),fh=ft?ft.offsetHeight:vh*0.6;
 let y0=Math.max(bot-vh,top-vh*0.15),span=Math.max(vh*0.45,fh*0.6);
 if(y0+span>max){y0=Math.max(top-vh*0.15,max-span);span=Math.max(vh*0.2,max-y0);}
-const t=Math.min(1,Math.max(0,(y-y0) / span)),k=t*t*t*(t*(t*6-15)+10),o=(0.62*(1-k)).toFixed(3);
+const fp=(W.gfxFoot&&W.gfxFoot.mode==='reveal')?+W.gfxFoot.p||0:0;
+const t=Math.max(fp,Math.min(1,Math.max(0,(y-y0) / span))),k=t*t*t*(t*(t*6-15)+10),o=(0.62*(1-k)).toFixed(3);
 if(o!==last){fox.style.opacity=o;last=o;}
 };
 const ask=()=>{if(!rq)rq=requestAnimationFrame(tick);};
