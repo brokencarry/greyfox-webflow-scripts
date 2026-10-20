@@ -447,7 +447,7 @@
       if (s < 2 && from >= 2) { fadeTo(nC, 0, 0.35); fadeTo(nA, 1, 0.6, 0.2); odoSet(oA, 92631); }
       if (phone() && nC) { if (s === 3) fadeTo(nC, 0, 0.4); else if (s === 2 && from === 3) fadeTo(nC, 1, 0.5); }
       // (1.1.5) from a tablet up the window opens with the scroll, in step with the line gathering into it (words())
-      if (s === 3 && from < 3) { ensureDemo(); if (phone()) tw(portalK, { k: 1, duration: 1.0, ease: 'power3.inOut', onUpdate: () => setPortal(portalK.k) }); demoDo('play'); }
+      if (s === 3 && from < 3) { ensureDemo(); if (phone()) { tw(portalK, { k: 1, duration: 1.0, ease: 'power3.inOut', onUpdate: () => setPortal(portalK.k) }); demoDo('play'); } }
       if (s < 3 && from === 3 && phone()) tw(portalK, { k: 0, duration: 0.5, ease: 'power2.in', onUpdate: () => setPortal(portalK.k) });
     };
     const lead = on => {
@@ -472,7 +472,12 @@
       if (arrived) { const s = stepOf(P); if (s !== step) { const from = step; step = s; enterStep(s, from); } }
       ixs.forEach((li, i) => { const f = `scaleX(${clamp(seg(P, WIN[i][0], WIN[i][1] - 0.01), 0, 1).toFixed(4)})`; if (li._f !== f && li._bar) { li._bar.style.transform = f; li._f = f; } });
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
-      if (!phone() && portal) { const k = arrived ? eio(seg(P, 0.6, 0.74)) : 0, o = (1 - eo(X)).toFixed(3); if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; } }
+      if (!phone() && portal) {
+        const k = arrived ? eio(seg(P, 0.6, 0.74)) : 0, o = (1 - eo(X)).toFixed(3);
+        if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; }
+        // the client's window plays once it is half open, and again each time it opens from closed
+        if (k > 0.5 && !portalK.played) { portalK.played = true; demoDo('play'); } else if (k === 0) portalK.played = false;
+      }
     };
     hls.forEach(h => { h.style.transform = 'translate3d(0, 105%, 0)'; });
     [lede, nA, nC].concat(capList).forEach(e => { if (e) e.style.opacity = '0'; });
