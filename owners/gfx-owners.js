@@ -313,7 +313,9 @@
     const phoneRail = () => {
       const on = !!list && mq('(max-width: 767px)');
       room.classList.toggle('gfx-pc-phone', on);
-      if (pq && pqHome && list) { if (on && pq.parentElement !== list.parentElement) list.after(pq); else if (!on && pq.parentElement !== pqHome.p) pqHome.p.insertBefore(pq, pqHome.n); }
+      let moved = false;
+      if (pq && pqHome && list) { if (on && pq.parentElement !== list.parentElement) { list.after(pq); moved = true; } else if (!on && pq.parentElement !== pqHome.p) { pqHome.p.insertBefore(pq, pqHome.n); moved = true; } }
+      if (moved) setTimeout(() => safe('rhythm after move', () => { if (W.gfxField && W.gfxField.rhythm) W.gfxField.rhythm(); if (gfx.refresh) gfx.refresh(); }), 60);   // (the room's height changed: the spacing and the triggers are measured again)
       if (!on) { if (rail) rail.style.display = 'none'; return; }
       if (!rail) { rail = D.createElementNS(NS, 'svg'); rail.setAttribute('class', 'gfx-pc-rail'); rail.setAttribute('aria-hidden', 'true'); list.appendChild(rail); }
       rail.style.display = '';
