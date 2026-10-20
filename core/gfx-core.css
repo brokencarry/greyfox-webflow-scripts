@@ -400,3 +400,5 @@ html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc
 @media (min-width: 768px) and (max-width: 991px) {
   html.gfx-f3.gfx-tab-rhythm .gfx-fr:not([data-gfx-foot]):not([data-gfx-last]):not(#gfx-ph) { padding-bottom: 0 !important; }
 }
+/* (core 1.0.12, founder 10/20) the phone menu's Contact is white like the other links (the designer had it gold; gold is the fox's alone) */
+html.gfx-f3 .w-nav-menu .navigation-item.mobile-nav-item.contact:not(#gfx-mc) { color: #ffffff !important; }
