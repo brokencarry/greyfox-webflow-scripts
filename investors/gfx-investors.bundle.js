@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.12 + investors 1.0.2. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.12 + investors 1.0.3. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1266,7 +1266,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.2';
+  W.__gfxInvestors = '1.0.3';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1311,12 +1311,12 @@
       { el: O('ow-hero'), native: 'L', tone: 'L', noInk: true },
       // (1.0.2, final audit) on a phone the rooms take the house rhythm (80 within a colour, the turn into the black)
       // like Home and Owners; their gaps had been 91 to 500px. Desktop keeps its own spacing.
-      { el: O('iv-fun'), native: 'L', tone: 'L', noInk: true, tierPhone: 'standard' },
-      { el: O('iv-client'), native: 'L', tone: 'L', noInk: true, tierPhone: 'standard' },
-      { el: O('iv-mc'), native: 'D', tone: 'D', noInk: true, tierPhone: 'turn', turnAt: (ym, c) => closeAt(c.room.el, c) },
-      { el: O('iv-cases'), native: 'D', tone: 'D', noInk: true, tierPhone: 'standard' },
-      { el: O('iv-std'), native: 'D', tone: 'D', noInk: true, tierPhone: 'standard' },
-      { el: O('iv-close'), native: 'D', tone: 'D', noInk: true, opaque: true, foot: true, tierPhone: 'standard' }
+      { el: O('iv-fun'), native: 'L', tone: 'L', noInk: true, tier: 'standard' },
+      { el: O('iv-client'), native: 'L', tone: 'L', noInk: true, tier: 'standard' },
+      { el: O('iv-mc'), native: 'D', tone: 'D', noInk: true, tier: 'turn', turnAt: (ym, c) => closeAt(c.room.el, c) },
+      { el: O('iv-cases'), native: 'D', tone: 'D', noInk: true, tier: 'standard' },
+      { el: O('iv-std'), native: 'D', tone: 'D', noInk: true, tier: 'standard' },
+      { el: O('iv-close'), native: 'D', tone: 'D', noInk: true, opaque: true, foot: true, tier: 'standard' }
     ]
   };
   // the inks follow the field's tone (iv-flow2.js ink(): html.iv2-dt, stage 1 re-inked in place)

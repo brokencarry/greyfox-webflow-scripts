@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.12 + investors 1.0.2 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.12 + investors 1.0.3 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1084,7 +1084,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.2';
+W.__gfxInvestors='1.0.3';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1116,12 +1116,12 @@ const field={
 phoneRhythm:true,
 rooms:[
 {el:O('ow-hero'),native:'L',tone:'L',noInk:true},
-{el:O('iv-fun'),native:'L',tone:'L',noInk:true,tierPhone:'standard'},
-{el:O('iv-client'),native:'L',tone:'L',noInk:true,tierPhone:'standard'},
-{el:O('iv-mc'),native:'D',tone:'D',noInk:true,tierPhone:'turn',turnAt:(ym,c)=>closeAt(c.room.el,c)},
-{el:O('iv-cases'),native:'D',tone:'D',noInk:true,tierPhone:'standard'},
-{el:O('iv-std'),native:'D',tone:'D',noInk:true,tierPhone:'standard'},
-{el:O('iv-close'),native:'D',tone:'D',noInk:true,opaque:true,foot:true,tierPhone:'standard'}
+{el:O('iv-fun'),native:'L',tone:'L',noInk:true,tier:'standard'},
+{el:O('iv-client'),native:'L',tone:'L',noInk:true,tier:'standard'},
+{el:O('iv-mc'),native:'D',tone:'D',noInk:true,tier:'turn',turnAt:(ym,c)=>closeAt(c.room.el,c)},
+{el:O('iv-cases'),native:'D',tone:'D',noInk:true,tier:'standard'},
+{el:O('iv-std'),native:'D',tone:'D',noInk:true,tier:'standard'},
+{el:O('iv-close'),native:'D',tone:'D',noInk:true,opaque:true,foot:true,tier:'standard'}
 ]
 };
 const inks=()=>{let dk=null;const f=()=>{const d=H.classList.contains('gfx-tone-dark');if(d===dk)return;dk=d;H.classList.toggle('iv2-dt',d);if(R.res)R.res.classList.toggle('ow-char',d);};
