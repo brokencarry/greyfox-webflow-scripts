@@ -263,6 +263,14 @@ html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-tl { height: auto !import
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-rail { display: none !important; }
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-stage { display: block !important; height: auto !important; margin-top: clamp(14px, 2.6vh, 28px) !important; }
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-ch { position: relative !important; opacity: 1 !important; pointer-events: auto; padding: 56px 0 !important; border-top: 1px solid var(--gfx-line-l); }
+/* (home 1.1.7, final audit) a desktop under 681px tall cannot pin the climb (PIN needs 681px): the three chapters sat in one
+   grid cell, all on, printed over each other. It gets the reduced page's case layout: every chapter in turn, rail aside. */
+@media (min-width: 992px) and (max-height: 680.99px) {
+  html.gfx-f3 .gfx-case-tl { height: auto !important; }
+  html.gfx-f3 .gfx-case-rail { display: none !important; }
+  html.gfx-f3 .gfx-case-stage { display: block !important; height: auto !important; margin-top: clamp(14px, 2.6vh, 28px) !important; }
+  html.gfx-f3 .gfx-case-ch { position: relative !important; opacity: 1 !important; pointer-events: auto; padding: 56px 0 !important; border-top: 1px solid var(--gfx-line-l); }
+}
 html.gfx-mk-still .gfx-mk-gates { display: block; position: absolute; inset: 0; }
 html.gfx-mk-still .gfx-mk-gate { opacity: 1; }
 html.gfx-mk-still .gfx-mk-ix .gfx-mk-sn:not(#gfx-x) { color: var(--gfx-green-cta) !important; }
