@@ -1,4 +1,4 @@
-/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.9 + pages 1.0.1 + contact 1.0.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
+/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.10 + pages 1.0.1 + contact 1.0.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.9';
+const VERSION='1.0.10';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -548,6 +548,7 @@ return inkQ.length>0;
 const TIERS=()=>{
 const vh=W.innerHeight,phone=W.innerWidth<=991,cl=(a,v,b)=>Math.min(b,Math.max(a,v));
 const turn=Math.max(224,vh*0.35);
+if(W.innerWidth<=767){const g=parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--_phone---section-gap'))||80;return{tight:g,standard:g,breath:Math.round(g*1.6),turn:Math.max(192,vh*0.3)};}
 if(phone)return{tight:80,standard:96,breath:128,turn:Math.max(192,vh*0.3)};
 return{tight:cl(64,vh*0.0711,93)*2,standard:cl(96,vh*0.1067,139)+cl(64,vh*0.0711,93),breath:cl(192,vh*0.2133,278)+cl(96,vh*0.1067,139),turn};
 };
