@@ -696,7 +696,8 @@
     });
   };
   const rhythm = () => {
-    const T = TIERS(), S = lastSpans = W.innerWidth <= 767 ? spansLite() : spans();
+    // (final audit) a tablet on a full-rhythm page reads its rooms the phone's way (every word and picture, hidden items skipped)
+    const T = TIERS(), S = lastSpans = (W.innerWidth <= 767 || (W.innerWidth <= 991 && fieldDef && fieldDef.phoneRhythm === true)) ? spansLite() : spans();
     let changed = false;
     // (1.0.12, final audit) tierPhone: a room that keeps its own desktop spacing joins the house rhythm on a phone only
     const ph = W.innerWidth <= 767;

@@ -603,7 +603,7 @@ return{pad,inner:top-(rt+pad),trail:Math.max(0,rt+rm.offsetHeight-bot),top,bot,r
 });
 };
 const rhythm=()=>{
-const T=TIERS(),S=lastSpans=W.innerWidth<=767?spansLite():spans();
+const T=TIERS(),S=lastSpans=(W.innerWidth<=767||(W.innerWidth<=991&&fieldDef&&fieldDef.phoneRhythm===true))?spansLite():spans();
 let changed=false;
 const ph=W.innerWidth<=767;
 const auto=(o,i)=>fieldDef&&fieldDef.phoneRhythm&&i&&fieldRooms[i-1].native!=='M'?(o.tone!==fieldRooms[i-1].tone?'turn':'standard'):null;
