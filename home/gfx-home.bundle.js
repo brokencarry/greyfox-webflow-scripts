@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.14 + home 1.1.7. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.15 + home 1.1.8. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.14';
+  const VERSION = '1.0.15';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -451,15 +451,27 @@
     const opts = { type: 'lines', mask: 'lines', linesClass: 'gfx-line', aria: 'none', onSplit: self => { o.lines = self.lines; if (!o.played) gsap.set(self.lines, { yPercent: G.headline.yPercent }); } };
     breakBalanced(el);
     o.split = W.SplitText.create(el, opts);
+    /* (1.0.15) the field gives inks to the split lines and the spans inside them; a revert or a resplit rebuilds those
+       nodes and the inks went with them, so a headline seen in the other tone kept its native ink (Home's team heading,
+       ink on black while the turn waits). Carry them over: the headline takes its lines' ink, inner spans theirs. */
+    const inkKeep = () => {
+      const m = {};
+      if (!el.hasAttribute('data-gfx-ink')) { const k = el.querySelector('.gfx-line[data-gfx-ink]'); if (k) el.setAttribute('data-gfx-ink', k.getAttribute('data-gfx-ink')); }
+      el.querySelectorAll('[data-gfx-ink]:not(.gfx-line)').forEach(n => { const key = n.tagName + '.' + n.className; if (!(key in m)) m[key] = n.getAttribute('data-gfx-ink'); });
+      return m;
+    };
+    const inkPut = m => el.querySelectorAll('*').forEach(n => { const v = m[n.tagName + '.' + n.className]; if (v && !n.hasAttribute('data-gfx-ink')) n.setAttribute('data-gfx-ink', v); });
     let lastW = W.innerWidth, rt = 0;
     W.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => safe('resplit', () => {
       if (W.innerWidth === lastW) return; lastW = W.innerWidth;
+      const m = inkKeep();
       if (!o.reverted) o.split.revert();
       breakBalanced(el);
       if (!o.reverted) { o.split = W.SplitText.create(el, opts); if (o.played) gsap.set(o.lines, { yPercent: 0 }); }
+      inkPut(m);
       requestAnimationFrame(() => D.dispatchEvent(new Event('gfx:resplit')));
     }), 160); });
-    o.revert = () => { if (o.reverted) return; o.reverted = true; o.split.revert(); };
+    o.revert = () => { if (o.reverted) return; o.reverted = true; const m = inkKeep(); o.split.revert(); inkPut(m); };
     return o;
   };
   const fitFilm = (tl, max) => { max = max || READ.film; const d = tl.duration(); if (d > max + 0.01) tl.timeScale(d / max); return Math.min(d, max); };
@@ -1268,7 +1280,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.7';
+  W.__gfxHome = '1.1.8';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';

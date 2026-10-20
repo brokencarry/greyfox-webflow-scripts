@@ -253,6 +253,13 @@ html.gfx-f3 .gfx-logos img[src*="white-w"] { --lh: 33px; }
 html.gfx-f3 .gfx-logos img[src*="logo_interconn"] { --lh: 38px; }
 html.gfx-f3 .gfx-logos img[src*="ventur"] { --lh: 23px; }
 html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 36px; }
+/* (home 1.1.8, founder 10/20) the designer's size: his row sets these files at 55 px; the line keeps its optical balance and
+   averages his 55 (x1.7), 768 px and up (his row overflows a phone, so the phone keeps its size). The strip is ~1.41x
+   longer, so the loop is too: the line moves at the same speed as before. */
+@media (min-width: 768px) {
+  html.gfx-f3 .gfx-logos img.testimonial_logo { height: calc(var(--lh, 30px) * 1.7) !important; max-height: calc(var(--lh, 30px) * 1.7) !important; }
+  html.gfx-m .gfx-marq .gfx-marq-track { animation-duration: 62s; }
+}
 @media (prefers-reduced-motion: reduce) and (min-width: 992px) {
   html.gfx-f3 .gfx-logos .gfx-marq-track { flex-wrap: nowrap !important; justify-content: space-between !important; width: 100% !important; transform: none !important; }
   html.gfx-f3 .gfx-logos img.testimonial_logo { margin: 0 !important; flex: 0 1 auto !important; min-width: 0; max-width: 9.2% !important; object-fit: contain; }
