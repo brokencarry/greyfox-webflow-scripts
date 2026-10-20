@@ -39,6 +39,7 @@
      paper room's last line in the top eighth, and done before the close's headline reaches 72 %. The paper rooms keep
      their own inks; the last one re-inks with the field (pf-leave). */
   const fieldDef = () => ({
+    phoneRhythm: true,   // (final audit) the house phone rhythm on every room
     rooms: R.rooms.map(r => r === R.close
       ? { el: r, native: 'D', tone: 'D', opaque: true, foot: true, noInk: true, turnAt: (ym, c) => {
           const room = c.room.el, top = c.docTop(room); let at = top - c.vh * 0.6;

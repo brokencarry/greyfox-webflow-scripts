@@ -697,9 +697,9 @@
     let changed = false;
     // (1.0.12, final audit) tierPhone: a room that keeps its own desktop spacing joins the house rhythm on a phone only
     const ph = W.innerWidth <= 767;
-    // on a phone every room after the first takes the house rhythm: 80 within a colour, the turn where the colour changes
+    // on a phone (pages that opt in with field.phoneRhythm) every room after the first takes the house rhythm: 80 within a colour, the turn where the colour changes
     // (a page may still name its own tierPhone); desktop keeps each room's own tier
-    const auto = (o, i) => i && fieldRooms[i - 1].native !== 'M' ? (o.tone !== fieldRooms[i - 1].tone ? 'turn' : 'standard') : null;
+    const auto = (o, i) => fieldDef && fieldDef.phoneRhythm && i && fieldRooms[i - 1].native !== 'M' ? (o.tone !== fieldRooms[i - 1].tone ? 'turn' : 'standard') : null;
     const writes = fieldRooms.map((o, i) => {
       const tier = ph ? (o.tierPhone || o.tier || auto(o, i)) : o.tier;
       if (!tier) { if (o._phPad) { o.el.style.removeProperty('padding-top'); o._phPad = false; S[i].pad = parseFloat(getComputedStyle(o.el).paddingTop) || 0; } return null; }
@@ -1288,6 +1288,7 @@
      not in the field: it keeps its own charcoal, as on staging. The paper rooms keep their own inks (noInk): they are never
      shown on the black (the questions leave as the field turns). */
   const field = {
+    phoneRhythm: true,   // (1.2.0) the house phone rhythm on every room
     rooms: [
       { el: O('ow-hero'), native: 'L', tone: 'L', noInk: true },
       { el: O('ow-proc'), native: 'L', tone: 'L', noInk: true },

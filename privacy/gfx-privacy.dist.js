@@ -604,7 +604,7 @@ const rhythm=()=>{
 const T=TIERS(),S=lastSpans=W.innerWidth<=767?spansLite():spans();
 let changed=false;
 const ph=W.innerWidth<=767;
-const auto=(o,i)=>i&&fieldRooms[i-1].native!=='M'?(o.tone!==fieldRooms[i-1].tone?'turn':'standard'):null;
+const auto=(o,i)=>fieldDef&&fieldDef.phoneRhythm&&i&&fieldRooms[i-1].native!=='M'?(o.tone!==fieldRooms[i-1].tone?'turn':'standard'):null;
 const writes=fieldRooms.map((o,i)=>{
 const tier=ph?(o.tierPhone||o.tier||auto(o,i)):o.tier;
 if(!tier){if(o._phPad){o.el.style.removeProperty('padding-top');o._phPad=false;S[i].pad=parseFloat(getComputedStyle(o.el).paddingTop)||0;}return null;}
@@ -1090,6 +1090,7 @@ const findRooms=()=>{R.main=$('#main')||$(O('ow-main'));R.rooms=$$(O('ow-room'))
 findRooms();
 const mk=(tag,cls,text)=>{const n=D.createElement(tag);if(cls){n.className=cls;n.setAttribute('data-o',cls);}if(text!=null)n.textContent=text;return n;};
 const fieldDef=()=>({
+phoneRhythm:true,
 rooms:R.rooms.map(r=>r===R.close
 ?{el:r,native:'D',tone:'D',opaque:true,foot:true,noInk:true,turnAt:(ym,c)=>{
 const room=c.room.el,top=c.docTop(room);let at=top-c.vh*0.6;

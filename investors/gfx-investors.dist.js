@@ -604,7 +604,7 @@ const rhythm=()=>{
 const T=TIERS(),S=lastSpans=W.innerWidth<=767?spansLite():spans();
 let changed=false;
 const ph=W.innerWidth<=767;
-const auto=(o,i)=>i&&fieldRooms[i-1].native!=='M'?(o.tone!==fieldRooms[i-1].tone?'turn':'standard'):null;
+const auto=(o,i)=>fieldDef&&fieldDef.phoneRhythm&&i&&fieldRooms[i-1].native!=='M'?(o.tone!==fieldRooms[i-1].tone?'turn':'standard'):null;
 const writes=fieldRooms.map((o,i)=>{
 const tier=ph?(o.tierPhone||o.tier||auto(o,i)):o.tier;
 if(!tier){if(o._phPad){o.el.style.removeProperty('padding-top');o._phPad=false;S[i].pad=parseFloat(getComputedStyle(o.el).paddingTop)||0;}return null;}
@@ -1107,6 +1107,7 @@ const hd=room.querySelector('h2, .heading-2');if(hd)at=Math.min(at,hd.getBoundin
 return Math.min(at,max-vh*0.04);
 };
 const field={
+phoneRhythm:true,
 rooms:[
 {el:O('ow-hero'),native:'L',tone:'L',noInk:true},
 {el:O('iv-fun'),native:'L',tone:'L',noInk:true,tierPhone:'standard'},

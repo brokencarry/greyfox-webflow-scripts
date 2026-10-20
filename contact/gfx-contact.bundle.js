@@ -697,9 +697,9 @@
     let changed = false;
     // (1.0.12, final audit) tierPhone: a room that keeps its own desktop spacing joins the house rhythm on a phone only
     const ph = W.innerWidth <= 767;
-    // on a phone every room after the first takes the house rhythm: 80 within a colour, the turn where the colour changes
+    // on a phone (pages that opt in with field.phoneRhythm) every room after the first takes the house rhythm: 80 within a colour, the turn where the colour changes
     // (a page may still name its own tierPhone); desktop keeps each room's own tier
-    const auto = (o, i) => i && fieldRooms[i - 1].native !== 'M' ? (o.tone !== fieldRooms[i - 1].tone ? 'turn' : 'standard') : null;
+    const auto = (o, i) => fieldDef && fieldDef.phoneRhythm && i && fieldRooms[i - 1].native !== 'M' ? (o.tone !== fieldRooms[i - 1].tone ? 'turn' : 'standard') : null;
     const writes = fieldRooms.map((o, i) => {
       const tier = ph ? (o.tierPhone || o.tier || auto(o, i)) : o.tier;
       if (!tier) { if (o._phPad) { o.el.style.removeProperty('padding-top'); o._phPad = false; S[i].pad = parseFloat(getComputedStyle(o.el).paddingTop) || 0; } return null; }
@@ -1263,6 +1263,7 @@
      paper room's last line in the top eighth, and done before the close's headline reaches 72 %. The paper rooms keep
      their own inks; the last one re-inks with the field (pf-leave). */
   const fieldDef = () => ({
+    phoneRhythm: true,   // (final audit) the house phone rhythm on every room
     rooms: R.rooms.map(r => r === R.close
       ? { el: r, native: 'D', tone: 'D', opaque: true, foot: true, noInk: true, turnAt: (ym, c) => {
           const room = c.room.el, top = c.docTop(room); let at = top - c.vh * 0.6;

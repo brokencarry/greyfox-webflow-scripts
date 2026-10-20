@@ -39,6 +39,7 @@
 
   /* ========================= the rooms and their chapters (gf-flow.js homeLine3) ========================= */
   const field = {
+    phoneRhythm: true,   // (1.1.6) the house phone rhythm on every room
     rooms: [
       { el: '.gfx-hero-sec', native: 'M', tone: 'L' },
       { el: '.gfx-std-sec', native: 'L', tone: 'L', tier: 'standard' },

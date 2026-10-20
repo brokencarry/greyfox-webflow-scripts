@@ -71,6 +71,7 @@
     return Math.min(at, max - vh * 0.04);
   };
   const field = {
+    phoneRhythm: true,   // (1.0.2) the house phone rhythm on every room
     rooms: [
       { el: O('ow-hero'), native: 'L', tone: 'L', noInk: true },
       // (1.0.2, final audit) on a phone the rooms take the house rhythm (80 within a colour, the turn into the black)

@@ -64,6 +64,7 @@
      not in the field: it keeps its own charcoal, as on staging. The paper rooms keep their own inks (noInk): they are never
      shown on the black (the questions leave as the field turns). */
   const field = {
+    phoneRhythm: true,   // (1.2.0) the house phone rhythm on every room
     rooms: [
       { el: O('ow-hero'), native: 'L', tone: 'L', noInk: true },
       { el: O('ow-proc'), native: 'L', tone: 'L', noInk: true },
