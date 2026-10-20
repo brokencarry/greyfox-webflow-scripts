@@ -84,3 +84,9 @@
 /* (insights 1.1.1, founder 10/20: the drop cap) a short opening paragraph holds the cap's full height, so the next
    paragraph starts below it instead of wrapping around it (many imported articles open with one short line) */
 [data-o~="gi-intro"] > p:first-child { display: flow-root; }
+
+/* (insights 1.1.1, founder 10/20: "this green line glitches ... messed up when you hover") the hover underline was drawn
+   once at 92% of a block title, so on a title of 2-5 lines it ran through the last line's letters (and appeared while
+   scrolling, as the card passed under a still cursor). It now follows the text: inline, drawn line by line in reading
+   order, just under each line's letters. */
+:is([data-o~="gi-tlink"], [data-o~="gi-row-t"]) { display: inline; -webkit-box-decoration-break: slice; box-decoration-break: slice; background-position: 0 calc(100% - .3em); }
