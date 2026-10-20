@@ -128,7 +128,7 @@ tlFill=tl.querySelector('.tl-fill');tlDots=[...tl.querySelectorAll('.tl-dot, .tl
 const frame=()=>{
 const bw=map.clientWidth||1,bh=map.clientHeight||1,X=PL.map(p=>p.at[0]),Y=PL.map(p=>p.at[1]);
 const x0=Math.min(...X)-(phone()?70:120),x1=Math.max(...X)+(phone()?300:120),y0=Math.min(...Y)-110,y1=Math.max(...Y)+110;
-const Z=phone()?{cx:.5,cy:.5,w:.94,h:.9}:{cx:.5,cy:.47,w:.9,h:.84};
+const Z=phone()?{cx:.475,cy:.5,w:.88,h:.85}:{cx:.5,cy:.47,w:.9,h:.84};
 const vw=Math.max((x1-x0) / Z.w,(y1-y0) / Z.h*bw / bh),vh=vw*bh / bw;
 const c=[(x0+x1) / 2-Z.cx*vw,(y0+y1) / 2-Z.cy*vh,vw,vh];
 const vb=c.map(f1).join(' ');map.querySelectorAll('svg').forEach(v=>v.setAttribute('viewBox',vb));
