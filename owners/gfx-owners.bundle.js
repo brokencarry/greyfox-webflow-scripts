@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.12 + owners 1.2.0. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.12 + owners 1.2.1. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1262,7 +1262,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.0';
+  W.__gfxOwners = '1.2.1';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1599,7 +1599,12 @@
   };
   function ptInit() {
     const room = R.pt; if (!room || room._ptInit) return; room._ptInit = true;
-    const go = () => ptLoad().then(ok => { if (ok) safe('partnership film', () => W.gfxPtFilm(room)); });
+    // (1.2.1, final audit: building the map as the room neared froze the scroll ~0.5 s) the film loads and builds in the
+    // first idle moment after the page opens, while the reader is still on the hero; the nearing room is the fallback
+    let started = false;
+    const go = () => { if (started) return; started = true; ptLoad().then(ok => { if (ok) safe('partnership film', () => W.gfxPtFilm(room)); }); };
+    const idle = () => (W.requestIdleCallback ? W.requestIdleCallback(go, { timeout: 2500 }) : setTimeout(go, 1200));
+    if (D.readyState === 'complete') idle(); else W.addEventListener('load', idle, { once: true });
     if ('IntersectionObserver' in W) { const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '150% 0px' }); io.observe(room); }
     else go();
   }

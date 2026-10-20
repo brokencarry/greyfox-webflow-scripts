@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.12 + owners 1.2.0 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.12 + owners 1.2.1 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1084,7 +1084,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.2.0';
+W.__gfxOwners='1.2.1';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1373,7 +1373,10 @@ return ptP;
 };
 function ptInit(){
 const room=R.pt;if(!room||room._ptInit)return;room._ptInit=true;
-const go=()=>ptLoad().then(ok=>{if(ok)safe('partnership film',()=>W.gfxPtFilm(room));});
+let started=false;
+const go=()=>{if(started)return;started=true;ptLoad().then(ok=>{if(ok)safe('partnership film',()=>W.gfxPtFilm(room));});};
+const idle=()=>(W.requestIdleCallback?W.requestIdleCallback(go,{timeout:2500}):setTimeout(go,1200));
+if(D.readyState==='complete')idle();else W.addEventListener('load',idle,{once:true});
 if('IntersectionObserver'in W){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();go();}},{rootMargin:'150% 0px'});io.observe(room);}
 else go();
 }
