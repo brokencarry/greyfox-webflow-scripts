@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.12 + owners 1.2.1 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.12 + owners 1.2.2 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1084,7 +1084,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.2.1';
+W.__gfxOwners='1.2.2';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1179,7 +1179,7 @@ if(n<4||svgs.some(s=>!s))return null;
 const pq=$(O('pc-q'),room),quoteEls=pq?[$('blockquote',pq),$('figcaption',pq)]:[];
 const ti=beats.map(b=>$(O('pc-ti'),b)),ps=beats.map(b=>$(O('pc-p'),b)),ws=beats.map(b=>$(O('pc-w'),b));
 const P2=(s,c)=>s.querySelector('.'+c);
-const S={};
+const S={},RAIL_X=11;
 const heads=new Map();let waitA=false;
 const fitQuote=(stacked,laneF)=>{
 if(!pq)return;room.style.removeProperty('--pc-draw');pq.style.removeProperty('top');pq.style.removeProperty('height');if(stacked)return;
@@ -1247,9 +1247,10 @@ arrow(s,xj,yh,END,Hh);
 svgs.forEach((s,k)=>{
 const r=boxes[k],Wk=r.width,Hh=r.height,yh=+(Hh+0.5).toFixed(1),yl=Math.round(Hh*0.24)+0.5;
 if(k===0){
-const u=market(s,{x0:0,x1:Wk-8,y0:6.5,y1:Math.round(Hh*0.66)+0.5,sp:17,dx:13,ux:0.74,urow:-1,seed:11,fit:0.12,H:Hh});
+const PH=mq('(max-width: 767px)');
+const u=market(s,{x0:PH?30:0,x1:Wk-8,y0:6.5,y1:Math.round(Hh*0.66)+0.5,sp:17,dx:13,ux:0.74,urow:-1,seed:11,fit:0.12,H:Hh});
 note(s,'pa-nu',u.x-20,Math.round(Hh*0.66)+30,'end');
-set(s,'pa-gr',mq('(max-width: 767px)')?`M${f1(u.x)} ${f1(u.y+9)}V${yh}`:`M${f1(u.x)} ${f1(u.y+9)}V${f1(yh-14)}Q${f1(u.x)} ${yh} ${f1(u.x+14)} ${yh}H${f1(Wk)}`);
+set(s,'pa-gr',PH?`M${f1(u.x)} ${f1(u.y+9)}V${f1(yh-16)}Q${f1(u.x)} ${yh} ${f1(u.x-16)} ${yh}H${RAIL_X}`:`M${f1(u.x)} ${f1(u.y+9)}V${f1(yh-14)}Q${f1(u.x)} ${yh} ${f1(u.x+14)} ${yh}H${f1(Wk)}`);
 }
 if(k===1){
 const ux=Wk*0.24,uy=yh,nx=Wk*0.72,ny=yl;
@@ -1318,7 +1319,31 @@ return[
 ];
 };
 const one=()=>names.forEach(c=>{S[c]=1;}),zero=()=>names.forEach(c=>{S[c]=0;});
-const relayout=()=>{safe('call layout',layout);paintDraw();};
+const list=beats[0]&&beats[0].parentElement,pqHome=pq?{p:pq.parentElement,n:pq.nextSibling}:null;
+let rail=null,railFg=null,railLen=0;
+const railPaint=()=>{if(!rail||!railFg)return;const r=rail.getBoundingClientRect(),H=r.height||1;const p=c01((W.innerHeight*0.72-r.top) / H);railFg.style.strokeDashoffset=(1-p).toFixed(4);rail.querySelectorAll('[data-at]').forEach(n=>n.classList.toggle('is-on',p*H>=+n.dataset.at-4));};
+const phoneRail=()=>{
+const on=!!list&&mq('(max-width: 767px)');
+room.classList.toggle('gfx-pc-phone',on);
+if(pq&&pqHome&&list){if(on&&pq.parentElement!==list.parentElement)list.after(pq);else if(!on&&pq.parentElement!==pqHome.p)pqHome.p.insertBefore(pq,pqHome.n);}
+if(!on){if(rail)rail.style.display='none';return;}
+if(!rail){rail=D.createElementNS(NS,'svg');rail.setAttribute('class','gfx-pc-rail');rail.setAttribute('aria-hidden','true');list.appendChild(rail);}
+rail.style.display='';
+const lr=list.getBoundingClientRect(),H=list.offsetHeight,X=RAIL_X;
+const d0=$(O('pc-draw'),beats[0]),y0=d0?d0.getBoundingClientRect().bottom-lr.top:0;
+const ys=ti.map(t=>{const r=t?t.getBoundingClientRect():null;return r?r.top-lr.top+r.height / 2:0;});
+const yE=ys[3],tip=40,rise=20;
+const d=`M${X} ${f1(y0)}V${f1(yE-14)}Q${X} ${f1(yE)} ${X+14} ${f1(yE)}H${tip-8}L${tip} ${f1(yE-rise)}`;
+rail.setAttribute('width',48);rail.setAttribute('height',f1(H));rail.setAttribute('viewBox',`0 0 48 ${f1(H)}`);
+rail.innerHTML=`<path class="gfx-pc-r-bg" d="${d}"/><path class="gfx-pc-r-fg" d="${d}" pathLength="1"/>`+
+`<circle class="gfx-pc-n gfx-pc-n-you" data-at="${f1(ys[0])}" cx="${X}" cy="${f1(ys[0])}" r="7"/><circle class="gfx-pc-n gfx-pc-n-dot" data-at="${f1(ys[0])}" cx="${X}" cy="${f1(ys[0])}" r="2.6"/>`+
+`<circle class="gfx-pc-n gfx-pc-n-dot" data-at="${f1(ys[1])}" cx="${X}" cy="${f1(ys[1])}" r="3.6"/>`+
+`<path class="gfx-pc-n gfx-pc-n-x" data-at="${f1(ys[2])}" d="M${X-6} ${f1(ys[2]+7)}V${f1(ys[2]-7)}M${X+6} ${f1(ys[2]-7)}V${f1(ys[2]+7)}"/>`+
+`<path class="gfx-pc-n gfx-pc-n-hd" data-at="${f1(yE)}" d="M${tip-9} ${f1(yE-rise+2)}L${tip} ${f1(yE-rise)}L${tip+1} ${f1(yE-rise+10)}"/>`;
+railFg=$('.gfx-pc-r-fg',rail);railPaint();
+};
+const relayout=()=>{safe('call layout',layout);paintDraw();safe('phone rail',phoneRail);};
+W.addEventListener('scroll',()=>{if(rail&&rail.style.display!=='none')railPaint();},{passive:true});
 one();relayout();
 let rz=0;W.addEventListener('resize',()=>{cancelAnimationFrame(rz);rz=requestAnimationFrame(relayout);});
 if(D.fonts&&D.fonts.ready)D.fonts.ready.then(relayout);

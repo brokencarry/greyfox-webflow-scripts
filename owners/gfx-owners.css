@@ -513,7 +513,24 @@ html:not(#gfx-o) [data-o~="pt-mearn"] [data-o~="pt-yr"]::before { content: "Year
    words alone (their drawings only make sense joined across the desktop line), and Introduction keeps a short line that
    turns up into the house arrow. Desktop and tablet unchanged. */
 @media (max-width: 767px) {
-  html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-beat]:is([data-o~=is-k1], [data-o~=is-k2]) [data-o~=pc-draw] { display: none; }
-  html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-beat][data-o~=is-k0] [data-o~=pc-draw] { height: 236px; }
-  html:not(#gfx-o) [data-o~=ow-proc] [data-o~=pc-beat][data-o~=is-k3] [data-o~=pc-draw] { height: 112px; }
+  /* (1.2.2) the upright line: the steps indent beside a rail (phoneRail); the market keeps the full width; the other
+     drawings give way to the rail's nodes; the owner's words follow the steps */
+  html:not(#gfx-o) [data-o~=ow-proc].gfx-pc-phone [data-o~=pc-beats] { position: relative; padding-left: 48px; }
+  html:not(#gfx-o) [data-o~=ow-proc].gfx-pc-phone [data-o~=pc-beat]:is([data-o~=is-k1], [data-o~=is-k2], [data-o~=is-k3]) [data-o~=pc-draw] { display: none; }
+  html:not(#gfx-o) [data-o~=ow-proc].gfx-pc-phone [data-o~=pc-beat][data-o~=is-k0] [data-o~=pc-draw] { height: 200px; margin-left: -48px; width: calc(100% + 48px); }
+  html:not(#gfx-o) [data-o~=ow-proc].gfx-pc-phone [data-o~=pc-beat] + [data-o~=pc-beat] { margin-top: 40px; }
+  html:not(#gfx-o) [data-o~=ow-proc].gfx-pc-phone [data-o~=pc-q] { position: static !important; top: auto !important; height: auto !important; margin: 64px 0 0; padding: 0; }
+  html:not(#gfx-o) .gfx-pc-rail { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  html:not(#gfx-o) .gfx-pc-rail path { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+  html:not(#gfx-o) .gfx-pc-r-bg { stroke: rgba(28, 28, 29, .16); stroke-width: 1.25px; }
+  html:not(#gfx-o) .gfx-pc-r-fg { stroke: var(--ow3-green); stroke-width: 1.6px; stroke-dasharray: 1; stroke-dashoffset: 1; }
+  html:not(#gfx-o) .gfx-pc-n { transition: opacity .5s cubic-bezier(.16, 1, .3, 1), stroke .5s, fill .5s; }
+  html:not(#gfx-o) .gfx-pc-n-you { fill: var(--ow3-paper); stroke: rgba(28, 28, 29, .3); stroke-width: 1.25px; }
+  html:not(#gfx-o) .gfx-pc-n-you.is-on { stroke: var(--ow3-green); }
+  html:not(#gfx-o) .gfx-pc-n-dot { fill: rgba(28, 28, 29, .3); }
+  html:not(#gfx-o) .gfx-pc-n-dot.is-on { fill: var(--ow3-green); }
+  html:not(#gfx-o) .gfx-pc-rail .gfx-pc-n-x { stroke: rgba(28, 28, 29, .3); stroke-width: 1.25px; }
+  html:not(#gfx-o) .gfx-pc-rail .gfx-pc-n-x.is-on { stroke: var(--ow3-green); }
+  html:not(#gfx-o) .gfx-pc-rail .gfx-pc-n-hd { stroke: var(--ow3-green); stroke-width: 1.6px; opacity: 0; }
+  html:not(#gfx-o) .gfx-pc-rail .gfx-pc-n-hd.is-on { opacity: 1; }
 }
