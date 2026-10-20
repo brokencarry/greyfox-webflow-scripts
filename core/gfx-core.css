@@ -244,7 +244,7 @@ html.gfx-ftg-lock-in:not(.gfx-ftg-reveal) .gfx-nav .logo-link { opacity: 0 !impo
   html.gfx-f3 .gfx-fi-bay:nth-child(n+3) { display: none; }
 }
 @media (max-width: 767px) {
-  html.gfx-f3 { --gfx-fd-fs: 17px; --gfx-fd-row: 44px; --gfx-fd-fox: 64px; --gfx-fd-pad-top: 64px; --gfx-fd-base-gap: 64px; --gfx-fd-bar-pad: 24px 0 32px; --gfx-fd-label-gap: 4px; }
+  html.gfx-f3 { --gfx-fd-fs: 17px; --gfx-fd-row: 44px; --gfx-fd-fox: 64px; --gfx-fd-pad-top: 64px; --gfx-fd-base-gap: 64px; --gfx-fd-bar-pad: 24px 0 32px; --gfx-fd-label-gap: 4px; --gfx-fd-inset: 0px; }   /* (1.0.12, final audit) no column inset on a phone: the logo, the columns and the legal row share the page edge (20) */
   html.gfx-f3 .gfx-fi-grid { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
   html.gfx-f3 .gfx-fi-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
   html.gfx-f3 .gfx-fi-bar .gfx-fi-small, html.gfx-f3 .gfx-fi-legal .gfx-fi-link { font-size: 16px; line-height: 24px; }
