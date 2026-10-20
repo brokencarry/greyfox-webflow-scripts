@@ -80,3 +80,7 @@
 /* the typographic plate (an article without a drawing) on the article's larger plates: the title set a size up */
 :is([data-o~="gi-plate-hero"], [data-o~="gi-plate-next"])[data-o~="gi-plate-type"] [data-o~="gi-type-t"] { left: 10%; right: 10%; font-size: clamp(22px, 2.3vw, 40px); line-height: 1.18; }
 [data-o~="gi-mcard-l"] [data-o~="gi-plate-type"] [data-o~="gi-type-t"] { font-size: clamp(18px, 1.5vw, 24px); }
+
+/* (insights 1.1.1, founder 10/20: the drop cap) a short opening paragraph holds the cap's full height, so the next
+   paragraph starts below it instead of wrapping around it (many imported articles open with one short line) */
+[data-o~="gi-intro"] > p:first-child { display: flow-root; }
