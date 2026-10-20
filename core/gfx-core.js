@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.16';
+  const VERSION = '1.0.17';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -856,6 +856,11 @@
     safe('nav name', navName);
     safe('top tint', topTint);
     const bar = $('.gfx-nav'); if (!bar) return;
+    /* (1.0.17, granular audit 10/20) ONE BAR ON EVERY PAGE: the inner pages (Insights, Team, Contact, Privacy, the people,
+       the articles) carry the nav's "base" variant, whose "Start a conversation" shows only through the pages' top rule
+       (.gfx-top). Past half a screen the bar drops gfx-top and the button vanished there, while Home, Owners and Investors
+       (the "dark" variant) kept it. The solid bar shows it on every page; on phones it sits in the folded menu. */
+    if (!$('#gfx-bar-btn')) { const st = D.createElement('style'); st.id = 'gfx-bar-btn'; st.textContent = 'html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
