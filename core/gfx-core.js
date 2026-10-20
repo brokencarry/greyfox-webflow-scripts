@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.13';
+  const VERSION = '1.0.14';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1121,13 +1121,17 @@
   // (core 1.0.4, STAGING ONLY) while the Flow 3 pages live on their -v2 slugs, every link to the designer's Contact page
   // reaches Contact v2 instead (the closes' "Start a conversation", footer I's action, the nav). Inert once the v2 pages
   // replace the originals at launch (no page path carries "-v2" then): delete this block at launch
-  const STAGING = /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname);
+  // (1.0.14) also every page on the staging host (the CMS article pages live at /insights/<slug>, no "-v2")
+  const STAGING = /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname) || /\.webflow\.io$/.test(location.hostname);
   // (core 1.0.7) and the other built pages the shared nav and footer can't reach yet: Insights (it pointed at the live
   // site), the footer's Team (Home's #team) and Privacy Policy ("#"). Terms of Service has no page; it stays as it is.
   const toV2 = a => {
     const h = a.getAttribute('href') || '', t = (a.textContent || '').trim();
     if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/\/contact\/?/, '/contact-v2'));
     else if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?$/.test(h)) a.setAttribute('href', '/insights-v2');
+    // (1.0.14) an article on the old site -> the same article in the Webflow CMS (same slug); at launch the absolute
+    // greyfoxpartners.com/insights/<slug> address is the CMS page itself
+    else if (/^https?:\/\/(www\.)?greyfoxpartners\.com\/insights\/[a-z0-9-]+\/?$/.test(h)) a.setAttribute('href', h.replace(/^https?:\/\/(www\.)?greyfoxpartners\.com/, '').replace(/\/$/, ''));
     else if (t === 'Team' && /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h)) a.setAttribute('href', '/team-v2');
     else if (/^privacy( policy)?$/i.test(t) && (h === '#' || /^\/privacy(-policy)?\/?$/.test(h))) a.setAttribute('href', '/privacy-v2');
     else if (h === '/' || h === '/#') a.setAttribute('href', '/home-v2');   // (1.0.8) home links: the logos
