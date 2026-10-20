@@ -1569,7 +1569,7 @@
     const drawStage = () => {
       dirty = false; ctx.clearRect(0, 0, Wd, Hd);
       const F = fieldR(), fh = F.bot - F.top, yc = phone() ? F.top + fh * 0.5 : Hd * 0.5;
-      const a = ss(seg(P, 0.0, 0.16)), b = ss(seg(P, 0.22, 0.36)), c = eio(seg(P, 0.42, 0.56)), d = eio(seg(P, 0.6, 0.78));
+      const a = ss(seg(P, 0.0, 0.16)), b = ss(seg(P, 0.22, 0.36)), c = ss(seg(P, 0.42, 0.57)), d = ss(seg(P, 0.6, 0.78));   // (1.1.5) smoothstep, not a steep in-out: even with the wheel
       const birthK = eo(clamp(E * 1.25, 0, 1));
       const uEnd = lerp(lerp(1, PORTAL_U(), d), 1, ss(X)) * birthK, SEG = phone() ? 14 : 28;
       const laneY = k => yc + (k - 5.5) * fh * 0.052 * (1 - d * 0.85);
@@ -1658,7 +1658,7 @@
       ixs.forEach((li, i) => { const f = `scaleX(${clamp(seg(P, WIN[i][0], WIN[i][1] - 0.01), 0, 1).toFixed(4)})`; if (li._f !== f && li._bar) { li._bar.style.transform = f; li._f = f; } });
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
       if (!phone() && portal) {
-        const k = arrived ? eio(seg(P, 0.6, 0.74)) : 0, o = (1 - eo(X)).toFixed(3);
+        const k = arrived ? ss(seg(P, 0.6, 0.76)) : 0, o = (1 - eo(X)).toFixed(3);
         if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; }
         // the client's window plays once it is half open, and again each time it opens from closed
         if (k > 0.5 && !portalK.played) { portalK.played = true; demoDo('play'); } else if (k === 0) portalK.played = false;
