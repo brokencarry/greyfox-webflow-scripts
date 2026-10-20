@@ -280,3 +280,28 @@ html body :is(.gfx-cta-sec .footer-logo-subtle, [data-o~="ow-close-fox"], [data-
   height: min(88%, 744px) !important; width: auto !important; max-width: none !important; max-height: none !important;
   aspect-ratio: 487 / 477; transform: translate(-61.8%, -50%) !important;
 }
+
+/* (core 1.0.8) THE MENU BUTTON on phones and tablets: ink on paper, white over Home's dark hero and on dark fields, paper
+   when the menu is open (it sat ink on the open menu's ink panel, invisible); the logo stays above the open menu. */
+html.gfx-tone-light .gfx-nav [class*="hamburger_inner"] { background-color: #1e1e1e !important; }
+html.gfx-tone-light:has(.gfx-hero-sec) .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #ffffff !important; }
+html body .w-nav-button.w--open [class*="hamburger_inner"] { background-color: #f6f5f2 !important; }
+html body .w-nav:has(.w-nav-button.w--open) .w-nav-brand { position: relative; z-index: 3; }
+
+/* (core 1.0.8) footer I's lockup is a link home */
+html.gfx-f3 a.gfx-fi-lockup { display: block; color: inherit; text-decoration: none; cursor: pointer; }
+html.gfx-f3 a.gfx-fi-lockup:focus-visible { outline: 1px solid #3aa678; outline-offset: 6px; border-radius: 2px; }
+
+/* (core 1.0.8) TAP TARGETS on touch screens: every small text link gets a 44px-tall hit area without moving the layout
+   (padding out, margin back in); footnote numbers get a generous box */
+@media (hover: none), (max-width: 767px) {
+  html body :is([data-o~="tf-open"], [data-o~="gi-row-t"], [data-o~="ow-more"], [data-o~="gi-acat"], [data-o~="gi-tlink"]) { padding-top: 10px !important; padding-bottom: 10px !important; margin-top: -10px !important; margin-bottom: -10px !important; }
+  html body [data-o~="gi-ref"] a, html body .gfx-pg-gi-ref a { display: inline-block; padding: 10px 8px; margin: -10px -8px; }
+  html body .w-nav-brand { min-width: 44px; min-height: 44px; }
+}
+
+/* (core 1.0.8) the article's hero plate stays inside a phone's width */
+@media (max-width: 767px) {
+  html body [data-o~="gi-hero-pic"], html body [data-o~="gi-plate-hero"] { max-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; box-sizing: border-box; }
+  html body [data-o~="gi-plate-hero"] svg { max-width: 100%; height: auto; }
+}

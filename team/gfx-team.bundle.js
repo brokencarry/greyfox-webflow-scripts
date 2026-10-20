@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.7 + pages 1.0.1 + team 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.8 + pages 1.0.1 + team 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.7';
+  const VERSION = '1.0.8';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -857,7 +857,8 @@
     const contact = (data.nav.find(([t]) => /contact/i.test(t)) || [0, '/contact'])[1];
     const clock = tz => `<span class="gfx-fi-time" data-gfx-clock="${tz}" aria-hidden="true"><span class="gfx-fi-h"></span><span class="gfx-fi-colon">:</span><span class="gfx-fi-m"></span><span class="gfx-fi-ap"></span></span>`;
     const col = (key, inner) => `<div class="gfx-fi-col gfx-fi-${key}"><i class="gfx-fi-rule" aria-hidden="true"></i><div class="gfx-fi-in">${inner}</div></div>`;
-    const lockup = `<p class="gfx-fi-lockup" role="img" aria-label="Grey Fox Partners"><img class="gfx-fi-head" src="${FOX}" alt="" width="41" height="40" decoding="async"><img class="gfx-fi-logo gfx-fi-word" src="${LOGO}" alt="" width="600" height="198" decoding="async"></p>`;
+    // (core 1.0.8) the lockup is the way home, as the bar's fox is (the founder kept tapping it)
+    const lockup = `<a class="gfx-fi-lockup" href="/" aria-label="Grey Fox Partners, home"><img class="gfx-fi-head" src="${FOX}" alt="" width="41" height="40" decoding="async"><img class="gfx-fi-logo gfx-fi-word" src="${LOGO}" alt="" width="600" height="198" decoding="async"></a>`;
     const nav = `<h2 class="gfx-fi-label" id="gfx-fi-l-nav">Navigate</h2><nav aria-labelledby="gfx-fi-l-nav"><ul class="gfx-fi-list gfx-fi-rows">${data.nav.map(([t, h]) => `<li><a class="gfx-fi-link" href="${esc(h)}">${esc(t)}</a></li>`).join('')}</ul></nav>`;
     const offices = `<h2 class="gfx-fi-label">Offices</h2><ul class="gfx-fi-list gfx-fi-rows gfx-fi-offices">${data.offices.map(o => `<li><span class="gfx-fi-city">${o.full}</span>${clock(o.tz)}</li>`).join('')}</ul>`;
     const write = `<h2 class="gfx-fi-label">Write us</h2><address class="gfx-fi-contact"><ul class="gfx-fi-list gfx-fi-rows">${data.mail.map(m => `<li><a class="gfx-fi-link" href="mailto:${esc(m)}">${esc(m)}</a></li>`).join('')}<li><a class="gfx-fi-link" href="${esc(data.tel[1])}">${esc(data.tel[0])}</a></li></ul></address>` +
@@ -1057,6 +1058,7 @@
     else if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?$/.test(h)) a.setAttribute('href', '/insights-v2');
     else if (t === 'Team' && /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h)) a.setAttribute('href', '/team-v2');
     else if (/^privacy( policy)?$/i.test(t) && (h === '#' || /^\/privacy(-policy)?\/?$/.test(h))) a.setAttribute('href', '/privacy-v2');
+    else if (h === '/' || h === '/#') a.setAttribute('href', '/home-v2');   // (1.0.8) home links: the logos
   };
   if (STAGING) {
     const sweep = () => D.querySelectorAll('a[href]').forEach(toV2);

@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.7 + home 1.1.2 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.8 + home 1.1.3 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.7';
+const VERSION='1.0.8';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -753,7 +753,7 @@ if(!data.legal.length)data.legal=[['Terms of Service','#'],['Privacy Policy','#'
 const contact=(data.nav.find(([t])=> /contact/i.test(t))||[0,'/contact'])[1];
 const clock=tz=>`<span class="gfx-fi-time" data-gfx-clock="${tz}" aria-hidden="true"><span class="gfx-fi-h"></span><span class="gfx-fi-colon">:</span><span class="gfx-fi-m"></span><span class="gfx-fi-ap"></span></span>`;
 const col=(key,inner)=>`<div class="gfx-fi-col gfx-fi-${key}"><i class="gfx-fi-rule" aria-hidden="true"></i><div class="gfx-fi-in">${inner}</div></div>`;
-const lockup=`<p class="gfx-fi-lockup" role="img" aria-label="Grey Fox Partners"><img class="gfx-fi-head" src="${FOX}" alt="" width="41" height="40" decoding="async"><img class="gfx-fi-logo gfx-fi-word" src="${LOGO}" alt="" width="600" height="198" decoding="async"></p>`;
+const lockup=`<a class="gfx-fi-lockup" href="/" aria-label="Grey Fox Partners, home"><img class="gfx-fi-head" src="${FOX}" alt="" width="41" height="40" decoding="async"><img class="gfx-fi-logo gfx-fi-word" src="${LOGO}" alt="" width="600" height="198" decoding="async"></a>`;
 const nav=`<h2 class="gfx-fi-label" id="gfx-fi-l-nav">Navigate</h2><nav aria-labelledby="gfx-fi-l-nav"><ul class="gfx-fi-list gfx-fi-rows">${data.nav.map(([t,h])=>`<li><a class="gfx-fi-link" href="${esc(h)}">${esc(t)}</a></li>`).join('')}</ul></nav>`;
 const offices=`<h2 class="gfx-fi-label">Offices</h2><ul class="gfx-fi-list gfx-fi-rows gfx-fi-offices">${data.offices.map(o=>`<li><span class="gfx-fi-city">${o.full}</span>${clock(o.tz)}</li>`).join('')}</ul>`;
 const write=`<h2 class="gfx-fi-label">Write us</h2><address class="gfx-fi-contact"><ul class="gfx-fi-list gfx-fi-rows">${data.mail.map(m=>`<li><a class="gfx-fi-link" href="mailto:${esc(m)}">${esc(m)}</a></li>`).join('')}<li><a class="gfx-fi-link" href="${esc(data.tel[1])}">${esc(data.tel[0])}</a></li></ul></address>`+
@@ -930,6 +930,7 @@ if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h))a.setAttribu
 else if(/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?$/.test(h))a.setAttribute('href','/insights-v2');
 else if(t==='Team'&& /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h))a.setAttribute('href','/team-v2');
 else if(/^privacy( policy)?$/i.test(t)&&(h==='#'|| /^\/privacy(-policy)?\/?$/.test(h)))a.setAttribute('href','/privacy-v2');
+else if(h==='/'||h==='/#')a.setAttribute('href','/home-v2');
 };
 if(STAGING){
 const sweep=()=>D.querySelectorAll('a[href]').forEach(toV2);
@@ -1034,7 +1035,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.2';
+W.__gfxHome='1.1.3';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
 const PIN='(min-width: 992px) and (min-height: 681.01px)',UNPIN='(max-width: 991px), (max-height: 680.99px)';
@@ -1459,6 +1460,10 @@ const rd=()=>{dirty=true;wake();};
 ST.create({trigger:sec,start:'bottom 95%',onEnter:()=>gsap.to(portal,{opacity:0,duration:0.45,ease:'power2.in',overwrite:'auto',onUpdate:rd,onComplete:rd}),
 onLeaveBack:()=>gsap.to(portal,{opacity:1,duration:0.6,ease:'expo.out',overwrite:'auto',onUpdate:rd,onComplete:rd})});
 words();wake();
+if(phone()&&portal&&'IntersectionObserver'in W)safe('mk phone',()=>{
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){ensureDemo();demoDo('play');io.disconnect();}}),{threshold:0.35});
+io.observe(portal);
+});
 W.gfxMarket={state:()=>({P,E,step}),redraw:rd};
 }
 function marketStill(){

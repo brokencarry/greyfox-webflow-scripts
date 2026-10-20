@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.2';
+  W.__gfxHome = '1.1.3';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -485,6 +485,12 @@
     ST.create({ trigger: sec, start: 'bottom 95%', onEnter: () => gsap.to(portal, { opacity: 0, duration: 0.45, ease: 'power2.in', overwrite: 'auto', onUpdate: rd, onComplete: rd }),
       onLeaveBack: () => gsap.to(portal, { opacity: 1, duration: 0.6, ease: 'expo.out', overwrite: 'auto', onUpdate: rd, onComplete: rd }) });
     words(); wake();
+    // (home 1.1.3) on a phone the room is a plain stack (gfx-home.css, "THE MARKET ROOM ON A PHONE"): the client's window
+    // plays when it is in view, not at a pinned step
+    if (phone() && portal && 'IntersectionObserver' in W) safe('mk phone', () => {
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { ensureDemo(); demoDo('play'); io.disconnect(); } }), { threshold: 0.35 });
+      io.observe(portal);
+    });
     W.gfxMarket = { state: () => ({ P, E, step }), redraw: rd };
   }
   // the reduced page: every part in its final, true state at once (the still stage shows all four steps)

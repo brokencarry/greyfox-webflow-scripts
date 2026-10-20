@@ -308,3 +308,42 @@ html .gfx-door-e { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles)
   html .gfx-mk-cap { font-size: 16px; }   /* was 15px (native gfx- class styles) */
 }
 /* <<< tokens 10/20 */
+
+/* (home 1.1.7) THE MARKET ROOM ON A PHONE: composed for the phone, not squeezed. The desktop room pins one screen and
+   plays the four steps in place; a phone has no room for that (the steps had a 121px column and the window sat on the
+   captions). Below 768px: no pin; the headline and lede, the two true figures as plain numbers (92,631 store locations
+   across 226 chains; about 100 chains prioritized), the four steps as one numbered list (number, title, sentence, a
+   hairline between), then the client's pipeline window at full width. Desktop is untouched. */
+@media (max-width: 767px) {
+  html.gfx-f3 .gfx-mk.gfx-mk:not(#gfx-p) { height: auto !important; padding-top: 104px !important; padding-bottom: 112px !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-stage:not(#gfx-p) { position: relative !important; top: auto !important; height: auto !important; overflow: visible !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-col:not(#gfx-p) { height: auto !important; display: block !important; padding-left: 20px !important; padding-right: 20px !important; }
+  html.gfx-f3 .gfx-mk :is(.gfx-mk-threads, .gfx-mk-gates):not(#gfx-p) { display: none !important; }
+  /* the headline and lede stand from the start (their reveal was keyed to the pin) */
+  html.gfx-f3 .gfx-mk .gfx-mk-hlt:not(#gfx-p) { transform: none !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-lede:not(#gfx-p) { opacity: 1 !important; transform: none !important; }
+  /* the figures: the true numbers, no reels */
+  html.gfx-f3 .gfx-mk .gfx-mk-fig:not(#gfx-p) { height: auto !important; margin: 56px 0 0 !important; display: grid !important; row-gap: 32px; transform: none !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-num:not(#gfx-p) { position: static !important; opacity: 1 !important; transform: none !important; visibility: visible !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-reels:not(#gfx-p) { display: none !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-val-off:not(#gfx-p) { display: inline !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-odo:not(#gfx-p) { font-size: 64px !important; line-height: 1 !important; height: auto !important; align-items: baseline; gap: 10px; }
+  html.gfx-f3 .gfx-mk .gfx-mk-about:not(#gfx-p) { font-size: 16px !important; opacity: 1 !important; transform: none !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-unit:not(#gfx-p) { margin-top: 10px !important; opacity: 1 !important; transform: none !important; }
+  /* the four steps: one list, each number with its title and its sentence */
+  html.gfx-f3 .gfx-mk .gfx-mk-steps:not(#gfx-p) { width: auto !important; max-width: none !important; margin: 64px 0 0 !important; opacity: 1 !important; transform: none !important; display: grid !important; grid-template-columns: 1fr; position: static !important; }
+  html.gfx-f3 .gfx-mk :is(.gfx-mk-idx, .gfx-mk-caps):not(#gfx-p) { display: contents !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix:not(#gfx-p) { opacity: 1 !important; display: grid !important; grid-template-columns: 44px 1fr; align-items: baseline; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .14); position: static !important; height: auto !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix-bar:not(#gfx-p) { display: none !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix .gfx-mk-sn:not(#gfx-p) { color: #3aa678 !important; font-size: 14px !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix .gfx-mk-st:not(#gfx-p) { font-size: 22px !important; line-height: 1.25 !important; white-space: normal !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-cap:not(#gfx-p) { position: static !important; opacity: 1 !important; transform: none !important; visibility: visible !important; margin: 10px 0 30px 44px !important; width: auto !important; max-width: none !important; height: auto !important; font-size: 16px !important; line-height: 1.6 !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-cap .gfx-mk-capp:not(#gfx-p) { margin: 0 !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ill:not(#gfx-p) { margin: 12px 0 0 !important; font-size: 13px !important; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix:nth-child(1) { order: 1; } html.gfx-f3 .gfx-mk .gfx-mk-cap-a { order: 2; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix:nth-child(2) { order: 3; } html.gfx-f3 .gfx-mk .gfx-mk-cap-b { order: 4; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix:nth-child(3) { order: 5; } html.gfx-f3 .gfx-mk .gfx-mk-cap-c { order: 6; }
+  html.gfx-f3 .gfx-mk .gfx-mk-ix:nth-child(4) { order: 7; } html.gfx-f3 .gfx-mk .gfx-mk-cap-d { order: 8; }
+  /* the client's pipeline window, full width under the list */
+  html.gfx-f3 .gfx-mk .gfx-mk-portal:not(#gfx-p) { position: relative !important; inset: auto !important; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; height: 440px !important; margin: 8px 20px 0 !important; visibility: visible !important; clip-path: none !important; opacity: 1 !important; transform: none !important; z-index: 1 !important; }
+}
