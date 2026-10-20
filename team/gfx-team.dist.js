@@ -1,4 +1,4 @@
-/*! Grey Fox · Team v2 (Flow 3) · core 1.0.12 + pages 1.0.1 + team 1.0.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + team/gfx-team.js (read those for the notes) */
+/*! Grey Fox · Team v2 (Flow 3) · core 1.0.13 + pages 1.0.1 + team 1.0.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + team/gfx-team.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.12';
+const VERSION='1.0.13';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -661,7 +661,7 @@ addEventListener('scroll',()=>{clearTimeout(lpT);lpT=setTimeout(()=>{if(!pending
 const holdPlace=()=>{if(!pending)pending=lastPlace||placeNow(true);clearTimeout(pendT);pendT=setTimeout(()=>{if(pending)goPlace(pending);pending=null;},1700);};
 rhythm();
 let rw=W.innerWidth,rh=W.innerHeight,rt=0;
-addEventListener('resize',()=>{if(W.innerWidth===rw&&Math.abs(W.innerHeight-rh)<120&&TOUCH)return;holdPlace();rw=W.innerWidth;rh=W.innerHeight;clearTimeout(rt);rt=setTimeout(()=>{rhythm();ST.refresh();},220);},true);
+addEventListener('resize',e=>{if(e.target!==W)return;if(W.innerWidth===rw&&Math.abs(W.innerHeight-rh)<120&&TOUCH)return;holdPlace();rw=W.innerWidth;rh=W.innerHeight;clearTimeout(rt);rt=setTimeout(()=>{rhythm();ST.refresh();},220);},true);
 const nav=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0]||{}).type;
 let saved=null;try{saved=JSON.parse(W.sessionStorage.getItem(KEYP)||'null');}catch(e){}
 if(saved&&(nav==='reload'||nav==='back_forward')){pending=saved;clearTimeout(pendT);pendT=setTimeout(()=>{if(pending)goPlace(pending);pending=null;},1400);}

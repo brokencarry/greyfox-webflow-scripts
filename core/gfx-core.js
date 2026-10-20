@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.12';
+  const VERSION = '1.0.13';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -762,7 +762,9 @@
     const holdPlace = () => { if (!pending) pending = lastPlace || placeNow(true); clearTimeout(pendT); pendT = setTimeout(() => { if (pending) goPlace(pending); pending = null; }, 1700); };
     rhythm();
     let rw = W.innerWidth, rh = W.innerHeight, rt = 0;
-    addEventListener('resize', () => { if (W.innerWidth === rw && Math.abs(W.innerHeight - rh) < 120 && TOUCH) return; holdPlace(); rw = W.innerWidth; rh = W.innerHeight; clearTimeout(rt); rt = setTimeout(() => { rhythm(); ST.refresh(); }, 220); }, true);
+    // (final audit) only the window's own resize: a capture listener also hears a <video>'s "resize" (fired when its
+    // first frame loads), which held the reader's place mid-scroll and pulled them back up to 1500px (Investors MC films)
+    addEventListener('resize', e => { if (e.target !== W) return; if (W.innerWidth === rw && Math.abs(W.innerHeight - rh) < 120 && TOUCH) return; holdPlace(); rw = W.innerWidth; rh = W.innerHeight; clearTimeout(rt); rt = setTimeout(() => { rhythm(); ST.refresh(); }, 220); }, true);
     const nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0] || {}).type;
     let saved = null; try { saved = JSON.parse(W.sessionStorage.getItem(KEYP) || 'null'); } catch (e) { /* none */ }
     if (saved && (nav === 'reload' || nav === 'back_forward')) { pending = saved; clearTimeout(pendT); pendT = setTimeout(() => { if (pending) goPlace(pending); pending = null; }, 1400); }
