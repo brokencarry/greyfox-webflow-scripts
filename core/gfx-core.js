@@ -665,9 +665,10 @@
         const rm = o.el; let top = Infinity, bot = -Infinity;
         all[k].forEach(e => {
           if (e === rm) return;
+          // (final audit) on a tablet a card's drawn cover (an svg of real size) counts, as on a phone; desktop as before
+          if (tabHid && e.tagName === 'svg' && !e.closest(SKIPSPAN) && !e.closest(DECOR)) { const r = e.getBoundingClientRect(); if (r.width >= 48 && r.height >= 48) { const t = r.top + (W.scrollY || 0); top = Math.min(top, t); bot = Math.max(bot, t + r.height); } return; }
           if (!(e.tagName === 'IMG' || e.tagName === 'VIDEO' || hasOwnText(e))) return;
           if (!e.offsetParent || e.offsetWidth < 3 || e.offsetHeight < 3 || e.closest(SKIPSPAN)) return;
-          if (tabHid && e.checkVisibility && !e.checkVisibility({ visibilityProperty: true })) return;   // (final audit) a tablet skips hidden items, like the phone
           let t = top0(e), b = t + e.offsetHeight;
           for (let n = e.parentElement; n && n !== rm; n = n.parentElement) if (clip.has(n)) { const nt = top0(n); t = Math.max(t, nt); b = Math.min(b, nt + n.offsetHeight); break; }
           if (b - t < 2) return;
