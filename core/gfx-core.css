@@ -317,3 +317,27 @@ html.gfx-f3 a.gfx-fi-lockup:focus-visible { outline: 1px solid #3aa678; outline-
   html body .gfx-menu-foot .gfx-menu-lines a { display: block; padding: 10px 0; color: #ffffff !important; font: 400 16px/1.4 "DM Sans", sans-serif; text-decoration: none; }
   html body .gfx-menu-foot .gfx-menu-lines span { display: block; margin-bottom: 2px; font-size: 13px; color: rgba(255, 255, 255, .54); }
 }
+
+/* (core 1.0.10) THE FOOTER ON A PHONE: "A · Ledger", chosen 10/19. The desktop footer stacked was 1,131px (1.3 screens)
+   of small type spread out. Below 768px: the pages in two columns, the two offices side by side, then Write us and the
+   action, the column rules kept; one compact legal block (copyright, Terms and Privacy on one line, the notice). 838px,
+   every link a 44px tap. Tablet and desktop unchanged. */
+@media (max-width: 767px) {
+  html.gfx-f3 body .gfx-fi-offices .gfx-fi-time { margin-left: 0 !important; padding-left: 0 !important; justify-content: flex-start !important; text-align: left !important; width: auto !important; }
+  html.gfx-f3 body .gfx-fi-offices .gfx-fi-rows > li { align-items: flex-start !important; }
+  html.gfx-f3 body .gfx-fi-bar { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 0 !important; padding: 20px 0 32px !important; }
+  html.gfx-f3 body .gfx-fi-bar .gfx-fi-copy { order: 1 !important; padding: 0 !important; font-size: 13px !important; line-height: 20px !important; color: rgba(255,255,255,.54) !important; }
+  html.gfx-f3 body .gfx-fi-legal { order: 2 !important; display: flex !important; gap: 24px; margin: 0 !important; }
+  html.gfx-f3 body .gfx-fi-legal .gfx-fi-link { min-height: 44px; display: inline-flex; align-items: center; font-size: 13px !important; line-height: 20px !important; color: #fff !important; }
+  html.gfx-f3 body .gfx-fi-bar .gfx-fi-notice { order: 3 !important; padding: 0 !important; margin: 0 !important; font-size: 13px !important; line-height: 20px !important; color: rgba(255,255,255,.54) !important; flex-basis: auto !important; }
+  html.gfx-f3 { --gfx-fd-fs: 16px; --gfx-fd-row: 44px; --gfx-fd-fox: 48px; --gfx-fd-pad-top: 48px; --gfx-fd-base-gap: 40px; --gfx-fd-bar-pad: 20px 0 28px; }
+  html.gfx-f3 body .gfx-fi-grid { grid-template-columns: minmax(0, 1fr) !important; row-gap: 32px !important; }
+  html.gfx-f3 body .gfx-fi-navc .gfx-fi-rows { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 20px; }
+  html.gfx-f3 body .gfx-fi-offices .gfx-fi-rows { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 20px; }
+  html.gfx-f3 body .gfx-fi-brand { grid-column: 1 / -1; }
+  html.gfx-f3 body .gfx-fi-write { grid-column: 1 / -1; }
+  html.gfx-f3 body .gfx-fi-offices .gfx-fi-rows > li { display: flex; flex-direction: column; justify-content: center; height: auto; min-height: 0; padding: 6px 0; }
+  html.gfx-f3 body .gfx-fi-offices .gfx-fi-time { margin-left: 0; font-size: 14px; }
+  html.gfx-f3 body .gfx-fi-act { font-size: 22px !important; }
+  html.gfx-f3 body .gfx-fi-actrow { margin-top: 12px; }
+}
