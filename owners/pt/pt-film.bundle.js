@@ -96,6 +96,16 @@ window.GF_PFIELD = {"pts":[[798.2,181.6],[708,303.5],[654.4,279.3],[818.4,294.3]
   const ribbon = P => { const Mx = P.length - 1, L = [], Rr = []; P.forEach((p, i) => { const a = P[Math.max(0, i - 1)], b = P[Math.min(Mx, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l, ny = dx / l; L.push(f2(p[0] + nx * p[2] / 2) + ' ' + f2(p[1] + ny * p[2] / 2)); Rr.push(f2(p[0] - nx * p[2] / 2) + ' ' + f2(p[1] - ny * p[2] / 2)); }); return 'M' + L.join(' L') + ' L' + Rr.reverse().join(' L') + ' Z'; };
   const headPaths = (x, y, ux, uy, len, wd) => [1, -1].map(sg => { const ang = Math.atan2(uy, ux) + Math.PI + sg * 0.52, P = []; for (let j = 0; j <= 12; j++) { const k = j / 12, bend = sg * 0.12 * Math.sin(Math.PI * k); P.push([x + Math.cos(ang + bend) * len * k, y + Math.sin(ang + bend) * len * k, wd * (1 - k * 0.8)]); } return ribbon(P); });
 
+  /* ---------- (pt 1.1.0) B v8, founder-approved 10/20: the routes and the covered field ---------- */
+  const groupOf = p => p.k.replace(/[a-z]$/, '');                      // a1a, a1b → a1 (one company)
+  const ROUTES = [];
+  PL.forEach(p => {
+    if (p.join != null) { const mine = ROUTES.filter(r => r.g === groupOf(p)); const dist = r => Math.hypot(r.to[0] - p.at[0], r.to[1] - p.at[1]); if (!mine.length) ROUTES.push({ step: p.join, from: A.HQ, to: p.at, g: groupOf(p) }); else if (mine.every(r => dist(r) > 90)) ROUTES.push({ step: p.join, from: mine.sort((a, b) => dist(a) - dist(b))[0].to, to: p.at, g: groupOf(p), cont: true }); return; }
+  });
+  const arc = (a, b, bow) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1]; return `M${f1(a[0])} ${f1(a[1])}Q${f1(mx - dy * bow)} ${f1(my + dx * bow)} ${f1(b[0])} ${f1(b[1])}`; };
+  // the field a step's territory covers (within 34 plan units of any place in by then)
+  const COVER = FIELD.map(([x, y]) => { let c = 99; PL.forEach(p => { if (Math.hypot(p.at[0] - x, p.at[1] - y) < 34) c = Math.min(c, Math.max(1, IN(p))); }); return c; });
+
   /* ---------- build ---------- */
   const dot = (x, y) => `M${f1(x)} ${f1(y)}h0`;
   const part = (root, name) => root.querySelector('[data-o~="' + name + '"]');
@@ -104,8 +114,9 @@ window.GF_PFIELD = {"pts":[[798.2,181.6],[708,303.5],[654.4,279.3],[818.4,294.3]
     const g = [];
     g.push(`<defs></defs><g class="p3-land">${G.states.map(s => `<path d="${s.d}"/>`).join('')}</g><path class="p3-bd" d="${G.borders}"/>`);
     g.push(`<g class="p3-terr">${TERR.map((L, s) => `<g data-s="${s}">${L.map((t, i) => `<path class="lv${i}" d="${t}"/>`).join('')}</g>`).join('')}</g>`);
+    g.push(`<g class="p8-routes">${ROUTES.map(r => `<path class="p8-r${r.cont ? ' is-cont' : ''}" data-step="${r.step}" pathLength="1" d="${arc(r.from, r.to, r.cont ? 0.08 : 0.12)}"/>`).join('')}</g>`);
     g.push(`<g class="p3-lbl">${Object.entries(LBL).filter(([k]) => STATES_AT[k]).map(([k, n]) => `<g class="p3-s${STATES_AT[k] ? ' is-fp' : ''}" data-st="${k}" data-x="${LBL_AT[k][0]}" data-y="${LBL_AT[k][1]}"><text>${n}</text></g>`).join('')}</g>`);
-    g.push(`<path class="p3-field" d="${FIELD.map(([x, y]) => dot(x, y)).join('')}"/>`);
+    for (const c of [...new Set(COVER)]) g.push(`<path class="p3-field" data-cov="${c}" d="${FIELD.filter((_, i) => COVER[i] === c).map(([x, y]) => dot(x, y)).join('')}"/>`);
     g.push(`<g class="p3-you"><path class="p3-you-o" d="${dot(...A.HQ)}"/><path class="p3-you-i" d="${dot(...A.HQ)}"/></g>`);
     g.push(`<g class="p3-locs">${PL.map(p => `<path class="p3-halo" data-k="${p.k}" d="${dot(...p.at)}"/><path class="p3-loc${p.hq ? ' is-hq' : ''}${p.open != null ? ' is-new' : ''}" data-k="${p.k}" d="${dot(...p.at)}"/>`).join('')}</g>`);
     g.push(`<g class="p3-s p3-youl" data-x="${A.HQ[0]}" data-y="${A.HQ[1]}"><text x="0" y="-20" text-anchor="middle">Your company</text></g>`);
@@ -132,7 +143,7 @@ window.GF_PFIELD = {"pts":[[798.2,181.6],[708,303.5],[654.4,279.3],[818.4,294.3]
     const S = build(sec), map = part(sec, 'pt-map'), film = part(sec, 'pt-film');
     const scal = [...S.querySelectorAll('.p3-s')].map(el => ({ el, x: +el.dataset.x, y: +el.dataset.y }));
     const locs = PL.map(p => ({ p, el: S.querySelector(`.p3-loc[data-k="${p.k}"]`), halo: S.querySelector(`.p3-halo[data-k="${p.k}"]`) }));
-    const terr = [...map.querySelectorAll('.p3-terr > g')], lbls = [...S.querySelectorAll('.p3-lbl .p3-s')];
+    const routes = [...S.querySelectorAll('.p8-r')], fields = [...S.querySelectorAll('.p3-field')], terr = [...map.querySelectorAll('.p3-terr > g')], lbls = [...S.querySelectorAll('.p3-lbl .p3-s')];
     const tl = part(sec, 'pt-tl'), yrs = [...sec.querySelectorAll('[data-yr]')], nums = [...sec.querySelectorAll('[data-num]')], num = { set textContent(v) { nums.forEach(n => n.textContent = v); } }, yr = { set textContent(v) { yrs.forEach(n => n.textContent = v); } }, replay = sec.querySelector('[data-replay]');
     const phone = () => matchMedia('(max-width: 767px)').matches;
 
@@ -172,12 +183,12 @@ window.GF_PFIELD = {"pts":[[798.2,181.6],[708,303.5],[654.4,279.3],[818.4,294.3]
       const m = d.createElementNS(NS, 'mask'); m.setAttribute('id', id); m.setAttribute('maskUnits', 'userSpaceOnUse'); m.setAttribute('x', -3000); m.setAttribute('y', -3000); m.setAttribute('width', 7000); m.setAttribute('height', 7000);
       m.innerHTML = `<path d="${TERR[s - 1][0] || ''}" fill="#fff"/>` + P.map(p => `<circle cx="${p.at[0]}" cy="${p.at[1]}" r="0" fill="#fff"/>`).join('');
       defs.appendChild(m); terr[s].setAttribute('mask', `url(#${id})`);
-      const cs = [...m.querySelectorAll('circle')], st = performance.now() + 260, Dur = 1200;
+      const cs = [...m.querySelectorAll('circle')], st = performance.now() + 650, Dur = 900;
       const grow = now => { const e = ARRIVE(clamp((now - st) / Dur, 0, 1)); cs.forEach(c => c.setAttribute('r', f1(e * R * 3.2))); if (e < 1 && terr[s].getAttribute('mask') === `url(#${id})`) requestAnimationFrame(grow); else if (e >= 1) terr[s].removeAttribute('mask'); };
       requestAnimationFrame(grow);
     };
-    const countIn = (a, v) => { const st = performance.now(), Dur = reduce ? 0 : 900;
-      const run = now => { const e = Dur ? ARRIVE(clamp((now - st) / Dur, 0, 1)) : 1; num.textContent = '$' + (a + (v - a) * e).toFixed(1) + 'M'; if (e < 1) requestAnimationFrame(run); }; requestAnimationFrame(run); };
+    const countIn = (a, v) => { const st = performance.now() + (reduce ? 0 : 600), Dur = reduce ? 0 : 800;
+      const run = now => { const e = Dur ? ARRIVE(clamp((now - st) / Dur, 0, 1)) : 1; if (now < st) { requestAnimationFrame(run); return; } num.textContent = '$' + (a + (v - a) * e).toFixed(1) + 'M'; if (e < 1) requestAnimationFrame(run); }; requestAnimationFrame(run); };
 
     // one step of the story (0 your company · 1 at the sale · 2-6 years 1-5 · 7 the later sale)
     let cur = -1;
@@ -186,10 +197,12 @@ window.GF_PFIELD = {"pts":[[798.2,181.6],[708,303.5],[654.4,279.3],[818.4,294.3]
       locs.forEach(({ p, el, halo }, i) => {
         const on = s >= IN(p), was = el.classList.contains('is-in');
         el.classList.toggle('is-in', on);
-        if (on && !was && !back && (p.join != null || p.open != null)) { el.style.transitionDelay = halo.style.animationDelay = (260 + (i % 3) * 120) + 'ms'; if (p.join != null) { halo.classList.remove('is-pulse'); void halo.getBBox(); halo.classList.add('is-pulse'); } }
+        if (on && !was && !back && (p.join != null || p.open != null)) { { const cand = ROUTES.filter(r => r.step === IN(p) && (r.g ? r.g === groupOf(p) : r.to === p.at)); const r0 = cand.sort((a, b) => Math.hypot(a.to[0] - p.at[0], a.to[1] - p.at[1]) - Math.hypot(b.to[0] - p.at[0], b.to[1] - p.at[1]))[0]; const lead = r0 && r0.to; const dd = lead ? Math.hypot(lead[0] - p.at[0], lead[1] - p.at[1]) : 0; el.style.transitionDelay = halo.style.animationDelay = Math.round(600 + dd * 2.2) + 'ms'; } if (p.join != null) { halo.classList.remove('is-pulse'); void halo.getBBox(); halo.classList.add('is-pulse'); } }
         else if (!on) { el.style.transitionDelay = '0ms'; halo.classList.remove('is-pulse'); }
       });
       lbls.forEach(el => el.classList.toggle('is-in', STATES_AT[el.dataset.st] != null && s >= STATES_AT[el.dataset.st]));
+      routes.forEach(r => r.classList.toggle('is-in', s >= +r.dataset.step)); routes.forEach(r => r.classList.toggle('is-now', !back && s === +r.dataset.step));
+      fields.forEach(f => f.classList.toggle('is-cov', s >= +f.dataset.cov));
       spread(s, back);
       yr.textContent = s <= 1 ? 'At the sale' : 'Year ' + Math.min(s - 1, 5);
       if (back) num.textContent = '$' + EARN[Math.min(s, 6)].toFixed(1) + 'M'; else if (s >= 2 && s <= 6) countIn(EARN[s - 1], EARN[s]);
@@ -198,9 +211,9 @@ window.GF_PFIELD = {"pts":[[798.2,181.6],[708,303.5],[654.4,279.3],[818.4,294.3]
     };
 
     // the clock: plays once in view, pauses out of view, holds on the last frame
-    // (pt 1.0.1, founder-approved 10/20) the tighter pace: payoff at about 9s, done at about 11.5s; each year 1.3s still holds
+    // (pt 1.1.0, B v8 approved 10/20) each year 1.5s, so the route draws, then the place arrives, then the count; payoff ~10.4s
     // the 1.2s territory spread and the 0.9s count
-    const T = [0, 1600, 2900, 4200, 5500, 6800, 8100, 9200], END = 11600, P0 = T[1], P1 = T[6];
+    const T = [0, 1600, 3100, 4600, 6100, 7600, 9100, 10400], END = 12800, P0 = T[1], P1 = T[6];
     let t = 0, playing = false, last = 0, done = false;
     const paint = () => { const s = T.filter(x => t >= x).length - 1; setStep(s, false); tlFill.style.strokeDashoffset = 1 - clamp((t - P0) / (P1 - P0), 0, 1); };
     const loop = now => { if (!playing) return; t += Math.min(250, now - last); last = now; paint(); if (t >= END) { playing = false; done = true; sec.classList.add('is-done'); return; } requestAnimationFrame(loop); };
