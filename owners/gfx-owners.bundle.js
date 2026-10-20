@@ -660,14 +660,11 @@
     const keep = st.map(e => ['position', 'top', 'bottom'].map(p => [p, e.style.getPropertyValue(p), e.style.getPropertyPriority(p)]));
     st.forEach(e => { e.style.setProperty('position', 'relative', 'important'); e.style.setProperty('top', 'auto', 'important'); e.style.setProperty('bottom', 'auto', 'important'); }); STICKY = new Set(st);
     const memo = new Map(), top0 = el => { if (!el) return 0; let v = memo.get(el); if (v == null) { v = el.offsetTop + top0(el.offsetParent); memo.set(el, v); } return v; };
-    const tabHid = W.innerWidth <= 991;
     try {
       return fieldRooms.map((o, k) => {
         const rm = o.el; let top = Infinity, bot = -Infinity;
         all[k].forEach(e => {
           if (e === rm) return;
-          // (final audit) on a tablet a card's drawn cover (an svg of real size) counts, as on a phone; desktop as before
-          if (tabHid && e.tagName === 'svg' && !e.closest(SKIPSPAN) && !e.closest(DECOR)) { const r = e.getBoundingClientRect(); if (r.width >= 48 && r.height >= 48) { const t = r.top + (W.scrollY || 0); top = Math.min(top, t); bot = Math.max(bot, t + r.height); } return; }
           if (!(e.tagName === 'IMG' || e.tagName === 'VIDEO' || hasOwnText(e))) return;
           if (!e.offsetParent || e.offsetWidth < 3 || e.offsetHeight < 3 || e.closest(SKIPSPAN)) return;
           let t = top0(e), b = t + e.offsetHeight;
