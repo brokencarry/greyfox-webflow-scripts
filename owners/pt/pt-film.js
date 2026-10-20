@@ -125,20 +125,6 @@ const vw=Math.max((x1-x0) / Z.w,(y1-y0) / Z.h*bw / bh),vh=vw*bh / bw;
 const c=[(x0+x1) / 2-Z.cx*vw,(y0+y1) / 2-Z.cy*vh,vw,vh];
 const vb=c.map(f1).join(' ');map.querySelectorAll('svg').forEach(v=>v.setAttribute('viewBox',vb));
 const k=vw / bw;scal.forEach(o=>o.el.setAttribute('transform',`translate(${o.x} ${o.y}) scale(${k.toFixed(4)})`));
-const box=lbls.map(el=>({el,half:(el.firstChild.getComputedTextLength()||0) / 2,sx:(+el.dataset.x-c[0]) / k,sy:(+el.dataset.y-c[1]) / k}));
-box.forEach(a=>{
-if(!a.half)return;
-const x0=a.sx,lo=bw*.06+6+a.half,hi=bw*.94-6-a.half;
-if(lo>hi||(x0>=lo&&x0<=hi))return;
-let x=Math.min(hi,Math.max(lo,x0));
-box.forEach(b=>{
-if(b===a||!b.half||Math.abs(a.sy-b.sy)>=21)return;
-const gap=a.half+b.half+10;
-if(x0>b.sx&&x<b.sx+gap)x=Math.min(x0,b.sx+gap);
-if(x0<b.sx&&x>b.sx-gap)x=Math.max(x0,b.sx-gap);
-});
-if(x!==x0)a.el.setAttribute('transform',`translate(${f1(c[0]+x*k)} ${a.el.dataset.y}) scale(${k.toFixed(4)})`);
-});
 };
 let mk=0;
 const spread=(s,back)=>{
@@ -181,7 +167,6 @@ const loop=now=>{if(!playing)return;t+=Math.min(250,now-last);last=now;paint();i
 const play=()=>{if(playing||done)return;playing=true;last=performance.now();requestAnimationFrame(loop);};
 const reset=()=>{t=0;done=false;cur=-1;sec.classList.remove('is-done');setStep(0,true);tlFill.style.strokeDashoffset=1;};
 drawTl();frame();reset();
-if(d.fonts&&d.fonts.ready)d.fonts.ready.then(frame);
 if(reduce){sec.classList.add('is-seen');t=END;cur=-1;setStep(7,true);tlFill.style.strokeDashoffset=0;done=true;sec.classList.add('is-done');}
 else if(w.IntersectionObserver){let to=0;new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){sec.classList.add('is-seen');clearTimeout(to);to=setTimeout(play,600);}else{clearTimeout(to);playing=false;}}),{threshold:0.45}).observe(film);}
 else play();
