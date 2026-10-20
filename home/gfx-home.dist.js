@@ -1298,7 +1298,20 @@ const rest=p.meta.concat(p.figs);if(rest.length)t.to(rest,{opacity:0,y:-G.body.y
 return t;
 };
 parts.forEach(p=>{if(p.lines.length)gsap.set(p.lines,{yPercent:105});gsap.set(p.meta.concat(p.nums),{opacity:0});gsap.set(p.figs,{'--r':0});gsap.set(p.caps,{opacity:0});});
+const headText=$$('.gfx-case-head .heading-2, .gfx-case-head .paragraph',sec);
+const layY=e=>{let y=0,n=e;while(n&&sec.contains(n)&&n!==sec){y+=n.offsetTop;n=n.offsetParent;}return y;};
+const labelsNeed=ls=>{
+let need=0;
+ls.forEach(l=>{if(!l||!l.offsetHeight)return;const q=l.getBoundingClientRect(),lt=layY(l);
+headText.forEach(h=>{if(!h.offsetHeight)return;const r=h.getBoundingClientRect();if(Math.min(q.right,r.right)-Math.max(q.left,r.left)>0)need=Math.max(need,layY(h)+h.offsetHeight+16-lt);});});
+return Math.ceil(need);
+};
 const mm=gsap.matchMedia();
+mm.add('(min-width: 992px) and (max-height: 680.99px)',()=>{
+const fit=()=>safe('climb clear',()=>{if(!rail)return;rail.style.removeProperty('margin-top');const need=labelsNeed($$('[class*="gfx-case-lbl-"]',rail));if(need>0)rail.style.setProperty('margin-top',(parseFloat(getComputedStyle(rail).marginTop)+need)+'px','important');});
+fit();ST.addEventListener('refresh',fit);
+return()=>{ST.removeEventListener('refresh',fit);if(rail)rail.style.removeProperty('margin-top');};
+});
 mm.add(PIN,()=>{
 const arrow=$('.gfx-rail-arrow',rail),stops=['a','b','c'].map(k=>$('.gfx-case-stop-'+k,rail)).filter(Boolean);
 const svg=$('.gfx-climb-svg',rail),cTrack=$('.gfx-climb-track',rail),cRect=$('#gfxc-rect',rail)||$('clipPath rect',rail);
@@ -1361,13 +1374,7 @@ camps.forEach((_,k)=>campReveal(k,f));
 stops.forEach((s,k)=>s.classList.toggle('gfx-dot-on',f>=camps[k]-0.015));
 };
 const placeStops=()=>{ridge();snapMid();camps.forEach((t,k)=>{const p=cPt(t);stops[k].style.left=p.x+'px';stops[k].style.top=p.y+'px';});};
-const headText=$$('.gfx-case-head .heading-2, .gfx-case-head .paragraph',sec);
-const fitRidge=()=>{
-let need=0;
-labels.forEach(l=>{if(!l)return;const y=+gsap.getProperty(l,'y')||0,q=l.getBoundingClientRect(),lt=q.top-y;
-headText.forEach(h=>{const r=h.getBoundingClientRect();if(Math.min(q.right,r.right)-Math.max(q.left,r.left)>0)need=Math.max(need,r.bottom+16-lt);});});
-return Math.ceil(need);
-};
+const fitRidge=()=>labelsNeed(labels);
 const placeClimb=()=>safe('climb',()=>{
 ridgeTop=14;placeStops();
 const need=fitRidge();if(need>0){ridgeTop=Math.min(14+need,Math.max(14,(rail.offsetHeight-10)*0.5));placeStops();}
