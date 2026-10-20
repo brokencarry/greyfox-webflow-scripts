@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.11';
+  const VERSION = '1.0.12';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -686,10 +686,14 @@
   const rhythm = () => {
     const T = TIERS(), S = lastSpans = W.innerWidth <= 767 ? spansLite() : spans();
     let changed = false;
+    // (1.0.12, final audit) tierPhone: a room that keeps its own desktop spacing joins the house rhythm on a phone only
+    const ph = W.innerWidth <= 767;
     const writes = fieldRooms.map((o, i) => {
-      if (!o.tier) return null;
+      const tier = ph && o.tierPhone ? o.tierPhone : o.tier;
+      if (!tier) { if (o._phPad) { o.el.style.removeProperty('padding-top'); o._phPad = false; S[i].pad = parseFloat(getComputedStyle(o.el).paddingTop) || 0; } return null; }
+      if (tier !== o.tier) o._phPad = true;
       const prevTrail = i && fieldRooms[i - 1].native !== 'M' ? S[i - 1].trail : 0;
-      const want = Math.max(0, Math.round(T[o.tier] - S[i].inner - prevTrail));
+      const want = Math.max(0, Math.round(T[tier] - S[i].inner - prevTrail));
       return Math.abs(want - S[i].pad) > 1 ? want : null;
     });
     writes.forEach((w, i) => { if (w != null) { fieldRooms[i].el.style.setProperty('padding-top', w + 'px', 'important'); lastSpans[i].pad = w; changed = true; } });

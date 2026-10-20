@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.1';
+  W.__gfxInvestors = '1.0.2';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -73,12 +73,14 @@
   const field = {
     rooms: [
       { el: O('ow-hero'), native: 'L', tone: 'L', noInk: true },
-      { el: O('iv-fun'), native: 'L', tone: 'L', noInk: true },
-      { el: O('iv-client'), native: 'L', tone: 'L', noInk: true },
-      { el: O('iv-mc'), native: 'D', tone: 'D', noInk: true, turnAt: (ym, c) => closeAt(c.room.el, c) },
-      { el: O('iv-cases'), native: 'D', tone: 'D', noInk: true },
-      { el: O('iv-std'), native: 'D', tone: 'D', noInk: true },
-      { el: O('iv-close'), native: 'D', tone: 'D', noInk: true, opaque: true, foot: true }
+      // (1.0.2, final audit) on a phone the rooms take the house rhythm (80 within a colour, the turn into the black)
+      // like Home and Owners; their gaps had been 91 to 500px. Desktop keeps its own spacing.
+      { el: O('iv-fun'), native: 'L', tone: 'L', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-client'), native: 'L', tone: 'L', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-mc'), native: 'D', tone: 'D', noInk: true, tierPhone: 'turn', turnAt: (ym, c) => closeAt(c.room.el, c) },
+      { el: O('iv-cases'), native: 'D', tone: 'D', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-std'), native: 'D', tone: 'D', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-close'), native: 'D', tone: 'D', noInk: true, opaque: true, foot: true, tierPhone: 'standard' }
     ]
   };
   // the inks follow the field's tone (iv-flow2.js ink(): html.iv2-dt, stage 1 re-inked in place)

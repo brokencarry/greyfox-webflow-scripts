@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.11 + investors 1.0.1 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.12 + investors 1.0.2 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.11';
+const VERSION='1.0.12';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -599,10 +599,13 @@ return{pad,inner:top-(rt+pad),trail:Math.max(0,rt+rm.offsetHeight-bot),top,bot};
 const rhythm=()=>{
 const T=TIERS(),S=lastSpans=W.innerWidth<=767?spansLite():spans();
 let changed=false;
+const ph=W.innerWidth<=767;
 const writes=fieldRooms.map((o,i)=>{
-if(!o.tier)return null;
+const tier=ph&&o.tierPhone?o.tierPhone:o.tier;
+if(!tier){if(o._phPad){o.el.style.removeProperty('padding-top');o._phPad=false;S[i].pad=parseFloat(getComputedStyle(o.el).paddingTop)||0;}return null;}
+if(tier!==o.tier)o._phPad=true;
 const prevTrail=i&&fieldRooms[i-1].native!=='M'?S[i-1].trail:0;
-const want=Math.max(0,Math.round(T[o.tier]-S[i].inner-prevTrail));
+const want=Math.max(0,Math.round(T[tier]-S[i].inner-prevTrail));
 return Math.abs(want-S[i].pad)>1?want:null;
 });
 writes.forEach((w,i)=>{if(w!=null){fieldRooms[i].el.style.setProperty('padding-top',w+'px','important');lastSpans[i].pad=w;changed=true;}});
@@ -1050,7 +1053,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.1';
+W.__gfxInvestors='1.0.2';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1081,12 +1084,12 @@ return Math.min(at,max-vh*0.04);
 const field={
 rooms:[
 {el:O('ow-hero'),native:'L',tone:'L',noInk:true},
-{el:O('iv-fun'),native:'L',tone:'L',noInk:true},
-{el:O('iv-client'),native:'L',tone:'L',noInk:true},
-{el:O('iv-mc'),native:'D',tone:'D',noInk:true,turnAt:(ym,c)=>closeAt(c.room.el,c)},
-{el:O('iv-cases'),native:'D',tone:'D',noInk:true},
-{el:O('iv-std'),native:'D',tone:'D',noInk:true},
-{el:O('iv-close'),native:'D',tone:'D',noInk:true,opaque:true,foot:true}
+{el:O('iv-fun'),native:'L',tone:'L',noInk:true,tierPhone:'standard'},
+{el:O('iv-client'),native:'L',tone:'L',noInk:true,tierPhone:'standard'},
+{el:O('iv-mc'),native:'D',tone:'D',noInk:true,tierPhone:'turn',turnAt:(ym,c)=>closeAt(c.room.el,c)},
+{el:O('iv-cases'),native:'D',tone:'D',noInk:true,tierPhone:'standard'},
+{el:O('iv-std'),native:'D',tone:'D',noInk:true,tierPhone:'standard'},
+{el:O('iv-close'),native:'D',tone:'D',noInk:true,opaque:true,foot:true,tierPhone:'standard'}
 ]
 };
 const inks=()=>{let dk=null;const f=()=>{const d=H.classList.contains('gfx-tone-dark');if(d===dk)return;dk=d;H.classList.toggle('iv2-dt',d);if(R.res)R.res.classList.toggle('ow-char',d);};

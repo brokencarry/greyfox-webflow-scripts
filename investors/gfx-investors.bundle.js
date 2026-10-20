@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.11 + investors 1.0.1. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.12 + investors 1.0.2. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.11';
+  const VERSION = '1.0.12';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -687,10 +687,14 @@
   const rhythm = () => {
     const T = TIERS(), S = lastSpans = W.innerWidth <= 767 ? spansLite() : spans();
     let changed = false;
+    // (1.0.12, final audit) tierPhone: a room that keeps its own desktop spacing joins the house rhythm on a phone only
+    const ph = W.innerWidth <= 767;
     const writes = fieldRooms.map((o, i) => {
-      if (!o.tier) return null;
+      const tier = ph && o.tierPhone ? o.tierPhone : o.tier;
+      if (!tier) { if (o._phPad) { o.el.style.removeProperty('padding-top'); o._phPad = false; S[i].pad = parseFloat(getComputedStyle(o.el).paddingTop) || 0; } return null; }
+      if (tier !== o.tier) o._phPad = true;
       const prevTrail = i && fieldRooms[i - 1].native !== 'M' ? S[i - 1].trail : 0;
-      const want = Math.max(0, Math.round(T[o.tier] - S[i].inner - prevTrail));
+      const want = Math.max(0, Math.round(T[tier] - S[i].inner - prevTrail));
       return Math.abs(want - S[i].pad) > 1 ? want : null;
     });
     writes.forEach((w, i) => { if (w != null) { fieldRooms[i].el.style.setProperty('padding-top', w + 'px', 'important'); lastSpans[i].pad = w; changed = true; } });
@@ -1216,7 +1220,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.1';
+  W.__gfxInvestors = '1.0.2';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1258,12 +1262,14 @@
   const field = {
     rooms: [
       { el: O('ow-hero'), native: 'L', tone: 'L', noInk: true },
-      { el: O('iv-fun'), native: 'L', tone: 'L', noInk: true },
-      { el: O('iv-client'), native: 'L', tone: 'L', noInk: true },
-      { el: O('iv-mc'), native: 'D', tone: 'D', noInk: true, turnAt: (ym, c) => closeAt(c.room.el, c) },
-      { el: O('iv-cases'), native: 'D', tone: 'D', noInk: true },
-      { el: O('iv-std'), native: 'D', tone: 'D', noInk: true },
-      { el: O('iv-close'), native: 'D', tone: 'D', noInk: true, opaque: true, foot: true }
+      // (1.0.2, final audit) on a phone the rooms take the house rhythm (80 within a colour, the turn into the black)
+      // like Home and Owners; their gaps had been 91 to 500px. Desktop keeps its own spacing.
+      { el: O('iv-fun'), native: 'L', tone: 'L', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-client'), native: 'L', tone: 'L', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-mc'), native: 'D', tone: 'D', noInk: true, tierPhone: 'turn', turnAt: (ym, c) => closeAt(c.room.el, c) },
+      { el: O('iv-cases'), native: 'D', tone: 'D', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-std'), native: 'D', tone: 'D', noInk: true, tierPhone: 'standard' },
+      { el: O('iv-close'), native: 'D', tone: 'D', noInk: true, opaque: true, foot: true, tierPhone: 'standard' }
     ]
   };
   // the inks follow the field's tone (iv-flow2.js ink(): html.iv2-dt, stage 1 re-inked in place)
