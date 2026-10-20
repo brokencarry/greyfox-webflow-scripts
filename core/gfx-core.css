@@ -397,3 +397,6 @@ html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc
 @media (max-width: 767px) {
   html.gfx-f3.gfx-ph-rhythm .gfx-fr:not([data-gfx-foot]):not([data-gfx-last]):not(#gfx-ph) { padding-bottom: 0 !important; }
 }
+@media (min-width: 768px) and (max-width: 991px) {
+  html.gfx-f3.gfx-tab-rhythm .gfx-fr:not([data-gfx-foot]):not([data-gfx-last]):not(#gfx-ph) { padding-bottom: 0 !important; }
+}

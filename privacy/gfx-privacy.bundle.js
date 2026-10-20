@@ -524,7 +524,7 @@
   const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
   const fieldListeners = [];
   const setupRooms = () => {
-    if (fieldDef.phoneRhythm) H.classList.add('gfx-ph-rhythm');
+    if (fieldDef.phoneRhythm) H.classList.add('gfx-ph-rhythm'); if (fieldDef.phoneRhythm === true) H.classList.add('gfx-tab-rhythm');
     fieldRooms = (fieldDef.rooms || []).map(o => Object.assign({}, o, { el: typeof o.el === 'string' ? $(o.el) : o.el })).filter(o => o.el);
     fieldRooms.forEach((o, i) => {
       const r = o.el; r.classList.add('gfx-fr'); r.setAttribute('data-gfx-native', o.native);
@@ -704,13 +704,15 @@
     // on a phone (pages that opt in with field.phoneRhythm) every room after the first takes the house rhythm: 80 within a colour, the turn where the colour changes
     // (a page may still name its own tierPhone); desktop keeps each room's own tier
     const auto = (o, i) => fieldDef && fieldDef.phoneRhythm && i && fieldRooms[i - 1].native !== 'M' ? (o.tone !== fieldRooms[i - 1].tone ? 'turn' : 'standard') : null;
+    // (final audit) a tablet (768-991) takes the same rhythm on pages that opt in fully (phoneRhythm true; 'phone' = phones only)
+    const rh = ph || (!!fieldDef && fieldDef.phoneRhythm === true && W.innerWidth <= 991);
     const writes = fieldRooms.map((o, i) => {
       const turnHere = fieldDef && fieldDef.phoneRhythm && i && fieldRooms[i - 1].native !== 'M' && o.tone !== fieldRooms[i - 1].tone;
-      const tier = ph ? (o.tierPhone || (turnHere ? 'turn' : o.tier || auto(o, i))) : o.tier;   // (a colour change is always the turn on a phone)
+      const tier = rh ? (o.tierPhone || (turnHere ? 'turn' : o.tier || auto(o, i))) : o.tier;   // (a colour change is always the turn on a phone)
       if (!tier) { if (o._phPad) { o.el.style.removeProperty('padding-top'); o._phPad = false; S[i].pad = parseFloat(getComputedStyle(o.el).paddingTop) || 0; } return null; }
       if (tier !== o.tier) o._phPad = true;
       // (final audit) whatever sits between two rooms (a block outside the field) counts toward the gap
-      const prevTrail = i && fieldRooms[i - 1].native !== 'M' ? S[i - 1].trail + (ph ? Math.max(0, (S[i].rtop || 0) - (S[i - 1].rbot || 0)) : 0) : 0;   // (phones only: desktop keeps its approved gaps)
+      const prevTrail = i && fieldRooms[i - 1].native !== 'M' ? S[i - 1].trail + (rh ? Math.max(0, (S[i].rtop || 0) - (S[i - 1].rbot || 0)) : 0) : 0;   // (phones only: desktop keeps its approved gaps)
       const want = Math.max(0, Math.round(T[tier] - S[i].inner - prevTrail));
       return Math.abs(want - S[i].pad) > 1 ? want : null;
     });
