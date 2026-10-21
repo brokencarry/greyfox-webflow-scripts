@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.22 + pages 1.0.1 + insights 1.2.1 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.23 + pages 1.0.1 + insights 1.2.1 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.22';
+const VERSION='1.0.23';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -1113,9 +1113,10 @@ safe('fox watch',()=>foxWatch(PAGE.foxZone));
 H.classList.add('gfx-rooms');
 ST.refresh();
 safe('height watch',()=>{
+const lim=()=>{if(shared&&!shared.__gfxStub)try{shared.resize();}catch(e){}};
 let lastH=D.documentElement.scrollHeight;
-ST.addEventListener('refresh',()=>{lastH=D.documentElement.scrollHeight;});
-const check=()=>{const h=D.documentElement.scrollHeight;if(Math.abs(h-lastH)>2)ST.refresh();};
+ST.addEventListener('refresh',()=>{lastH=D.documentElement.scrollHeight;lim();});
+const check=()=>{lim();const h=D.documentElement.scrollHeight;if(Math.abs(h-lastH)>2)ST.refresh();};
 const later=()=>{setTimeout(check,300);setTimeout(check,1800);};
 if(D.readyState==='complete')later();else W.addEventListener('load',later);
 });

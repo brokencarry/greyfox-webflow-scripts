@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.22';
+  const VERSION = '1.0.23';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1308,9 +1308,11 @@
              so nothing notices on its own: look at the height after load and once more later, and re-measure only if
              it moved. */
           safe('height watch', () => {
+            // the smooth scroll keeps its own page end too (its watcher waits on a frame): bring it along every time
+            const lim = () => { if (shared && !shared.__gfxStub) try { shared.resize(); } catch (e) { /* ignore */ } };
             let lastH = D.documentElement.scrollHeight;
-            ST.addEventListener('refresh', () => { lastH = D.documentElement.scrollHeight; });
-            const check = () => { const h = D.documentElement.scrollHeight; if (Math.abs(h - lastH) > 2) ST.refresh(); };
+            ST.addEventListener('refresh', () => { lastH = D.documentElement.scrollHeight; lim(); });
+            const check = () => { lim(); const h = D.documentElement.scrollHeight; if (Math.abs(h - lastH) > 2) ST.refresh(); };
             const later = () => { setTimeout(check, 300); setTimeout(check, 1800); };
             if (D.readyState === 'complete') later(); else W.addEventListener('load', later);
           });
