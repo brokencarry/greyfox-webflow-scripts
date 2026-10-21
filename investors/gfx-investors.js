@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.4';
+  W.__gfxInvestors = '1.0.5';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -423,7 +423,7 @@
   const vPause = v => { if (v && !v.paused) v.pause(); };
   // ("Pause motion" chosen on Home v2 / Owners v2: the films do not start by themselves; the words and Play still play them)
   const STILL = () => gfx.store.get('gfx-still') === '1';
-  let E2 = 0, P2 = 0, s2Act = -1, s2In = false;
+  let E2 = 0, P2 = 0, s2Act = -1, s2In = false, s2User = null;   // (1.0.5) s2User: the reader's Play/Pause on the held stage
   const s2Weights = P => { const X = 0.035, b1 = 1 / 3, b2 = 2 / 3; const a = ss(seg(P, b1 - X, b1 + X)), c = ss(seg(P, b2 - X, b2 + X)); return [1 - a, a * (1 - c), c]; };
   const s2Render = () => {
     const E = E2, P = P2;
@@ -438,8 +438,22 @@
     if (P > 0.12) vLoad(S2.vids[1], true);
     if (P > 0.45) vLoad(S2.vids[2], true);
     const shown = E > 0.92;
-    if (actNow !== s2Act) { s2Act = actNow; S2.bbs.forEach((b, i) => b.setAttribute('aria-pressed', i === actNow ? 'true' : 'false')); S2.vids.forEach((v, i) => v.toggleAttribute('aria-hidden', i !== actNow)); }
-    if (shown && s2In && !STILL()) vPlay(S2.vids[actNow]); else vPause(S2.vids[actNow]);
+    if (actNow !== s2Act) { s2Act = actNow; s2User = null; S2.bbs.forEach((b, i) => b.setAttribute('aria-pressed', i === actNow ? 'true' : 'false')); S2.vids.forEach((v, i) => v.toggleAttribute('aria-hidden', i !== actNow)); }
+    const run = s2User === 'pause' ? false : s2User === 'play' ? shown && s2In : shown && s2In && !STILL();
+    if (run) vPlay(S2.vids[actNow]); else vPause(S2.vids[actNow]);
+  };
+  /* (1.0.5, founder 10/20: "play button on mission control isn't working") on the held stage the films run with the
+     scroll and Play had no hand on them. It now pauses and plays the film in view, and says which it will do; a new
+     beat starts its own film again. */
+  const s2Button = () => {
+    if (!S2.play || !S2.vids || !S2.vids.length) return;
+    const cur = () => S2.vids[s2Act < 0 ? 0 : s2Act];
+    const lab = () => { const v = cur(), on = !!v && !v.paused && !v.ended, t = on ? 'Pause' : 'Play', s = S2.play.querySelector('span');
+      if (s && s.textContent !== t) s.textContent = t; S2.play.dataset.state = on ? 'pause' : 'play'; S2.play.setAttribute('aria-label', t); };
+    S2.vids.forEach(v => ['play', 'pause', 'ended'].forEach(ev => v.addEventListener(ev, lab)));
+    S2.play.hidden = false;
+    S2.play.addEventListener('click', () => { const v = cur(); if (v && !v.paused && !v.ended) { s2User = 'pause'; v.pause(); } else { s2User = 'play'; vPlay(v); } });
+    lab();
   };
   const s2Static = () => {
     if (!S2.vids || !S2.vids.length || !S2.play) return;
@@ -508,6 +522,7 @@
     }
     if (S2.track && S2.win && S2.winIn) {
       S2.vids.forEach(v => { v.poster = posterOf(v, 'first'); });
+      s2Button();
       ST.create({ trigger: S2.track, start: 'top bottom', end: 'top top', onUpdate: s => { E2 = s.progress; s2Render(); }, onRefresh: s => { E2 = s.progress; s2Render(); } });
       ST.create({ trigger: S2.track, start: 'top top', end: 'bottom bottom', onUpdate: s => { P2 = s.progress; s2Render(); }, onRefresh: s => { P2 = s.progress; s2Render(); } });
       ST.create({ trigger: S2.track, start: 'top bottom', end: 'bottom top', onToggle: s => { s2In = s.isActive; s2Render(); if (!s2In) S2.vids.forEach(vPause); } });
