@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.19 + investors 1.0.7 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.19 + investors 1.0.8 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1109,7 +1109,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.7';
+W.__gfxInvestors='1.0.8';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1411,6 +1411,50 @@ if(!S1.svg)return;
 if(L){S1.mp.style.strokeDashoffset='0';S1.hk=1;if(S1.hd)S1.hd.set(1);}
 S1.stops.forEach((li,i)=>{li.style.setProperty('--hit','1');li.style.setProperty('--on',i===3?'1':'0');});
 };
+function s1Phone(still){
+const list=S1.stops&&S1.stops.length===4?S1.stops[0].parentElement:null;if(!list)return;
+let rail=null,fg=null,ys=[],on=false;
+const easeOut=t=>1-Math.pow(1-t,3);
+const count=li=>{
+const el=li._num;if(!el||li._counted)return;li._counted=true;
+const tw=D.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n=null,m=null;
+while((n=tw.nextNode())){m=n.data.match(/\d+(?:\.\d+)?/);if(m)break;}
+if(!n||!m||still||REDUCE)return;
+const full=n.data,to=parseFloat(m[0]),dec=(m[0].split('.')[1]||'').length,t0=performance.now(),dur=900;
+const step=now=>{const k=Math.min(1,(now-t0) / dur),v=(to*easeOut(k)).toFixed(dec);n.data=full.slice(0,m.index)+v+full.slice(m.index+m[0].length);if(k<1)requestAnimationFrame(step);else n.data=full;};
+requestAnimationFrame(step);
+};
+const paint=()=>{
+if(!on||!rail||!fg)return;
+const r=list.getBoundingClientRect(),Hh=r.height||1,p=still?1:clamp((W.innerHeight*0.72-r.top) / Hh,0,1),at=p*Hh;
+fg.style.strokeDashoffset=(1-p).toFixed(4);
+rail.querySelectorAll('[data-at]').forEach(e=>e.classList.toggle('is-on',at>=+e.dataset.at-4));
+S1.stops.forEach((li,i)=>{const reached=at>=ys[i]-4;if(reached!==li.classList.contains('gfx-s1-on')){li.classList.toggle('gfx-s1-on',reached);if(reached)count(li);}});
+};
+const build=()=>{
+on=mq('(max-width: 767px)');
+H.classList.toggle('gfx-s1-phone',on);
+if(!on){if(rail)rail.style.display='none';S1.stops.forEach(li=>li.classList.remove('gfx-s1-on'));return;}
+if(!rail){rail=D.createElementNS(NS,'svg');rail.setAttribute('class','gfx-s1-rail');rail.setAttribute('aria-hidden','true');rail.setAttribute('focusable','false');list.appendChild(rail);}
+rail.style.display='';
+const lr=list.getBoundingClientRect(),Hh=list.offsetHeight,X=11,tip=40,rise=20;
+ys=S1.stops.map(li=>{const t=$(O('iv2-sn'),li),r=(t||li).getBoundingClientRect();return r.top-lr.top+r.height / 2;});
+const y0=Math.max(0,ys[0]-40),yE=ys[3],f=v=>v.toFixed(1);
+const d=`M${X} ${f(y0)}V${f(yE-14)}Q${X} ${f(yE)} ${X+14} ${f(yE)}H${tip-8}L${tip} ${f(yE-rise)}`;
+const ticks=[0,1,2,3].map(i=>{const y=y0+6+i*7;return`<circle class="gfx-s1-n gfx-s1-n-tick" data-at="${f(y)}" cx="${X}" cy="${f(y)}" r="1.9"/>`;}).join('');
+rail.setAttribute('width',48);rail.setAttribute('height',f(Hh));rail.setAttribute('viewBox',`0 0 48 ${f(Hh)}`);
+rail.innerHTML=`<path class="gfx-s1-r-bg" d="${d}"/><path class="gfx-s1-r-fg" d="${d}" pathLength="1"/>`+ticks+
+`<circle class="gfx-s1-n gfx-s1-n-ring" data-at="${f(ys[0])}" cx="${X}" cy="${f(ys[0])}" r="7"/><circle class="gfx-s1-n gfx-s1-n-dot" data-at="${f(ys[0])}" cx="${X}" cy="${f(ys[0])}" r="2.6"/>`+
+`<path class="gfx-s1-n gfx-s1-n-x" data-at="${f(ys[1])}" d="M${X-6} ${f(ys[1]+7)}V${f(ys[1]-7)}M${X+6} ${f(ys[1]-7)}V${f(ys[1]+7)}"/>`+
+`<circle class="gfx-s1-n gfx-s1-n-ring" data-at="${f(ys[2])}" cx="${X}" cy="${f(ys[2])}" r="7"/><circle class="gfx-s1-n gfx-s1-n-dot" data-at="${f(ys[2])}" cx="${X}" cy="${f(ys[2])}" r="3.6"/>`+
+`<path class="gfx-s1-n gfx-s1-n-hd" data-at="${f(yE)}" d="M${tip-9} ${f(yE-rise+2)}L${tip} ${f(yE-rise)}L${tip+1} ${f(yE-rise+10)}"/>`;
+fg=$('.gfx-s1-r-fg',rail);paint();
+};
+build();
+W.addEventListener('scroll',paint,{passive:true});
+let rz=0;W.addEventListener('resize',()=>{cancelAnimationFrame(rz);rz=requestAnimationFrame(build);});
+if(D.fonts&&D.fonts.ready)D.fonts.ready.then(build);
+}
 let portalP=null;
 const loadPortal=()=>{
 if(portalP)return portalP;
@@ -1590,6 +1634,7 @@ H.classList.add('ow-hero-on','ow-ready','gfx-ready');
 safe('stage 1 still',()=>{s1Layout();s1Still();W.addEventListener('resize',()=>{s1Layout();s1Still();});});
 safe('stage 2 still',s2Static);
 safe('mc phone',mcPhone);
+safe('stage 1 phone',()=>s1Phone(true));
 safe('pipe',pipe);
 safe('pairs',pairs);
 if(R.close)R.close.classList.add('gfc-in');
@@ -1618,7 +1663,7 @@ safe('pairs',pairs);
 safe('stage 1 layout',s1Layout);
 safe('pipe',pipe);
 if(live)safe('stages',stagesLive);
-else{safe('stage 1 still',()=>{s1Still();W.addEventListener('resize',()=>{s1Layout();s1Still();});});safe('stage 2 still',s2Static);safe('mc phone',mcPhone);}
+else{safe('stage 1 still',()=>{s1Still();W.addEventListener('resize',()=>{s1Layout();s1Still();});});safe('stage 2 still',s2Static);safe('mc phone',mcPhone);safe('stage 1 phone',()=>s1Phone(false));}
 H.classList.add('ow-ready');
 if(W.ivHeroGo)requestAnimationFrame(()=>requestAnimationFrame(W.ivHeroGo));
 refresh();
