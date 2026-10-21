@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.9';
+  W.__gfxInvestors = '1.0.10';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -315,7 +315,9 @@
   /* ---------- a figure and its caption leave the screen together (gf-site.js pairs) ---------- */
   function pairs() {
     const items = $$(O('iv-stat') + ', ' + O('iv-df')); if (!items.length) return;
-    let rq = 0; const tick = () => { rq = 0; items.forEach(el => { const r = el.getBoundingClientRect(); el.classList.toggle('gf-pair-gone', r.top < 96 && r.bottom > 0); }); };
+    // (smoothness lab 10/21) every place is read first, then the classes written: read, write, read... made the browser
+    // lay the page out again for each figure on every frame
+    let rq = 0; const tick = () => { rq = 0; const gone = items.map(el => { const r = el.getBoundingClientRect(); return r.top < 96 && r.bottom > 0; }); items.forEach((el, i) => el.classList.toggle('gf-pair-gone', gone[i])); };
     W.addEventListener('scroll', () => { if (!rq) rq = requestAnimationFrame(tick); }, { passive: true }); tick();
   }
 
@@ -427,7 +429,11 @@
       fg = $('.gfx-s1-r-fg', rail); paint();
     };
     build();
-    W.addEventListener('scroll', paint, { passive: true });
+    // (smoothness lab 10/21) once a frame, and only while the line is within a screen of view (it measured itself on
+    // every scroll event from the top of the page down); leaving that range it is painted once more, so it rests right
+    let prq = 0, pNear = true; const paintSoon = () => { if (pNear && !prq) prq = requestAnimationFrame(() => { prq = 0; paint(); }); };
+    if ('IntersectionObserver' in W) new IntersectionObserver(es => es.forEach(e => { pNear = e.isIntersecting; paint(); }), { rootMargin: '100% 0px' }).observe(list);
+    W.addEventListener('scroll', paintSoon, { passive: true });
     let rz = 0; W.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(build); });
     if (D.fonts && D.fonts.ready) D.fonts.ready.then(build);
   }

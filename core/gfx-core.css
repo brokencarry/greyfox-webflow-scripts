@@ -85,8 +85,9 @@ html.gfx-f3 .gfx-fr[data-gfx-tier="turn"] { --gfx-a: max(128px, 20vh); --gfx-bb:
 @media (max-width: 991px) { html.gfx-f3 .gfx-fr[data-gfx-tier="turn"] { --gfx-a: max(144px, 20vh); --gfx-bb: 10vh; } }
 html.gfx-f3 .gfx-fr[data-gfx-tier] { padding-top: calc(var(--gfx-a) + var(--gfx-bb)) !important; }
 html.gfx-f3 [data-gfx-clear] { background-color: transparent !important; }
-/* inks: every room's text takes the inks of the field it is on (the 150 ms swap runs only while the tone flips) */
-html.gfx-f3.gfx-toning [data-gfx-native] [data-gfx-ink]:not(#gfx-x), html.gfx-f3.gfx-toning [data-gfx-native][data-gfx-ink]:not(#gfx-x), html.gfx-f3.gfx-toning [data-gfx-native] [data-gfx-line]:not(#gfx-x), html.gfx-f3.gfx-toning [data-gfx-native] [data-gfx-bline]:not(#gfx-x) { transition: color .15s linear, background-color .15s linear, border-color .15s linear !important; }
+/* inks: every room's text takes the inks of the field it is on (the 150 ms swap runs only while the tone flips, and
+   (1.0.27) only in the rooms on screen, data-gfx-tv: hundreds of fades at once stalled the turn into the close) */
+html.gfx-f3.gfx-toning [data-gfx-native][data-gfx-tv] [data-gfx-ink]:not(#gfx-x), html.gfx-f3.gfx-toning [data-gfx-native][data-gfx-tv][data-gfx-ink]:not(#gfx-x), html.gfx-f3.gfx-toning [data-gfx-native][data-gfx-tv] [data-gfx-line]:not(#gfx-x), html.gfx-f3.gfx-toning [data-gfx-native][data-gfx-tv] [data-gfx-bline]:not(#gfx-x) { transition: color .15s linear, background-color .15s linear, border-color .15s linear !important; }
 html.gfx-f3.gfx-tone-light [data-gfx-native] [data-gfx-ink="h"]:not(#gfx-x), html.gfx-f3.gfx-tone-light [data-gfx-native][data-gfx-ink="h"]:not(#gfx-x) { color: var(--gfx-ink-l1) !important; }
 html.gfx-f3.gfx-tone-light [data-gfx-native] [data-gfx-ink="b"]:not(#gfx-x), html.gfx-f3.gfx-tone-light [data-gfx-native][data-gfx-ink="b"]:not(#gfx-x) { color: var(--gfx-ink-l2) !important; }
 html.gfx-f3.gfx-tone-light [data-gfx-native] [data-gfx-ink="q"]:not(#gfx-x) { color: var(--gfx-ink-l3) !important; }

@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.4';
+  W.__gfxOwners = '1.2.5';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -333,7 +333,12 @@
       railFg = $('.gfx-pc-r-fg', rail); railPaint();
     };
     const relayout = () => { safe('call layout', layout); paintDraw(); safe('phone rail', phoneRail); };
-    W.addEventListener('scroll', () => { if (rail && rail.style.display !== 'none') railPaint(); }, { passive: true });
+    // (smoothness lab 10/21) once a frame, and only while the rail is within a screen of view (it measured itself on every
+    // scroll event from the top of the page down); leaving that range it is painted once more, so it rests right
+    let rrq = 0, rNear = true;
+    const railSoon = () => { if (rNear && !rrq && rail && rail.style.display !== 'none') rrq = requestAnimationFrame(() => { rrq = 0; railPaint(); }); };
+    if (list && 'IntersectionObserver' in W) new IntersectionObserver(es => es.forEach(e => { rNear = e.isIntersecting; if (rail && rail.style.display !== 'none') railPaint(); }), { rootMargin: '100% 0px' }).observe(list);
+    W.addEventListener('scroll', railSoon, { passive: true });
     one(); relayout();
     let rz = 0; W.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(relayout); });
     if (D.fonts && D.fonts.ready) D.fonts.ready.then(relayout);

@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.26 + owners 1.2.4. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.27 + owners 1.2.5. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.26';
+  const VERSION = '1.0.27';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -312,9 +312,14 @@
          mid-headline). And the mark leaves with its words: while they pass under the header's zone (the bar's clear band,
          --gf-zone, where the room's cap hides them) the mark fades too, so it never floats alone at the cap's edge */
       var fixed = o.range && typeof o.range !== 'function' ? o.range : null;
+      /* (1.0.27, smoothness lab 10/21: on a phone the marks were 2 s of a scroll's work) the words' range is kept until
+         the words change (a re-split replaces the text nodes; the watch below drops it), not searched for every frame */
+      var kept = null;
       var rng = typeof o.range === 'function' ? o.range : function () {
         if (fixed && fixed.startContainer && fixed.startContainer.isConnected) return fixed;
-        return o.el ? rangeOf(o.el, o.key) : fixed;
+        if (!o.el) return fixed;
+        if (kept && kept.startContainer.isConnected && kept.endContainer.isConnected) return kept;
+        return (kept = rangeOf(o.el, o.key));
       };
       var host = o.host; if (!host || !rng()) return null;
       var withHead = o.head !== false, id = 'gfa-l' + (++uid), lAt = 1, hAt = 0, hd = null, drawn = false, raf = 0;
@@ -345,19 +350,23 @@
       };
       var still = function () { drawn = true; lAt = 0; hAt = 1; place(); };
       place();
-      var rq0 = 0, re = function () { if (!rq0) rq0 = requestAnimationFrame(function () { rq0 = 0; place(); }); };
-      addEventListener('resize', re); D.addEventListener('gfx:resplit', re);
+      /* (1.0.27) a mark off the screen is not placed or watched; it is placed the moment it comes within half a screen */
+      var near = true, owed = false;
+      var rq0 = 0, re = function () { if (!near) { owed = true; return; } if (!rq0) rq0 = requestAnimationFrame(function () { rq0 = 0; place(); }); };
+      if ('IntersectionObserver' in W) new IntersectionObserver(function (es) { es.forEach(function (e) { near = e.isIntersecting; if (near && owed) { owed = false; re(); } if (near) zoneSoon(); }); }, { rootMargin: '50% 0px' }).observe(host);
+      addEventListener('resize', function () { zoneZ = 0; re(); }); D.addEventListener('gfx:resplit', function () { kept = null; re(); });
       if (W.ScrollTrigger) ScrollTrigger.addEventListener('refresh', re);
       if (D.fonts && D.fonts.ready) D.fonts.ready.then(re);
       // (a re-split or a late reveal of the words: placed again once it has happened, and again as the rise settles)
-      if (o.el && 'MutationObserver' in W) new MutationObserver(re).observe(o.el, { childList: true, subtree: true, characterData: true });
+      if (o.el && 'MutationObserver' in W) new MutationObserver(function () { kept = null; re(); }).observe(o.el, { childList: true, subtree: true, characterData: true });
       if (o.el) { o.el.addEventListener('transitionend', re); o.el.addEventListener('animationend', re); }
-      // the zone: the mark is hidden while its words are under the header's clear band
-      var zq = 0, zoneOut = false, zone = function () { zq = 0; var r0 = rng(); if (!r0) return; var rs = r0.getClientRects(); if (!rs.length) return;
-        var z = parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--gf-zone')) || 74, top = rs[rs.length - 1].top;
+      // the zone: the mark is hidden while its words are under the header's clear band (the band's depth read once)
+      var zoneZ = 0, zq = 0, zoneOut = false, zone = function () { zq = 0; if (!near) return; var r0 = rng(); if (!r0) return; var rs = r0.getClientRects(); if (!rs.length) return;
+        var z = zoneZ || (zoneZ = parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--gf-zone')) || 74), top = rs[rs.length - 1].top;
         var out = top < z - 2; if (out !== zoneOut) { zoneOut = out; svg.style.opacity = out ? '0' : ''; } };
-      addEventListener('scroll', function () { if (!zq) zq = requestAnimationFrame(zone); }, { passive: true });
-      if (W.lenis && W.lenis.on) W.lenis.on('scroll', function () { if (!zq) zq = requestAnimationFrame(zone); });
+      var zoneSoon = function () { if (!zq) zq = requestAnimationFrame(zone); };
+      addEventListener('scroll', function () { if (near) zoneSoon(); }, { passive: true });
+      if (W.lenis && W.lenis.on) W.lenis.on('scroll', function () { if (near) zoneSoon(); });
       if (o.auto !== false) {
         if ('IntersectionObserver' in W) { var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); draw(o.delay == null ? 0.35 : o.delay); } }); }, { rootMargin: '0px 0px -28% 0px' }); io.observe(host); }
         else still();
@@ -547,6 +556,11 @@
       if (o.foot) r.setAttribute('data-gfx-foot', ''); if (i === fieldRooms.length - 1) r.setAttribute('data-gfx-last', '');
       if (i && o.tone !== fieldRooms[i - 1].tone && fieldRooms[i - 1].native !== 'M') r.setAttribute('data-gfx-turn', '');
     });
+    /* (1.0.27, smoothness lab 10/21: the worst moment on most pages was the turn into the close) when the tone flips,
+       every inked line on the page took a 150 ms colour fade at once, hundreds of them off screen, all run by the page
+       itself. The fade now runs only in the rooms on screen (data-gfx-tv); the rest change where no one sees them. */
+    if ('IntersectionObserver' in W) { const tv = new IntersectionObserver(es => es.forEach(e => e.target.toggleAttribute('data-gfx-tv', e.isIntersecting)), { rootMargin: '25% 0px' }); fieldRooms.forEach(o => tv.observe(o.el)); }
+    else fieldRooms.forEach(o => o.el.setAttribute('data-gfx-tv', ''));
   };
   const measure = () => {
     const vh = W.innerHeight, max = D.documentElement.scrollHeight - vh;
@@ -849,10 +863,15 @@
       }
       return solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';
     };
-    const run = () => { raf = 0; const c = pick(); if (c !== last) { m.setAttribute('content', c); last = c; } };
-    const soon = () => { if (!raf) raf = requestAnimationFrame(run); };
-    addEventListener('scroll', soon, { passive: true }); addEventListener('resize', soon); D.addEventListener('click', () => setTimeout(soon, 350), true);
-    setInterval(() => { if (!D.hidden) soon(); }, 600); run();
+    /* (1.0.27, smoothness lab 10/21) the strip's colour is read at most every 200 ms while the page moves (it was a probe
+       every frame), and the slow look-again runs only for 2 s after a scroll or a tap (a turn's crossfade finishing in
+       time), not every 0.6 s for as long as the page is open */
+    let ran = 0, tmo = 0, poked = 0;
+    const run = () => { raf = 0; ran = performance.now(); const c = pick(); if (c !== last) { m.setAttribute('content', c); last = c; } };
+    const soon = () => { if (raf || tmo) return; const wait = 200 - (performance.now() - ran); if (wait > 0) tmo = setTimeout(() => { tmo = 0; raf = requestAnimationFrame(run); }, wait); else raf = requestAnimationFrame(run); };
+    const poke = () => { poked = performance.now(); soon(); };
+    addEventListener('scroll', poke, { passive: true }); addEventListener('resize', poke); D.addEventListener('click', () => { poked = performance.now(); setTimeout(soon, 350); }, true);
+    setInterval(() => { if (!D.hidden && performance.now() - poked < 2000) soon(); }, 500); run();
   }
   function navInit() {
     safe('menu foot', menuFoot);
@@ -918,10 +937,16 @@
     let away = false, since = 0, rq = 0, last = -1, lastY = W.scrollY;
     const shownEl = el => { for (let n = el; n && n !== D.body; n = n.parentElement) { const cs = getComputedStyle(n); if (cs.visibility === 'hidden' || +cs.opacity < 0.05) return false; } return true; };
     const hit = (q, z) => q.right > z.left && q.left < z.right && q.bottom > z.top && q.top < z.bottom;
+    /* (1.0.27, smoothness lab 10/21: with the CPU at a quarter speed, this check was 65% of Home's script time while
+       scrolling - 30 "what is here?" probes a frame, each making the browser settle the page first) the probes now
+       sit 3 across and one row per 24 px of the zone (12 to 30, closer than a paragraph gap, so a line of words or
+       picture is still found: a hit inspects the whole block's text lines), and the watch runs once per 50 ms
+       instead of every frame, looking ahead by the distance the page moves in that time */
     const near = (r, m) => {
       const z = { left: r.left - m, top: r.top - m, right: r.right + m, bottom: r.bottom + m }, seen = [];
-      for (let i = 0; i <= 4; i++) for (let j = 0; j <= 5; j++) {
-        const x = clamp(z.left + (z.right - z.left) * i / 4, 0, W.innerWidth - 1), y = clamp(z.top + (z.bottom - z.top) * j / 5, 0, W.innerHeight - 1);
+      const nj = Math.max(3, Math.min(9, Math.ceil((z.bottom - z.top) / 24)));
+      for (let i = 0; i <= 2; i++) for (let j = 0; j <= nj; j++) {
+        const x = clamp(z.left + (z.right - z.left) * i / 2, 0, W.innerWidth - 1), y = clamp(z.top + (z.bottom - z.top) * j / nj, 0, W.innerHeight - 1);
         let e = D.elementsFromPoint(x, y).filter(el => !el.closest(CHROME))[0];
         if (e && e instanceof SVGElement && e.ownerSVGElement) e = e.closest('svg') ? (function f(s) { return s.ownerSVGElement ? f(s.ownerSVGElement) : s; })(e.closest('svg')) : e;
         if (!e || seen.indexOf(e) >= 0) continue; seen.push(e);
@@ -930,16 +955,17 @@
       }
       return false;
     };
+    const GAP = 50; let ran = 0, tmo = 0;
     const tick = () => {
-      rq = 0; const im = $$('img', link).filter(i => i.offsetWidth)[0] || link; const r = im.getBoundingClientRect(), now = performance.now();
-      const dy = Math.abs(W.scrollY - lastY); lastY = W.scrollY; const ahead = M[0] + (M[2] ? Math.min(180, dy * 4) : 0);
+      rq = 0; const im = $$('img', link).filter(i => i.offsetWidth)[0] || link; const r = im.getBoundingClientRect(), now = performance.now(); ran = now;
+      const dy = Math.abs(W.scrollY - lastY); lastY = W.scrollY; const ahead = M[0] + (M[2] ? Math.min(180, dy * 1.5) : Math.min(48, dy));
       if (!away) { if (near(r, ahead)) { away = true; bar.classList.add('gfx-fox-away'); } }
       else if (near(r, M[1])) since = 0;
-      else if (!since) { since = now; rq = requestAnimationFrame(tick); }
+      else if (!since) { since = now; ask(); }
       else if (now - since > 350) { away = false; since = 0; bar.classList.remove('gfx-fox-away'); }
-      else rq = requestAnimationFrame(tick);
+      else ask();
     };
-    const ask = () => { if (!rq) rq = requestAnimationFrame(tick); };
+    const ask = () => { if (rq || tmo) return; const wait = GAP - (performance.now() - ran); if (wait > 0) tmo = setTimeout(() => { tmo = 0; rq = requestAnimationFrame(tick); }, wait); else rq = requestAnimationFrame(tick); };
     addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask);
     setInterval(() => { const y = W.scrollY; if (y !== last) { last = y; ask(); } }, 250); ask();
   }
@@ -1140,9 +1166,13 @@
       const t = Math.max(fp, Math.min(1, Math.max(0, (y - y0) / span))), k = t * t * t * (t * (t * 6 - 15) + 10), o = (0.62 * (1 - k)).toFixed(3);
       if (o !== last) { fox.style.opacity = o; last = o; }
     };
-    const ask = () => { if (!rq) rq = requestAnimationFrame(tick); };
-    addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask); if (shared && shared.on) shared.on('scroll', ask);
-    setTimeout(ask, 600); addEventListener('load', ask);
+    // (1.0.27, smoothness lab 10/21) it measured the close and the page on every frame from the top down; now only while
+    // the close is within a screen and a half (once more as it leaves that range, so the drawing rests where it should)
+    let nearC = true;
+    const ask = force => { if ((nearC || force === true) && !rq) rq = requestAnimationFrame(tick); };
+    const fox0 = $(sel); if (fox0 && fox0.parentElement && 'IntersectionObserver' in W) new IntersectionObserver(es => es.forEach(e => { nearC = e.isIntersecting; ask(true); }), { rootMargin: '150% 0px' }).observe(fox0.parentElement);
+    addEventListener('scroll', ask, { passive: true }); addEventListener('resize', () => ask(true)); if (shared && shared.on) shared.on('scroll', ask);
+    setTimeout(() => ask(true), 600); addEventListener('load', () => ask(true));
   }
 
   /* ========================= 10 · keyboard: a control reached before its reveal is shown at once ========================= */
@@ -1365,7 +1395,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.4';
+  W.__gfxOwners = '1.2.5';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1671,7 +1701,12 @@
       railFg = $('.gfx-pc-r-fg', rail); railPaint();
     };
     const relayout = () => { safe('call layout', layout); paintDraw(); safe('phone rail', phoneRail); };
-    W.addEventListener('scroll', () => { if (rail && rail.style.display !== 'none') railPaint(); }, { passive: true });
+    // (smoothness lab 10/21) once a frame, and only while the rail is within a screen of view (it measured itself on every
+    // scroll event from the top of the page down); leaving that range it is painted once more, so it rests right
+    let rrq = 0, rNear = true;
+    const railSoon = () => { if (rNear && !rrq && rail && rail.style.display !== 'none') rrq = requestAnimationFrame(() => { rrq = 0; railPaint(); }); };
+    if (list && 'IntersectionObserver' in W) new IntersectionObserver(es => es.forEach(e => { rNear = e.isIntersecting; if (rail && rail.style.display !== 'none') railPaint(); }), { rootMargin: '100% 0px' }).observe(list);
+    W.addEventListener('scroll', railSoon, { passive: true });
     one(); relayout();
     let rz = 0; W.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(relayout); });
     if (D.fonts && D.fonts.ready) D.fonts.ready.then(relayout);
