@@ -93,3 +93,9 @@
 @media (min-width: 768px) {
   :is([data-o~="gi-tlink"], [data-o~="gi-row-t"]) { display: inline; -webkit-box-decoration-break: clone; box-decoration-break: clone; background-position: 0 calc(100% - .3em); }
 }
+/* (10/21 polish scan) phones and tablets: the collapsed "In this article" row is framed by its own two lines, and the
+   article body below opened with a third line 40 px further down - two lines around an empty strip. Where the row shows,
+   its bottom line is the divide; the body's own line steps aside (spacing unchanged) */
+@media (max-width: 991px) {
+  [data-o~="gi-ahead"]:has([data-o~="gi-toc-m"]:not([hidden])) + [data-o~="gi-read"] { border-top-color: transparent; }
+}
