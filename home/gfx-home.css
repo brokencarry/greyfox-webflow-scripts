@@ -389,3 +389,10 @@ html .gfx-door-e { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles)
   html.gfx-f3 .gfx-ins-sec .gfx-ink-all { position: relative; }
   html.gfx-f3 .gfx-ins-sec .gfx-ink-all::after { content: ""; position: absolute; left: -4px; right: -4px; top: -11px; bottom: -11px; }
 }
+/* (home 1.1.12, iPad walk) TABLETS 768-991: the field rule (.gfx-fr min-height 0) cancelled the designer's full-screen
+   hero, so on a tall iPad it was a 734px band pushed down under an empty top, its lede cut and its doors out of view.
+   The hero fills the screen again there; its film stretches with it. Phones and desktop are untouched. */
+@media (min-width: 768px) and (max-width: 991px) {
+  html.gfx-f3 .gfx-hero-sec.gfx-fr { min-height: 100svh !important; }
+  html.gfx-f3 .gfx-hero-sec > .hero__video { flex: 1 1 auto; align-self: stretch; }
+}

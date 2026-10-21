@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.11';
+  W.__gfxHome = '1.1.12';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -177,7 +177,9 @@
     out.classList.add('gfx-out'); inn.classList.add('gfx-in');
     const dim = D.createElement('i'); dim.className = 'gfx-dim'; dim.setAttribute('aria-hidden', 'true'); out.appendChild(dim);
     let last = '';
-    ST.create({ trigger: inn, start: 'top bottom', end: 'top top', invalidateOnRefresh: true,
+    // (1.1.12, iPad walk) clamp: where the next room already shows at the top of the page (a hero shorter than a tall
+    // tablet), the slide starts at 0 instead of half-way through (it had pushed the hero 184px down at load on 834x1194)
+    ST.create({ trigger: inn, start: 'clamp(top bottom)', end: 'top top', invalidateOnRefresh: true,
       onUpdate: s => { const p = s.progress, dist = s.end - s.start, t = `translate3d(0, ${(p * dist * 0.4).toFixed(1)}px, 0)`; if (t !== last) { out.style.transform = p > 0 ? t : ''; last = t; dim.style.opacity = (dimMax * eo(p)).toFixed(3); } },
       onLeave: () => { out.style.transform = ''; dim.style.opacity = '0'; last = ''; out.style.visibility = 'hidden'; },
       onEnterBack: () => { out.style.visibility = ''; } });
