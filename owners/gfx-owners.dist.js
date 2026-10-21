@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.27 + owners 1.2.6 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.27 + owners 1.2.7 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.2.6';
+W.__gfxOwners='1.2.7';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1457,7 +1457,7 @@ rail.style.display='';
 const lr=list.getBoundingClientRect(),H=list.offsetHeight,X=RAIL_X;
 const d0=$(O('pc-draw'),beats[0]),y0=d0?d0.getBoundingClientRect().bottom-lr.top:0;
 const ys=ti.map(t=>{const r=t?t.getBoundingClientRect():null;return r?r.top-lr.top+r.height / 2:0;});
-const yE=ys[3],tip=40,rise=20;
+const yE=ys[3]+9,tip=40,rise=20;
 const d=`M${X} ${f1(y0)}V${f1(yE-14)}Q${X} ${f1(yE)} ${X+14} ${f1(yE)}H${tip-8}L${tip} ${f1(yE-rise)}`;
 rail.setAttribute('width',48);rail.setAttribute('height',f1(H));rail.setAttribute('viewBox',`0 0 48 ${f1(H)}`);
 rail.innerHTML=`<path class="gfx-pc-r-bg" d="${d}"/><path class="gfx-pc-r-fg" d="${d}" pathLength="1"/>`+

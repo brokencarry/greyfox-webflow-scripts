@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.6';
+  W.__gfxOwners = '1.2.7';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -322,7 +322,11 @@
       const lr = list.getBoundingClientRect(), H = list.offsetHeight, X = RAIL_X;
       const d0 = $(O('pc-draw'), beats[0]), y0 = d0 ? d0.getBoundingClientRect().bottom - lr.top : 0;
       const ys = ti.map(t => { const r = t ? t.getBoundingClientRect() : null; return r ? r.top - lr.top + r.height / 2 : 0; });
-      const yE = ys[3], tip = 40, rise = 20;
+      // (1.2.7, founder 10/21: the arrow pointed above "Introduction") the head's last stroke is steep (8 across, 20 up),
+      // so it aims ~17 px above its tip: the tip sits 16 px below the words' middle and the stroke, carried on, meets
+      // their middle - the same rule as Investors' stage line. Measured on WebKit iPhone: ys[3] runs 27 px below the
+      // words' middle here, so the turn is 9 px below it
+      const yE = ys[3] + 9, tip = 40, rise = 20;
       const d = `M${X} ${f1(y0)}V${f1(yE - 14)}Q${X} ${f1(yE)} ${X + 14} ${f1(yE)}H${tip - 8}L${tip} ${f1(yE - rise)}`;
       rail.setAttribute('width', 48); rail.setAttribute('height', f1(H)); rail.setAttribute('viewBox', `0 0 48 ${f1(H)}`);
       rail.innerHTML = `<path class="gfx-pc-r-bg" d="${d}"/><path class="gfx-pc-r-fg" d="${d}" pathLength="1"/>` +

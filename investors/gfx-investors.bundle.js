@@ -1866,9 +1866,10 @@
       const lr = list.getBoundingClientRect(), Hh = list.offsetHeight, X = 11, tip = 40, rise = 20;
       ys = S1.stops.map(li => { const t = $(O('iv2-sn'), li), r = (t || li).getBoundingClientRect(); return r.top - lr.top + r.height / 2; });
       // (1.0.13, founder 10/21: "the arrow should go a little lower so it points up directly to the Introduced to a
-      // client statement") the turn sits just under the words (16 px below their middle), so the head rises into them
-      // and ends level with them, not above
-      const y0 = Math.max(0, ys[0] - 40), yE = ys[3] + 16, f = v => v.toFixed(1);
+      // client statement") the head's last stroke is steep (8 across, 20 up), so it aims ~17 px above its tip: the tip
+      // sits 16 px below the words' middle and the stroke, carried on, meets their middle. Measured on WebKit iPhone:
+      // the turn 36 px below the middle (ys[3] is the words' middle here; Owners uses the same rule)
+      const y0 = Math.max(0, ys[0] - 40), yE = ys[3] + 36, f = v => v.toFixed(1);
       const d = `M${X} ${f(y0)}V${f(yE - 14)}Q${X} ${f(yE)} ${X + 14} ${f(yE)}H${tip - 8}L${tip} ${f(yE - rise)}`;
       const ticks = [0, 1, 2, 3].map(i => { const y = y0 + 6 + i * 7; return `<circle class="gfx-s1-n gfx-s1-n-tick" data-at="${f(y)}" cx="${X}" cy="${f(y)}" r="1.9"/>`; }).join('');
       rail.setAttribute('width', 48); rail.setAttribute('height', f(Hh)); rail.setAttribute('viewBox', `0 0 48 ${f(Hh)}`);

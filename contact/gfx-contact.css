@@ -40,3 +40,6 @@ html body [data-o~="r4-tel"]:not(#gfx-c6)::after { content: ""; position: absolu
   html body [data-o~="r4-band"]:not(#gfx-c6) [data-o~="r4-time"], html body [data-o~="r4-band"]:not(#gfx-c6) [data-o~="r4-tel"] { min-width: 0; }
   html body [data-o~="r4-band"]:not(#gfx-c6):not(#gfx-c7) [data-o~="r4-tel"] { min-width: auto; }   /* (1.0.7) the number keeps its width, so the label column starts after it */
 }
+/* (10/21, founder: "Bold that text so someone on iPhone or mobile can easily tell their form was submitted") the thanks
+   is set in the serif's bold (Sentient 700, an uploaded weight - never a faked bold), at every width */
+html body .w-form-done h2 { font-weight: 700 !important; }

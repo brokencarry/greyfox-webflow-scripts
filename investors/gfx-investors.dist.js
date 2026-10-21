@@ -1537,7 +1537,7 @@ if(!rail){rail=D.createElementNS(NS,'svg');rail.setAttribute('class','gfx-s1-rai
 rail.style.display='';
 const lr=list.getBoundingClientRect(),Hh=list.offsetHeight,X=11,tip=40,rise=20;
 ys=S1.stops.map(li=>{const t=$(O('iv2-sn'),li),r=(t||li).getBoundingClientRect();return r.top-lr.top+r.height / 2;});
-const y0=Math.max(0,ys[0]-40),yE=ys[3]+16,f=v=>v.toFixed(1);
+const y0=Math.max(0,ys[0]-40),yE=ys[3]+36,f=v=>v.toFixed(1);
 const d=`M${X} ${f(y0)}V${f(yE-14)}Q${X} ${f(yE)} ${X+14} ${f(yE)}H${tip-8}L${tip} ${f(yE-rise)}`;
 const ticks=[0,1,2,3].map(i=>{const y=y0+6+i*7;return`<circle class="gfx-s1-n gfx-s1-n-tick" data-at="${f(y)}" cx="${X}" cy="${f(y)}" r="1.9"/>`;}).join('');
 rail.setAttribute('width',48);rail.setAttribute('height',f(Hh));rail.setAttribute('viewBox',`0 0 48 ${f(Hh)}`);
