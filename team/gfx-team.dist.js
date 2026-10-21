@@ -1,4 +1,4 @@
-/*! Grey Fox · Team v2 (Flow 3) · core 1.0.27 + pages 1.0.2 + team 1.0.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + team/gfx-team.js (read those for the notes) */
+/*! Grey Fox · Team v2 (Flow 3) · core 1.0.27 + pages 1.0.2 + team 1.0.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + team/gfx-team.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1381,7 +1381,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxTeam)return;
-W.__gfxTeam='1.0.2';
+W.__gfxTeam='1.0.3';
 const P=gfx.pages,O=P.O,H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const SETTLE=G.SETTLE,DRAW=G.DRAW;
 H.classList.add('t2-once','tf-on','t3-on');
@@ -1404,23 +1404,28 @@ const rg=D.createRange(),boxes=[];
 for(let t;(t=tw.nextNode());){if(!t.textContent.trim())continue;rg.selectNodeContents(t);boxes.push(rg.getBoundingClientRect());}});
 return{right:Math.max(...boxes.map(b=>b.right)),bottom:Math.max(...boxes.map(b=>b.bottom))};
 };
-let geo=null,motion=false,pend=false;
+let geo=null,motion=false,pend=false,under=false;
 const lay=()=>{
 geo=null;
 const hr=hero.getBoundingClientRect(),vw=hero.clientWidth;if(!vw||!hwrap||!rule)return;
 const gap=parseFloat(getComputedStyle(hero).getPropertyValue('--gap'))||96;
 const tb=textBox(),top=hwrap.getBoundingClientRect().top-hr.top,bottom=($(O('ow-hero-l'),hero)||hwrap).getBoundingClientRect().bottom-hr.top,right=tb.right-hr.left;
 const ruleY=rule.getBoundingClientRect().top-hr.top;
-let Hh=K.tall*(bottom-top),on=true;
+under=W.matchMedia('(max-width: 767px)').matches;
+let Hh=K.tall*(bottom-top),on=true,Wd,X;
+if(under){
+Wd=Math.min(0.72*vw,340);Hh=Wd*40 / 41;X=vw-0.78*Wd;
+}else{
 Hh=Math.min(Hh,ruleY-72-24);
 const room=vw-right-gap;
 if(K.brow*Hh*41 / 40>room)Hh=room / K.brow*40 / 41;
 if(Hh<K.min)on=false;
+Wd=Hh*41 / 40;X=vw-K.brow*Wd;
+}
 emb.classList.toggle('is-off',!on);emb.classList.add('is-set');
 if(!on)return;
-const Wd=Hh*41 / 40;
 emb.style.setProperty('--emb-s',Wd.toFixed(1)+'px');
-emb.style.setProperty('--emb-x',(vw-K.brow*Wd).toFixed(1)+'px');
+emb.style.setProperty('--emb-x',X.toFixed(1)+'px');
 emb.style.setProperty('--emb-y',(ruleY-Hh).toFixed(1)+'px');
 const w=K.weight*41 / Wd;emb.style.setProperty('--emb-w',w.toFixed(4));
 const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 43 42" preserveAspectRatio="none"><g fill-opacity=".16">${FILLS.map(d=>`<path d="${d}"/>`).join('')}</g>`+
@@ -1459,7 +1464,10 @@ tl=g.timeline({delay})
 return{
 lay,
 reduced:()=>{emb.classList.remove('is-wait');emb.classList.add('is-set');lay();},
-start:delay=>{motion=true;par();film(delay);},
+start:delay=>{motion=true;par();
+if(!under||!('IntersectionObserver'in W))return film(delay);
+const io=new IntersectionObserver(es=>{if(!es.some(e=>e.isIntersecting))return;io.disconnect();film(Math.min(delay,0.2));},{threshold:0.33});
+io.observe(Pb);},
 ff:()=>{const g=gsap();if(g&&tl&&tl.progress()<1)g.to(tl,{progress:1,duration:G.fastForward||0.3,overwrite:true});}
 };
 }
@@ -1489,7 +1497,7 @@ $$(O('ow-tl')+' '+O('ow-nw')).forEach(nw=>{if($('svg',nw))return;const t=D.creat
 }
 P.run({
 dom:()=>{safe('glyphs',glyphs);E=safe('emblem',emblem)||null;},
-start:()=>{if(E)E.start(0.1+G.picture.at);},
+start:()=>{if(E)E.start(0.1+G.hairline.at);},
 rooms:api=>safe('people',()=>people(api)),
 still:()=>{if(E)E.reduced();H.classList.add('t2-on');}
 });

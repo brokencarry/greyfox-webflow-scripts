@@ -11,3 +11,15 @@ html.gfx-pg-js:not(#gfx-o) :is([data-o~="t2-name"], [data-o~="t3-tri"]) { min-he
    screen) the hiring link's arrow steps aside at rest; focus still shows it (local team/final.css 10/20) ---------- */
 html:not(#gfx-o) [data-o~="pg-v-final"] [data-o~="t3-car-go"] .ow-arw { opacity: 0; transition: opacity .45s var(--ease), color .6s var(--ease); }
 html:not(#gfx-o) [data-o~="pg-v-final"] [data-o~="t3-car-go"] [data-o~="ow-tl"]:focus-visible:not(.hm-on) .ow-arw { opacity: 1; }
+
+/* ---------- (team 1.0.3, 10/21) the emblem never shows before it draws: the drawing is put in by the script and, until its
+   film sets the line back to the start, the finished fox showed for a frame or two, vanished, then drew ---------- */
+html:not(#gfx-o) [data-o~="t2-emb"].is-wait .t2-emb-line path { stroke-dashoffset: 1.02; }
+html:not(#gfx-o) [data-o~="t2-emb"].is-wait .t2-emb-fill { opacity: 0; }
+
+/* ---------- (team 1.0.3, founder 10/21: option A) A PHONE KEEPS THE FOX: under the words, chin on the room's hairline,
+   a fifth past the right edge (the desktop's crop). The room it stands in is held here (no shift when it arrives): the
+   fox is 72 % of the screen wide (at most 340 px), 86 % of its height opens above the hairline. Must match emblem() ---------- */
+@media (max-width: 767px) {
+  html.gfx-pg-js:not(#gfx-o) [data-o~="t2-name"] [data-o~="ow-hero-foot"] { padding-top: min(60.4vw, 285px); }
+}

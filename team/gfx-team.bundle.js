@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.27 + pages 1.0.2 + team 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.27 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1682,7 +1682,7 @@
  *   What the approved local Team (prototype/team/final.html: r2.js + r3.js + t-flow2.js, Flow 3 the default) adds to the
  *   inner pages (pages/gfx-pages.js plays the hero's words, the rooms' heads, the close and the one turn into it):
  *   - the name room's emblem (r2.js A·0): the logo's outline, large, half past the right edge, its chin on the room's
- *     hairline, 130 % of the words' height, never nearer the words than the grid's gap (a phone: none). The line draws once
+ *     hairline, 130 % of the words' height, never nearer the words than the grid's gap (a phone, 1.0.3: under the words, 72 % of the screen wide, drawn as it comes into view). The line draws once
  *     from the brow outward (DRAW), the faint fill settles behind it (SETTLE); it moves 3.5 % slower than the words.
  *     Drawn once (t2-once: no light passes). Its two drawings are the page's decoration, drawn here into the native box;
  *   - the people (r2.js A·2, Flow 3: nothing holds): each portrait opens upward as it reaches 88 % of the screen
@@ -1696,7 +1696,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxTeam) return;
-  W.__gfxTeam = '1.0.2';
+  W.__gfxTeam = '1.0.3';
   const P = gfx.pages, O = P.O, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const SETTLE = G.SETTLE, DRAW = G.DRAW;
   // the local page's html classes the ported stylesheet reads (t2-once: the emblem draws once; tf-on: Team on the field)
@@ -1723,23 +1723,30 @@
         for (let t; (t = tw.nextNode());) { if (!t.textContent.trim()) continue; rg.selectNodeContents(t); boxes.push(rg.getBoundingClientRect()); } });
       return { right: Math.max(...boxes.map(b => b.right)), bottom: Math.max(...boxes.map(b => b.bottom)) };
     };
-    let geo = null, motion = false, pend = false;
+    let geo = null, motion = false, pend = false, under = false;
     const lay = () => {
       geo = null;
       const hr = hero.getBoundingClientRect(), vw = hero.clientWidth; if (!vw || !hwrap || !rule) return;
       const gap = parseFloat(getComputedStyle(hero).getPropertyValue('--gap')) || 96;
       const tb = textBox(), top = hwrap.getBoundingClientRect().top - hr.top, bottom = ($(O('ow-hero-l'), hero) || hwrap).getBoundingClientRect().bottom - hr.top, right = tb.right - hr.left;
       const ruleY = rule.getBoundingClientRect().top - hr.top;
-      let Hh = K.tall * (bottom - top), on = true;
-      Hh = Math.min(Hh, ruleY - 72 - 24);
-      const room = vw - right - gap;
-      if (K.brow * Hh * 41 / 40 > room) Hh = room / K.brow * 40 / 41;
-      if (Hh < K.min) on = false;
+      // (1.0.3, founder 10/21: option A) a phone: the fox stands under the words in the room gfx-team.css holds for it,
+      // 72 % of the screen wide (at most 340 px), chin on the hairline, a fifth past the right edge
+      under = W.matchMedia('(max-width: 767px)').matches;
+      let Hh = K.tall * (bottom - top), on = true, Wd, X;
+      if (under) {
+        Wd = Math.min(0.72 * vw, 340); Hh = Wd * 40 / 41; X = vw - 0.78 * Wd;
+      } else {
+        Hh = Math.min(Hh, ruleY - 72 - 24);
+        const room = vw - right - gap;
+        if (K.brow * Hh * 41 / 40 > room) Hh = room / K.brow * 40 / 41;
+        if (Hh < K.min) on = false;
+        Wd = Hh * 41 / 40; X = vw - K.brow * Wd;
+      }
       emb.classList.toggle('is-off', !on); emb.classList.add('is-set');
       if (!on) return;
-      const Wd = Hh * 41 / 40;
       emb.style.setProperty('--emb-s', Wd.toFixed(1) + 'px');
-      emb.style.setProperty('--emb-x', (vw - K.brow * Wd).toFixed(1) + 'px');
+      emb.style.setProperty('--emb-x', X.toFixed(1) + 'px');
       emb.style.setProperty('--emb-y', (ruleY - Hh).toFixed(1) + 'px');
       const w = K.weight * 41 / Wd; emb.style.setProperty('--emb-w', w.toFixed(4));
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 43 42" preserveAspectRatio="none"><g fill-opacity=".16">${FILLS.map(d => `<path d="${d}"/>`).join('')}</g>` +
@@ -1779,7 +1786,12 @@
     return {
       lay,
       reduced: () => { emb.classList.remove('is-wait'); emb.classList.add('is-set'); lay(); },
-      start: delay => { motion = true; par(); film(delay); },
+      // (1.0.3) on a phone the fox stands below the first screen's words: it draws when a third of it is on screen, so the
+      // reader sees it drawn rather than finding it finished
+      start: delay => { motion = true; par();
+        if (!under || !('IntersectionObserver' in W)) return film(delay);
+        const io = new IntersectionObserver(es => { if (!es.some(e => e.isIntersecting)) return; io.disconnect(); film(Math.min(delay, 0.2)); }, { threshold: 0.33 });
+        io.observe(Pb); },
       ff: () => { const g = gsap(); if (g && tl && tl.progress() < 1) g.to(tl, { progress: 1, duration: G.fastForward || 0.3, overwrite: true }); }
     };
   }
@@ -1816,7 +1828,7 @@
 
   P.run({
     dom: () => { safe('glyphs', glyphs); E = safe('emblem', emblem) || null; },
-    start: () => { if (E) E.start(0.1 + G.picture.at); },
+    start: () => { if (E) E.start(0.1 + G.hairline.at); },   // (1.0.3) with the hairline, not a second after it
     rooms: api => safe('people', () => people(api)),
     still: () => { if (E) E.reduced(); H.classList.add('t2-on'); }
   });
