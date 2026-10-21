@@ -1113,7 +1113,7 @@ safe('fox watch',()=>foxWatch(PAGE.foxZone));
 H.classList.add('gfx-rooms');
 ST.refresh();
 safe('height watch',()=>{
-const lim=()=>{if(shared&&!shared.__gfxStub)try{shared.resize();}catch(e){}};
+const lim=()=>{if(shared&&!shared.__gfxStub)try{if(Math.abs(shared.limit-ST.maxScroll(W))>1)shared.resize();}catch(e){}};
 let lastH=D.documentElement.scrollHeight;
 ST.addEventListener('refresh',()=>{lastH=D.documentElement.scrollHeight;lim();});
 const check=()=>{lim();const h=D.documentElement.scrollHeight;if(Math.abs(h-lastH)>2)ST.refresh();};

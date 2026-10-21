@@ -1310,7 +1310,8 @@
              it moved. */
           safe('height watch', () => {
             // the smooth scroll keeps its own page end too (its watcher waits on a frame): bring it along every time
-            const lim = () => { if (shared && !shared.__gfxStub) try { shared.resize(); } catch (e) { /* ignore */ } };
+            // (only when it is wrong: a resize also settles a glide in progress)
+            const lim = () => { if (shared && !shared.__gfxStub) try { if (Math.abs(shared.limit - ST.maxScroll(W)) > 1) shared.resize(); } catch (e) { /* ignore */ } };
             let lastH = D.documentElement.scrollHeight;
             ST.addEventListener('refresh', () => { lastH = D.documentElement.scrollHeight; lim(); });
             const check = () => { lim(); const h = D.documentElement.scrollHeight; if (Math.abs(h - lastH) > 2) ST.refresh(); };
