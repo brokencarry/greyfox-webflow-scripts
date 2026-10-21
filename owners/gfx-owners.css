@@ -513,8 +513,10 @@ html:not(#gfx-o) [data-o~="pt-mearn"] [data-o~="pt-yr"]::before { content: "Year
 /* (owners 1.2.0, final audit 10/20; the founder: the four drawings "shot" on a phone) on a phone the call reads as one
    short sequence: Research keeps its drawing (your company found inside the market), Outreach and Conversation are their
    words alone (their drawings only make sense joined across the desktop line), and Introduction keeps a short line that
-   turns up into the house arrow. Desktop and tablet unchanged. */
-@media (max-width: 767px) {
+   turns up into the house arrow. Desktop unchanged.
+   (owners 1.2.4, founder 10/21: "I wouldn't want anyone on any size device to have a shitty experience") tablets
+   (768-991) take the phone sequence too: the desktop drawings laid flat there were sparse, with large empty gaps. */
+@media (max-width: 991px) {
   /* (1.2.2) the upright line: the steps indent beside a rail (phoneRail); the market keeps the full width; the other
      drawings give way to the rail's nodes; the owner's words follow the steps */
   html:not(#gfx-o) [data-o~=ow-proc].gfx-pc-phone [data-o~=pc-beats] { position: relative; padding-left: 48px; }

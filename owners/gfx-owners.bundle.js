@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.25 + owners 1.2.3. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.25 + owners 1.2.4. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1363,7 +1363,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.3';
+  W.__gfxOwners = '1.2.4';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1565,7 +1565,7 @@
           if (k === 0) {
             // (1.2.2) on a phone the market leaves the rail's column free (x 0-30) and your company's line turns left into
             // the rail that carries the four steps (phoneRail)
-            const PH = mq('(max-width: 767px)');
+            const PH = mq('(max-width: 991px)');
             const u = market(s, { x0: PH ? 30 : 0, x1: Wk - 8, y0: 6.5, y1: Math.round(Hh * 0.66) + 0.5, sp: 17, dx: 13, ux: 0.74, urow: -1, seed: 11, fit: 0.12, H: Hh });
             note(s, 'pa-nu', u.x - 20, Math.round(Hh * 0.66) + 30, 'end');
             set(s, 'pa-gr', PH ? `M${f1(u.x)} ${f1(u.y + 9)}V${f1(yh - 16)}Q${f1(u.x)} ${yh} ${f1(u.x - 16)} ${yh}H${RAIL_X}` : `M${f1(u.x)} ${f1(u.y + 9)}V${f1(yh - 14)}Q${f1(u.x)} ${yh} ${f1(u.x + 14)} ${yh}H${f1(Wk)}`);
@@ -1647,7 +1647,7 @@
     let rail = null, railFg = null, railLen = 0;
     const railPaint = () => { if (!rail || !railFg) return; const r = rail.getBoundingClientRect(), H = r.height || 1; const p = c01((W.innerHeight * 0.72 - r.top) / H); railFg.style.strokeDashoffset = (1 - p).toFixed(4); rail.querySelectorAll('[data-at]').forEach(n => n.classList.toggle('is-on', p * H >= +n.dataset.at - 4)); };
     const phoneRail = () => {
-      const on = !!list && mq('(max-width: 767px)');
+      const on = !!list && mq('(max-width: 991px)');
       room.classList.toggle('gfx-pc-phone', on);
       let moved = false;
       if (pq && pqHome && list) { if (on && pq.parentElement !== list.parentElement) { list.after(pq); moved = true; } else if (!on && pq.parentElement !== pqHome.p) { pqHome.p.insertBefore(pq, pqHome.n); moved = true; } }

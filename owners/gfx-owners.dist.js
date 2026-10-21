@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.25 + owners 1.2.3 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.25 + owners 1.2.4 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1132,7 +1132,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.2.3';
+W.__gfxOwners='1.2.4';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1295,7 +1295,7 @@ arrow(s,xj,yh,END,Hh);
 svgs.forEach((s,k)=>{
 const r=boxes[k],Wk=r.width,Hh=r.height,yh=+(Hh+0.5).toFixed(1),yl=Math.round(Hh*0.24)+0.5;
 if(k===0){
-const PH=mq('(max-width: 767px)');
+const PH=mq('(max-width: 991px)');
 const u=market(s,{x0:PH?30:0,x1:Wk-8,y0:6.5,y1:Math.round(Hh*0.66)+0.5,sp:17,dx:13,ux:0.74,urow:-1,seed:11,fit:0.12,H:Hh});
 note(s,'pa-nu',u.x-20,Math.round(Hh*0.66)+30,'end');
 set(s,'pa-gr',PH?`M${f1(u.x)} ${f1(u.y+9)}V${f1(yh-16)}Q${f1(u.x)} ${yh} ${f1(u.x-16)} ${yh}H${RAIL_X}`:`M${f1(u.x)} ${f1(u.y+9)}V${f1(yh-14)}Q${f1(u.x)} ${yh} ${f1(u.x+14)} ${yh}H${f1(Wk)}`);
@@ -1371,7 +1371,7 @@ const list=beats[0]&&beats[0].parentElement,pqHome=pq?{p:pq.parentElement,n:pq.n
 let rail=null,railFg=null,railLen=0;
 const railPaint=()=>{if(!rail||!railFg)return;const r=rail.getBoundingClientRect(),H=r.height||1;const p=c01((W.innerHeight*0.72-r.top) / H);railFg.style.strokeDashoffset=(1-p).toFixed(4);rail.querySelectorAll('[data-at]').forEach(n=>n.classList.toggle('is-on',p*H>=+n.dataset.at-4));};
 const phoneRail=()=>{
-const on=!!list&&mq('(max-width: 767px)');
+const on=!!list&&mq('(max-width: 991px)');
 room.classList.toggle('gfx-pc-phone',on);
 let moved=false;
 if(pq&&pqHome&&list){if(on&&pq.parentElement!==list.parentElement){list.after(pq);moved=true;}else if(!on&&pq.parentElement!==pqHome.p){pqHome.p.insertBefore(pq,pqHome.n);moved=true;}}
