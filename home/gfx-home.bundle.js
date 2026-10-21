@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.17 + home 1.1.8. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.17 + home 1.1.9. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1297,7 +1297,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.8';
+  W.__gfxHome = '1.1.9';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -1546,14 +1546,31 @@
         headText.forEach(h => { if (!h.offsetHeight) return; const r = h.getBoundingClientRect(); if (Math.min(q.right, r.right) - Math.max(q.left, r.left) > 0) need = Math.max(need, layY(h) + h.offsetHeight + 16 - lt); }); });
       return Math.ceil(need);
     };
-    const mm = gsap.matchMedia();
+    /* (1.1.9, granular audit 10/20) A CHAPTER TALLER THAN THE HELD SCREEN: at 1280x689 to ~1280x760 (a 1280x800 laptop
+       with the browser's bars) and 1366x700 the held chapter ran past the screen's foot - its figures' captions sat 8 to
+       66px below it, each chapter swapped out before they could be read. The rule under 681px (every chapter in turn,
+       the rail aside) now also holds wherever a chapter's last line would come within 16px of the held screen's foot,
+       measured on the layout. 1366x720, 1536x730, 1440x789 and taller fit and keep the held climb, unchanged. */
+    const caseShort = () => {
+      if (!tlBox || !W.matchMedia(PIN).matches) return false;
+      const rel = el => { let y = 0, n = el; while (n && n !== tlBox) { y += n.offsetTop; n = n.offsetParent; } return n === tlBox ? y : null; };
+      let low = 0;
+      chs.forEach(ch => $$('.gfx-case-cap, .gfx-case-meta > *, .gfx-case-num, .gfx-case-num-lead', ch).forEach(e => { const y = rel(e); if (y != null && e.offsetHeight) low = Math.max(low, y + e.offsetHeight); }));
+      return low > tlBox.offsetHeight - 16;
+    };
+    let mm = null;
+    const setupCases = () => {
+    mm = gsap.matchMedia();
+    const SHORT = H.classList.contains('gfx-case-short');
     // (1.1.7) a desktop under 681px tall shows the climb unpinned: the same clearance, taken as room above the rail
-    mm.add('(min-width: 992px) and (max-height: 680.99px)', () => {
+    const shortClear = () => {
       const fit = () => safe('climb clear', () => { if (!rail) return; rail.style.removeProperty('margin-top'); const need = labelsNeed($$('[class*="gfx-case-lbl-"]', rail)); if (need > 0) rail.style.setProperty('margin-top', (parseFloat(getComputedStyle(rail).marginTop) + need) + 'px', 'important'); });
       fit(); ST.addEventListener('refresh', fit);
       return () => { ST.removeEventListener('refresh', fit); if (rail) rail.style.removeProperty('margin-top'); };
-    });
-    mm.add(PIN, () => {
+    };
+    mm.add('(min-width: 992px) and (max-height: 680.99px)', shortClear);
+    if (SHORT) { mm.add(PIN, () => { const off = shortClear(); const sts = parts.map((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => enter(i), onLeave: () => enter(i).progress(1) })); return () => { off(); sts.forEach(s => s.kill()); }; }); }
+    else mm.add(PIN, () => {
       const arrow = $('.gfx-rail-arrow', rail), stops = ['a', 'b', 'c'].map(k => $('.gfx-case-stop-' + k, rail)).filter(Boolean);
       const svg = $('.gfx-climb-svg', rail), cTrack = $('.gfx-climb-track', rail), cRect = $('#gfxc-rect', rail) || $('clipPath rect', rail);
       if (!content || !tlBox || !rail || !svg || !cTrack || !cRect || stops.length < 3) { enter(0).progress(1); return undefined; }
@@ -1647,6 +1664,15 @@
       };
     });
     mm.add(UNPIN, () => { parts.forEach((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => enter(i), onLeave: () => enter(i).progress(1) })); return undefined; });
+    };
+    // decided on the held layout (the class off), again after a resize that changes the answer
+    const decide = () => { H.classList.remove('gfx-case-short'); const s = caseShort(); H.classList.toggle('gfx-case-short', s); return s; };
+    let shortNow = decide(); setupCases();
+    let rz = 0;
+    W.addEventListener('resize', e => { if (e.target !== W) return; clearTimeout(rz); rz = setTimeout(() => safe('cases fit', () => {
+      const was = shortNow; shortNow = decide(); if (shortNow === was) return;
+      mm.revert(); parts.forEach(p => { p.ch.classList.remove('gfx-on'); }); setupCases(); ST.refresh();
+    }), 260); });
   }
 
   /* ========================= the market stage (gf-line.js) =========================

@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.17 + home 1.1.8 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.17 + home 1.1.9 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1104,7 +1104,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.8';
+W.__gfxHome='1.1.9';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
 const PIN='(min-width: 992px) and (min-height: 681.01px)',UNPIN='(max-width: 991px), (max-height: 680.99px)';
@@ -1326,13 +1326,25 @@ ls.forEach(l=>{if(!l||!l.offsetHeight)return;const q=l.getBoundingClientRect(),l
 headText.forEach(h=>{if(!h.offsetHeight)return;const r=h.getBoundingClientRect();if(Math.min(q.right,r.right)-Math.max(q.left,r.left)>0)need=Math.max(need,layY(h)+h.offsetHeight+16-lt);});});
 return Math.ceil(need);
 };
-const mm=gsap.matchMedia();
-mm.add('(min-width: 992px) and (max-height: 680.99px)',()=>{
+const caseShort=()=>{
+if(!tlBox||!W.matchMedia(PIN).matches)return false;
+const rel=el=>{let y=0,n=el;while(n&&n!==tlBox){y+=n.offsetTop;n=n.offsetParent;}return n===tlBox?y:null;};
+let low=0;
+chs.forEach(ch=>$$('.gfx-case-cap, .gfx-case-meta > *, .gfx-case-num, .gfx-case-num-lead',ch).forEach(e=>{const y=rel(e);if(y!=null&&e.offsetHeight)low=Math.max(low,y+e.offsetHeight);}));
+return low>tlBox.offsetHeight-16;
+};
+let mm=null;
+const setupCases=()=>{
+mm=gsap.matchMedia();
+const SHORT=H.classList.contains('gfx-case-short');
+const shortClear=()=>{
 const fit=()=>safe('climb clear',()=>{if(!rail)return;rail.style.removeProperty('margin-top');const need=labelsNeed($$('[class*="gfx-case-lbl-"]',rail));if(need>0)rail.style.setProperty('margin-top',(parseFloat(getComputedStyle(rail).marginTop)+need)+'px','important');});
 fit();ST.addEventListener('refresh',fit);
 return()=>{ST.removeEventListener('refresh',fit);if(rail)rail.style.removeProperty('margin-top');};
-});
-mm.add(PIN,()=>{
+};
+mm.add('(min-width: 992px) and (max-height: 680.99px)',shortClear);
+if(SHORT){mm.add(PIN,()=>{const off=shortClear();const sts=parts.map((p,i)=>ST.create({trigger:p.ch,start:'top 88%',onEnter:()=>enter(i),onLeave:()=>enter(i).progress(1)}));return()=>{off();sts.forEach(s=>s.kill());};});}
+else mm.add(PIN,()=>{
 const arrow=$('.gfx-rail-arrow',rail),stops=['a','b','c'].map(k=>$('.gfx-case-stop-'+k,rail)).filter(Boolean);
 const svg=$('.gfx-climb-svg',rail),cTrack=$('.gfx-climb-track',rail),cRect=$('#gfxc-rect',rail)||$('clipPath rect',rail);
 if(!content||!tlBox||!rail||!svg||!cTrack||!cRect||stops.length<3){enter(0).progress(1);return undefined;}
@@ -1420,6 +1432,14 @@ gsap.set(leaders.concat(labels).filter(Boolean),{clearProps:'all'});
 };
 });
 mm.add(UNPIN,()=>{parts.forEach((p,i)=>ST.create({trigger:p.ch,start:'top 88%',onEnter:()=>enter(i),onLeave:()=>enter(i).progress(1)}));return undefined;});
+};
+const decide=()=>{H.classList.remove('gfx-case-short');const s=caseShort();H.classList.toggle('gfx-case-short',s);return s;};
+let shortNow=decide();setupCases();
+let rz=0;
+W.addEventListener('resize',e=>{if(e.target!==W)return;clearTimeout(rz);rz=setTimeout(()=>safe('cases fit',()=>{
+const was=shortNow;shortNow=decide();if(shortNow===was)return;
+mm.revert();parts.forEach(p=>{p.ch.classList.remove('gfx-on');});setupCases();ST.refresh();
+}),260);});
 }
 function marketInit(){
 const sec=MK.sec;if(!sec)return;

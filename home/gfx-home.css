@@ -278,6 +278,12 @@ html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-ch { position: relative !
   html.gfx-f3 .gfx-case-stage { display: block !important; height: auto !important; margin-top: clamp(14px, 2.6vh, 28px) !important; }
   html.gfx-f3 .gfx-case-ch { position: relative !important; opacity: 1 !important; pointer-events: auto; padding: 56px 0 !important; border-top: 1px solid var(--gfx-line-l); }
 }
+/* (home 1.1.9, granular audit 10/20) the same layout wherever a held chapter would run past the screen's foot (the script
+   measures it: html.gfx-case-short) - 1280x689-760, 1366x700 */
+html.gfx-f3.gfx-case-short .gfx-case-tl { height: auto !important; }
+html.gfx-f3.gfx-case-short .gfx-case-rail { display: none !important; }
+html.gfx-f3.gfx-case-short .gfx-case-stage { display: block !important; height: auto !important; margin-top: clamp(14px, 2.6vh, 28px) !important; }
+html.gfx-f3.gfx-case-short .gfx-case-ch { position: relative !important; opacity: 1 !important; pointer-events: auto; padding: 56px 0 !important; border-top: 1px solid var(--gfx-line-l); }
 html.gfx-mk-still .gfx-mk-gates { display: block; position: absolute; inset: 0; }
 html.gfx-mk-still .gfx-mk-gate { opacity: 1; }
 html.gfx-mk-still .gfx-mk-ix .gfx-mk-sn:not(#gfx-x) { color: var(--gfx-green-cta) !important; }
