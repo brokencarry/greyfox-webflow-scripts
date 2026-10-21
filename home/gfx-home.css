@@ -396,3 +396,9 @@ html .gfx-door-e { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles)
   html.gfx-f3 .gfx-hero-sec.gfx-fr { min-height: 100svh !important; }
   html.gfx-f3 .gfx-hero-sec > .hero__video { flex: 1 1 auto; align-self: stretch; }
 }
+/* (10/21 consistency pass, founder: "consistent ... in all ways?") Home's two closing doors are the designer's own block;
+   every other page's doors (gfc-door) turn their rule green on hover - these now do the same, with the same timing */
+@media (hover: hover) {
+  html.gfx-f3 .cta_section .cta_contact_item-wrapper { transition: border-color .15s linear; }
+  html.gfx-f3 .cta_section .cta_contact_item-wrapper:hover { border-left-color: #3aa678 !important; }
+}
