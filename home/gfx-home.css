@@ -402,3 +402,9 @@ html .gfx-door-e { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles)
   html.gfx-f3 .cta_section .cta_contact_item-wrapper { transition: border-color .15s linear; }
   html.gfx-f3 .cta_section .cta_contact_item-wrapper:hover { border-left-color: #3aa678 !important; }
 }
+/* (10/21 consistency pass) the team's email and LinkedIn links had no hover at all; the site's links are ink at rest and
+   green on hover (arrow rule 10/17). The ink system's own rule carries an id + !important, so this one does too */
+@media (hover: hover) {
+  html.gfx-f3 :is(a.paragraph[href^="mailto:"], .gfx-team-li, .gfx-team-li *) { transition: color .2s cubic-bezier(.25, 1, .5, 1); }
+  html.gfx-f3 :is(a.paragraph[href^="mailto:"]:hover, .gfx-team-li:hover, .gfx-team-li:hover *):not(#gfx-h1):not(#gfx-h2) { color: #156946 !important; }
+}
