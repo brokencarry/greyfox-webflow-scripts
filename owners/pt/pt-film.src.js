@@ -141,7 +141,7 @@
     const locs = PL.map(p => ({ p, el: S.querySelector(`.p3-loc[data-k="${p.k}"]`), halo: S.querySelector(`.p3-halo[data-k="${p.k}"]`) }));
     const routes = [...S.querySelectorAll('.p8-r')], fields = [...S.querySelectorAll('.p3-field')], terr = [...map.querySelectorAll('.p3-terr > g')], lbls = [...S.querySelectorAll('.p3-lbl .p3-s')];
     const tl = part(sec, 'pt-tl'), yrs = [...sec.querySelectorAll('[data-yr]')], nums = [...sec.querySelectorAll('[data-num]')], num = { set textContent(v) { nums.forEach(n => n.textContent = v); } }, yr = { set textContent(v) { yrs.forEach(n => n.textContent = v); } }, replay = sec.querySelector('[data-replay]');
-    const phone = () => matchMedia('(max-width: 767px)').matches;
+    const phone = () => matchMedia('(max-width: 991px)').matches;   // (owners 1.2.4, founder 10/21) tablets take the phone film too
 
     // the timeline under the film: six stops, then the rise into the house head at the later sale (the film's progress bar)
     let tlFill, tlDots = [];

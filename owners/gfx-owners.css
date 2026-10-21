@@ -473,8 +473,10 @@ html:not(#gfx-o) [data-o~="pt-t"] tfoot td[data-o~="pt-k"] { font-size: 64px; le
   html:not(#gfx-o) [data-o~="pt-t"] td { font-size: 26px; padding-top: 8px; padding-bottom: 8px; }
   html:not(#gfx-o) [data-o~="pt-t"] tfoot td[data-o~="pt-k"] { font-size: 50px; }
 }
-/* phone: head, words, film (with the earnings line inside it), table; the site's phone type and room gap */
-@media (max-width: 767px) {
+/* phone: head, words, film (with the earnings line inside it), table; the site's phone type and room gap
+   (owners 1.2.4) tablets too: in two columns there the map was 297px wide and its year labels ran together ("At the
+   Yeale 1"); the tablet keeps its own gutter (override below) */
+@media (max-width: 991px) {
   html:not(#gfx-o) [data-o~="ow-pt"] { grid-template-columns: 1fr; grid-template-areas: "head" "para" "film" "ledger" "note"; row-gap: 18px; padding: 80px 20px 96px; min-height: 0; }
   html:not(#gfx-o) [data-o~="pt-para"] { margin: 0; font-size: 18px; }
   html:not(#gfx-o) [data-o~="pt-map"] { aspect-ratio: 1 / 1.02; margin: 0 -20px; width: calc(100% + 40px); }
@@ -537,4 +539,9 @@ html:not(#gfx-o) [data-o~="pt-mearn"] [data-o~="pt-yr"]::before { content: "Year
   html:not(#gfx-o) .gfx-pc-rail .gfx-pc-n-x.is-on { stroke: var(--ow3-green); }
   html:not(#gfx-o) .gfx-pc-rail .gfx-pc-n-hd { stroke: var(--ow3-green); stroke-width: 1.6px; opacity: 0; }
   html:not(#gfx-o) .gfx-pc-rail .gfx-pc-n-hd.is-on { opacity: 1; }
+}
+/* (owners 1.2.4) the partnership in one column on a tablet keeps the tablet's gutter, the map spanning it */
+@media (min-width: 768px) and (max-width: 991px) {
+  html:not(#gfx-o) [data-o~="ow-pt"] { padding-left: var(--ow3-gut); padding-right: var(--ow3-gut); }
+  html:not(#gfx-o) [data-o~="pt-map"] { margin: 0 calc(-1 * var(--ow3-gut)); width: calc(100% + 2 * var(--ow3-gut)); }
 }
