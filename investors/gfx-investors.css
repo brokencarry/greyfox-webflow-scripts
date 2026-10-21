@@ -57,3 +57,16 @@ html.gfx-mc-open, html.gfx-mc-open body { overflow: hidden !important; }
   /* (1.0.2) the results room's desktop hold (live from 992) kept a 119px top inside it on a phone or tablet: the rhythm sets that gap */
   html:not(#gfx-iv) [data-o~="iv2-stage"] { padding-top: 0 !important; padding-bottom: 0 !important; }
 }
+
+/* (investors 1.0.6, founder 10/20: "make the photo images a little more vertically taller so you can spread out and lay
+   out our stats more thoroughly and spaced out") THE CASES, desktop: each card a third taller (66% of the screen, 480 to
+   700px), more of its photograph above the words; the heading and the figure at one height across the three cards, the
+   figure's line and the result given room, and the supporting figures along the foot on one rule. */
+@media (min-width: 992px) {
+  html:not(#gfx-iv) [data-o~="iv-cases"] [data-o~="iv-case"] { min-height: clamp(480px, 66vh, 700px) !important; justify-content: stretch !important; }
+  html:not(#gfx-iv) [data-o~="iv-cases"] [data-o~="iv-case-in"] { flex: 1 1 auto; display: flex; flex-direction: column; padding: var(--s-5) var(--s-4) var(--s-4) !important; }
+  html:not(#gfx-iv) [data-o~="iv-cases"] [data-o~="iv-case-fig"] { margin-top: var(--s-4) !important; }
+  html:not(#gfx-iv) [data-o~="iv-cases"] [data-o~="iv-case-k"] { margin-top: var(--s-2) !important; }
+  html:not(#gfx-iv) [data-o~="iv-cases"] [data-o~="iv-case-p"] { margin-top: var(--s-4) !important; }
+  html:not(#gfx-iv) [data-o~="iv-cases"] [data-o~="iv-case-ss"] { margin-top: auto !important; padding-top: var(--s-3) !important; box-sizing: border-box; min-height: calc(var(--s-3) + 3.25em); align-content: flex-start; }
+}
