@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.15';
+  W.__gfxInvestors = '1.0.16';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -649,6 +649,17 @@
     W.addEventListener('scroll', ask, { passive: true }); W.addEventListener('resize', ask);
   }
 
+  /* (1.0.16, founder 10/21: "put the fox arrow under: Mission Control.") the house arrow under the room's own name, drawn
+     once as its words come into view (gfArrow.word's own trigger), as the close's under "thesis." - the room has no other
+     arrow in its view (arrow rule 10/17: never two at rest) */
+  let mcMark = null;
+  function mcMarkInit(still) {
+    const room = R.mc, h = room && $('h2', room); if (!h || !W.gfArrow || mcMark) return;
+    const mark = W.gfArrow.word({ el: h, host: h.parentElement, key: 'Mission Control', cls: 'gfc-mark', auto: !still });
+    if (!mark) return; mcMark = mark;
+    if (still && mark.still) mark.still();
+  }
+
   /* ========================= reduced motion / no library: every room settled ========================= */
   function still() {
     gsap = W.gsap || null; ST = W.ScrollTrigger || null;
@@ -662,6 +673,7 @@
     safe('pairs', pairs);
     if (R.close) R.close.classList.add('gfc-in');
     if (W.gfArrow) safe('close mark', () => closeMarkInit(true));
+    if (W.gfArrow) safe('mc mark', () => mcMarkInit(true));
     safe('inks', inks);
   }
 
@@ -692,7 +704,7 @@
       if (W.ivHeroGo) requestAnimationFrame(() => requestAnimationFrame(W.ivHeroGo));
       refresh();
     },
-    late: () => { safe('close mark', () => closeMarkInit(false)); },
+    late: () => { safe('close mark', () => closeMarkInit(false)); safe('mc mark', () => mcMarkInit(false)); },
     still
   });
 })();

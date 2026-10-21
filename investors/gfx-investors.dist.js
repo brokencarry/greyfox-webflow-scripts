@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.15 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.16 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.15';
+W.__gfxInvestors='1.0.16';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1731,6 +1731,13 @@ const ask=()=>{if(near&&!rq){rq=1;((W.gfx&&W.gfx.postFrame)||requestAnimationFra
 if('IntersectionObserver'in W)new IntersectionObserver(es=>es.forEach(e=>{near=e.isIntersecting;ask();})).observe(room);
 W.addEventListener('scroll',ask,{passive:true});W.addEventListener('resize',ask);
 }
+let mcMark=null;
+function mcMarkInit(still){
+const room=R.mc,h=room&&$('h2',room);if(!h||!W.gfArrow||mcMark)return;
+const mark=W.gfArrow.word({el:h,host:h.parentElement,key:'Mission Control',cls:'gfc-mark',auto:!still});
+if(!mark)return;mcMark=mark;
+if(still&&mark.still)mark.still();
+}
 function still(){
 gsap=W.gsap||null;ST=W.ScrollTrigger||null;
 H.classList.remove('iv2-live');live=false;
@@ -1743,6 +1750,7 @@ safe('pipe',pipe);
 safe('pairs',pairs);
 if(R.close)R.close.classList.add('gfc-in');
 if(W.gfArrow)safe('close mark',()=>closeMarkInit(true));
+if(W.gfArrow)safe('mc mark',()=>mcMarkInit(true));
 safe('inks',inks);
 }
 gfx.page({
@@ -1772,7 +1780,7 @@ H.classList.add('ow-ready');
 if(W.ivHeroGo)requestAnimationFrame(()=>requestAnimationFrame(W.ivHeroGo));
 refresh();
 },
-late:()=>{safe('close mark',()=>closeMarkInit(false));},
+late:()=>{safe('close mark',()=>closeMarkInit(false));safe('mc mark',()=>mcMarkInit(false));},
 still
 });
 })();

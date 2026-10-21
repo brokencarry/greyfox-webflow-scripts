@@ -72,12 +72,12 @@
   "sri": "sha384-hClY6jkd49yrVNeSbHkpUtsas4uAlhiXbNjFTK8Apw3eRRnrlKspBzLOUmQ8FgNm"
  },
  "investors/gfx-investors.dist.js": {
-  "bytes": 119986,
-  "sri": "sha384-aLcYoolFSnThEvvAYGAc+IogmSmdeQ+3lBDimvOgRWTQZg22mLjpU+A6rMBJswyp"
+  "bytes": 120362,
+  "sri": "sha384-pcIVAj6Z0koWHBB354ySpfc/sE+/VE4WHHE3q8msxSX58xJBUseLIPdnEdYFi5Zg"
  },
  "investors/gfx-investors.dist.css": {
   "bytes": 60651,
-  "sri": "sha384-jA6Cw74jxQNEad3r6YV9OCrKdzyoxz27pIb8DtvzzNErI4QwVzC0Asd4Icu9Ztwz"
+  "sri": "sha384-l9F47v1UHeRA50ypBjsfp3L4ablTgThpRkqW7dkE1eTq/cj091F437kUTHE6DSTp"
  },
  "_versions": {
   "core": "1.0.27",
@@ -89,6 +89,6 @@
   "team": "1.0.3",
   "insights": "1.2.1",
   "person": "1.0.2",
-  "investors": "1.0.15"
+  "investors": "1.0.16"
  }
 }
