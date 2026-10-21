@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.18';
+  const VERSION = '1.0.19';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -865,7 +865,10 @@
        of each close (314px on Insights to 589px on Home). A close shorter than the drawing trims it above and below. */
     if (!$('#gfx-bar-btn')) { const st = D.createElement('style'); st.id = 'gfx-bar-btn'; st.textContent = 'html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}' +
       'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}' +
-      'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}'; (D.head || H).appendChild(st); }
+      'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}' +
+      // (1.0.19, founder 10/20: "on iPhone the footer's grey lines push up against the logo, Navigate and the left column")
+      // the column rules divide columns standing side by side; stacked on a phone they ran down the text's own edge
+      '@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {

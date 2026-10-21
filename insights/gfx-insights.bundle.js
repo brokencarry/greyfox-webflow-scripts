@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.18 + pages 1.0.1 + insights 1.2.0. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.19 + pages 1.0.1 + insights 1.2.1. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.18';
+  const VERSION = '1.0.19';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -866,7 +866,10 @@
        of each close (314px on Insights to 589px on Home). A close shorter than the drawing trims it above and below. */
     if (!$('#gfx-bar-btn')) { const st = D.createElement('style'); st.id = 'gfx-bar-btn'; st.textContent = 'html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}' +
       'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}' +
-      'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}'; (D.head || H).appendChild(st); }
+      'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}' +
+      // (1.0.19, founder 10/20: "on iPhone the footer's grey lines push up against the logo, Navigate and the left column")
+      // the column rules divide columns standing side by side; stacked on a phone they ran down the text's own edge
+      '@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
@@ -1545,7 +1548,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.0';
+  W.__gfxInsights = '1.2.1';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -1728,6 +1731,8 @@
     rws.forEach(r => { const t = topicOf(r); by[t] = (by[t] || 0) + 1; });
     $$(O('gi-topic')).forEach(b => { const t = b.getAttribute('data-topic') || '', n = t ? (by[t] || 0) : rws.length, c = $(O('gi-topic-c'), b); if (c) c.textContent = String(n); if (t && !n) b.remove(); });
     const note = $('[data-gi-note]'); if (note) note.textContent = `Showing all ${rws.length} articles.`;
+    // (1.2.1, founder 10/20: option A) one topic left: a filter of one choice is not shown (the heading reads "All articles")
+    if (Object.keys(by).filter(Boolean).length <= 1) { const g = $(O('gi-topics')); if (g) { g.hidden = true; g.style.setProperty('display', 'none', 'important'); } }
     const cnt = $(O('gi-open-count'));
     if (cnt) {
       const k = Object.keys(by).filter(Boolean).length, first = $('.gfx-pg-t', cnt), mis = $$(O('gi-mi'), cnt);

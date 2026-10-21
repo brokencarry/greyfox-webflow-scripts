@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.0';
+  W.__gfxInsights = '1.2.1';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -220,6 +220,8 @@
     rws.forEach(r => { const t = topicOf(r); by[t] = (by[t] || 0) + 1; });
     $$(O('gi-topic')).forEach(b => { const t = b.getAttribute('data-topic') || '', n = t ? (by[t] || 0) : rws.length, c = $(O('gi-topic-c'), b); if (c) c.textContent = String(n); if (t && !n) b.remove(); });
     const note = $('[data-gi-note]'); if (note) note.textContent = `Showing all ${rws.length} articles.`;
+    // (1.2.1, founder 10/20: option A) one topic left: a filter of one choice is not shown (the heading reads "All articles")
+    if (Object.keys(by).filter(Boolean).length <= 1) { const g = $(O('gi-topics')); if (g) { g.hidden = true; g.style.setProperty('display', 'none', 'important'); } }
     const cnt = $(O('gi-open-count'));
     if (cnt) {
       const k = Object.keys(by).filter(Boolean).length, first = $('.gfx-pg-t', cnt), mis = $$(O('gi-mi'), cnt);
