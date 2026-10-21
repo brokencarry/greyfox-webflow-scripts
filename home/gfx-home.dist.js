@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.20 + home 1.1.9 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.21 + home 1.1.9 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.20';
+const VERSION='1.0.21';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -61,7 +61,7 @@ H.classList.add('gfx-failsafe');H.classList.remove('gfx-intro');ix3Late();
 safe('failsafe',()=>{const p=D.querySelector('.page-wrapper');p&&p.removeAttribute('inert');});
 };
 setTimeout(failsafe,6000);
-const LENIS_OPTS={lerp:0.085,wheelMultiplier:0.95,smoothWheel:true};
+const LENIS_OPTS={lerp:0.12,wheelMultiplier:0.95,smoothWheel:true};
 let RealLenis=null,shared=null,sharedRaf=null,tempLoop=0,tickerOn=false;
 const lenisStub=()=>({
 __gfxStub:true,raf(){},on(){},off(){},start(){},stop(){},destroy(){},resize(){},
@@ -739,7 +739,7 @@ if(!$('#gfx-bar-btn')){const st=D.createElement('style');st.id='gfx-bar-btn';st.
 'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}'+
 'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}'+
 '@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}'+
-'html.gfx-f3 .gfx-nav:not(.gfx-top) :is(.navigation_items,.w-nav-menu){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}';(D.head||H).appendChild(st);}
+'html.gfx-f3 .gfx-nav:not(.gfx-top) :is(.navigation_items,.w-nav-menu,.button){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}';(D.head||H).appendChild(st);}
 let showing=true,upFrom=null,prevY=null;
 gsap.set(bar,{'--gfx-away':0});
 const setShown=want=>{
@@ -900,7 +900,7 @@ prog=p;
 const covered=p<=0.001;
 H.classList.toggle('gfx-ftg-covered',covered);H.classList.toggle('gfx-ftg-open',p>=0.97);
 const local=H0*(1-p);
-cut(close?Math.max(0,Math.round(H0*(1-p)-CH)):0);
+cut(Math.max(0,Math.round(H0*(1-p)-CH)));
 const home=local<=lockR.localBottom+2,away=local>lockR.localBottom+72;
 if(instant){if(state==='out'||state==='home'?!away:home)setHome();else setBar();}
 else if(home&&(state==='bar'||state==='back'))goHome();

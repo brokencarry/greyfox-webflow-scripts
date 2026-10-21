@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.20';
+  const VERSION = '1.0.21';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -97,7 +97,9 @@
   setTimeout(failsafe, 6000);
 
   /* ---------- Lenis: one instance, the local settings, one clock (home-v2-motion.js 1.0.9) ---------- */
-  const LENIS_OPTS = { lerp: 0.085, wheelMultiplier: 0.95, smoothWheel: true };
+  // (1.0.21, founder 10/20: "slightly lagging" on a Mac) 0.085 trailed the trackpad, which already carries its own
+  // momentum; 0.12 follows the hand more closely and is still smooth
+  const LENIS_OPTS = { lerp: 0.12, wheelMultiplier: 0.95, smoothWheel: true };
   let RealLenis = null, shared = null, sharedRaf = null, tempLoop = 0, tickerOn = false;
   const lenisStub = () => ({
     __gfxStub: true, raf() {}, on() {}, off() {}, start() {}, stop() {}, destroy() {}, resize() {},
@@ -871,7 +873,7 @@
       '@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}' +
       // (1.0.20, founder 10/20: "slightly lagging on a Mac") the designer's frosted menu re-blurred the page under the bar on
       // every scrolled frame; past the top the bar is solid and the blur showed nothing. It stays where it shows: the top.
-      'html.gfx-f3 .gfx-nav:not(.gfx-top) :is(.navigation_items,.w-nav-menu){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}'; (D.head || H).appendChild(st); }
+      'html.gfx-f3 .gfx-nav:not(.gfx-top) :is(.navigation_items,.w-nav-menu,.button){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
@@ -1047,7 +1049,10 @@
       const covered = p <= 0.001;
       H.classList.toggle('gfx-ftg-covered', covered); H.classList.toggle('gfx-ftg-open', p >= 0.97);
       const local = H0 * (1 - p);
-      cut(close ? Math.max(0, Math.round(H0 * (1 - p) - CH)) : 0);
+      /* (1.0.21, founder 10/20: "when I scroll on my bio down to Tony, his name gets covered") a page with no close (the
+         person pages) has nothing opaque over the waiting footer, so it painted over the way on. Its top now meets the
+         page's end there too (CH is 0 without a close). */
+      cut(Math.max(0, Math.round(H0 * (1 - p) - CH)));
       const home = local <= lockR.localBottom + 2, away = local > lockR.localBottom + 72;
       if (instant) { if (state === 'out' || state === 'home' ? !away : home) setHome(); else setBar(); }
       else if (home && (state === 'bar' || state === 'back')) goHome();
