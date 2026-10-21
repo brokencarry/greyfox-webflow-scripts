@@ -127,6 +127,13 @@ html.gfx-m:not(.gfx-mk-still) .gfx-mk-portal { display: block; position: absolut
 @media (min-width: 992px) { html.gfx-m:not(.gfx-mk-still) .gfx-mk .gfx-mk-lede { max-width: min(630px, calc(51vw - 88px)); } }
 /* (home 1.1.10) the gate labels never rise under the bar on short screens (the lines' top in gfx-home.js matches) */
 @media (min-width: 992px) { .gfx-mk .gfx-mk-gate { top: calc(max(14vh, 118px) - 34px); } }
+/* (home 1.1.11, iPad walk) TABLETS 768-991: the window sat at 57% across from 19% down, over the heading and the lede
+   ("market", "thesis", "for" under it at 820x1180); it now opens below the lede, right of the figures and steps. The
+   three gate labels, ~100px apart there, ran into each other on one line each: two short centred lines */
+@media (min-width: 768px) and (max-width: 991px) {
+  html.gfx-m:not(.gfx-mk-still) .gfx-mk .gfx-mk-portal { left: 57%; right: 40px; top: max(32%, 384px); bottom: 6%; }
+  .gfx-mk .gfx-mk-gate { width: 80px; white-space: normal; text-align: center; font-size: 13px; line-height: 1.2; top: calc(max(14vh, 132px) - 40px); }
+}
 html.gfx-f3 .gfx-mk-portal-in.gfx-mk-portal-in { position: absolute; inset: 0; transform-origin: 0% 50%; }
 html.gfx-m:not(.gfx-mk-still) .gfx-mk-portal-in { will-change: transform; }
 html.gfx-mk-still .gfx-mk-portal { display: block; position: relative; height: 560px; margin: 32px 48px 0; }

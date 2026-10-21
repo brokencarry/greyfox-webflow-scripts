@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.24 + home 1.1.10 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.24 + home 1.1.11 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1131,7 +1131,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.10';
+W.__gfxHome='1.1.11';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
 const PIN='(min-width: 992px) and (min-height: 681.01px)',UNPIN='(max-width: 991px), (max-height: 680.99px)';
@@ -1487,7 +1487,7 @@ const g=c=>{const gr=ctx.createLinearGradient(x0,0,x1+1,0);gr.addColorStop(0,c.r
 gInk=phone()?ink(1):g('rgba(244, 243, 240, A)');gGreen=phone()?GREEN:g('rgba(58, 166, 120, A)');
 dirty=true;
 };
-const fieldR=()=>phone()?{x0:-8,x1:Wd+8,top:Hd*0.36,bot:Hd*0.6}:{x0:-Wd*0.04,x1:Wd*1.02,top:Math.max(Hd*0.14,118),bot:Hd*0.9};
+const fieldR=()=>phone()?{x0:-8,x1:Wd+8,top:Hd*0.36,bot:Hd*0.6}:{x0:-Wd*0.04,x1:Wd*1.02,top:Math.max(Hd*0.14,W.innerWidth<992?132:118),bot:Hd*0.9};
 const PORTAL_U=()=>(phone()?1.02:0.575);
 const GATES=[0.6,0.71,0.82];
 const gateIn=()=>ss(seg(P,0.2,0.28)),gateReach=i=>ss(seg(P,0.25+i*0.045,0.31+i*0.045));
