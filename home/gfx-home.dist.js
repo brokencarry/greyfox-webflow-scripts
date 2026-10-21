@@ -1331,7 +1331,7 @@ if(!tlBox||!W.matchMedia(PIN).matches)return false;
 const rel=el=>{let y=0,n=el;while(n&&n!==tlBox){y+=n.offsetTop;n=n.offsetParent;}return n===tlBox?y:null;};
 let low=0;
 chs.forEach(ch=>$$('.gfx-case-cap, .gfx-case-meta > *, .gfx-case-num, .gfx-case-num-lead',ch).forEach(e=>{const y=rel(e);if(y!=null&&e.offsetHeight)low=Math.max(low,y+e.offsetHeight);}));
-return low>tlBox.offsetHeight-16;
+return low>tlBox.offsetHeight-4;
 };
 let mm=null;
 const setupCases=()=>{

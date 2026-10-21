@@ -1549,14 +1549,14 @@
     /* (1.1.9, granular audit 10/20) A CHAPTER TALLER THAN THE HELD SCREEN: at 1280x689 to ~1280x760 (a 1280x800 laptop
        with the browser's bars) and 1366x700 the held chapter ran past the screen's foot - its figures' captions sat 8 to
        66px below it, each chapter swapped out before they could be read. The rule under 681px (every chapter in turn,
-       the rail aside) now also holds wherever a chapter's last line would come within 16px of the held screen's foot,
+       the rail aside) now also holds wherever a chapter's last line would reach the held screen's foot (within 4px),
        measured on the layout. 1366x720, 1536x730, 1440x789 and taller fit and keep the held climb, unchanged. */
     const caseShort = () => {
       if (!tlBox || !W.matchMedia(PIN).matches) return false;
       const rel = el => { let y = 0, n = el; while (n && n !== tlBox) { y += n.offsetTop; n = n.offsetParent; } return n === tlBox ? y : null; };
       let low = 0;
       chs.forEach(ch => $$('.gfx-case-cap, .gfx-case-meta > *, .gfx-case-num, .gfx-case-num-lead', ch).forEach(e => { const y = rel(e); if (y != null && e.offsetHeight) low = Math.max(low, y + e.offsetHeight); }));
-      return low > tlBox.offsetHeight - 16;
+      return low > tlBox.offsetHeight - 4;   // (the approved 1440x900 ends 10px above the foot: it holds)
     };
     let mm = null;
     const setupCases = () => {
