@@ -1,7 +1,7 @@
 {
  "home/gfx-home.dist.js": {
-  "bytes": 122119,
-  "sri": "sha384-UNpuVm6ogUf9fQ8SSCOgwd5uxsvLyV1zlwcXqFOfgdT56MxZ92g5uJO6o2PhEIlM"
+  "bytes": 122593,
+  "sri": "sha384-aNclE0A8fAzQV6bWUXCugkgnN0wdCzAVhTix8Ym+eoVGGnm/xA2gxu7CLKYNkbM9"
  },
  "core/gfx-core.dist.css": {
   "bytes": 29749,
@@ -9,7 +9,7 @@
  },
  "home/gfx-home.dist.css": {
   "bytes": 28095,
-  "sri": "sha384-VBEoI2ZH4xFgZdw8tdDfS3PankRySEOyerAlh0emVd8aDauxYqf2dZ6fjAw1iuBy"
+  "sri": "sha384-TW98hjDyd0yo8r/8ryqfVSuSJz3+MwD6/5SUftjsRoyW0pPabjvYTXZsAgNM+527"
  },
  "portal/desktop-portal.js": {
   "bytes": 9150,
@@ -20,75 +20,75 @@
   "sri": "sha384-wGOwqAfyGMMFPf9OPRIbu+IPlSRwZP85820QSFNvE1BMLaNpQ73+LHzFUy6gipoV"
  },
  "owners/gfx-owners.dist.js": {
-  "bytes": 107408,
-  "sri": "sha384-AhUEFApBFjkvnlqVhhT71TvnFYBuvi4iH/r4ciwsKPTYt/1fgVahCUWxiER4xWxe"
+  "bytes": 107882,
+  "sri": "sha384-UZ+bEdlVOppSdksWQjhDx9x1qKxQFSAS0q0uCr6MFpjJBDgQyhBtcBaXjHlQfMjW"
  },
  "owners/gfx-owners.dist.css": {
   "bytes": 49019,
-  "sri": "sha384-vzlUY9EgJWLOXtxujSDp6SA+IEkCIYQFuxp0Trtl8VBJSpJBwCiHIEOAfsdvd16v"
+  "sri": "sha384-CBrA0g/4lW9VaDaKa9NhAQ2iFnvql66H48hMInHZVwbuntLC+DQfOBqZeZtz/0xe"
  },
  "owners/pt/pt-film.js": {
   "bytes": 107870,
   "sri": "sha384-+PYpydyv2ntY5vUMTATzjhF2vwdSia3Z/BdMTEFWW8qWdRjf8X8CmANRErTw5aYa"
  },
  "contact/gfx-contact.dist.js": {
-  "bytes": 101210,
-  "sri": "sha384-l53KzLlmVpXwuGq2b+k7/jE9ZxGefMNkk26t5wF9QZCV2lR1OkI89thfXJJYoHWa"
+  "bytes": 101684,
+  "sri": "sha384-hANHVIkJDg5eHRqAbsytpmujVNjmFSAqW3YXvUFafqdhlWv1SGa4l+F94gS2hU8J"
  },
  "contact/gfx-contact.dist.css": {
   "bytes": 43581,
-  "sri": "sha384-1WxxIDbXKf5Y+sCe3SG3MoEx4uzxF6O0Efn7O5kSq4QsM+QH/z1aVnTe8mX4jvdh"
+  "sri": "sha384-vEn+fMIrOaNU4H3bA6eSP41dypry0h1XVXoNQeGT4qiSj1Om8vu3bOL/r4wQMKfo"
  },
  "privacy/gfx-privacy.dist.js": {
-  "bytes": 92867,
-  "sri": "sha384-rke9OE8s1SNC1JysDcwFrvRdFgSx1267hxvRUNQ8TgMC3GOhz8zG92mGuvskMBGU"
+  "bytes": 93341,
+  "sri": "sha384-/bGtcXvjN7WWRQxrMIwcZd9YaKiNbolalzfHeDdq5St/Z8UZaigYxvecEGcgxECY"
  },
  "privacy/gfx-privacy.dist.css": {
   "bytes": 23737,
-  "sri": "sha384-rCEprnldnVdpnXcXe0vLe1q6l5IX7RTm4NR4V7W4aQUfFzEu+7UHXAiHmpTLKozI"
+  "sri": "sha384-FsSE7OK9echELYEa2dxk+Md2z7IOU6N1GE4lCSOLpKkjI6GbVlyMergsE7/DUpVB"
  },
  "team/gfx-team.dist.js": {
-  "bytes": 101054,
-  "sri": "sha384-kqw6hNxywxj5MvdvI9KiGEMibiAwtr0//e7z8o3ZJcWiVGIcq6lq4AlYti6u4WXb"
+  "bytes": 101528,
+  "sri": "sha384-oeVjpF+i4bWMkrDROB/RDQ+4DU7c8M+ufPtVuy/VCxV8PQ02kXx6vb/IW0YlLxFM"
  },
  "team/gfx-team.dist.css": {
   "bytes": 34622,
-  "sri": "sha384-Y0G9c+YGrWNqf+bYJCqXdyKVJH6xpjuqLwJu65UoTLfTs9zJ58V7YrhSD5dh/WVA"
+  "sri": "sha384-PnHQhg9eeUpc5lqldFE6Fvl3x8jkouu/cBDFy3WO9DUQdBhZ31W8ldXOxx+xye7V"
  },
  "insights/gfx-insights.dist.js": {
-  "bytes": 115717,
-  "sri": "sha384-2fmL5SxBWExTsJ8na1B4d/cUu9lz6gkVeNDgTghvZF34HTG0Wr5xQsRuKUDnmvWg"
+  "bytes": 116191,
+  "sri": "sha384-Ny8rx089Vn6Uz4X30OJ3oaSnvBiR2HnAryY1eGVpO4vgujHjAPiqlWsT9Q6R4u5H"
  },
  "insights/gfx-insights.dist.css": {
   "bytes": 53142,
-  "sri": "sha384-/J+9PYcH3tWKBylKfHhiXP1l2D45va9DwbpPYDhSdbiK97lxPvK1upqj7Yi3Pe6z"
+  "sri": "sha384-/dOpoXykKc0iO4iuwafo5x7Jg1sAtA7yw99s3U7uTNRtcHxFBdDcwt/E/jxRqNrF"
  },
  "person/gfx-person.dist.js": {
-  "bytes": 83854,
-  "sri": "sha384-La1Rodygqffvte3Bzt6Ed9qZzQekR2oXN9FB06LBzHzwDNEvTfgbs1y6fz0X5+A8"
+  "bytes": 84296,
+  "sri": "sha384-bZ7I7JhOUfRZKpPVX0Am3/11Hm7IIHTghnTMW4mDSBPUAJqH7P7uAdY8SZvLiC0Y"
  },
  "person/gfx-person.dist.css": {
   "bytes": 16986,
   "sri": "sha384-cIWDs2NLHqtDigo3hScsmk6yXcVXOoN3XDi/xntFgL3SFwZlJqG58IPW+2JuQE+/"
  },
  "investors/gfx-investors.dist.js": {
-  "bytes": 119000,
-  "sri": "sha384-zyRKt1rlYBNj5hJhFqOOa5CENNTrgFl0FagNMmX2ZMzl/uNDL0/aNCmCOpv3UUQ8"
+  "bytes": 119474,
+  "sri": "sha384-4rLBBzHYgOahu6D6iqMuKfoHcTuutQ1CYl8ijDKhBTeZ1i3M5eJxpH+dNPh604AB"
  },
  "investors/gfx-investors.dist.css": {
   "bytes": 60651,
-  "sri": "sha384-YOhC2uW+y3IJ2TfET0u+dcQj8IkGAyhY1JSc2JLXl0R/vrgw5UV3xMAWaJFBAVbG"
+  "sri": "sha384-YFRSDrs4C5Tif0p14BvWfjI57xn5wxRUQTlZv8dO4IkRzuja699tzwwigxuQlYB+"
  },
  "_versions": {
   "core": "1.0.27",
-  "home": "1.1.12",
-  "owners": "1.2.5",
-  "pages": "1.0.1",
+  "home": "1.1.13",
+  "owners": "1.2.6",
+  "pages": "1.0.2",
   "contact": "1.0.7",
   "privacy": "1.0.2",
   "team": "1.0.2",
   "insights": "1.2.1",
   "person": "1.0.1",
-  "investors": "1.0.10"
+  "investors": "1.0.11"
  }
 }

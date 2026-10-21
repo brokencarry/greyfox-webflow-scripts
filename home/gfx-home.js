@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.12';
+  W.__gfxHome = '1.1.13';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -694,7 +694,8 @@
     let near = false, rq = 0;
     const seenFa = fa => { const b = fa.getBoundingClientRect(); if (!(b.width > 0 && b.top < W.innerHeight && b.bottom > 0)) return false; const x = Math.min(W.innerWidth - 1, Math.max(0, b.left + b.width / 2)), y = Math.min(W.innerHeight - 1, Math.max(0, b.top + b.height / 2)), e = D.elementFromPoint(x, y); return !!(e && e.closest('.footer_section_wrapper')); };
     const check = () => { rq = 0; const fa = $('.gfx-fi-act'); if (!fa) return; const cr = cta.getBoundingClientRect(), shownK = Math.max(0, Math.min(cr.bottom, W.innerHeight) - Math.max(cr.top, 0)) / (cr.height || 1); const on = near && shownK <= 0.4 && seenFa(fa); mark.svg.classList.toggle('gfx-cm-off', on); cta.classList.toggle('gfx-cta-rest', on); };
-    const ask = () => { if (near && !rq) rq = requestAnimationFrame(check); };
+    // (smoothness lab 10/21) read just after a frame is drawn (core postFrame), not mid-frame as the close arrives
+    const ask = () => { if (near && !rq) { rq = 1; ((W.gfx && W.gfx.postFrame) || requestAnimationFrame)(check); } };
     if ('IntersectionObserver' in W) new IntersectionObserver(es => es.forEach(e => { near = e.isIntersecting; ask(); })).observe(cta);
     W.addEventListener('scroll', ask, { passive: true }); W.addEventListener('resize', ask);
   }

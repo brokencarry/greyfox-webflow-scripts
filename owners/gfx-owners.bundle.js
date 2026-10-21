@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.27 + owners 1.2.5. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.27 + owners 1.2.6. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -88,6 +88,21 @@
     const intro = !REDUCE && !/[?&]intro=0(&|$)/.test(qs) && (/[?&]intro(&|=1|$)/.test(qs) || (!location.hash && !store.get('gfx-intro-seen')));
     if (intro) H.classList.add('gfx-intro');
   });
+
+  /* (1.0.27, smoothness lab 10/21) the menu button's own code (the hamburger embed in the bar) styles its three parts
+     with class-text selectors ([class^="hamburger_line"], [class*=" hamburger_line"]). Those make the browser re-check
+     the whole page on ANY class change anywhere: every root class the scroll flips (the bar leaving and returning, a
+     tone turn, the footer's states) cost a full restyle - ~150 ms on a mid-range phone at a quarter speed, 2 ms
+     without them. The same rules are rewritten once to plain class selectors (.hamburger_line): the same three
+     elements (one class each), the same styles, the same open/close. */
+  const plainHamburger = () => safe('hamburger selectors', () => {
+    D.querySelectorAll('style').forEach(st => {
+      const t = st.textContent; if (t.indexOf('hamburger_') < 0 || t.indexOf('[class') < 0) return;
+      const nt = t.replace(/\[class\^="(hamburger_[\w-]+)"\]|\[class\*=" (hamburger_[\w-]+)"\]/g, (m, a, b) => '.' + (a || b));
+      if (nt !== t) st.textContent = nt;
+    });
+  });
+  if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', plainHamburger, { once: true }); else plainHamburger();
 
   // the failsafe: if the motion never takes the page (a blocked CDN, an error), everything shows
   const failsafe = () => {
@@ -362,7 +377,9 @@
       place();
       /* (1.0.27) a mark off the screen is not placed or watched; it is placed the moment it comes within half a screen */
       var near = true, owed = false;
-      var rq0 = 0, re = function () { if (!near) { owed = true; return; } if (!rq0) rq0 = requestAnimationFrame(function () { rq0 = 0; place(); }); };
+      // (placed just after a frame is drawn, postFrame: placing mid-frame, as a close arrives, laid the whole page out
+      // again each time - ~125 ms a placing on a mid-range phone)
+      var rq0 = 0, re = function () { if (!near) { owed = true; return; } if (!rq0) { rq0 = 1; postFrame(function () { rq0 = 0; place(); }); } };
       if ('IntersectionObserver' in W) new IntersectionObserver(function (es) { es.forEach(function (e) { near = e.isIntersecting; if (near && owed) { owed = false; re(); } if (near) zoneSoon(); }); }, { rootMargin: '50% 0px' }).observe(host);
       addEventListener('resize', function () { zoneZ = 0; re(); }); D.addEventListener('gfx:resplit', function () { kept = null; re(); });
       if (W.ScrollTrigger) ScrollTrigger.addEventListener('refresh', re);
@@ -1232,7 +1249,7 @@
     // (1.0.27, smoothness lab 10/21) it measured the close and the page on every frame from the top down; now only while
     // the close is within a screen and a half (once more as it leaves that range, so the drawing rests where it should)
     let nearC = true;
-    const ask = force => { if ((nearC || force === true) && !rq) rq = requestAnimationFrame(tick); };
+    const ask = force => { if ((nearC || force === true) && !rq) { rq = 1; postFrame(tick); } };
     const fox0 = $(sel); if (fox0 && fox0.parentElement && 'IntersectionObserver' in W) new IntersectionObserver(es => es.forEach(e => { nearC = e.isIntersecting; ask(true); }), { rootMargin: '150% 0px' }).observe(fox0.parentElement);
     addEventListener('scroll', ask, { passive: true }); addEventListener('resize', () => ask(true)); if (shared && shared.on) shared.on('scroll', ask);
     setTimeout(() => ask(true), 600); addEventListener('load', () => ask(true));
@@ -1351,7 +1368,7 @@
   let PAGE = null;
   const api = {
     core: VERSION, G, $, $$, safe, mq, store, clamp, docTop, NS, TAN, BASE, REDUCE, TOUCH, READ,
-    room, lineSplit, fitFilm, rooms, scrollToY, refresh, esc,
+    room, lineSplit, fitFilm, rooms, scrollToY, refresh, esc, postFrame,
     get gsap() { return gsap; }, get ST() { return ST; }, get lenis() { return shared; }, scrollNow,
     arrow: () => W.gfArrow, turn: () => W.gfTurn,
     onField: f => fieldListeners.push(f),
@@ -1458,7 +1475,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.5';
+  W.__gfxOwners = '1.2.6';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1917,7 +1934,8 @@
     let near = false, rq = 0;
     const seenFa = fa => { const b = fa.getBoundingClientRect(); if (!(b.width > 0 && b.top < W.innerHeight && b.bottom > 0)) return false; const x = Math.min(W.innerWidth - 1, Math.max(0, b.left + b.width / 2)), y = Math.min(W.innerHeight - 1, Math.max(0, b.top + b.height / 2)), e = D.elementFromPoint(x, y); return !!(e && e.closest('.footer_section_wrapper')); };
     const check = () => { rq = 0; const fa = $('.gfx-fi-act'); if (!fa) return; const cr = room.getBoundingClientRect(), k = Math.max(0, Math.min(cr.bottom, W.innerHeight) - Math.max(cr.top, 0)) / (cr.height || 1); room.classList.toggle('gfx-ow3-rest', near && k <= 0.4 && seenFa(fa)); };
-    const ask = () => { if (near && !rq) rq = requestAnimationFrame(check); };
+    // (smoothness lab 10/21) read just after a frame is drawn (core postFrame), not mid-frame as the close arrives
+    const ask = () => { if (near && !rq) { rq = 1; ((W.gfx && W.gfx.postFrame) || requestAnimationFrame)(check); } };
     if ('IntersectionObserver' in W) new IntersectionObserver(es => es.forEach(e => { near = e.isIntersecting; ask(); })).observe(room);
     W.addEventListener('scroll', ask, { passive: true }); W.addEventListener('resize', ask);
   }

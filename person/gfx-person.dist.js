@@ -55,6 +55,14 @@ const qs=location.search;
 const intro=!REDUCE&&!/[?&]intro=0(&|$)/.test(qs)&&(/[?&]intro(&|=1|$)/.test(qs)||(!location.hash&&!store.get('gfx-intro-seen')));
 if(intro)H.classList.add('gfx-intro');
 });
+const plainHamburger=()=>safe('hamburger selectors',()=>{
+D.querySelectorAll('style').forEach(st=>{
+const t=st.textContent;if(t.indexOf('hamburger_')<0||t.indexOf('[class')<0)return;
+const nt=t.replace(/\[class\^="(hamburger_[\w-]+)"\]|\[class\*=" (hamburger_[\w-]+)"\]/g,(m,a,b)=>'.'+(a||b));
+if(nt!==t)st.textContent=nt;
+});
+});
+if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',plainHamburger,{once:true});else plainHamburger();
 const failsafe=()=>{
 if(H.classList.contains('gfx-ready'))return;
 H.classList.add('gfx-failsafe');H.classList.remove('gfx-intro');ix3Late();
@@ -292,7 +300,7 @@ raf=requestAnimationFrame(step);
 var still=function(){drawn=true;lAt=0;hAt=1;place();};
 place();
 var near=true,owed=false;
-var rq0=0,re=function(){if(!near){owed=true;return;}if(!rq0)rq0=requestAnimationFrame(function(){rq0=0;place();});};
+var rq0=0,re=function(){if(!near){owed=true;return;}if(!rq0){rq0=1;postFrame(function(){rq0=0;place();});}};
 if('IntersectionObserver'in W)new IntersectionObserver(function(es){es.forEach(function(e){near=e.isIntersecting;if(near&&owed){owed=false;re();}if(near)zoneSoon();});},{rootMargin:'50% 0px'}).observe(host);
 addEventListener('resize',function(){zoneZ=0;re();});D.addEventListener('gfx:resplit',function(){kept=null;re();});
 if(W.ScrollTrigger)ScrollTrigger.addEventListener('refresh',re);
@@ -1031,7 +1039,7 @@ const t=Math.max(fp,Math.min(1,Math.max(0,(y-y0) / span))),k=t*t*t*(t*(t*6-15)+1
 if(o!==last){fox.style.opacity=o;last=o;}
 };
 let nearC=true;
-const ask=force=>{if((nearC||force===true)&&!rq)rq=requestAnimationFrame(tick);};
+const ask=force=>{if((nearC||force===true)&&!rq){rq=1;postFrame(tick);}};
 const fox0=$(sel);if(fox0&&fox0.parentElement&&'IntersectionObserver'in W)new IntersectionObserver(es=>es.forEach(e=>{nearC=e.isIntersecting;ask(true);}),{rootMargin:'150% 0px'}).observe(fox0.parentElement);
 addEventListener('scroll',ask,{passive:true});addEventListener('resize',()=>ask(true));if(shared&&shared.on)shared.on('scroll',ask);
 setTimeout(()=>ask(true),600);addEventListener('load',()=>ask(true));
@@ -1125,7 +1133,7 @@ return Promise.race([fr,cap]);
 let PAGE=null;
 const api={
 core:VERSION,G,$,$$,safe,mq,store,clamp,docTop,NS,TAN,BASE,REDUCE,TOUCH,READ,
-room,lineSplit,fitFilm,rooms,scrollToY,refresh,esc,
+room,lineSplit,fitFilm,rooms,scrollToY,refresh,esc,postFrame,
 get gsap(){return gsap;},get ST(){return ST;},get lenis(){return shared;},scrollNow,
 arrow:()=>W.gfArrow,turn:()=>W.gfTurn,
 onField:f=>fieldListeners.push(f),
