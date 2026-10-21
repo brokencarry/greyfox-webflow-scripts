@@ -47,3 +47,6 @@ html body .w-form-done h2 { font-weight: 700 !important; }
    keyboard or iPhone "Go" submit the browser counted that as keyboard focus and drew the core's 2px box round the
    heading - a dark frame on the moment the visitor should read. A non-interactive focus target shows no ring. */
 html.gfx-f3 .w-form-done:focus-visible, html.gfx-f3 .w-form-done [tabindex="-1"]:focus, html.gfx-f3 .w-form-done [tabindex="-1"]:focus-visible { outline: none !important; box-shadow: none !important; }
+/* (10/21 overnight states sweep) a field's note that wraps ("Please describe what the / company does.") ran its second
+   line back under the dash; the note hangs from its dash now (dash 10 px + 8 px gap), so every line starts with the words */
+html body [data-o~="r4-err"] { padding-left: 18px; text-indent: -18px; }
