@@ -956,3 +956,7 @@ html[data-theme="dark"] .cover-band::before { opacity: 1; }
   transition: color 0.15s;
 }
 .pass-table .pass-domain:hover { color: var(--accent); }
+
+/* (10/20, phone walk) the Investors phone window lays the report out ~500px wide: the six summary labels ran into each
+   other ("QUALIFIEDENGAGED"). Tighter tracking on narrow frames only; desktop untouched. */
+@media (max-width: 620px) { .summary-cell .lbl { letter-spacing: .08em; } }

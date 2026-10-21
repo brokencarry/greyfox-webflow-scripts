@@ -79,6 +79,12 @@ html:not(#gfx-iv1):not(#gfx-iv2):not(#gfx-iv3):not(#gfx-iv4) [data-o~="iv-cases"
 @media (min-width: 992px) and (max-height: 820px) {
   html:not(#gfx-iv) [data-o~="iv-cases"] [data-o~="iv-case-list"] { grid-template-rows: clamp(80px, 12vh, 120px) repeat(5, auto); }
 }
+/* (investors 1.0.9, phone walk) a card's two small figures share a row half the card wide: on a phone "Under 90 days"
+   (152px at 23px) ran into "3.7" beside it. The figures follow the screen's width there (19px on a 393 iPhone, 16.6 at
+   360, 21.6 at 430), so the longest still clears its column */
+@media (max-width: 767px) {
+  html:not(#gfx-iv1):not(#gfx-iv2):not(#gfx-iv3):not(#gfx-iv4) [data-o~="iv-cases"] [data-o~="iv-case-sf"] { font-size: min(23px, calc((100vw - 128px) / 14)); }
+}
 
 /* (investors 1.0.8) THE FOUR STAGES ON A PHONE: one line down the left (Owners' phone line; gfx-investors.js s1Phone) */
 @media (max-width: 767px) {
