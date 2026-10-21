@@ -545,3 +545,9 @@ html:not(#gfx-o) [data-o~="pt-mearn"] [data-o~="pt-yr"]::before { content: "Year
   html:not(#gfx-o) [data-o~="ow-pt"] { padding-left: var(--ow3-gut); padding-right: var(--ow3-gut); }
   html:not(#gfx-o) [data-o~="pt-map"] { margin: 0 calc(-1 * var(--ow3-gut)); width: calc(100% + 2 * var(--ow3-gut)); }
 }
+/* (10/21 type inventory, founder: "is typography ... consistent all throughout?") the hero headline takes the site's
+   three steps like every other page's h1 - 72 px from 992 px up, 56 px on a tablet, 40 px on a phone - instead of
+   scaling with the window (it read 65 px at 1280 and 84 px at 1920 while Investors, Contact, Team and Privacy hold 72) */
+html:not(#gfx-o) [data-o~=ow-hero] [data-o~=ow-h1] { font-size: 72px; }
+@media (max-width: 1279px) { html:not(#gfx-o) [data-o~=ow-hero] [data-o~=ow-h1] { font-size: 56px; } }   /* the hero's words share the row with the photograph: below 1280 px the column is too narrow for 72 (four lines at 1024) */
+@media (max-width: 767px) { html:not(#gfx-o) [data-o~=ow-hero] [data-o~=ow-h1] { font-size: 40px; } }
