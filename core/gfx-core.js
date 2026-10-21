@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.25';
+  const VERSION = '1.0.26';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -971,7 +971,9 @@
       notice: txt($('.gfx-notice', foot)) || 'Grey Fox Partners represents buyers. Nothing on this site is an offer or advice.'
     };
     if (!data.mail.length) data.mail = ['owners@greyfoxpartners.com', 'info@greyfoxpartners.com'];
-    if (!data.legal.length) data.legal = [['Terms of Service', '#'], ['Privacy Policy', '#']];
+    // (1.0.26, founder 10/21: "remove Terms") no Terms page: the legal row carries the Privacy Policy alone
+    data.legal = data.legal.filter(([t]) => !/^terms/i.test(t));
+    if (!data.legal.length) data.legal = [['Privacy Policy', '#']];
     const contact = (data.nav.find(([t]) => /contact/i.test(t)) || [0, '/contact'])[1];
     const clock = tz => `<span class="gfx-fi-time" data-gfx-clock="${tz}" aria-hidden="true"><span class="gfx-fi-h"></span><span class="gfx-fi-colon">:</span><span class="gfx-fi-m"></span><span class="gfx-fi-ap"></span></span>`;
     const col = (key, inner) => `<div class="gfx-fi-col gfx-fi-${key}"><i class="gfx-fi-rule" aria-hidden="true"></i><div class="gfx-fi-in">${inner}</div></div>`;
