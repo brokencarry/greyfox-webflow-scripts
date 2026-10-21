@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.11 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.12 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.11';
+W.__gfxInvestors='1.0.12';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1582,6 +1582,8 @@ fit();let t=0;W.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(fit,
 const go=()=>{if(started)return;started=true;loadPortal().then(ok=>{if(!ok)return;const sc=W.GFSearchScene.mount(box,{theme:'dark',autoplay:!REDUCE,loop:false,reducedMotion:REDUCE,frame:true,fit:'fill',
 label:'A client’s pipeline in the Grey Fox portal, a commercial HVAC search: the handoff stage, with one company’s note open. Illustrative companies and notes.'});if(sc&&sc.ready)sc.ready.then(tall);});};
 if('IntersectionObserver'in W){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();go();}},{rootMargin:'150% 0px'});io.observe(box);}else go();
+const idle=()=>(W.requestIdleCallback?W.requestIdleCallback(()=>safe('pipe idle',go),{timeout:3000}):setTimeout(()=>safe('pipe idle',go),1500));
+if(D.readyState==='complete')idle();else W.addEventListener('load',idle,{once:true});
 if(live&&ST){
 let lc='';
 ST.create({trigger:box,start:'top 96%',end:'top 50%',onUpdate:s=>{const k=eo(s.progress),c=`inset(0 0 ${((1-k)*14).toFixed(2)}% 0 round 10px)`;if(c!==lc){box.style.clipPath=c;lc=c;}},
