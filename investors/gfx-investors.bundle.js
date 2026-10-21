@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.17 + investors 1.0.3. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.17 + investors 1.0.4. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1301,7 +1301,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.3';
+  W.__gfxInvestors = '1.0.4';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1786,8 +1786,22 @@
         const top = S2.track.getBoundingClientRect().top + sy(), span = S2.track.offsetHeight - W.innerHeight;
         gfx.scrollToY(top + span * (i / 3 + 1 / 6), 1.4);
       }));
-      const fit = () => { S2.stage.style.setProperty('--iv2-mw', S2.win.offsetWidth + 'px'); };
-      fit(); W.addEventListener('resize', fit); ST.addEventListener('refreshInit', fit);
+      /* (1.0.4, granular audit 10/20) A SHORT WINDOW: the held stage is one screen tall and its last row takes what is
+         left, so below ~780px (1366x657, 1536x730, 1280x720: the common laptop windows) the beats, the Play line and the
+         note (about 425px) rose over the lede, up to 106px of text on text. When the gap under the lede falls below 16px,
+         the stage takes its own height and holds by its foot (top = screen - stage, as Investors' tall rooms do): the
+         beats and the window stay in view through the hold, the heading has been read on the way in. A window where it
+         fits (1440x900, 1920x1080) is untouched. */
+      const tall = on => { const s = S2.stage.style; if (on) { s.setProperty('height', 'auto', 'important'); s.setProperty('min-height', '100svh', 'important'); s.setProperty('grid-template-rows', 'auto auto auto', 'important'); s.top = Math.min(0, W.innerHeight - S2.stage.offsetHeight) + 'px'; } else { ['height', 'min-height', 'grid-template-rows', 'top'].forEach(p => s.removeProperty(p)); } };
+      const fit = () => {
+        S2.stage.style.setProperty('--iv2-mw', S2.win.offsetWidth + 'px');
+        const was = S2.stage.hasAttribute('data-gfx-tall'); tall(false);
+        const rows = getComputedStyle(S2.stage).gridTemplateRows.split(' ').map(parseFloat);
+        const on = !!S2.foot && rows.length === 3 && rows[1] - (S2.foot.offsetHeight - rows[2]) < 16;
+        S2.stage.toggleAttribute('data-gfx-tall', on); if (on) tall(true);
+        return on !== was;
+      };
+      if (fit()) ST.refresh(); W.addEventListener('resize', fit); ST.addEventListener('refreshInit', fit);
     }
     ST.addEventListener('refresh', () => { s1Layout(); s1Render(); });
     W.addEventListener('resize', () => { s1Layout(); s1Render(); });

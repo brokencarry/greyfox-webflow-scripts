@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.17 + investors 1.0.3 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.17 + investors 1.0.4 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1104,7 +1104,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.3';
+W.__gfxInvestors='1.0.4';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1533,8 +1533,16 @@ S2.bbs.forEach((b,i)=>b.addEventListener('click',()=>{
 const top=S2.track.getBoundingClientRect().top+sy(),span=S2.track.offsetHeight-W.innerHeight;
 gfx.scrollToY(top+span*(i / 3+1 / 6),1.4);
 }));
-const fit=()=>{S2.stage.style.setProperty('--iv2-mw',S2.win.offsetWidth+'px');};
-fit();W.addEventListener('resize',fit);ST.addEventListener('refreshInit',fit);
+const tall=on=>{const s=S2.stage.style;if(on){s.setProperty('height','auto','important');s.setProperty('min-height','100svh','important');s.setProperty('grid-template-rows','auto auto auto','important');s.top=Math.min(0,W.innerHeight-S2.stage.offsetHeight)+'px';}else{['height','min-height','grid-template-rows','top'].forEach(p=>s.removeProperty(p));}};
+const fit=()=>{
+S2.stage.style.setProperty('--iv2-mw',S2.win.offsetWidth+'px');
+const was=S2.stage.hasAttribute('data-gfx-tall');tall(false);
+const rows=getComputedStyle(S2.stage).gridTemplateRows.split(' ').map(parseFloat);
+const on=!!S2.foot&&rows.length===3&&rows[1]-(S2.foot.offsetHeight-rows[2])<16;
+S2.stage.toggleAttribute('data-gfx-tall',on);if(on)tall(true);
+return on!==was;
+};
+if(fit())ST.refresh();W.addEventListener('resize',fit);ST.addEventListener('refreshInit',fit);
 }
 ST.addEventListener('refresh',()=>{s1Layout();s1Render();});
 W.addEventListener('resize',()=>{s1Layout();s1Render();});
