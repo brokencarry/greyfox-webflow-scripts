@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.21 + owners 1.2.3 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.22 + owners 1.2.3 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.21';
+const VERSION='1.0.22';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -934,9 +934,9 @@ ST.refresh();return;
 }
 H.classList.add('gfx-ftg-reveal');
 measureF();tl=film(true);
-const live=y=>Math.min(1,Math.max(0,(W.innerHeight-(hostTop-y)) / (H0||1)));
+const live=()=>Math.min(1,Math.max(0,(W.innerHeight-host.getBoundingClientRect().top) / (H0||1)));
 let first=true;
-st=ST.create({start:0,end:'max',onRefresh:s=>{measureF();step(live(s.scroll()),true);first=false;},onUpdate:s=>{step(live(s.scroll()),first);first=false;}});
+st=ST.create({start:0,end:'max',onRefresh:()=>{measureF();step(live(),true);first=false;},onUpdate:()=>{step(live(),first);first=false;}});
 ro=new ResizeObserver(()=>{if(foot.offsetHeight!==H0){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>ST.refresh());}});
 ro.observe(foot);
 ST.refresh();
@@ -946,6 +946,8 @@ const re=()=>setup();
 if(wide.addEventListener)wide.addEventListener('change',re);else wide.addListener(re);
 let rz=0;W.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(re,180);});
 setup();
+const settle=()=>{if(mode==='reveal'&&H0){const r=host.getBoundingClientRect().top;step(Math.min(1,Math.max(0,(W.innerHeight-r) / H0)),true);}};
+W.addEventListener('load',()=>setTimeout(settle,60));W.addEventListener('pageshow',()=>setTimeout(settle,60));setTimeout(settle,1200);
 W.gfxFoot={get state(){return state;},get mode(){return mode;},get p(){return prog;},get film(){return tl;}};
 }
 function foxStep(sel){
@@ -1110,6 +1112,13 @@ if(PAGE.fox)safe('fox step',()=>foxStep(PAGE.fox));
 safe('fox watch',()=>foxWatch(PAGE.foxZone));
 H.classList.add('gfx-rooms');
 ST.refresh();
+safe('height watch',()=>{
+let lastH=D.documentElement.scrollHeight;
+ST.addEventListener('refresh',()=>{lastH=D.documentElement.scrollHeight;});
+const check=()=>{const h=D.documentElement.scrollHeight;if(Math.abs(h-lastH)>2)ST.refresh();};
+const later=()=>{setTimeout(check,300);setTimeout(check,1800);};
+if(D.readyState==='complete')later();else W.addEventListener('load',later);
+});
 },60);
 },200);
 });
