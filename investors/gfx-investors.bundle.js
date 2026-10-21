@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.19 + investors 1.0.8. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.20 + investors 1.0.8. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.19';
+  const VERSION = '1.0.20';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -869,7 +869,10 @@
       'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}' +
       // (1.0.19, founder 10/20: "on iPhone the footer's grey lines push up against the logo, Navigate and the left column")
       // the column rules divide columns standing side by side; stacked on a phone they ran down the text's own edge
-      '@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}'; (D.head || H).appendChild(st); }
+      '@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}' +
+      // (1.0.20, founder 10/20: "slightly lagging on a Mac") the designer's frosted menu re-blurred the page under the bar on
+      // every scrolled frame; past the top the bar is solid and the blur showed nothing. It stays where it shows: the top.
+      'html.gfx-f3 .gfx-nav:not(.gfx-top) :is(.navigation_items,.w-nav-menu){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
@@ -1150,6 +1153,19 @@
   // made the body the scroll container, so every sticky stage broke (Owners' partnership hold among them). Once the page's
   // own layer has run (the bundle evaluates it right after the core), a page without Home's layer drops it at once
   onReady(() => { if (!W.__gfxHome) H.classList.remove('gfx-intro'); });
+  /* (1.0.20, founder 10/20: "slightly lagging on a Mac") A FILM NO ONE CAN SEE IS STOPPED: the designer's background
+     video (Home's hero, under the still that replaced it) is hidden but looped and decoded for the whole visit. A video
+     with no box on the screen (hidden, not displayed, or 0 x 0) that the page did not start itself is paused and not
+     fetched further; checked at load and after a resize. Our own films (Mission Control, the stages) are untouched. */
+  const idleFilms = () => safe('idle films', () => D.querySelectorAll('video').forEach(v => {
+    if (v.closest('[data-o], .gfx-mc-still')) return;   // our rooms' films are run by their pages
+    const cs = getComputedStyle(v), r = v.getBoundingClientRect();
+    let hidden = cs.display === 'none' || cs.visibility === 'hidden' || r.width < 2 || r.height < 2;
+    for (let n = v.parentElement; !hidden && n && n !== D.body; n = n.parentElement) { const s = getComputedStyle(n); if (s.display === 'none' || s.visibility === 'hidden') hidden = true; }
+    if (hidden) { if (!v.paused) v.pause(); v.removeAttribute('autoplay'); v.autoplay = false; v.preload = 'none'; v.dataset.gfxIdle = '1'; }
+    else if (v.dataset.gfxIdle) { delete v.dataset.gfxIdle; v.autoplay = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+  }));
+  onReady(idleFilms); W.addEventListener('load', () => setTimeout(idleFilms, 200)); { let vt = 0; W.addEventListener('resize', () => { clearTimeout(vt); vt = setTimeout(idleFilms, 400); }); }
   // (core 1.0.4, STAGING ONLY) while the Flow 3 pages live on their -v2 slugs, every link to the designer's Contact page
   // reaches Contact v2 instead (the closes' "Start a conversation", footer I's action, the nav). Inert once the v2 pages
   // replace the originals at launch (no page path carries "-v2" then): delete this block at launch

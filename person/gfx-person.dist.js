@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.19 + person 1.0.1 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.20 + person 1.0.1 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.19';
+const VERSION='1.0.20';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -738,7 +738,8 @@ const bar=$('.gfx-nav');if(!bar)return;
 if(!$('#gfx-bar-btn')){const st=D.createElement('style');st.id='gfx-bar-btn';st.textContent='html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}'+
 'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}'+
 'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}'+
-'@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}';(D.head||H).appendChild(st);}
+'@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}'+
+'html.gfx-f3 .gfx-nav:not(.gfx-top) :is(.navigation_items,.w-nav-menu){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}';(D.head||H).appendChild(st);}
 let showing=true,upFrom=null,prevY=null;
 gsap.set(bar,{'--gfx-away':0});
 const setShown=want=>{
@@ -987,6 +988,15 @@ $$('.divider').forEach(el=>clr(el,['width','transform','-webkit-transform']));
 });
 const onReady=fn=>(D.readyState==='loading'?D.addEventListener('DOMContentLoaded',fn,{once:true}):fn());
 onReady(()=>{if(!W.__gfxHome)H.classList.remove('gfx-intro');});
+const idleFilms=()=>safe('idle films',()=>D.querySelectorAll('video').forEach(v=>{
+if(v.closest('[data-o], .gfx-mc-still'))return;
+const cs=getComputedStyle(v),r=v.getBoundingClientRect();
+let hidden=cs.display==='none'||cs.visibility==='hidden'||r.width<2||r.height<2;
+for(let n=v.parentElement;!hidden&&n&&n!==D.body;n=n.parentElement){const s=getComputedStyle(n);if(s.display==='none'||s.visibility==='hidden')hidden=true;}
+if(hidden){if(!v.paused)v.pause();v.removeAttribute('autoplay');v.autoplay=false;v.preload='none';v.dataset.gfxIdle='1';}
+else if(v.dataset.gfxIdle){delete v.dataset.gfxIdle;v.autoplay=true;const p=v.play();if(p&&p.catch)p.catch(()=>{});}
+}));
+onReady(idleFilms);W.addEventListener('load',()=>setTimeout(idleFilms,200));{let vt=0;W.addEventListener('resize',()=>{clearTimeout(vt);vt=setTimeout(idleFilms,400);});}
 const STAGING= /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname)|| /\.webflow\.io$/.test(location.hostname);
 const toV2=a=>{
 const h=a.getAttribute('href')||'',t=(a.textContent||'').trim();
