@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.13 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.14 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.13';
+W.__gfxInvestors='1.0.14';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1649,7 +1649,7 @@ S2.bbs.forEach((b,i)=>b.addEventListener('click',()=>pick(i)));
 pick(0);
 };
 const MC_ALT=[
-'Mission Control: the profile of Ambercote Elevator Co., an illustrative company, with this week’s calls and their notes.',
+'Mission Control: a recorded owner meeting with Kestinby Lift Co., an illustrative company, reviewed: the conversation measured, each objection set beside the answer given, the next steps and what worked.',
 'Mission Control: the research on Ambercote Elevator Co., an illustrative company: founded 1988, Overland Park, Kansas, one branch, 60 to 75 employees.',
 'Mission Control: the firm dashboard, with illustrative figures: 398 engaged, 137 qualified, 101 at handoff and 8 beyond handoff, and the effort across 14 sectors.'];
 const MC_KEY=['refined','efficient','transparent'];

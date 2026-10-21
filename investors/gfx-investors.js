@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.13';
+  W.__gfxInvestors = '1.0.14';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -550,8 +550,9 @@
   /* (1.0.1, 10/20) MISSION CONTROL ON A PHONE: a still of the whole working area per tab (the founder's pick), not the film.
      The film is a 2240px desktop screen; below 768px each tab shows a sharp still of the same screen (no left menu, 16:9),
      the films are never fetched, and a tap opens the screen full size to slide across and read. Stills: investors/mc/. */
+  /* (1.0.14, 10/21) Refined is now the call review (the founder's "full Gong view", no transcript): its still and words follow. */
   const MC_ALT = [
-    'Mission Control: the profile of Ambercote Elevator Co., an illustrative company, with this week’s calls and their notes.',
+    'Mission Control: a recorded owner meeting with Kestinby Lift Co., an illustrative company, reviewed: the conversation measured, each objection set beside the answer given, the next steps and what worked.',
     'Mission Control: the research on Ambercote Elevator Co., an illustrative company: founded 1988, Overland Park, Kansas, one branch, 60 to 75 employees.',
     'Mission Control: the firm dashboard, with illustrative figures: 398 engaged, 137 qualified, 101 at handoff and 8 beyond handoff, and the effort across 14 sectors.'];
   const MC_KEY = ['refined', 'efficient', 'transparent'];
