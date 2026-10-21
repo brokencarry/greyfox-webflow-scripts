@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.27 + home 1.1.13 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.27 + home 1.1.14 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.13';
+W.__gfxHome='1.1.14';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
 const PIN='(min-width: 992px) and (min-height: 681.01px)',UNPIN='(max-width: 991px), (max-height: 680.99px)';
@@ -1700,7 +1700,9 @@ if(phone()&&portal&&'IntersectionObserver'in W)safe('mk phone',()=>{
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){ensureDemo();demoDo('play');io.disconnect();}}),{threshold:0.35});
 io.observe(portal);
 });
-const idleMount=()=>(W.requestIdleCallback?W.requestIdleCallback(()=>safe('mk idle',ensureDemo),{timeout:3000}):setTimeout(()=>safe('mk idle',ensureDemo),1500));
+let moved=0;W.addEventListener('scroll',()=>{moved=performance.now();},{passive:true});
+const idleMount=()=>{if(demo)return;const still=()=>{if(demo)return;if(performance.now()-moved<400){setTimeout(idleMount,300);return;}safe('mk idle',ensureDemo);};
+if(W.requestIdleCallback)W.requestIdleCallback(still,{timeout:3000});else setTimeout(still,1500);};
 if(D.readyState==='complete')idleMount();else W.addEventListener('load',idleMount,{once:true});
 W.gfxMarket={state:()=>({P,E,step}),redraw:rd};
 }

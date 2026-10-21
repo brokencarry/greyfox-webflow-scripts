@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.27 + home 1.1.13. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.27 + home 1.1.14. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1475,7 +1475,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.13';
+  W.__gfxHome = '1.1.14';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -2035,7 +2035,11 @@
     });
     // (1.1.6, final audit: mounting the client's window as the market arrived dropped 3-4 frames on a phone) the window is
     // built in the first idle moment after load, long before the reader reaches it
-    const idleMount = () => (W.requestIdleCallback ? W.requestIdleCallback(() => safe('mk idle', ensureDemo), { timeout: 3000 }) : setTimeout(() => safe('mk idle', ensureDemo), 1500));
+    // (1.1.14, smoothness lab 10/21: the idle moment can fall just as a thumb starts the scroll) and only while the page
+    // is still - no scroll in the last 0.4 s, else it looks again shortly; arriving at the market still builds it at once
+    let moved = 0; W.addEventListener('scroll', () => { moved = performance.now(); }, { passive: true });
+    const idleMount = () => { if (demo) return; const still = () => { if (demo) return; if (performance.now() - moved < 400) { setTimeout(idleMount, 300); return; } safe('mk idle', ensureDemo); };
+      if (W.requestIdleCallback) W.requestIdleCallback(still, { timeout: 3000 }); else setTimeout(still, 1500); };
     if (D.readyState === 'complete') idleMount(); else W.addEventListener('load', idleMount, { once: true });
     W.gfxMarket = { state: () => ({ P, E, step }), redraw: rd };
   }

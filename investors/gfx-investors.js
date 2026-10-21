@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.12';
+  W.__gfxInvestors = '1.0.13';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -417,7 +417,10 @@
       rail.style.display = '';
       const lr = list.getBoundingClientRect(), Hh = list.offsetHeight, X = 11, tip = 40, rise = 20;
       ys = S1.stops.map(li => { const t = $(O('iv2-sn'), li), r = (t || li).getBoundingClientRect(); return r.top - lr.top + r.height / 2; });
-      const y0 = Math.max(0, ys[0] - 40), yE = ys[3], f = v => v.toFixed(1);
+      // (1.0.13, founder 10/21: "the arrow should go a little lower so it points up directly to the Introduced to a
+      // client statement") the turn sits just under the words (16 px below their middle), so the head rises into them
+      // and ends level with them, not above
+      const y0 = Math.max(0, ys[0] - 40), yE = ys[3] + 16, f = v => v.toFixed(1);
       const d = `M${X} ${f(y0)}V${f(yE - 14)}Q${X} ${f(yE)} ${X + 14} ${f(yE)}H${tip - 8}L${tip} ${f(yE - rise)}`;
       const ticks = [0, 1, 2, 3].map(i => { const y = y0 + 6 + i * 7; return `<circle class="gfx-s1-n gfx-s1-n-tick" data-at="${f(y)}" cx="${X}" cy="${f(y)}" r="1.9"/>`; }).join('');
       rail.setAttribute('width', 48); rail.setAttribute('height', f(Hh)); rail.setAttribute('viewBox', `0 0 48 ${f(Hh)}`);
@@ -469,7 +472,11 @@
     // (smoothness lab 10/21: building the window as the reader approached it froze a mid-range phone ~200-330 ms
     // mid-scroll, the portal's own first frame and layout) as on Home (1.1.6), the window is built in the first idle
     // moment after load, while the reader is still on the opening; the approach above stays as the fallback
-    const idle = () => (W.requestIdleCallback ? W.requestIdleCallback(() => safe('pipe idle', go), { timeout: 3000 }) : setTimeout(() => safe('pipe idle', go), 1500));
+    // (1.0.13, live check: the idle moment can fall just as a thumb starts the scroll) and only while the page is still:
+    // no scroll in the last 0.4 s, else it looks again shortly
+    let moved = 0; W.addEventListener('scroll', () => { moved = performance.now(); }, { passive: true });
+    const idle = () => { if (started) return; const still = () => { if (started) return; if (performance.now() - moved < 400) { setTimeout(idle, 300); return; } safe('pipe idle', go); };
+      if (W.requestIdleCallback) W.requestIdleCallback(still, { timeout: 3000 }); else setTimeout(still, 1500); };
     if (D.readyState === 'complete') idle(); else W.addEventListener('load', idle, { once: true });
     if (live && ST) {
       let lc = '';
