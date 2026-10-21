@@ -152,6 +152,13 @@ const $$=(s,r)=>Array.prototype.slice.call((r||D).querySelectorAll(s));
 const NS='http://www.w3.org/2000/svg',TAN=Math.tan(38.2*Math.PI / 180);
 const arr=x=>(x?[].concat(x):[]).reduce((a,e)=>a.concat(typeof e==='string'?$$(e):[e]),[]).filter(Boolean);
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const postFrame=(()=>{
+const q=[];let mc=null,armed=false;
+const flush=()=>{armed=false;const fs=q.splice(0);for(const f of fs){try{f();}catch(e){}}};
+return f=>{q.push(f);if(armed)return;armed=true;
+if(!mc&&W.MessageChannel){mc=new MessageChannel();mc.port1.onmessage=flush;}
+requestAnimationFrame(()=>{if(mc)mc.port2.postMessage(0);else setTimeout(flush,0);});};
+})();
 const docTop=el=>{let y=0;for(let n=el;n;n=n.offsetParent)y+=n.offsetTop;return y;};
 const scrollNow=()=>(shared?shared.scroll:W.scrollY);
 let ST=null,gsap=null;
@@ -295,7 +302,7 @@ if(o.el){o.el.addEventListener('transitionend',re);o.el.addEventListener('animat
 var zoneZ=0,zq=0,zoneOut=false,zone=function(){zq=0;if(!near)return;var r0=rng();if(!r0)return;var rs=r0.getClientRects();if(!rs.length)return;
 var z=zoneZ||(zoneZ=parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--gf-zone'))||74),top=rs[rs.length-1].top;
 var out=top<z-2;if(out!==zoneOut){zoneOut=out;svg.style.opacity=out?'0':'';}};
-var zoneSoon=function(){if(!zq)zq=requestAnimationFrame(zone);};
+var zoneSoon=function(){if(!zq){zq=1;postFrame(zone);}};
 addEventListener('scroll',function(){if(near)zoneSoon();},{passive:true});
 if(W.lenis&&W.lenis.on)W.lenis.on('scroll',function(){if(near)zoneSoon();});
 if(o.auto!==false){
@@ -735,7 +742,7 @@ return solid(getComputedStyle(D.body).backgroundColor)||'rgb(246, 245, 242)';
 };
 let ran=0,tmo=0,poked=0;
 const run=()=>{raf=0;ran=performance.now();const c=pick();if(c!==last){m.setAttribute('content',c);last=c;}};
-const soon=()=>{if(raf||tmo)return;const wait=200-(performance.now()-ran);if(wait>0)tmo=setTimeout(()=>{tmo=0;raf=requestAnimationFrame(run);},wait);else raf=requestAnimationFrame(run);};
+const soon=()=>{if(raf||tmo)return;const wait=200-(performance.now()-ran);if(wait>0)tmo=setTimeout(()=>{tmo=0;raf=1;postFrame(run);},wait);else{raf=1;postFrame(run);}};
 const poke=()=>{poked=performance.now();soon();};
 addEventListener('scroll',poke,{passive:true});addEventListener('resize',poke);D.addEventListener('click',()=>{poked=performance.now();setTimeout(soon,350);},true);
 setInterval(()=>{if(!D.hidden&&performance.now()-poked<2000)soon();},500);run();
@@ -782,7 +789,42 @@ const CHROME='.navigation_wrapper, .gfx-skip, .preloader, .gfx-ftg-fly, .gfx-fly
 let away=false,since=0,rq=0,last=-1,lastY=W.scrollY;
 const shownEl=el=>{for(let n=el;n&&n!==D.body;n=n.parentElement){const cs=getComputedStyle(n);if(cs.visibility==='hidden'||+cs.opacity<0.05)return false;}return true;};
 const hit=(q,z)=>q.right>z.left&&q.left<z.right&&q.bottom>z.top&&q.top<z.bottom;
-const near=(r,m)=>{
+const MEDIA= /^(IMG|VIDEO|CANVAS|svg)$/;
+const ownText=el=>{for(let n=el.firstChild;n;n=n.nextSibling)if(n.nodeType===3&& /\S/.test(n.data))return true;return false;};
+const outerSvg=e=>{while(e&&e.ownerSVGElement)e=e.ownerSVGElement;return e;};
+const wants=el=>MEDIA.test(el.tagName)?!(el.tagName==='svg'&&el.ownerSVGElement):ownText(el);
+const CAND=new Set(),ALL=[],seenEl=new WeakSet();let io=null,ioZ=0;
+const watchEl=el=>{if(seenEl.has(el)||!wants(el))return;seenEl.add(el);ALL.push(el);if(io)io.observe(el);};
+const pend=[];let pendT=0;
+const drain=dl=>{const t0=performance.now();while(pend.length&&(dl&&dl.timeRemaining?dl.timeRemaining()>2:performance.now()-t0<6)){const n=pend.pop();if(!n||n.nodeType!==1||!n.isConnected||n.matches(CHROME)|| /^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE|IFRAME)$/.test(n.tagName))continue;watchEl(n);if(n.tagName!=='svg')for(let c=n.lastElementChild;c;c=c.previousElementSibling)pend.push(c);}pendT=pend.length?later(drain):0;};
+const later=f=>W.requestIdleCallback?W.requestIdleCallback(f,{timeout:400}):setTimeout(f,60);
+const queue=n=>{if(!n||n.nodeType!==1||(n!==D.body&&n.closest(CHROME)))return;pend.push(n);if(!pendT)pendT=later(drain);};
+const zoneIO=()=>{
+if(!('IntersectionObserver'in W))return;
+const im=$$('img',link).filter(i=>i.offsetWidth)[0]||link,r=im.getBoundingClientRect(),vw=W.innerWidth,vh=W.innerHeight;
+const Z=Math.max(M[1],M[0]+(M[2]?180:48))+2,t=Math.max(0,r.top-Z),l=Math.max(0,r.left-Z),b=Math.min(vh,r.bottom+Z),rt=Math.min(vw,r.right+Z);
+const key=[t,l,b,rt].map(Math.round).join();if(io&&key===ioZ)return;ioZ=key;
+if(io)io.disconnect();CAND.clear();
+io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)CAND.add(e.target);else CAND.delete(e.target);});ask();},
+{rootMargin:`${-Math.round(t)}px ${-Math.round(vw-rt)}px ${-Math.round(vh-b)}px ${-Math.round(l)}px`});
+for(let i=ALL.length-1;i>=0;i--){if(ALL[i].isConnected)io.observe(ALL[i]);else ALL.splice(i,1);}
+};
+const onTop=(e,q,z)=>{
+const x=clamp((Math.max(q.left,z.left)+Math.min(q.right,z.right)) / 2,0,W.innerWidth-1),y=clamp((Math.max(q.top,z.top)+Math.min(q.bottom,z.bottom)) / 2,0,W.innerHeight-1);
+let top=D.elementsFromPoint(x,y).filter(el=>!el.closest(CHROME))[0];if(top instanceof SVGElement)top=outerSvg(top)||top;
+return!!top&&(top===e||e.contains(top));
+};
+const nearIO=(r,m)=>{
+if(!CAND.size)return false;
+const z={left:r.left-m,top:r.top-m,right:r.right+m,bottom:r.bottom+m};
+for(const e of CAND){
+if(!e.isConnected){CAND.delete(e);continue;}
+if(MEDIA.test(e.tagName)){const qi=e.getBoundingClientRect();if(qi.width<W.innerWidth*0.6&&hit(qi,z)&&shownEl(e)&&onTop(e,qi,z))return true;continue;}
+for(let nd=e.firstChild;nd;nd=nd.nextSibling){if(nd.nodeType!==3||!/\S/.test(nd.data))continue;const rg=D.createRange();rg.selectNodeContents(nd);const qs=rg.getClientRects();for(let q=0;q<qs.length;q++)if(hit(qs[q],z)&&shownEl(e)&&onTop(e,qs[q],z))return true;}
+}
+return false;
+};
+const nearGrid=(r,m)=>{
 const z={left:r.left-m,top:r.top-m,right:r.right+m,bottom:r.bottom+m},seen=[];
 const nj=Math.max(3,Math.min(9,Math.ceil((z.bottom-z.top) / 24)));
 for(let i=0;i<=2;i++)for(let j=0;j<=nj;j++){
@@ -795,19 +837,29 @@ for(let k=0;k<e.childNodes.length;k++){const nd=e.childNodes[k];if(nd.nodeType!=
 }
 return false;
 };
+const near=(r,m)=>(io?nearIO(r,m):nearGrid(r,m));
 const GAP=50;let ran=0,tmo=0;
 const tick=()=>{
-rq=0;const im=$$('img',link).filter(i=>i.offsetWidth)[0]||link;const r=im.getBoundingClientRect(),now=performance.now();ran=now;
+rq=0;const now=performance.now();ran=now;
 const dy=Math.abs(W.scrollY-lastY);lastY=W.scrollY;const ahead=M[0]+(M[2]?Math.min(180,dy*1.5):Math.min(48,dy));
-if(!away){if(near(r,ahead)){away=true;bar.classList.add('gfx-fox-away');}}
-else if(near(r,M[1]))since=0;
+const empty=!!io&&!CAND.size;let r=null;
+const isNear=m=>{if(empty)return false;if(!r){const im=$$('img',link).filter(i=>i.offsetWidth)[0]||link;r=im.getBoundingClientRect();}return near(r,m);};
+if(!away){if(isNear(ahead)){away=true;bar.classList.add('gfx-fox-away');}}
+else if(isNear(M[1]))since=0;
 else if(!since){since=now;ask();}
 else if(now-since>350){away=false;since=0;bar.classList.remove('gfx-fox-away');}
 else ask();
 };
-const ask=()=>{if(rq||tmo)return;const wait=GAP-(performance.now()-ran);if(wait>0)tmo=setTimeout(()=>{tmo=0;rq=requestAnimationFrame(tick);},wait);else rq=requestAnimationFrame(tick);};
-addEventListener('scroll',ask,{passive:true});addEventListener('resize',ask);
-setInterval(()=>{const y=W.scrollY;if(y!==last){last=y;ask();}},250);ask();
+const ask=()=>{if(rq||tmo)return;const wait=GAP-(performance.now()-ran);if(wait>0)tmo=setTimeout(()=>{tmo=0;rq=1;postFrame(tick);},wait);else{rq=1;postFrame(tick);}};
+addEventListener('scroll',ask,{passive:true});
+let rzT=0;addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{zoneIO();ask();},150);});
+setInterval(()=>{const y=W.scrollY;if(y!==last){last=y;ask();}},250);
+if('IntersectionObserver'in W){
+zoneIO();queue(D.body);
+if('MutationObserver'in W)new MutationObserver(ms=>ms.forEach(mu=>{if(mu.type!=='childList')return;mu.addedNodes.forEach(n=>queue(n.nodeType===1?n:mu.target));})).observe(D.body,{childList:true,subtree:true});
+if(D.fonts&&D.fonts.ready)D.fonts.ready.then(()=>{zoneIO();ask();});
+}
+ask();
 }
 const FOX='https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6ace72f97fb1cddac2a0305c_gfx-logo-fox-gold.svg';
 const LOGO='https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6aac4f63ec128fc57da36e73_logo-full.png';
