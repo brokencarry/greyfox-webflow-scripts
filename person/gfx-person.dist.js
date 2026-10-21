@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.27 + person 1.0.1 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.27 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxPerson)return;
-W.__gfxPerson='1.0.1';
+W.__gfxPerson='1.0.2';
 const H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE,G=gfx.G;
 const O=c=>'[data-o~="'+c+'"]';
 H.classList.add('gf-flow','gf-flow2','gf-flow3','gf-dark-black','ow-js','gfx-tp-js','tp','tp-v-a');
@@ -1251,7 +1251,7 @@ rise([$(O('tp-f-k'),f),$(O('tp-f-v'),f)].filter(Boolean),{delay:0.25});
 const b1=$(O('tp-b1'),root);
 if(b1&&W.SplitText){
 let played=false;
-W.SplitText.create(b1,{type:'lines',mask:'lines',linesClass:'tp-sl',autoSplit:true,onSplit(self){
+W.SplitText.create(b1,{type:'lines',mask:'lines',linesClass:'tp-sl',autoSplit:true,aria:'none',onSplit(self){
 b1.style.opacity=1;
 if(played)return;
 return gsap.fromTo(self.lines,{yPercent:108},{yPercent:0,duration:1.3,stagger:0.08,ease:SETTLE,

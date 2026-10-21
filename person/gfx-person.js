@@ -22,7 +22,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPerson) return;
-  W.__gfxPerson = '1.0.1';
+  W.__gfxPerson = '1.0.2';
   const H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE, G = gfx.G;
   const O = c => '[data-o~="' + c + '"]';
   // the local page's html classes, before the body is parsed (the ported stylesheet reads them); tp-m holds the arrival
@@ -75,7 +75,9 @@
     const b1 = $(O('tp-b1'), root);
     if (b1 && W.SplitText) {
       let played = false;
-      W.SplitText.create(b1, { type: 'lines', mask: 'lines', linesClass: 'tp-sl', autoSplit: true, onSplit(self) {
+      // (1.0.2, a11y sweep 10/21) aria 'none', as every other split on the site: SplitText's default hid the lines from
+      // screen readers and named the paragraph with aria-label, which a <p> may not carry, so the bio's opening was silent
+      W.SplitText.create(b1, { type: 'lines', mask: 'lines', linesClass: 'tp-sl', autoSplit: true, aria: 'none', onSplit(self) {
         b1.style.opacity = 1;
         if (played) return;
         return gsap.fromTo(self.lines, { yPercent: 108 }, { yPercent: 0, duration: 1.3, stagger: 0.08, ease: SETTLE,
