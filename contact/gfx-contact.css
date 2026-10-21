@@ -43,3 +43,7 @@ html body [data-o~="r4-tel"]:not(#gfx-c6)::after { content: ""; position: absolu
 /* (10/21, founder: "Bold that text so someone on iPhone or mobile can easily tell their form was submitted") the thanks
    is set in the serif's bold (Sentient 700, an uploaded weight - never a faked bold), at every width */
 html body .w-form-done h2 { font-weight: 700 !important; }
+/* (10/21 overnight states sweep) the thanks takes focus so a screen reader reads it (tabindex -1, never tabbable); after a
+   keyboard or iPhone "Go" submit the browser counted that as keyboard focus and drew the core's 2px box round the
+   heading - a dark frame on the moment the visitor should read. A non-interactive focus target shows no ring. */
+html.gfx-f3 .w-form-done:focus-visible, html.gfx-f3 .w-form-done [tabindex="-1"]:focus, html.gfx-f3 .w-form-done [tabindex="-1"]:focus-visible { outline: none !important; box-shadow: none !important; }
