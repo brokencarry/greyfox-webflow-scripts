@@ -755,6 +755,8 @@ onEnter:()=>navLook(false),
 onLeaveBack:()=>{navLook(true);setShown(true);}});
 navLook(!past.isActive&&W.scrollY<W.innerHeight*0.5);
 if(past.isActive)setShown(true);
+const barHome=()=>{if(scrollNow()<W.innerHeight*0.5){navLook(true);upFrom=null;prevY=null;if(!showing)setShown(true);else{gsap.set(bar,{'--gfx-away':0});bar.classList.remove('gfx-away');H.classList.remove('gfx-bar-away');}}};
+W.addEventListener('pageshow',()=>setTimeout(barHome,60));W.addEventListener('load',()=>setTimeout(barHome,300));setTimeout(barHome,1200);
 }
 function foxWatch(M){
 M=M||[28,36,true];

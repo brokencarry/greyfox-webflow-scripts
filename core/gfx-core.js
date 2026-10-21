@@ -880,6 +880,12 @@
       onLeaveBack: () => { navLook(true); setShown(true); } });
     navLook(!past.isActive && W.scrollY < W.innerHeight * 0.5);
     if (past.isActive) setShown(true);
+    /* (1.0.18, founder 10/20: "if I scroll down and hit Next, the bar goes away" - Shivam -> Tony / Burke) a page shown with
+       the bar tucked away while the reader is in its first half screen (a page restored from the browser's cache with the
+       state it left in, or a scroll event that reached the new page): the bar is never away there. Checked on show, on
+       load and once settled. */
+    const barHome = () => { if (scrollNow() < W.innerHeight * 0.5) { navLook(true); upFrom = null; prevY = null; if (!showing) setShown(true); else { gsap.set(bar, { '--gfx-away': 0 }); bar.classList.remove('gfx-away'); H.classList.remove('gfx-bar-away'); } } };
+    W.addEventListener('pageshow', () => setTimeout(barHome, 60)); W.addEventListener('load', () => setTimeout(barHome, 300)); setTimeout(barHome, 1200);
   }
   function foxWatch(M) {
     M = M || [28, 36, true];   // [in, out, look ahead]: Home keeps its own tighter zone (sbx.js: 2 / 6 px, no look ahead)

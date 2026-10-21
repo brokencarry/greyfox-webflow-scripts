@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.17 + investors 1.0.6 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.17 + investors 1.0.7 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -755,6 +755,8 @@ onEnter:()=>navLook(false),
 onLeaveBack:()=>{navLook(true);setShown(true);}});
 navLook(!past.isActive&&W.scrollY<W.innerHeight*0.5);
 if(past.isActive)setShown(true);
+const barHome=()=>{if(scrollNow()<W.innerHeight*0.5){navLook(true);upFrom=null;prevY=null;if(!showing)setShown(true);else{gsap.set(bar,{'--gfx-away':0});bar.classList.remove('gfx-away');H.classList.remove('gfx-bar-away');}}};
+W.addEventListener('pageshow',()=>setTimeout(barHome,60));W.addEventListener('load',()=>setTimeout(barHome,300));setTimeout(barHome,1200);
 }
 function foxWatch(M){
 M=M||[28,36,true];
@@ -1104,7 +1106,7 @@ ST.refresh();
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.6';
+W.__gfxInvestors='1.0.7';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';

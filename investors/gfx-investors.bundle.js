@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.17 + investors 1.0.6. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.17 + investors 1.0.7. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -881,6 +881,12 @@
       onLeaveBack: () => { navLook(true); setShown(true); } });
     navLook(!past.isActive && W.scrollY < W.innerHeight * 0.5);
     if (past.isActive) setShown(true);
+    /* (1.0.18, founder 10/20: "if I scroll down and hit Next, the bar goes away" - Shivam -> Tony / Burke) a page shown with
+       the bar tucked away while the reader is in its first half screen (a page restored from the browser's cache with the
+       state it left in, or a scroll event that reached the new page): the bar is never away there. Checked on show, on
+       load and once settled. */
+    const barHome = () => { if (scrollNow() < W.innerHeight * 0.5) { navLook(true); upFrom = null; prevY = null; if (!showing) setShown(true); else { gsap.set(bar, { '--gfx-away': 0 }); bar.classList.remove('gfx-away'); H.classList.remove('gfx-bar-away'); } } };
+    W.addEventListener('pageshow', () => setTimeout(barHome, 60)); W.addEventListener('load', () => setTimeout(barHome, 300)); setTimeout(barHome, 1200);
   }
   function foxWatch(M) {
     M = M || [28, 36, true];   // [in, out, look ahead]: Home keeps its own tighter zone (sbx.js: 2 / 6 px, no look ahead)
@@ -1301,7 +1307,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.6';
+  W.__gfxInvestors = '1.0.7';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
