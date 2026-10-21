@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.17';
+  const VERSION = '1.0.18';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -860,7 +860,12 @@
        the articles) carry the nav's "base" variant, whose "Start a conversation" shows only through the pages' top rule
        (.gfx-top). Past half a screen the bar drops gfx-top and the button vanished there, while Home, Owners and Investors
        (the "dark" variant) kept it. The solid bar shows it on every page; on phones it sits in the folded menu. */
-    if (!$('#gfx-bar-btn')) { const st = D.createElement('style'); st.id = 'gfx-bar-btn'; st.textContent = 'html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}'; (D.head || H).appendChild(st); }
+    /* (1.0.18, founder 10/20: "is the size of the fox on every footer the same? should be consistent") the close's fox at
+       Home's size on every page: 64% of the screen's height (Home's 577px on 1440x900), at most 744px, where it was 88%
+       of each close (314px on Insights to 589px on Home). A close shorter than the drawing trims it above and below. */
+    if (!$('#gfx-bar-btn')) { const st = D.createElement('style'); st.id = 'gfx-bar-btn'; st.textContent = 'html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}' +
+      'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}' +
+      'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
