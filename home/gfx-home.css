@@ -121,6 +121,12 @@ html.gfx-f3 .gfx-mk-ix.gfx-on .gfx-mk-sn:not(#gfx-x) { color: var(--gfx-green-ct
 html:not(.gfx-m):not(.gfx-mk-still) .gfx-mk-gates { display: none; }
 html.gfx-m:not(.gfx-mk-still) .gfx-mk-portal { display: block; position: absolute; z-index: 3; left: 57%; right: max(96px, calc((100% - 1400px) / 2 + 48px)); top: 19%; bottom: 15%; visibility: hidden; clip-path: inset(0 100% 0 0); }
 @media (min-width: 992px) { html.gfx-m:not(.gfx-mk-still) .gfx-mk-portal { left: 51%; right: max(48px, calc((100% - 1400px) / 2 + 24px)); top: 15%; bottom: 10%; } }
+/* (home 1.1.10, final sweeps) the window starts at 51% of the screen; the 630px lede ran under it below ~1376px wide
+   (1280x720: "for" and "service." 22-33px under the window). The lede now ends 32px before the window there; 1440 and
+   wider keep 630 */
+@media (min-width: 992px) { html.gfx-m:not(.gfx-mk-still) .gfx-mk .gfx-mk-lede { max-width: min(630px, calc(51vw - 88px)); } }
+/* (home 1.1.10) the gate labels never rise under the bar on short screens (the lines' top in gfx-home.js matches) */
+@media (min-width: 992px) { .gfx-mk .gfx-mk-gate { top: calc(max(14vh, 118px) - 34px); } }
 html.gfx-f3 .gfx-mk-portal-in.gfx-mk-portal-in { position: absolute; inset: 0; transform-origin: 0% 50%; }
 html.gfx-m:not(.gfx-mk-still) .gfx-mk-portal-in { will-change: transform; }
 html.gfx-mk-still .gfx-mk-portal { display: block; position: relative; height: 560px; margin: 32px 48px 0; }
