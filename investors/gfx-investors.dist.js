@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.14 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.27 + investors 1.0.15 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.14';
+W.__gfxInvestors='1.0.15';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
