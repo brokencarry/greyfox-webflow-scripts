@@ -412,14 +412,15 @@ html:not(#gfx-o) [data-o~="pt-replay"] { position: absolute; right: 0; top: 0; z
 html:not(#gfx-o) [data-o~="pt-replay"]:hover { color: var(--pt-ink); text-decoration-color: var(--pt-ink); }
 html:not(#gfx-o) [data-o~="pt-replay"]:focus-visible { outline: 2px solid var(--pt-green); outline-offset: 3px; }
 
-/* the timeline: time, not money, so ink; the rise into the house head at "Five years later" stays green */
+/* the timeline: (10/21, founder) green, as the Investors timeline is - the same device reads the same on every page (line,
+   reached years, the rise into the house head at "Five years later"); the track ahead and the year names stay neutral */
 html:not(#gfx-o) [data-o~="pt-tl"] { position: relative; margin-top: 8px; transition: opacity .8s cubic-bezier(.45, 0, .25, 1); }
 [data-o~="ow-pt"].is-ready[data-step="0"] [data-o~="pt-tl"] { opacity: .35; }
 [data-o~="pt-tl"] svg { display: block; overflow: visible; }
 [data-o~="pt-tl"] .tl-track { stroke: #cfcfca; stroke-width: 1.2; fill: none; }
-[data-o~="pt-tl"] .tl-fill { stroke: #1e1e1e; stroke-width: 1.8; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.3s cubic-bezier(.45, 0, .25, 1); }
+[data-o~="pt-tl"] .tl-fill { stroke: #156946; stroke-width: 1.8; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.3s cubic-bezier(.45, 0, .25, 1); }
 [data-o~="pt-tl"] .tl-dot { fill: #f6f5f2; stroke: #b9bab5; stroke-width: 1.2; transition: fill .5s, stroke .5s; }
-[data-o~="pt-tl"] .tl-dot.is-in { fill: #1e1e1e; stroke: #1e1e1e; }
+[data-o~="pt-tl"] .tl-dot.is-in { fill: #156946; stroke: #156946; }
 [data-o~="pt-tl"] .tl-n { font-family: "DM Sans", system-ui, sans-serif; font-size: 13px; fill: #8b8e96; transition: fill .5s; }
 [data-o~="pt-tl"] .tl-n.is-in { fill: #585e6b; }
 [data-o~="pt-tl"] .tl-rise { stroke: #156946; stroke-width: 1.8; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .6s cubic-bezier(.45, 0, .25, 1); }
