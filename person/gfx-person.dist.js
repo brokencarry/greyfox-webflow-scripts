@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.33 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.34 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.33';
+const VERSION='1.0.34';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -470,7 +470,7 @@ let fieldRooms=[],fieldDef=null,turns=[],opaque=[],lastSpans=[],spanOf=null;
 let footTone=null;
 let navs=null;
 const navTone=s=>{
-if(!navs||!navs.length){navs=$$('.gfx-nav');if(navs.length&&!$('#gfx-nav-field')){const st=D.createElement('style');st.id='gfx-nav-field';st.textContent='html.gfx-f3 .gfx-nav[data-gfx-fc]::before{background-color:var(--gfx-fc)!important}';D.head.appendChild(st);}}
+if(!navs||!navs.length){navs=$$('.gfx-nav');if(navs.length&&!$('#gfx-nav-field')){const st=D.createElement('style');st.id='gfx-nav-field';st.textContent='html.gfx-f3 .gfx-nav[data-gfx-fc]::before{background-color:var(--gfx-fc)!important;transition:box-shadow .1s linear!important}';D.head.appendChild(st);}}
 for(const n of navs){n.style.setProperty('--gfx-fc',s);if(!n.hasAttribute('data-gfx-fc'))n.setAttribute('data-gfx-fc','');}
 };
 const toneRGB=t=>(t==='D'?FIELD.DARK:FIELD.LIGHT);

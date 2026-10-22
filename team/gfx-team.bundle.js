@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.33 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.34 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.33';
+  const VERSION = '1.0.34';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -576,7 +576,7 @@
      through a turn). The variable sits on the bar alone, so a turn restyles the bar and nothing else. */
   let navs = null;
   const navTone = s => {
-    if (!navs || !navs.length) { navs = $$('.gfx-nav'); if (navs.length && !$('#gfx-nav-field')) { const st = D.createElement('style'); st.id = 'gfx-nav-field'; st.textContent = 'html.gfx-f3 .gfx-nav[data-gfx-fc]::before{background-color:var(--gfx-fc)!important}'; D.head.appendChild(st); } }
+    if (!navs || !navs.length) { navs = $$('.gfx-nav'); if (navs.length && !$('#gfx-nav-field')) { const st = D.createElement('style'); st.id = 'gfx-nav-field'; st.textContent = 'html.gfx-f3 .gfx-nav[data-gfx-fc]::before{background-color:var(--gfx-fc)!important;transition:box-shadow .1s linear!important}'; /* (1.0.34) no easing on the colour: the stylesheet's .1 s background fade left the bar a tenth of a second behind the page mid-turn */ D.head.appendChild(st); } }
     for (const n of navs) { n.style.setProperty('--gfx-fc', s); if (!n.hasAttribute('data-gfx-fc')) n.setAttribute('data-gfx-fc', ''); }
   };
   const toneRGB = t => (t === 'D' ? FIELD.DARK : FIELD.LIGHT);
