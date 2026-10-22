@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.34 + owners 1.2.7 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.35 + owners 1.2.7 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.34';
+const VERSION='1.0.35';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -344,16 +344,17 @@ var dur=toDark?DUR.dark:DUR.light,inkDone=false,raf=0,dead=false,resolve;
 var done=new Promise(function(r){resolve=r;});
 if(o.reduce||REDUCE){o.onFrame&&o.onFrame(to);o.onInk&&o.onInk();resolve();return{cancel:function(){},done:done};}
 var mid=0.5,lo=0,hi=1;for(var i=0;i<18;i++){mid=(lo+hi) / 2;if(ease(mid,toDark)<0.5)lo=mid;else hi=mid;}
-var inkAt=mid*dur+INK_LAG,t0=performance.now();
+var inkAt=mid*dur+INK_LAG,t0=performance.now(),hb=0,ht0=0,hd=0;
 var step=function(now){
 raf=0;if(dead)return;
-var el=now-t0,t=Math.min(1,el / dur),c=mixL(from,to,ease(t,toDark));
+var el=now-t0,t=hd?Math.min(1,hb+(1-hb)*(now-ht0) / hd):Math.min(1,el / dur),c=mixL(from,to,ease(t,toDark));
 o.onFrame&&o.onFrame(c);
-if(!inkDone&&el>=inkAt){inkDone=true;o.onInk&&o.onInk();}
+if(!inkDone&&(hd?t>=mid:el>=inkAt)){inkDone=true;o.onInk&&o.onInk();}
 if(t<1||!inkDone)raf=requestAnimationFrame(step);else resolve();
 };
 raf=requestAnimationFrame(step);
-return{cancel:function(){dead=true;if(raf)cancelAnimationFrame(raf);resolve();},done:done,toDark:toDark};
+return{cancel:function(){dead=true;if(raf)cancelAnimationFrame(raf);resolve();},done:done,toDark:toDark,
+hurry:function(ms){if(dead||hd)return;var now=performance.now();hb=Math.min(1,(now-t0) / dur);ht0=now;hd=Math.max(16,ms);}};
 };
 var docY=function(){return W.scrollY||D.documentElement.scrollTop||0;};
 var lastBottom=function(room){
@@ -468,6 +469,8 @@ const r={tl,head,trig};rooms.push(r);return r;
 const FIELD={DARK:[17,17,18],LIGHT:[246,245,242],FOOT:[17,17,18]};
 let fieldRooms=[],fieldDef=null,turns=[],opaque=[],lastSpans=[],spanOf=null;
 let footTone=null;
+let footOpen=null;
+const hurryTurn=()=>{if(fade&&fade.h&&fade.h.hurry)fade.h.hurry(160);};
 let navs=null;
 const navTone=s=>{
 if(!navs||!navs.length){navs=$$('.gfx-nav');if(navs.length&&!$('#gfx-nav-field')){const st=D.createElement('style');st.id='gfx-nav-field';st.textContent='html.gfx-f3 .gfx-nav[data-gfx-fc]::before{background-color:var(--gfx-fc)!important;transition:box-shadow .1s linear!important}';D.head.appendChild(st);}}
@@ -529,6 +532,7 @@ f.h=W.gfTurn.run({from:f.from,to:f.to,reduce:REDUCE,
 onFrame:c=>{if(fade!==f)return;shown=c;apply(c,f.ink);},
 onInk:()=>{if(fade!==f)return;f.ink=f.tt;apply(shown,f.tt);}});
 f.h.done.then(()=>{if(fade===f){shown=f.to.slice();apply(shown,f.tt);fade=null;}});
+if(footOpen&&footOpen())hurryTurn();
 };
 const paint=sy=>{
 if(!fieldRooms.length)return;
@@ -979,6 +983,7 @@ if(tl){tl.timeScale(1);if(prog<=0.001)tl.pause(0);}}}).to(fly,{x:n.left,y:n.top,
 let CH=0,K=-1;
 const fiEl=$('.gfx-fi',foot);
 const flowTone=()=>{if(!fiEl)return;const on=mode==='flow';fiEl.style.transition=on?'opacity .35s cubic-bezier(.16, 1, .3, 1)':'';fiEl.style.opacity=on&&H.classList.contains('gfx-tone-light')?'0':'';};
+footOpen=()=>(mode==='reveal'?prog>0.001:foot.getBoundingClientRect().top<W.innerHeight);
 const openNow=()=>H.classList.toggle('gfx-ftg-open',prog>=0.34&&!H.classList.contains('gfx-tone-light'));
 if(fieldRooms.some(o=>o.foot)){foot.style.setProperty('background-color','transparent','important');host.style.setProperty('background-color','transparent','important');footTone=()=>{if(mode==='reveal')openNow();else flowTone();};}
 const inner=()=>q(':scope > .gfx-fi-wrap, :scope > .gfx-fi-layer');
@@ -986,6 +991,7 @@ const cut=k=>{if(k===K)return;K=k;foot.style.transform=k?`translate3d(0,${k}px,0
 const measureF=()=>{CH=0;cut(0);H0=foot.offsetHeight;host.style.setProperty('--gfx-ftg-h',H0+'px');const r=lockup.getBoundingClientRect(),f=foot.getBoundingClientRect();lockR={localBottom:r.bottom-f.top};hostTop=host.getBoundingClientRect().top+W.scrollY;};
 const step=(p,instant)=>{
 prog=p;
+if(p>0.001)hurryTurn();
 const covered=p<=0.001;
 H.classList.toggle('gfx-ftg-covered',covered);
 openNow();
@@ -1018,7 +1024,7 @@ H.setAttribute('data-gfx-foot',mode);
 if(mode==='flow'){
 flowTone();
 tl=film(false);
-st=ST.create({trigger:foot,start:'top 92%',end:'max',onEnter:()=>{if(tl.progress()<1&&!tl.isActive())tl.play();}});
+st=ST.create({trigger:foot,start:'top 92%',end:'max',onEnter:()=>{hurryTurn();if(tl.progress()<1&&!tl.isActive())tl.play();}});
 st2=ST.create({trigger:foot,start:'top 125%',onLeaveBack:()=>tl.pause(0)});
 if(was)tl.progress(foot.getBoundingClientRect().top<W.innerHeight?1:0);
 if('IntersectionObserver'in W){lockIO=new IntersectionObserver(es=>es.forEach(e=>H.classList.toggle('gfx-ftg-lock-in',e.isIntersecting)));lockIO.observe(lockup);}

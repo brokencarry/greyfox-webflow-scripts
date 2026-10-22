@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.34 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.35 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.34';
+  const VERSION = '1.0.35';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -429,16 +429,18 @@
       var done = new Promise(function (r) { resolve = r; });
       if (o.reduce || REDUCE) { o.onFrame && o.onFrame(to); o.onInk && o.onInk(); resolve(); return { cancel: function () {}, done: done }; }
       var mid = 0.5, lo = 0, hi = 1; for (var i = 0; i < 18; i++) { mid = (lo + hi) / 2; if (ease(mid, toDark) < 0.5) lo = mid; else hi = mid; }
-      var inkAt = mid * dur + INK_LAG, t0 = performance.now();
+      var inkAt = mid * dur + INK_LAG, t0 = performance.now(), hb = 0, ht0 = 0, hd = 0;
       var step = function (now) {
         raf = 0; if (dead) return;
-        var el = now - t0, t = Math.min(1, el / dur), c = mixL(from, to, ease(t, toDark));
+        // (core 1.0.35) a hurried turn carries on from where it was and lands in hd ms
+        var el = now - t0, t = hd ? Math.min(1, hb + (1 - hb) * (now - ht0) / hd) : Math.min(1, el / dur), c = mixL(from, to, ease(t, toDark));
         o.onFrame && o.onFrame(c);
-        if (!inkDone && el >= inkAt) { inkDone = true; o.onInk && o.onInk(); }
+        if (!inkDone && (hd ? t >= mid : el >= inkAt)) { inkDone = true; o.onInk && o.onInk(); }
         if (t < 1 || !inkDone) raf = requestAnimationFrame(step); else resolve();
       };
       raf = requestAnimationFrame(step);
-      return { cancel: function () { dead = true; if (raf) cancelAnimationFrame(raf); resolve(); }, done: done, toDark: toDark };
+      return { cancel: function () { dead = true; if (raf) cancelAnimationFrame(raf); resolve(); }, done: done, toDark: toDark,
+        hurry: function (ms) { if (dead || hd) return; var now = performance.now(); hb = Math.min(1, (now - t0) / dur); ht0 = now; hd = Math.max(16, ms); } };
     };
     var docY = function () { return W.scrollY || D.documentElement.scrollTop || 0; };
     var lastBottom = function (room) {
@@ -571,6 +573,10 @@
   let fieldRooms = [], fieldDef = null, turns = [], opaque = [], lastSpans = [], spanOf = null;
   // (1.0.30) set by the footer once it is built: it takes the field's colour and settles its columns only on a dark field
   let footTone = null;
+  /* (1.0.35, founder 10/22: one move at a time) set by the footer: true while any of it is open. A turn running then (a quick
+     reader outran the close's crossfade) finishes from where it is in 160 ms, so the footer always opens on settled black. */
+  let footOpen = null;
+  const hurryTurn = () => { if (fade && fade.h && fade.h.hurry) fade.h.hurry(160); };
   /* (1.0.31, founder 10/22: no seam anywhere) the bar's backing wears the field's colour frame by frame; before, it switched
      paper/black in one step at the ink moment while the field behind it was mid-fade (a band at the top when scrolling up
      through a turn). The variable sits on the bar alone, so a turn restyles the bar and nothing else. */
@@ -641,6 +647,7 @@
       onFrame: c => { if (fade !== f) return; shown = c; apply(c, f.ink); },
       onInk: () => { if (fade !== f) return; f.ink = f.tt; apply(shown, f.tt); } });
     f.h.done.then(() => { if (fade === f) { shown = f.to.slice(); apply(shown, f.tt); fade = null; } });
+    if (footOpen && footOpen()) hurryTurn();
   };
   const paint = sy => {
     if (!fieldRooms.length) return;
@@ -1184,6 +1191,7 @@
        (a jump to the page's end before the turn finished showed its white type on paper) */
     const fiEl = $('.gfx-fi', foot);
     const flowTone = () => { if (!fiEl) return; const on = mode === 'flow'; fiEl.style.transition = on ? 'opacity .35s cubic-bezier(.16, 1, .3, 1)' : ''; fiEl.style.opacity = on && H.classList.contains('gfx-tone-light') ? '0' : ''; };
+    footOpen = () => (mode === 'reveal' ? prog > 0.001 : foot.getBoundingClientRect().top < W.innerHeight);
     const openNow = () => H.classList.toggle('gfx-ftg-open', prog >= 0.34 && !H.classList.contains('gfx-tone-light'));
     // (1.0.31) see-through as the close is: the page's background shows behind its columns
     if (fieldRooms.some(o => o.foot)) { foot.style.setProperty('background-color', 'transparent', 'important'); /* (1.0.32) and its wrapper: the inner pages' footer wrapper (gfx-ow-foot) carried its own near-black, a band below the close mid-turn */ host.style.setProperty('background-color', 'transparent', 'important'); footTone = () => { if (mode === 'reveal') openNow(); else flowTone(); }; }
@@ -1194,6 +1202,7 @@
     const measureF = () => { CH = 0; cut(0); H0 = foot.offsetHeight; host.style.setProperty('--gfx-ftg-h', H0 + 'px'); const r = lockup.getBoundingClientRect(), f = foot.getBoundingClientRect(); lockR = { localBottom: r.bottom - f.top }; hostTop = host.getBoundingClientRect().top + W.scrollY; };
     const step = (p, instant) => {
       prog = p;
+      if (p > 0.001) hurryTurn();
       const covered = p <= 0.001;
       H.classList.toggle('gfx-ftg-covered', covered);
       // (1.0.29, founder 10/22 "why is the footer dead here?") the columns settle once a third of the footer is uncovered (was
@@ -1231,7 +1240,7 @@
       if (mode === 'flow') {
         flowTone();
         tl = film(false);
-        st = ST.create({ trigger: foot, start: 'top 92%', end: 'max', onEnter: () => { if (tl.progress() < 1 && !tl.isActive()) tl.play(); } });
+        st = ST.create({ trigger: foot, start: 'top 92%', end: 'max', onEnter: () => { hurryTurn(); if (tl.progress() < 1 && !tl.isActive()) tl.play(); } });
         st2 = ST.create({ trigger: foot, start: 'top 125%', onLeaveBack: () => tl.pause(0) });
         if (was) tl.progress(foot.getBoundingClientRect().top < W.innerHeight ? 1 : 0);
         if ('IntersectionObserver' in W) { lockIO = new IntersectionObserver(es => es.forEach(e => H.classList.toggle('gfx-ftg-lock-in', e.isIntersecting))); lockIO.observe(lockup); }
