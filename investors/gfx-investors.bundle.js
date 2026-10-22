@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.27 + investors 1.0.16. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.27 + investors 1.0.17. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1479,7 +1479,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.16';
+  W.__gfxInvestors = '1.0.17';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1735,6 +1735,20 @@
       dfs.forEach((d, i) => { const a = 0.1 + i * 0.3; tl.to(d, { '--ow-rl': 1, duration: G.hairline.duration, ease: GLIDE }, a); dRoll[i] && dRoll[i](tl, a + 0.15); settleIn(tl, dText[i], a + 0.3, { y: G.detail.y, d: G.detail.duration }); });
       settleIn(tl, note, 0.1 + dfs.length * 0.3 + 0.3, { y: G.detail.y, d: G.detail.duration });
     });
+  }
+  /* (10/21, founder) Mars Shah's quote closes the client room and arrives as Lindsay's does on Home: the mark, the quote, then the
+     headshot opening from its clip as the name and role settle (stage only; the room's figures above keep their own film) */
+  function clientQuoteInit() {
+    const room = R.del, cq = room && $(O('iv-cq') + O('is-client'), room); if (!cq) return;
+    const mark = $(O('iv-cq-mark'), cq), q = $('blockquote', cq), cap = $('figcaption', cq), pic = $(O('iv-cq-pic'), cq);
+    hideNow([mark, q, cap]);
+    if (pic) gsap.set(pic, { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom });
+    once(cq, 'top 85%', skip => { const tl = gsap.timeline();
+      settleIn(tl, mark, 0, { y: G.detail.y, d: G.detail.duration });
+      settleIn(tl, q, 0.1);
+      settleIn(tl, cap, 0.45, { y: G.detail.y, d: G.detail.duration });
+      if (pic) tl.to(pic, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: GLIDE }, 0.45).to(pic, { scale: 1, duration: G.picture.duration, ease: SETTLE }, 0.45);
+      if (skip) tl.progress(1); });
   }
   /* ========================= 5 · three searches (investors.js §5) ========================= */
   function casesInit() {
@@ -2138,6 +2152,7 @@
     rooms: () => {
       safe('breath', breathInit);
       safe('delivery', () => { $$(O('iv-client') + ' ' + O('ow-open')).length && roomHead(R.del); deliveryInit(); });
+      safe('client quote', clientQuoteInit);
       safe('mc head', () => roomHead(R.mc));
       safe('cases head', () => roomHead(R.cases));
       safe('cases', casesInit);

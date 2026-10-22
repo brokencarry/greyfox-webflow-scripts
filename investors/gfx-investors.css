@@ -111,16 +111,34 @@ html:not(#gfx-iv1):not(#gfx-iv2):not(#gfx-iv3):not(#gfx-iv4) [data-o~="iv-cases"
    dark rooms' other controls do */
 html.iv-f2 [data-o~="iv2-mplay"] { transition: color .2s cubic-bezier(.25, 1, .5, 1); }
 @media (hover: hover) { html.iv-f2 [data-o~="iv2-mplay"]:hover { color: var(--green-lit, #3aa678); } }
-/* (10/21, founder) the cases room's quote is Mars Shah's (CEO, GarageCo Holdings, approved by him). Its attribution takes
-   the house testimonial form from Home (Lindsay Lewellen's): the round 81 px headshot, 18 px apart, the name over the role.
-   The role keeps this room's own caption type and colour (it sits under this quote, on the dark room); the name is the
-   house name style (DM Sans 500) in the room's white */
-html.iv-f2 [data-o~="iv-cq"] figcaption:has([data-o~="iv-cq-pic"]) { display: flex; align-items: center; column-gap: 18px; }
+/* (10/21, founder) Mars Shah's quote (CEO, GarageCo Holdings; his words, approved by him) closes the client room, "We answer
+   our clients in minutes.", whose lede is "When a firm lets us speak in its name...": the client says it back. It takes Home's
+   testimonial (Lindsay Lewellen's) whole: the house quote mark over the serif quote, the round 81 px headshot 18 px from the
+   name over the role, in the room's right column (the lede's), under a hairline in the room's rule colour */
+html.iv-f2 [data-o~="iv-cq"][data-o~="is-client"] { display: grid; grid-template-columns: 7fr 5fr; column-gap: var(--gap); max-width: none;
+  margin: clamp(32px, 5vh, 56px) 0 0; padding-top: clamp(40px, 6vh, 56px); border-top: 1px solid var(--c-rule, #e7e8ea); }
+html.iv-f2 [data-o~="iv-cq"][data-o~="is-client"] > * { grid-column: 2; min-width: 0; }
+html.iv-f2 [data-o~="iv-cq-mark"] { display: block; width: 28px; height: 22px; margin: 0 0 19px; filter: brightness(0); }
+html.iv-f2 [data-o~="iv-cq"][data-o~="is-client"] blockquote { margin: 0; padding: 0; border: 0; }
+html.iv-f2 [data-o~="iv-cq"][data-o~="is-client"] blockquote p { margin: 0; max-width: none; font: 200 22px/1.35 Sentient, Georgia, serif; text-indent: 0; text-wrap: pretty; }
+html.iv-f2 [data-o~="iv-cq"][data-o~="is-client"] figcaption { display: flex; align-items: center; column-gap: 18px; margin-top: 25px; }
 html.iv-f2 [data-o~="iv-cq-pic"] { flex: none; width: 81px; height: 81px; border-radius: 50%; object-fit: cover; display: block; }
 html.iv-f2 [data-o~="iv-cq-id"] { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-html.iv-f2 :is([data-o~="iv-cq-name"], [data-o~="iv-cq-role"]) { margin: 0; }
+html.iv-f2 :is([data-o~="iv-cq-name"], [data-o~="iv-cq-role"]) { margin: 0; text-indent: 0; }
 html.iv-f2 [data-o~="iv-cq-name"] { font: 500 16px/1.3 "DM Sans", sans-serif; }
-/* the ink system colours every <p> with an id-strength !important rule; these two take theirs the same way */
-html.iv-f2 [data-o~="iv-cq"] [data-o~="iv-cq-name"]:not(#gfx-q1):not(#gfx-q2) { color: #ffffff !important; }
-html.iv-f2 [data-o~="iv-cq"] [data-o~="iv-cq-role"]:not(#gfx-q1):not(#gfx-q2) { color: rgba(255, 255, 255, .54) !important; }
-html.iv-f2 [data-o~="iv-cq-role"] { font: inherit; color: rgba(255, 255, 255, .54); }   /* the dark rooms' secondary ink (as "Illustrative data..."): name over role, as on Home */
+html.iv-f2 [data-o~="iv-cq-role"] { font: 400 14px/1.45 "DM Sans", sans-serif; }
+/* the ink system colours every <p> with an id-strength !important rule; these take theirs the same way (Home's inks) */
+html.iv-f2 [data-o~="iv-cq"] blockquote p:not(#gfx-q1):not(#gfx-q2),
+html.iv-f2 [data-o~="iv-cq"] [data-o~="iv-cq-name"]:not(#gfx-q1):not(#gfx-q2) { color: #1e1e1e !important; }
+html.iv-f2 [data-o~="iv-cq"] [data-o~="iv-cq-role"]:not(#gfx-q1):not(#gfx-q2) { color: #585e6b !important; }
+@media (max-width: 991px) {
+  html.iv-f2 [data-o~="iv-cq"][data-o~="is-client"] { grid-template-columns: minmax(0, 1fr); }
+  html.iv-f2 [data-o~="iv-cq"][data-o~="is-client"] > * { grid-column: 1; }
+  html.iv-f2 [data-o~="iv-cq-role"] { font-size: 16px; }   /* as Lindsay's on a phone */
+}
+/* the cases room's right column held the quote; with the quote in the client room it is empty, so the heading takes the house
+   heading measure (7 of 12, as every other room's) and the empty column leaves no gap on a phone */
+html.iv-f2 [data-o~="iv-cases-open"] > [data-o~="ow-open-r"]:not(:has(*)) { display: none; }
+@media (min-width: 992px) {
+  html.iv-f2 [data-o~="iv-cases-open"][data-o~="ow-open"]:not(:has(> [data-o~="ow-open-r"] *)) { grid-template-columns: 7fr 5fr; }
+}
