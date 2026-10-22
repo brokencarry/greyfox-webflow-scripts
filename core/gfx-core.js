@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.31';
+  const VERSION = '1.0.32';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1181,7 +1181,7 @@
        now wears the field's colour frame by frame (close and footer are one surface), and its columns wait for a dark field. */
     const openNow = () => H.classList.toggle('gfx-ftg-open', prog >= 0.34 && !H.classList.contains('gfx-tone-light'));
     // (1.0.31) see-through as the close is: the page's background shows behind its columns
-    if (fieldRooms.some(o => o.foot)) { foot.style.setProperty('background-color', 'transparent', 'important'); footTone = () => { if (mode === 'reveal') openNow(); }; }
+    if (fieldRooms.some(o => o.foot)) { foot.style.setProperty('background-color', 'transparent', 'important'); /* (1.0.32) and its wrapper: the inner pages' footer wrapper (gfx-ow-foot) carried its own near-black, a band below the close mid-turn */ host.style.setProperty('background-color', 'transparent', 'important'); footTone = () => { if (mode === 'reveal') openNow(); }; }
     const inner = () => q(':scope > .gfx-fi-wrap, :scope > .gfx-fi-layer');
     const cut = k => { if (k === K) return; K = k; foot.style.transform = k ? `translate3d(0,${k}px,0)` : ''; inner().forEach(e => { e.style.transform = k ? `translate3d(0,${-k}px,0)` : ''; }); };
     // (1.0.31) CH stays 0 on every page: with a see-through close the waiting footer must start at the close's last line, as

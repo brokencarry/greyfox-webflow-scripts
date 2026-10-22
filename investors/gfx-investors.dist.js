@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.31 + investors 1.0.18 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.32 + investors 1.0.18 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.31';
+const VERSION='1.0.32';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -978,7 +978,7 @@ if(tl){tl.timeScale(1);if(prog<=0.001)tl.pause(0);}}}).to(fly,{x:n.left,y:n.top,
 };
 let CH=0,K=-1;
 const openNow=()=>H.classList.toggle('gfx-ftg-open',prog>=0.34&&!H.classList.contains('gfx-tone-light'));
-if(fieldRooms.some(o=>o.foot)){foot.style.setProperty('background-color','transparent','important');footTone=()=>{if(mode==='reveal')openNow();};}
+if(fieldRooms.some(o=>o.foot)){foot.style.setProperty('background-color','transparent','important');host.style.setProperty('background-color','transparent','important');footTone=()=>{if(mode==='reveal')openNow();};}
 const inner=()=>q(':scope > .gfx-fi-wrap, :scope > .gfx-fi-layer');
 const cut=k=>{if(k===K)return;K=k;foot.style.transform=k?`translate3d(0,${k}px,0)`:'';inner().forEach(e=>{e.style.transform=k?`translate3d(0,${-k}px,0)`:'';});};
 const measureF=()=>{CH=0;cut(0);H0=foot.offsetHeight;host.style.setProperty('--gfx-ftg-h',H0+'px');const r=lockup.getBoundingClientRect(),f=foot.getBoundingClientRect();lockR={localBottom:r.bottom-f.top};hostTop=host.getBoundingClientRect().top+W.scrollY;};
