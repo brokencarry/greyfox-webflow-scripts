@@ -1,4 +1,4 @@
-/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.29 + pages 1.0.2 + contact 1.0.8. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
+/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.30 + pages 1.0.2 + contact 1.0.8. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.29';
+  const VERSION = '1.0.30';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -569,6 +569,8 @@
      is kept through a resize, a reload and back. */
   const FIELD = { DARK: [17, 17, 18], LIGHT: [246, 245, 242], FOOT: [17, 17, 18] };
   let fieldRooms = [], fieldDef = null, turns = [], opaque = [], lastSpans = [], spanOf = null;
+  // (1.0.30) set by the footer once it is built: it takes the field's colour and settles its columns only on a dark field
+  let footTone = null;
   const toneRGB = t => (t === 'D' ? FIELD.DARK : FIELD.LIGHT);
   const css = c => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
   const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
@@ -613,11 +615,12 @@
   const ease3 = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const apply = (c, tone) => {
     const s = css(c);
-    if (s !== lastC) { lastC = s; D.body.style.backgroundColor = s; for (const e of opaque) e.style.setProperty('background-color', s, 'important'); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
+    if (s !== lastC) { lastC = s; D.body.style.backgroundColor = s; for (const e of opaque) e.style.setProperty('background-color', s, 'important'); if (footTone) footTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
     if (tone !== lastTone) {
       if (lastTone) { H.classList.add('gfx-toning'); clearTimeout(toningT); toningT = setTimeout(() => H.classList.remove('gfx-toning'), 220); }
       lastTone = tone;
       H.classList.toggle('gfx-tone-dark', tone === 'D'); H.classList.toggle('gfx-tone-light', tone !== 'D');
+      if (footTone) footTone(null);
     }
   };
   const fadeStep = () => {
@@ -1163,6 +1166,11 @@
         if (tl) { tl.timeScale(1); if (prog <= 0.001) tl.pause(0); } } }).to(fly, { x: n.left, y: n.top, scale: 1, duration: 1.2, ease: G.DRAW }, 0.1);
     };
     let CH = 0, K = -1;
+    /* (1.0.30, founder 10/22 "you can see the cuts in the footer. This needs to be seamless") the close's turn is a crossfade
+       in time that can start late, so a quick reader uncovered the black footer while the close was still grey. The footer
+       now wears the field's colour frame by frame (close and footer are one surface), and its columns wait for a dark field. */
+    const openNow = () => H.classList.toggle('gfx-ftg-open', prog >= 0.34 && !H.classList.contains('gfx-tone-light'));
+    if (fieldRooms.some(o => o.foot)) { footTone = c => { if (c) foot.style.setProperty('background-color', c, 'important'); if (mode === 'reveal') openNow(); }; if (lastC) footTone(lastC); }
     const inner = () => q(':scope > .gfx-fi-wrap, :scope > .gfx-fi-layer');
     const cut = k => { if (k === K) return; K = k; foot.style.transform = k ? `translate3d(0,${k}px,0)` : ''; inner().forEach(e => { e.style.transform = k ? `translate3d(0,${-k}px,0)` : ''; }); };
     const measureF = () => { CH = close ? close.offsetHeight : 0; cut(0); H0 = foot.offsetHeight; host.style.setProperty('--gfx-ftg-h', H0 + 'px'); const r = lockup.getBoundingClientRect(), f = foot.getBoundingClientRect(); lockR = { localBottom: r.bottom - f.top }; hostTop = host.getBoundingClientRect().top + W.scrollY; };
@@ -1171,8 +1179,8 @@
       const covered = p <= 0.001;
       H.classList.toggle('gfx-ftg-covered', covered);
       // (1.0.29, founder 10/22 "why is the footer dead here?") the columns settle once a third of the footer is uncovered (was
-      // 97%: a reader who stopped short of the very end saw only the black and the faint foxes)
-      H.classList.toggle('gfx-ftg-open', p >= 0.34);
+      // 97%: a reader who stopped short of the very end saw only the black and the faint foxes); (1.0.30) and the field is dark
+      openNow();
       const local = H0 * (1 - p);
       /* (1.0.21, founder 10/20: "when I scroll on my bio down to Tony, his name gets covered") a page with no close (the
          person pages) has nothing opaque over the waiting footer, so it painted over the way on. Its top now meets the
