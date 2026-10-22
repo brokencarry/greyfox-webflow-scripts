@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.28';
+  const VERSION = '1.0.29';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1168,7 +1168,10 @@
     const step = (p, instant) => {
       prog = p;
       const covered = p <= 0.001;
-      H.classList.toggle('gfx-ftg-covered', covered); H.classList.toggle('gfx-ftg-open', p >= 0.97);
+      H.classList.toggle('gfx-ftg-covered', covered);
+      // (1.0.29, founder 10/22 "why is the footer dead here?") the columns settle once a third of the footer is uncovered (was
+      // 97%: a reader who stopped short of the very end saw only the black and the faint foxes)
+      H.classList.toggle('gfx-ftg-open', p >= 0.34);
       const local = H0 * (1 - p);
       /* (1.0.21, founder 10/20: "when I scroll on my bio down to Tony, his name gets covered") a page with no close (the
          person pages) has nothing opaque over the waiting footer, so it painted over the way on. Its top now meets the

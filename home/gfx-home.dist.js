@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.28 + home 1.1.15 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.29 + home 1.1.15 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.28';
+const VERSION='1.0.29';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -975,7 +975,8 @@ const measureF=()=>{CH=close?close.offsetHeight:0;cut(0);H0=foot.offsetHeight;ho
 const step=(p,instant)=>{
 prog=p;
 const covered=p<=0.001;
-H.classList.toggle('gfx-ftg-covered',covered);H.classList.toggle('gfx-ftg-open',p>=0.97);
+H.classList.toggle('gfx-ftg-covered',covered);
+H.classList.toggle('gfx-ftg-open',p>=0.34);
 const local=H0*(1-p);
 cut(Math.max(0,Math.round(H0*(1-p)-CH)));
 const home=local<=lockR.localBottom+2,away=local>lockR.localBottom+72;
