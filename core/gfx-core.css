@@ -403,3 +403,16 @@ html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc
 }
 /* (core 1.0.12, founder 10/20) the phone menu's Contact is white like the other links (the designer had it gold; gold is the fox's alone) */
 html.gfx-f3 .w-nav-menu .navigation-item.mobile-nav-item.contact:not(#gfx-mc) { color: #ffffff !important; }
+
+/* ---------- (core 1.0.28, 10/21 details pass, founder: "the LITTLE details ... end to end") ---------- */
+/* selected text takes the house green (the browser's blue was the one foreign colour left), the ink stays legible */
+::selection { background: rgba(58, 166, 120, .24); color: inherit; }
+/* a tap on a phone no longer flashes the browser's grey box over links and buttons; their own states answer */
+html.gfx-f3 :is(a, button, label, summary, [role="button"]) { -webkit-tap-highlight-color: transparent; }
+/* the footer's "Start a conversation": its hover changed green to the same green (--gfx-green-d = --gfx-green-cta on the
+   dark footer), so nothing moved; it now underlines as the footer's own links do, same weight, offset and timing */
+html.gfx-f3 .gfx-fi-act .gfx-fi-act-t { text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: .22em; transition: color .35s cubic-bezier(.16, 1, .3, 1), text-decoration-color .35s cubic-bezier(.19, 1, .22, 1); }
+@media (hover: hover) { html.gfx-f3 .gfx-fi-act:hover .gfx-fi-act-t { text-decoration-color: currentColor; } }
+/* the footer's Grey Fox lockup answered nothing on hover; it now dims as the menu's fox does (same .35 s) */
+html.gfx-f3 .gfx-fi-lockup { transition: opacity .35s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) { html.gfx-f3 .gfx-fi-lockup:hover { opacity: .78; } }

@@ -551,3 +551,10 @@ html:not(#gfx-o) [data-o~="pt-mearn"] [data-o~="pt-yr"]::before { content: "Year
 html:not(#gfx-o) [data-o~=ow-hero] [data-o~=ow-h1] { font-size: 72px; }
 @media (max-width: 1279px) { html:not(#gfx-o) [data-o~=ow-hero] [data-o~=ow-h1] { font-size: 56px; } }   /* the hero's words share the row with the photograph: below 1280 px the column is too narrow for 72 (four lines at 1024) */
 @media (max-width: 767px) { html:not(#gfx-o) [data-o~=ow-hero] [data-o~=ow-h1] { font-size: 40px; } }
+/* (10/21 details pass) the same questions answer the same way everywhere: on Contact a question and its + turn green on
+   hover; here the words held still and the + only darkened. Now as Contact (green, with the words' own .2 s timing) */
+html:not(#gfx-o) [data-o~=ow-acc-q] { transition: color .2s cubic-bezier(.25, 1, .5, 1); }
+@media (hover: hover) {
+  html:not(#gfx-o) [data-o~=ow-acc-b]:hover [data-o~=ow-acc-q] { color: var(--ow3-green); }
+  html:not(#gfx-o) [data-o~=ow-acc-b]:hover [data-o~=ow-acc-i]::before, html:not(#gfx-o) [data-o~=ow-acc-b]:hover [data-o~=ow-acc-i]::after { background: var(--ow3-green); }
+}

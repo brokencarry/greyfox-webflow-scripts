@@ -4,8 +4,8 @@
   "sri": "sha384-KBQOn5CZ2cx65hODRNmw/Uyp8eT9Iqvnsptuv5qhTAUBIdiP2Tmg8ky2bHCGaqgP"
  },
  "core/gfx-core.dist.css": {
-  "bytes": 29749,
-  "sri": "sha384-iHZKWozEt5YbcQ8hZwscE7AfKDkhLdCADPRUL2Mae/ecNYxb1Cv4Wh3uVq9LK3zF"
+  "bytes": 30403,
+  "sri": "sha384-LJLz7LrXV+iOxk9x14XaipmK/8Cl/Wg2DuUSx3nHL+3g3gfp/swY3c9GL1FgUhg3"
  },
  "home/gfx-home.dist.css": {
   "bytes": 28583,
@@ -24,8 +24,8 @@
   "sri": "sha384-cpfBa8mxx6tBoKmcR1s7+5J8e82UWE+mUmImB7oTqpSSgyMldWV5ff0C2AZa8pwE"
  },
  "owners/gfx-owners.dist.css": {
-  "bytes": 49270,
-  "sri": "sha384-jgS0uxNECjNMLD4v4rafZ2NC6bmGALvGchPyvbIqHwq79A39LTm60QZ8VL1pxXqO"
+  "bytes": 49623,
+  "sri": "sha384-5H77XkzzI7vPYkN8tm+kGNrzlhJXn5yC4t9ChdUA/qota+77IcXb6Ak3d6dEU6Q1"
  },
  "owners/pt/pt-film.js": {
   "bytes": 107870,
@@ -76,8 +76,8 @@
   "sri": "sha384-pcIVAj6Z0koWHBB354ySpfc/sE+/VE4WHHE3q8msxSX58xJBUseLIPdnEdYFi5Zg"
  },
  "investors/gfx-investors.dist.css": {
-  "bytes": 60651,
-  "sri": "sha384-l9F47v1UHeRA50ypBjsfp3L4ablTgThpRkqW7dkE1eTq/cj091F437kUTHE6DSTp"
+  "bytes": 60822,
+  "sri": "sha384-h9oW7i7Jn3aXLwLHgvT7U33FT0JGkPwJDws7fYgq78jAboC2Pz52awANmiAVoGW1"
  },
  "_versions": {
   "core": "1.0.27",
