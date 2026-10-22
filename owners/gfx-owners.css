@@ -559,3 +559,21 @@ html:not(#gfx-o) [data-o~=ow-acc-q] { transition: color .2s cubic-bezier(.25, 1,
   html:not(#gfx-o) [data-o~=ow-acc-b]:hover [data-o~=ow-acc-q] { color: var(--ow3-green); }
   html:not(#gfx-o) [data-o~=ow-acc-b]:hover [data-o~=ow-acc-i]::before, html:not(#gfx-o) [data-o~=ow-acc-b]:hover [data-o~=ow-acc-i]::after { background: var(--ow3-green); }
 }
+/* (10/21, founder) a founder's own words under "Questions owners ask." (his line is "you answered a lot of my questions"),
+   in the page's owner-quote type, the same as the quote in the call diagram: Sentient 300, the house ink; the attribution
+   in the small sans, secondary ink. Real call quote, masked (no name) */
+html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] { margin: 48px 0 0; padding: 0; max-width: 26em; min-width: 0; }
+html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] blockquote { margin: 0; padding: 0; border: 0; }
+html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] blockquote p { margin: 0; font: 300 19px/1.45 var(--ow3-serif, Sentient, Georgia, serif); letter-spacing: -.003em; color: var(--ow3-ink, #1e1e1e); text-wrap: pretty; }
+html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] figcaption { margin-top: 14px; text-align: left; }
+/* role and years as two unbreakable parts with the house middle dot between, as the diagram quote's caption */
+html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] figcaption p { display: inline; white-space: nowrap; }
+html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] figcaption p + p::before { content: " · "; white-space: pre; }
+html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] figcaption p { margin: 0; font: 400 14px/1.5 "DM Sans", sans-serif; color: var(--ow3-ink-3, #585e6b); }
+@media (max-width: 767px) {
+  html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] { margin-top: 32px; max-width: none; }
+  html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] blockquote p { font-size: 20px; }
+  html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] figcaption p { font-size: 16px; }
+  html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] figcaption p { display: block; white-space: normal; }
+  html:not(#gfx-o) [data-o~=ow-qs] [data-o~=ow-qq] figcaption p + p::before { content: none; }
+}

@@ -50,3 +50,7 @@ html.gfx-f3 .w-form-done:focus-visible, html.gfx-f3 .w-form-done [tabindex="-1"]
 /* (10/21 overnight states sweep) a field's note that wraps ("Please describe what the / company does.") ran its second
    line back under the dash; the note hangs from its dash now (dash 10 px + 8 px gap), so every line starts with the words */
 html body [data-o~="r4-err"] { padding-left: 18px; text-indent: -18px; }
+/* (10/21, founder) Business Owners' "See more questions on the contact page" lands here (/contact#r4-questions): the
+   heading arrives clear of the bar, a breath below it, as on every other arrival */
+#r4-questions { scroll-margin-top: 16px; }
+@media (max-width: 767px) { #r4-questions { scroll-margin-top: 72px; } }
