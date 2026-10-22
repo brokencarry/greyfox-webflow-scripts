@@ -119,5 +119,8 @@ html.iv-f2 [data-o~="iv-cq"] figcaption:has([data-o~="iv-cq-pic"]) { display: fl
 html.iv-f2 [data-o~="iv-cq-pic"] { flex: none; width: 81px; height: 81px; border-radius: 50%; object-fit: cover; display: block; }
 html.iv-f2 [data-o~="iv-cq-id"] { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 html.iv-f2 :is([data-o~="iv-cq-name"], [data-o~="iv-cq-role"]) { margin: 0; }
-html.iv-f2 [data-o~="iv-cq-name"] { font: 500 16px/1.3 "DM Sans", sans-serif; color: #ffffff; }
+html.iv-f2 [data-o~="iv-cq-name"] { font: 500 16px/1.3 "DM Sans", sans-serif; }
+/* the ink system colours every <p> with an id-strength !important rule; these two take theirs the same way */
+html.iv-f2 [data-o~="iv-cq"] [data-o~="iv-cq-name"]:not(#gfx-q1):not(#gfx-q2) { color: #ffffff !important; }
+html.iv-f2 [data-o~="iv-cq"] [data-o~="iv-cq-role"]:not(#gfx-q1):not(#gfx-q2) { color: rgba(255, 255, 255, .54) !important; }
 html.iv-f2 [data-o~="iv-cq-role"] { font: inherit; color: rgba(255, 255, 255, .54); }   /* the dark rooms' secondary ink (as "Illustrative data..."): name over role, as on Home */
