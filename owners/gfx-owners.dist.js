@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.30 + owners 1.2.7 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.31 + owners 1.2.7 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.30';
+const VERSION='1.0.31';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -468,6 +468,11 @@ const r={tl,head,trig};rooms.push(r);return r;
 const FIELD={DARK:[17,17,18],LIGHT:[246,245,242],FOOT:[17,17,18]};
 let fieldRooms=[],fieldDef=null,turns=[],opaque=[],lastSpans=[],spanOf=null;
 let footTone=null;
+let navs=null;
+const navTone=s=>{
+if(!navs||!navs.length){navs=$$('.gfx-nav');if(navs.length&&!$('#gfx-nav-field')){const st=D.createElement('style');st.id='gfx-nav-field';st.textContent='html.gfx-f3 .gfx-nav[data-gfx-fc]::before{background-color:var(--gfx-fc)!important}';D.head.appendChild(st);}}
+for(const n of navs){n.style.setProperty('--gfx-fc',s);if(!n.hasAttribute('data-gfx-fc'))n.setAttribute('data-gfx-fc','');}
+};
 const toneRGB=t=>(t==='D'?FIELD.DARK:FIELD.LIGHT);
 const css=c=>`rgb(${c[0]}, ${c[1]}, ${c[2]})`;
 const mix=(a,b,t)=>a.map((v,i)=>Math.round(v+(b[i]-v)*t));
@@ -503,12 +508,13 @@ turns.push({y0:end-vh*0.3,y1:end,from:last,to:FIELD.FOOT,tf:o.tone,tt:o.tone});
 }
 });
 opaque=fieldRooms.filter(o=>o.opaque).map(o=>o.el);
+for(const e of opaque)e.style.setProperty('background-color','transparent','important');
 };
 let lastC='',lastTone='',shown=null,fade=null,fadeRaf=0,toningT=0;
 const ease3=t=>(t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3) / 2);
 const apply=(c,tone)=>{
 const s=css(c);
-if(s!==lastC){lastC=s;D.body.style.backgroundColor=s;for(const e of opaque)e.style.setProperty('background-color',s,'important');if(footTone)footTone(s);fieldListeners.forEach(f=>safe('field listener',()=>f(s,c)));}
+if(s!==lastC){lastC=s;D.body.style.backgroundColor=s;if(footTone)footTone(s);navTone(s);fieldListeners.forEach(f=>safe('field listener',()=>f(s,c)));}
 if(tone!==lastTone){
 if(lastTone){H.classList.add('gfx-toning');clearTimeout(toningT);toningT=setTimeout(()=>H.classList.remove('gfx-toning'),220);}
 lastTone=tone;
@@ -972,10 +978,10 @@ if(tl){tl.timeScale(1);if(prog<=0.001)tl.pause(0);}}}).to(fly,{x:n.left,y:n.top,
 };
 let CH=0,K=-1;
 const openNow=()=>H.classList.toggle('gfx-ftg-open',prog>=0.34&&!H.classList.contains('gfx-tone-light'));
-if(fieldRooms.some(o=>o.foot)){footTone=c=>{if(c)foot.style.setProperty('background-color',c,'important');if(mode==='reveal')openNow();};if(lastC)footTone(lastC);}
+if(fieldRooms.some(o=>o.foot)){foot.style.setProperty('background-color','transparent','important');footTone=()=>{if(mode==='reveal')openNow();};}
 const inner=()=>q(':scope > .gfx-fi-wrap, :scope > .gfx-fi-layer');
 const cut=k=>{if(k===K)return;K=k;foot.style.transform=k?`translate3d(0,${k}px,0)`:'';inner().forEach(e=>{e.style.transform=k?`translate3d(0,${-k}px,0)`:'';});};
-const measureF=()=>{CH=close?close.offsetHeight:0;cut(0);H0=foot.offsetHeight;host.style.setProperty('--gfx-ftg-h',H0+'px');const r=lockup.getBoundingClientRect(),f=foot.getBoundingClientRect();lockR={localBottom:r.bottom-f.top};hostTop=host.getBoundingClientRect().top+W.scrollY;};
+const measureF=()=>{CH=0;cut(0);H0=foot.offsetHeight;host.style.setProperty('--gfx-ftg-h',H0+'px');const r=lockup.getBoundingClientRect(),f=foot.getBoundingClientRect();lockR={localBottom:r.bottom-f.top};hostTop=host.getBoundingClientRect().top+W.scrollY;};
 const step=(p,instant)=>{
 prog=p;
 const covered=p<=0.001;

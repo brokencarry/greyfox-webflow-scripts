@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.30 + pages 1.0.2 + insights 1.2.4. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.31 + pages 1.0.2 + insights 1.2.4. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.30';
+  const VERSION = '1.0.31';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -571,6 +571,14 @@
   let fieldRooms = [], fieldDef = null, turns = [], opaque = [], lastSpans = [], spanOf = null;
   // (1.0.30) set by the footer once it is built: it takes the field's colour and settles its columns only on a dark field
   let footTone = null;
+  /* (1.0.31, founder 10/22: no seam anywhere) the bar's backing wears the field's colour frame by frame; before, it switched
+     paper/black in one step at the ink moment while the field behind it was mid-fade (a band at the top when scrolling up
+     through a turn). The variable sits on the bar alone, so a turn restyles the bar and nothing else. */
+  let navs = null;
+  const navTone = s => {
+    if (!navs || !navs.length) { navs = $$('.gfx-nav'); if (navs.length && !$('#gfx-nav-field')) { const st = D.createElement('style'); st.id = 'gfx-nav-field'; st.textContent = 'html.gfx-f3 .gfx-nav[data-gfx-fc]::before{background-color:var(--gfx-fc)!important}'; D.head.appendChild(st); } }
+    for (const n of navs) { n.style.setProperty('--gfx-fc', s); if (!n.hasAttribute('data-gfx-fc')) n.setAttribute('data-gfx-fc', ''); }
+  };
   const toneRGB = t => (t === 'D' ? FIELD.DARK : FIELD.LIGHT);
   const css = c => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
   const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
@@ -610,12 +618,15 @@
       }
     });
     opaque = fieldRooms.filter(o => o.opaque).map(o => o.el);
+    // (1.0.31) the close is see-through: the page's background is the one colour behind the close and the footer, so the
+    // browser can never draw them apart during a turn (1.0.30 painted both, and a large screen still showed them a few frames apart)
+    for (const e of opaque) e.style.setProperty('background-color', 'transparent', 'important');
   };
   let lastC = '', lastTone = '', shown = null, fade = null, fadeRaf = 0, toningT = 0;
   const ease3 = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const apply = (c, tone) => {
     const s = css(c);
-    if (s !== lastC) { lastC = s; D.body.style.backgroundColor = s; for (const e of opaque) e.style.setProperty('background-color', s, 'important'); if (footTone) footTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
+    if (s !== lastC) { lastC = s; D.body.style.backgroundColor = s; if (footTone) footTone(s); navTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
     if (tone !== lastTone) {
       if (lastTone) { H.classList.add('gfx-toning'); clearTimeout(toningT); toningT = setTimeout(() => H.classList.remove('gfx-toning'), 220); }
       lastTone = tone;
@@ -1170,10 +1181,13 @@
        in time that can start late, so a quick reader uncovered the black footer while the close was still grey. The footer
        now wears the field's colour frame by frame (close and footer are one surface), and its columns wait for a dark field. */
     const openNow = () => H.classList.toggle('gfx-ftg-open', prog >= 0.34 && !H.classList.contains('gfx-tone-light'));
-    if (fieldRooms.some(o => o.foot)) { footTone = c => { if (c) foot.style.setProperty('background-color', c, 'important'); if (mode === 'reveal') openNow(); }; if (lastC) footTone(lastC); }
+    // (1.0.31) see-through as the close is: the page's background shows behind its columns
+    if (fieldRooms.some(o => o.foot)) { foot.style.setProperty('background-color', 'transparent', 'important'); footTone = () => { if (mode === 'reveal') openNow(); }; }
     const inner = () => q(':scope > .gfx-fi-wrap, :scope > .gfx-fi-layer');
     const cut = k => { if (k === K) return; K = k; foot.style.transform = k ? `translate3d(0,${k}px,0)` : ''; inner().forEach(e => { e.style.transform = k ? `translate3d(0,${-k}px,0)` : ''; }); };
-    const measureF = () => { CH = close ? close.offsetHeight : 0; cut(0); H0 = foot.offsetHeight; host.style.setProperty('--gfx-ftg-h', H0 + 'px'); const r = lockup.getBoundingClientRect(), f = foot.getBoundingClientRect(); lockR = { localBottom: r.bottom - f.top }; hostTop = host.getBoundingClientRect().top + W.scrollY; };
+    // (1.0.31) CH stays 0 on every page: with a see-through close the waiting footer must start at the close's last line, as
+    // it already did on the person pages (no close)
+    const measureF = () => { CH = 0; cut(0); H0 = foot.offsetHeight; host.style.setProperty('--gfx-ftg-h', H0 + 'px'); const r = lockup.getBoundingClientRect(), f = foot.getBoundingClientRect(); lockR = { localBottom: r.bottom - f.top }; hostTop = host.getBoundingClientRect().top + W.scrollY; };
     const step = (p, instant) => {
       prog = p;
       const covered = p <= 0.001;

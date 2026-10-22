@@ -714,7 +714,7 @@
   const mirror = s => {
     (covers || (covers = $$('.gfx-team-sec .reveal_block'))).forEach(e => e.style.setProperty('--gfx-field', s));
     clearTimeout(rootT); rootT = setTimeout(() => H.style.setProperty('--gfx-field', s), 160);
-    $$('.footer_section_wrapper').forEach(f => f.style.setProperty('background-color', s, 'important'));
+    // (core 1.0.31) the footer is see-through; the page's background shows behind it
   };
 
   gfx.page({
