@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.39 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.40 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.39';
+const VERSION='1.0.40';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -728,7 +728,7 @@ if(D.readyState==='complete')requestAnimationFrame(settle);else addEventListener
 if('ResizeObserver'in W){let lastH=D.documentElement.scrollHeight,rt2=0;new ResizeObserver(()=>{const h=D.documentElement.scrollHeight;if(Math.abs(h-lastH)<2)return;lastH=h;clearTimeout(rt2);rt2=setTimeout(()=>{if(ST)ST.refresh();measure();paint();},150);}).observe(D.body);}
 W.gfxField={turns:()=>turns,spans:()=>lastSpans,paint,measure,rhythm,place:{now:placeNow,go:goPlace}};
 }
-const early=()=>safe('early field',()=>{if(!fieldDef)return;if(!fieldRooms.length)setupRooms();measure();paint();});
+const early=()=>safe('early field',()=>{if(!fieldDef)return;if(performance.now()<calmUntil&&W.scrollY>W.innerHeight*0.5)return;if(!fieldRooms.length)setupRooms();measure();paint();});
 const barEase=t=>{const c=[0.16,1,0.3,1];let x=t;for(let i=0;i<6;i++){const bx=3*c[0]*x*(1-x)*(1-x)+3*c[2]*x*x*(1-x)+x*x*x-t,d=3*c[0]*(1-x)*(1-x)+6*(c[2]-c[0])*x*(1-x)+3*(1-c[2])*x*x;if(Math.abs(bx)<1e-5||!d)break;x-=bx / d;}return 3*c[1]*x*(1-x)*(1-x)+3*c[3]*x*x*(1-x)+x*x*x;};
 const navLook=top=>safe('nav look',()=>{
 const bar=$('.gfx-nav');if(!bar)return;

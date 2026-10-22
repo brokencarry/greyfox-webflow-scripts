@@ -1,4 +1,4 @@
-/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.39 + person 1.0.2. Sources: core/gfx-core.js, person/gfx-person.js */
+/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.40 + person 1.0.2. Sources: core/gfx-core.js, person/gfx-person.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.39';
+  const VERSION = '1.0.40';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -868,7 +868,9 @@
     W.gfxField = { turns: () => turns, spans: () => lastSpans, paint, measure, rhythm, place: { now: placeNow, go: goPlace } };
   }
   // before the layers have run, the backdrop already follows the scroll (a reload mid-page never shows the wrong field)
-  const early = () => safe('early field', () => { if (!fieldDef) return; if (!fieldRooms.length) setupRooms(); measure(); paint(); });
+  // (1.0.40, launch QA 10/22) a reload or Back mid-page skips this early guess: before the page's own layers are built the
+  // rooms measure short and the guess can be the wrong colour (Home: black for ~0.15 s, then paper); the first real paint lands calm
+  const early = () => safe('early field', () => { if (!fieldDef) return; if (performance.now() < calmUntil && W.scrollY > W.innerHeight * 0.5) return; if (!fieldRooms.length) setupRooms(); measure(); paint(); });
 
   /* ========================= 7 · the bar (sbx.js, Flow) =========================
      One bar on Webflow (our nav copy). At the top it wears the regular look (transparent, white links, no button) over
