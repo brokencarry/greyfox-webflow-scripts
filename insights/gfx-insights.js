@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.3';
+  W.__gfxInsights = '1.2.4';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -307,6 +307,9 @@
     'what-inning': 'sha384-/SUk/cdWwPXOCeZrgj9Z1yQjL4PIYWjM+Wn6yqZqZBVvzk+0eXNxK8VBHKjTzaaA'
   };
   const SITE = 'https://www.greyfoxpartners.com';
+  // (1.2.4) the firm's mark for the article publisher, and each author's page after the launch renames (LAUNCH.txt 1b)
+  const LOGO = 'https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6ad9b63e75f1cad7b6871bde_gfx-logo-mark-256.png';
+  const PEOPLE = { 'Shivam Shirolawala': '/shivam-shirolawala', 'Tony Giudice': '/tony-giudice', 'Burke Widhelm': '/burke-widhelm' };
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const escH = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   // (build.js) a hyphenated word never breaks; a title's part after ": " is its own line on a desktop (gi-sub)
@@ -440,8 +443,16 @@
       if (D.querySelector('script[data-gi-ld]')) return;
       const meta = n => { const m = D.querySelector('meta[property="' + n + '"],meta[name="' + n + '"]'); return m ? m.content : ''; };
       const t = ameta && $('time', ameta), iso = (t && t.getAttribute('datetime')) || (me && me.date ? me.date.iso : '');
-      const org = { '@type': 'Organization', name: 'Grey Fox Partners', url: SITE };
-      const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: title.slice(0, 110), mainEntityOfPage: url, author: org, publisher: org };
+      const org = { '@type': 'Organization', name: 'Grey Fox Partners', url: SITE, logo: { '@type': 'ImageObject', url: LOGO } };
+      // (1.2.4) the author is the byline's person (as the page shows), not the firm: name from the byline, LinkedIn from the
+      // end-of-piece author note, the person's page on the site when the roster knows it; the firm when there is no byline
+      const byEl = $(O('gi-author-n')) || $(O('gi-ea-n')), byName = byEl ? byEl.textContent.replace(/\s+/g, ' ').trim() : '';
+      const liEl = $(O('gi-endauthor') + ' a[href*="linkedin.com/in/"]') || $(O('gi-author') + ' a[href*="linkedin.com/in/"]');
+      const author = byName ? { '@type': 'Person', name: byName } : org;
+      if (byName && PEOPLE[byName]) author.url = SITE + PEOPLE[byName];
+      if (byName && liEl) author.sameAs = [liEl.getAttribute('href')];
+      if (byName) author.worksFor = { '@type': 'Organization', name: 'Grey Fox Partners', url: SITE };
+      const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: title.slice(0, 110), mainEntityOfPage: url, author, publisher: org };
       const desc = meta('description'), img = meta('og:image');
       if (desc) ld.description = desc; if (img) ld.image = img; if (iso) ld.datePublished = iso;
       const sc = D.createElement('script'); sc.type = 'application/ld+json'; sc.setAttribute('data-gi-ld', ''); sc.textContent = JSON.stringify(ld); D.head.appendChild(sc);

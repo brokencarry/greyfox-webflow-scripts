@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.27 + pages 1.0.2 + insights 1.2.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.27 + pages 1.0.2 + insights 1.2.4 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1381,7 +1381,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.2.3';
+W.__gfxInsights='1.2.4';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1614,6 +1614,8 @@ const COVER_SRI={
 'what-inning':'sha384-/SUk/cdWwPXOCeZrgj9Z1yQjL4PIYWjM+Wn6yqZqZBVvzk+0eXNxK8VBHKjTzaaA'
 };
 const SITE='https://www.greyfoxpartners.com';
+const LOGO='https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6ad9b63e75f1cad7b6871bde_gfx-logo-mark-256.png';
+const PEOPLE={'Shivam Shirolawala':'/shivam-shirolawala','Tony Giudice':'/tony-giudice','Burke Widhelm':'/burke-widhelm'};
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const escH=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const nb=t=>escH(t).replace(/(\S+-\S+)/g,'<span class="gfx-pg-gi-nb" data-o="gi-nb">$1</span>');
@@ -1728,8 +1730,14 @@ safe('article ld',()=>{
 if(D.querySelector('script[data-gi-ld]'))return;
 const meta=n=>{const m=D.querySelector('meta[property="'+n+'"],meta[name="'+n+'"]');return m?m.content:'';};
 const t=ameta&&$('time',ameta),iso=(t&&t.getAttribute('datetime'))||(me&&me.date?me.date.iso:'');
-const org={'@type':'Organization',name:'Grey Fox Partners',url:SITE};
-const ld={'@context':'https://schema.org','@type':'Article',headline:title.slice(0,110),mainEntityOfPage:url,author:org,publisher:org};
+const org={'@type':'Organization',name:'Grey Fox Partners',url:SITE,logo:{'@type':'ImageObject',url:LOGO}};
+const byEl=$(O('gi-author-n'))||$(O('gi-ea-n')),byName=byEl?byEl.textContent.replace(/\s+/g,' ').trim():'';
+const liEl=$(O('gi-endauthor')+' a[href*="linkedin.com/in/"]')||$(O('gi-author')+' a[href*="linkedin.com/in/"]');
+const author=byName?{'@type':'Person',name:byName}:org;
+if(byName&&PEOPLE[byName])author.url=SITE+PEOPLE[byName];
+if(byName&&liEl)author.sameAs=[liEl.getAttribute('href')];
+if(byName)author.worksFor={'@type':'Organization',name:'Grey Fox Partners',url:SITE};
+const ld={'@context':'https://schema.org','@type':'Article',headline:title.slice(0,110),mainEntityOfPage:url,author,publisher:org};
 const desc=meta('description'),img=meta('og:image');
 if(desc)ld.description=desc;if(img)ld.image=img;if(iso)ld.datePublished=iso;
 const sc=D.createElement('script');sc.type='application/ld+json';sc.setAttribute('data-gi-ld','');sc.textContent=JSON.stringify(ld);D.head.appendChild(sc);
