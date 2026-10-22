@@ -1,4 +1,4 @@
-/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.32 + pages 1.0.2 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
+/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.33 + pages 1.0.2 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.32';
+  const VERSION = '1.0.33';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1180,9 +1180,13 @@
     /* (1.0.30, founder 10/22 "you can see the cuts in the footer. This needs to be seamless") the close's turn is a crossfade
        in time that can start late, so a quick reader uncovered the black footer while the close was still grey. The footer
        now wears the field's colour frame by frame (close and footer are one surface), and its columns wait for a dark field. */
+    /* (1.0.33) phones (the footer in the flow): the see-through footer's columns wait for a dark field too, as the reveal's do
+       (a jump to the page's end before the turn finished showed its white type on paper) */
+    const fiEl = $('.gfx-fi', foot);
+    const flowTone = () => { if (!fiEl) return; const on = mode === 'flow'; fiEl.style.transition = on ? 'opacity .35s cubic-bezier(.16, 1, .3, 1)' : ''; fiEl.style.opacity = on && H.classList.contains('gfx-tone-light') ? '0' : ''; };
     const openNow = () => H.classList.toggle('gfx-ftg-open', prog >= 0.34 && !H.classList.contains('gfx-tone-light'));
     // (1.0.31) see-through as the close is: the page's background shows behind its columns
-    if (fieldRooms.some(o => o.foot)) { foot.style.setProperty('background-color', 'transparent', 'important'); /* (1.0.32) and its wrapper: the inner pages' footer wrapper (gfx-ow-foot) carried its own near-black, a band below the close mid-turn */ host.style.setProperty('background-color', 'transparent', 'important'); footTone = () => { if (mode === 'reveal') openNow(); }; }
+    if (fieldRooms.some(o => o.foot)) { foot.style.setProperty('background-color', 'transparent', 'important'); /* (1.0.32) and its wrapper: the inner pages' footer wrapper (gfx-ow-foot) carried its own near-black, a band below the close mid-turn */ host.style.setProperty('background-color', 'transparent', 'important'); footTone = () => { if (mode === 'reveal') openNow(); else flowTone(); }; }
     const inner = () => q(':scope > .gfx-fi-wrap, :scope > .gfx-fi-layer');
     const cut = k => { if (k === K) return; K = k; foot.style.transform = k ? `translate3d(0,${k}px,0)` : ''; inner().forEach(e => { e.style.transform = k ? `translate3d(0,${-k}px,0)` : ''; }); };
     // (1.0.31) CH stays 0 on every page: with a see-through close the waiting footer must start at the close's last line, as
@@ -1212,6 +1216,7 @@
       if (tl && tl.progress() < 1) tl.progress(1);
     };
     const teardown = () => {
+      if (fiEl) { fiEl.style.opacity = ''; fiEl.style.transition = ''; }
       if (st) st.kill(); st = null; if (st2) st2.kill(); st2 = null; if (tl) tl.kill(); tl = null; stopFlight(); if (wordTw) wordTw.kill(); if (ro) ro.disconnect(); ro = null; if (lockIO) lockIO.disconnect(); lockIO = null;
       H.classList.remove('gfx-ftg-reveal', 'gfx-ftg-covered', 'gfx-ftg-home', 'gfx-ftg-flying', 'gfx-ftg-lock-in', 'gfx-ftg-open');
       cut(0); host.style.removeProperty('--gfx-ftg-h'); if (fly) fly.style.visibility = 'hidden'; state = 'bar';
@@ -1224,6 +1229,7 @@
       if (next === mode) return; const was = mode; if (was) teardown(); mode = next;
       H.setAttribute('data-gfx-foot', mode);
       if (mode === 'flow') {
+        flowTone();
         tl = film(false);
         st = ST.create({ trigger: foot, start: 'top 92%', end: 'max', onEnter: () => { if (tl.progress() < 1 && !tl.isActive()) tl.play(); } });
         st2 = ST.create({ trigger: foot, start: 'top 125%', onLeaveBack: () => tl.pause(0) });
