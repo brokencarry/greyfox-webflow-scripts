@@ -18,7 +18,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.7';
+  W.__gfxContact = '1.0.8';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -101,7 +101,7 @@
   }
 
   /* ========================= the intake (r4.js + final.js, on Webflow's own form) ========================= */
-  const COPY = { subject: { owner: 'Contact page: a business owner', investor: 'Contact page: an investor' }, fail: ['This did not send. Please try again, or write to ', '.'], failTo: { owner: 'owners@greyfoxpartners.com', investor: 'info@greyfoxpartners.com' } };
+  const COPY = { subject: { owner: 'Contact page: a business owner', investor: 'Contact page: an investor' }, fail: ['This did not send. Please try again, or write to ', '.'], failTo: { owner: 'inquiries@greyfoxpartners.com', investor: 'inquiries@greyfoxpartners.com' } };
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const okReach = v => EMAIL.test(v) || (/^[\d\s()+.\-]+$/.test(v) && v.replace(/\D/g, '').length >= 7);
   const navBottom = () => { const n = $('.navigation_wrapper'); if (!n) return 74; const b = Math.max(n.getBoundingClientRect().bottom, n.offsetHeight); return b > 0 && b < W.innerHeight / 2 ? b : 74; };
@@ -157,6 +157,9 @@
       if (byUser) tellIn(sayEl, k === 'owner' ? 'The form for business owners follows.' : 'The form for investors follows.');
     };
     radios.forEach(r => r.addEventListener('change', () => { if (r.checked) choose(r.value, true); }));
+    // (1.0.8, founder 10/22) a link that names the reader (?for=owner or ?for=investor, from the door cards) opens the form
+    // on that path, as if the reader had chosen it
+    safe('preselect', () => { const want = (new URLSearchParams(location.search).get('for') || '').toLowerCase(); const pre = radios.find(r => r.value === want); if (pre && !path) { pre.checked = true; choose(want, false); } });
     const pre = radios.find(r => r.checked); if (pre) choose(pre.value, false);   // (the browser restoring the choice on Back)
 
     // errors

@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.27 + home 1.1.15 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.28 + home 1.1.15 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.27';
+const VERSION='1.0.28';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -726,7 +726,7 @@ function menuFoot(){
 const menu=$('.w-nav-menu');if(!menu||$('.gfx-menu-foot',menu))return;
 const cta=$$('.gfx-nav a, .w-nav a').find(a=> /^start a conversation$/i.test(a.textContent.trim()));
 const href=(cta&&cta.getAttribute('href'))||'/contact';
-menu.insertAdjacentHTML('beforeend',`<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:owners@greyfoxpartners.com"><span>Business owners</span>owners@greyfoxpartners.com</a></li><li><a href="mailto:info@greyfoxpartners.com"><span>Investors</span>info@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+menu.insertAdjacentHTML('beforeend',`<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
 }
 function navName(){
 $$('a.w-nav-brand, a.logo-link').forEach(a=>{
@@ -888,7 +888,8 @@ legal:$$('.tos_pp_wrapper a, .gfx-ft-legal a',foot).map(a=>[txt(a),a.getAttribut
 copy:txt($('.gfx-foot-cap, .footer_caption_grid > :first-child',foot))||('© '+new Date().getFullYear()+' Grey Fox Partners'),
 notice:txt($('.gfx-notice',foot))||'Grey Fox Partners represents buyers. Nothing on this site is an offer or advice.'
 };
-if(!data.mail.length)data.mail=['owners@greyfoxpartners.com','info@greyfoxpartners.com'];
+if(!data.mail.length)data.mail=['inquiries@greyfoxpartners.com'];
+data.copy=data.copy.split(/\b20\d\d\b/).join(String(new Date().getFullYear()));
 data.legal=data.legal.filter(([t])=>!/^terms/i.test(t));
 if(!data.legal.length)data.legal=[['Privacy Policy','#']];
 const contact=(data.nav.find(([t])=> /contact/i.test(t))||[0,'/contact'])[1];

@@ -1,4 +1,4 @@
-/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.27 + pages 1.0.2 + contact 1.0.7 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
+/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.28 + pages 1.0.2 + contact 1.0.8 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.27';
+const VERSION='1.0.28';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -726,7 +726,7 @@ function menuFoot(){
 const menu=$('.w-nav-menu');if(!menu||$('.gfx-menu-foot',menu))return;
 const cta=$$('.gfx-nav a, .w-nav a').find(a=> /^start a conversation$/i.test(a.textContent.trim()));
 const href=(cta&&cta.getAttribute('href'))||'/contact';
-menu.insertAdjacentHTML('beforeend',`<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:owners@greyfoxpartners.com"><span>Business owners</span>owners@greyfoxpartners.com</a></li><li><a href="mailto:info@greyfoxpartners.com"><span>Investors</span>info@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+menu.insertAdjacentHTML('beforeend',`<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
 }
 function navName(){
 $$('a.w-nav-brand, a.logo-link').forEach(a=>{
@@ -888,7 +888,8 @@ legal:$$('.tos_pp_wrapper a, .gfx-ft-legal a',foot).map(a=>[txt(a),a.getAttribut
 copy:txt($('.gfx-foot-cap, .footer_caption_grid > :first-child',foot))||('© '+new Date().getFullYear()+' Grey Fox Partners'),
 notice:txt($('.gfx-notice',foot))||'Grey Fox Partners represents buyers. Nothing on this site is an offer or advice.'
 };
-if(!data.mail.length)data.mail=['owners@greyfoxpartners.com','info@greyfoxpartners.com'];
+if(!data.mail.length)data.mail=['inquiries@greyfoxpartners.com'];
+data.copy=data.copy.split(/\b20\d\d\b/).join(String(new Date().getFullYear()));
 data.legal=data.legal.filter(([t])=>!/^terms/i.test(t));
 if(!data.legal.length)data.legal=[['Privacy Policy','#']];
 const contact=(data.nav.find(([t])=> /contact/i.test(t))||[0,'/contact'])[1];
@@ -1381,7 +1382,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxContact)return;
-W.__gfxContact='1.0.7';
+W.__gfxContact='1.0.8';
 const P=gfx.pages,O=P.O,mk=P.mk,H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const GROUP=G.group;
 const el=(tag,cls,text)=>{const n=D.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
@@ -1454,7 +1455,7 @@ setTimeout(refresh,60);
 $$(O('r4-qb'),sw).forEach(b=>b.addEventListener('click',()=>showQs(b.getAttribute('data-q'))));
 });
 }
-const COPY={subject:{owner:'Contact page: a business owner',investor:'Contact page: an investor'},fail:['This did not send. Please try again, or write to ','.'],failTo:{owner:'owners@greyfoxpartners.com',investor:'info@greyfoxpartners.com'}};
+const COPY={subject:{owner:'Contact page: a business owner',investor:'Contact page: an investor'},fail:['This did not send. Please try again, or write to ','.'],failTo:{owner:'inquiries@greyfoxpartners.com',investor:'inquiries@greyfoxpartners.com'}};
 const EMAIL= /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const okReach=v=>EMAIL.test(v)||(/^[\d\s()+.\-]+$/.test(v)&&v.replace(/\D/g,'').length>=7);
 const navBottom=()=>{const n=$('.navigation_wrapper');if(!n)return 74;const b=Math.max(n.getBoundingClientRect().bottom,n.offsetHeight);return b>0&&b<W.innerHeight / 2?b:74;};
@@ -1504,6 +1505,7 @@ showQs(k);
 if(byUser)tellIn(sayEl,k==='owner'?'The form for business owners follows.':'The form for investors follows.');
 };
 radios.forEach(r=>r.addEventListener('change',()=>{if(r.checked)choose(r.value,true);}));
+safe('preselect',()=>{const want=(new URLSearchParams(location.search).get('for')||'').toLowerCase();const pre=radios.find(r=>r.value===want);if(pre&&!path){pre.checked=true;choose(want,false);}});
 const pre=radios.find(r=>r.checked);if(pre)choose(pre.value,false);
 const setErr=(f,msg)=>{f.setAttribute('aria-invalid',msg?'true':'false');const e=D.getElementById(f.id+'-err');if(e){e.textContent=msg||'';e.hidden=!msg;}};
 const check=()=>{

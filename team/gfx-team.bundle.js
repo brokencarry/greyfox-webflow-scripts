@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.27 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.28 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.27';
+  const VERSION = '1.0.28';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -863,7 +863,7 @@
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
     const href = (cta && cta.getAttribute('href')) || '/contact';
-    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:owners@greyfoxpartners.com"><span>Business owners</span>owners@greyfoxpartners.com</a></li><li><a href="mailto:info@greyfoxpartners.com"><span>Investors</span>info@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
   }
   /* (1.0.11) the logo link is two images with empty alt text, so it had no name for a screen reader: it is named here */
   function navName() {
@@ -1077,7 +1077,10 @@
       copy: txt($('.gfx-foot-cap, .footer_caption_grid > :first-child', foot)) || ('© ' + new Date().getFullYear() + ' Grey Fox Partners'),
       notice: txt($('.gfx-notice', foot)) || 'Grey Fox Partners represents buyers. Nothing on this site is an offer or advice.'
     };
-    if (!data.mail.length) data.mail = ['owners@greyfoxpartners.com', 'info@greyfoxpartners.com'];
+    // (1.0.28, founder 10/22) one public address for owners and investors alike
+    if (!data.mail.length) data.mail = ['inquiries@greyfoxpartners.com'];
+    // (1.0.28) the footer's year follows the clock (it was typed "2026")
+    data.copy = data.copy.split(/\b20\d\d\b/).join(String(new Date().getFullYear()));
     // (1.0.26, founder 10/21: "remove Terms") no Terms page: the legal row carries the Privacy Policy alone
     data.legal = data.legal.filter(([t]) => !/^terms/i.test(t));
     if (!data.legal.length) data.legal = [['Privacy Policy', '#']];
