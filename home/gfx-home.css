@@ -408,3 +408,6 @@ html .gfx-door-e { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles)
   html.gfx-f3 :is(a.paragraph[href^="mailto:"], .gfx-team-li, .gfx-team-li *) { transition: color .2s cubic-bezier(.25, 1, .5, 1); }
   html.gfx-f3 :is(a.paragraph[href^="mailto:"]:hover, .gfx-team-li:hover, .gfx-team-li:hover *):not(#gfx-h1):not(#gfx-h2) { color: #156946 !important; }
 }
+/* (10/22 peer review) the hero headline is the page's real H1 now (was a div with role="heading"); the H1 element's base
+   margins (20 / 15 px) are cleared so it sits exactly where the div did */
+html .hero_title h1.gfx-hero-h { margin: 0; }
