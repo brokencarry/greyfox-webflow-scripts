@@ -1,4 +1,4 @@
-/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.38 + person 1.0.2. Sources: core/gfx-core.js, person/gfx-person.js */
+/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.39 + person 1.0.2. Sources: core/gfx-core.js, person/gfx-person.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.38';
+  const VERSION = '1.0.39';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1436,6 +1436,9 @@
     if (!PAGE) { H.classList.add('gfx-ready'); return; }
     safe('page dom', () => PAGE.dom && PAGE.dom(api));
     safe('footer I', footBuild);
+    // (1.0.39, launch QA 10/22) an article's picture link repeats its title link: one stop and one name per article for
+    // keyboards and screen readers (the drawing's own words - 'Caller 40% Founder 60%...' - were read as the link's name)
+    safe('pic links', () => { const named = new Set($$('a[href*="/articles/"]').filter(x => !x.querySelector('svg, img, picture') && x.textContent.trim()).map(x => x.getAttribute('href'))); $$('a[href*="/articles/"]').forEach(x => { if (x.querySelector('svg, img, picture') && named.has(x.getAttribute('href'))) { x.setAttribute('aria-hidden', 'true'); x.tabIndex = -1; } }); });
     if (fieldDef) { addEventListener('scroll', early, { passive: true }); early(); }
     if (REDUCE) { stillInit(); return; }
     Promise.all([ensureGsap(), ensureLenis()]).then(([ok]) => { if (!ok) { staticInit(); return; } safe('start', start); });

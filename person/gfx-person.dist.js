@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.38 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.39 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.38';
+const VERSION='1.0.39';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -1173,6 +1173,7 @@ W.addEventListener('load',()=>{stopIX2();setTimeout(ix3Late,3000);},{once:true})
 if(!PAGE){H.classList.add('gfx-ready');return;}
 safe('page dom',()=>PAGE.dom&&PAGE.dom(api));
 safe('footer I',footBuild);
+safe('pic links',()=>{const named=new Set($$('a[href*="/articles/"]').filter(x=>!x.querySelector('svg, img, picture')&&x.textContent.trim()).map(x=>x.getAttribute('href')));$$('a[href*="/articles/"]').forEach(x=>{if(x.querySelector('svg, img, picture')&&named.has(x.getAttribute('href'))){x.setAttribute('aria-hidden','true');x.tabIndex=-1;}});});
 if(fieldDef){addEventListener('scroll',early,{passive:true});early();}
 if(REDUCE){stillInit();return;}
 Promise.all([ensureGsap(),ensureLenis()]).then(([ok])=>{if(!ok){staticInit();return;}safe('start',start);});
