@@ -56,12 +56,12 @@
   "sri": "sha384-NWjqadfueNjs/bVQmKdDQMP45t7oaBvz6P7ebFEeXTqx2PYBCdh40H4YKlyQZDp7"
  },
  "insights/gfx-insights.dist.js": {
-  "bytes": 116191,
-  "sri": "sha384-Ny8rx089Vn6Uz4X30OJ3oaSnvBiR2HnAryY1eGVpO4vgujHjAPiqlWsT9Q6R4u5H"
+  "bytes": 116966,
+  "sri": "sha384-4IdnJ3MSeaGAN8wUgRAW3TIGfs+tjuBnMy/TatIp/hAh+PEr4FZO6O4iRXOAKwYR"
  },
  "insights/gfx-insights.dist.css": {
   "bytes": 53280,
-  "sri": "sha384-bKkqGTwKyIT5OT/lHqNXV8qjBYWjtQzvLl6QtrraOhCvrmqwufTIh8Gg+Hqfta7m"
+  "sri": "sha384-B9oZ4yqMpFu5L0ImoDBNrkPoUzsJC8iTdqFGZQrcPx8Z1EwHzvnbDShOqeDH18M+"
  },
  "person/gfx-person.dist.js": {
   "bytes": 84308,
@@ -87,7 +87,7 @@
   "contact": "1.0.7",
   "privacy": "1.0.2",
   "team": "1.0.3",
-  "insights": "1.2.1",
+  "insights": "1.2.2",
   "person": "1.0.2",
   "investors": "1.0.18"
  }

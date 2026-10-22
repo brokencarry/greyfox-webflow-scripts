@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.27 + pages 1.0.2 + insights 1.2.1 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.27 + pages 1.0.2 + insights 1.2.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1381,7 +1381,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.2.1';
+W.__gfxInsights='1.2.2';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1723,7 +1723,17 @@ tocFill(b.secs.map(s=>({id:s.id,text:sentenceHead(s.text)})).concat(b.sources?[{
 const url=SITE+'/articles/'+slug;
 const SH={in:'https://www.linkedin.com/sharing/share-offsite/?url=',x:'https://x.com/intent/post?url=',fb:'https://www.facebook.com/sharer/sharer.php?u='};
 $$('a[data-gi-ico]').forEach(a=>{const k=a.getAttribute('data-gi-ico');if(SH[k])a.setAttribute('href',SH[k]+encodeURIComponent(url));});
-$$('[data-gi-copy]').forEach(c=>c.setAttribute('data-gi-copy',url));
+$('[data-gi-copy]').forEach(c=>c.setAttribute('data-gi-copy',url));
+safe('article ld',()=>{
+if(D.querySelector('script[data-gi-ld]'))return;
+const meta=n=>{const m=D.querySelector('meta[property="'+n+'"],meta[name="'+n+'"]');return m?m.content:'';};
+const t=ameta&&$('time',ameta),iso=(t&&t.getAttribute('datetime'))||(me&&me.date?me.date.iso:'');
+const org={'@type':'Organization',name:'Grey Fox Partners',url:SITE};
+const ld={'@context':'https://schema.org','@type':'Article',headline:title.slice(0,110),mainEntityOfPage:url,author:org,publisher:org};
+const desc=meta('description'),img=meta('og:image');
+if(desc)ld.description=desc;if(img)ld.image=img;if(iso)ld.datePublished=iso;
+const sc=D.createElement('script');sc.type='application/ld+json';sc.setAttribute('data-gi-ld','');sc.textContent=JSON.stringify(ld);D.head.appendChild(sc);
+});
 const hero=$(O('gi-plate-hero'));
 if(hero)plate(hero,hero.getAttribute('data-gi-cover')||(me?me.cover:''),title);
 const at=me?feed.indexOf(me):-1,others=feed.filter(a=>a!==me);
