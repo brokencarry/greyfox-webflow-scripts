@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.36 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.37 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.36';
+  const VERSION = '1.0.37';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -573,6 +573,8 @@
   let fieldRooms = [], fieldDef = null, turns = [], opaque = [], lastSpans = [], spanOf = null;
   // (1.0.30) set by the footer once it is built: it takes the field's colour and settles its columns only on a dark field
   let footTone = null;
+  // (1.0.37) until then the field paints without fades (see paint); a reload or Back starts calm for its first 1.6 s
+  let calmUntil = (() => { try { const t = (performance.getEntriesByType("navigation")[0] || {}).type; return t === "reload" || t === "back_forward" ? performance.now() + 1600 : 0; } catch (e) { return 0; } })();
   /* (1.0.35, founder 10/22: one move at a time) set by the footer: true while any of it is open. A turn running then (a quick
      reader outran the close's crossfade) finishes from where it is in 160 ms, so the footer always opens on settled black. */
   let footOpen = null;
@@ -659,7 +661,9 @@
       if (y > u.y0) { const t = (y - u.y0) / (u.y1 - u.y0); tone = t < 0.5 ? u.tf : u.tt; c = REDUCE ? (t < 0.5 ? u.from : u.to) : mix(u.from, u.to, ease3(t)); }
       break;
     }
-    if (!shown || REDUCE) { shown = c; apply(c, tone); return; }
+    // (1.0.37, launch QA 10/22) while the reader is being put back in place (reload, Back), the colour lands at once: the
+    // first measures overshoot (Home: dark for ~1 s, then a fade back to paper); a turn fades only when the reader scrolls
+    if (!shown || REDUCE || performance.now() < calmUntil) { if (fade && fade.h) fade.h.cancel(); fade = null; shown = c; apply(c, tone); return; }
     if (tone !== (fade ? fade.tt : lastTone)) {
       if (fade && fade.h) fade.h.cancel();
       fade = { from: shown.slice(), to: c, tf: lastTone, tt: tone };
@@ -814,6 +818,7 @@
   };
   let lastPlace = null;
   const goPlace = at => {
+    calmUntil = performance.now() + 450;
     const o = fieldRooms[at.i]; if (!o) return;
     let y = Math.max(0, Math.round(docTop(o.el) + at.f * o.el.offsetHeight));
     if (at.el && at.el.isConnected && at.el.getBoundingClientRect().height > 0 && !inSticky(at.el)) y = Math.max(0, Math.round(at.el.getBoundingClientRect().top + scrollNow() - at.off));
