@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.2';
+  W.__gfxInsights = '1.2.3';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -434,7 +434,7 @@
     const url = SITE + '/articles/' + slug;
     const SH = { in: 'https://www.linkedin.com/sharing/share-offsite/?url=', x: 'https://x.com/intent/post?url=', fb: 'https://www.facebook.com/sharer/sharer.php?u=' };
     $$('a[data-gi-ico]').forEach(a => { const k = a.getAttribute('data-gi-ico'); if (SH[k]) a.setAttribute('href', SH[k] + encodeURIComponent(url)); });
-    $('[data-gi-copy]').forEach(c => c.setAttribute('data-gi-copy', url));
+    $$('[data-gi-copy]').forEach(c => c.setAttribute('data-gi-copy', url));
     // (10/22) structured data for search: the article, its date and the firm that published it (Google reads script-built JSON-LD)
     safe('article ld', () => {
       if (D.querySelector('script[data-gi-ld]')) return;
