@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.17';
+  W.__gfxInvestors = '1.0.18';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -288,10 +288,11 @@
       settleIn(tl, note, 0.1 + dfs.length * 0.3 + 0.3, { y: G.detail.y, d: G.detail.duration });
     });
   }
-  /* (10/21, founder) Mars Shah's quote closes the client room and arrives as Lindsay's does on Home: the mark, the quote, then the
-     headshot opening from its clip as the name and role settle (stage only; the room's figures above keep their own film) */
-  function clientQuoteInit() {
-    const room = R.del, cq = room && $(O('iv-cq') + O('is-client'), room); if (!cq) return;
+  /* (10/21, founder) the client quotes, each closing its room - Mars Shah's (client room), Jonathan Tauber's (cases room) -
+     arrive as Lindsay's does on Home: the mark, the quote, then the headshot opening from its clip as the name and role
+     settle (stage only; each room's own film above keeps its timing) */
+  function quoteRowInit(room, cq) {
+    if (!room || !cq) return;
     const mark = $(O('iv-cq-mark'), cq), q = $('blockquote', cq), cap = $('figcaption', cq), pic = $(O('iv-cq-pic'), cq);
     hideNow([mark, q, cap]);
     if (pic) gsap.set(pic, { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom });
@@ -302,6 +303,10 @@
       if (pic) tl.to(pic, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: GLIDE }, 0.45).to(pic, { scale: 1, duration: G.picture.duration, ease: SETTLE }, 0.45);
       if (skip) tl.progress(1); });
   }
+  const clientQuoteInit = () => {
+    quoteRowInit(R.del, R.del && $(O('iv-cq') + O('is-client'), R.del));
+    quoteRowInit(R.cases, R.cases && $(O('iv-cq') + O('is-cases'), R.cases));
+  };
   /* ========================= 5 · three searches (investors.js §5) ========================= */
   function casesInit() {
     const room = R.cases, list = room && $(O('iv-case-list'), room); if (!list) return;
