@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.27 + home 1.1.14 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.27 + home 1.1.15 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1207,7 +1207,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.14';
+W.__gfxHome='1.1.15';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
 const PIN='(min-width: 992px) and (min-height: 681.01px)',UNPIN='(max-width: 991px), (max-height: 680.99px)';
@@ -1315,7 +1315,8 @@ H.classList.add('gfx-born');
 birth=birth||birthBuild();if(birth){if(REDUCE)birth.still();else birth.draw(0.15);}
 const fox=$('.gfx-nav .logo-link');if(fox)setTimeout(()=>fox.classList.add('gfx-breath1'),300);
 };
-setTimeout(born,introTl?2600:900);
+const outAt=introTl&&introTl.labels?introTl.labels.out:null;
+if(outAt!=null)introTl.call(born,null,outAt+G.seam.hairline);else setTimeout(born,introTl?2600:900);
 if(late){
 if(still)gsap.set(still,{scale:1});
 [para].concat(btns).filter(Boolean).forEach(e=>{const o=+getComputedStyle(e).opacity;if(o<1)gsap.fromTo(e,{opacity:o},{opacity:1,duration:0.6,ease:G.SETTLE,clearProps:'opacity'});});

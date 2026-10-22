@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.27 + home 1.1.14. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.27 + home 1.1.15. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1475,7 +1475,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.14';
+  W.__gfxHome = '1.1.15';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   const PIN = '(min-width: 992px) and (min-height: 681.01px)', UNPIN = '(max-width: 991px), (max-height: 680.99px)';
@@ -1599,7 +1599,10 @@
       birth = birth || birthBuild(); if (birth) { if (REDUCE) birth.still(); else birth.draw(0.15); }
       const fox = $('.gfx-nav .logo-link'); if (fox) setTimeout(() => fox.classList.add('gfx-breath1'), 300);
     };
-    setTimeout(born, introTl ? 2600 : 900);
+    // (1.1.15, founder: the line was already there when the page appeared) after an intro it is drawn as the fox lands in
+    // the nav (the fly runs G.seam.hairline from the intro's "out"), so the reader sees it written; without one, 0.9 s after ready
+    const outAt = introTl && introTl.labels ? introTl.labels.out : null;
+    if (outAt != null) introTl.call(born, null, outAt + G.seam.hairline); else setTimeout(born, introTl ? 2600 : 900);
     if (late) {
       if (still) gsap.set(still, { scale: 1 });
       [para].concat(btns).filter(Boolean).forEach(e => { const o = +getComputedStyle(e).opacity; if (o < 1) gsap.fromTo(e, { opacity: o }, { opacity: 1, duration: 0.6, ease: G.SETTLE, clearProps: 'opacity' }); });
