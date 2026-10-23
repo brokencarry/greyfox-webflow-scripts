@@ -22,7 +22,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPerson) return;
-  W.__gfxPerson = '1.0.4';
+  W.__gfxPerson = '1.0.5';
   const H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE, G = gfx.G;
   const O = c => '[data-o~="' + c + '"]';
   // the local page's html classes, before the body is parsed (the ported stylesheet reads them); tp-m holds the arrival
@@ -33,59 +33,25 @@
   /* (person 1.0.3, the founder 10/22: one structure for the whole team) each page has one card, the person's quote under
      'Something you should know' (Noteworthy is gone): the card runs the width of the column and the quote is set in the serif */
   if (!D.getElementById('gfx-tp-quote')) { const st = D.createElement('style'); st.id = 'gfx-tp-quote';
-    st.textContent = '[data-o~="tp-cards"][data-o~="is-panels"]>[data-o~="tp-card"]:only-child{grid-column:1/-1}'
-      + '[aria-labelledby^="tp-c-know"] [data-o~="tp-li"]{font:300 26px/1.4 var(--tp-serif);letter-spacing:-.005em;color:var(--i1);min-height:0;padding:20px 0 6px}'
+    st.textContent = ''
       // a fact not written yet is hidden: the first fact shown then opens the list as the first one does (no rule above it)
       + '[data-o~="tp-a-l"] [data-o~="tp-f"][data-o~="is-blank"]:first-child+[data-o~="tp-f"]{padding-top:0}[data-o~="tp-a-l"] [data-o~="tp-f"][data-o~="is-blank"]:first-child+[data-o~="tp-f"] [data-o~="tp-f-rule"]{display:none}'
-      + '@media (max-width:767px){[aria-labelledby^="tp-c-know"] [data-o~="tp-li"]{font-size:22px}}';
+      ;
     D.head.appendChild(st); }
   const MAIL = '<svg class="tp-ico-g" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.75" y="4.75" width="14.5" height="10.5" rx=".5"/><path d="M3.2 5.3 10 10.6l6.8-5.3"/></svg>';
   let root = null;
   const field = { rooms: [] };
 
-  /* (person 1.0.4, the founder 10/23: "let me see it for real") a private preview of three layouts for the person pages, only
-     with ?look=1|2|3 in the address; visitors without it see the page as it is. A small bar flips between them.
-     1 Dissolve: the portrait reaches the margin and fades into the page. 2 Half: the portrait is the hero's right half, off
-     the screen's edge. 3 Aligned: the portrait aligned to the margin, larger, no fade. All three: the quote ends the bio in
-     the serif under the site's gold mark, no panel. */
-  const LOOK = (() => { try { const v = new URLSearchParams(location.search).get('look'); return /^[0-3]$/.test(v || '') ? +v : 0; } catch (e) { return 0; } })();
-  if (LOOK || /[?&]look=/.test(location.search)) {
-    const P = '[data-o~="tp-a-pic"]', ST = '[data-o~="tp-a-stage"]', K = '[aria-labelledby^="tp-c-know"]';
-    const QM = 'https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6aac07e14a086611b4e0c064_quote_decoration_gold.svg';
-    const quote = '[data-o~="tp-cards"]{margin-top:96px!important;display:block!important}'
-      + K + ' [data-o~="tp-card-sheet"],' + K + ' [data-o~="tp-card-h"]{display:none!important}'
-      + '[data-o~="tp-cards"] ' + K + '{padding:0!important}' + K + ' [data-o~="tp-list"]{margin-top:0!important}'
-      + K + ' [data-o~="tp-li"]{position:relative;border-top:0!important;padding:68px 0 0!important;min-height:0!important;font:300 40px/1.22 var(--tp-serif)!important;letter-spacing:-.014em!important;color:#fff!important;max-width:17em}'
-      + K + ' [data-o~="tp-li"]::before{content:"";position:absolute;left:0;top:0;width:44px;height:36px;background:url(' + QM + ') no-repeat 0 0/contain}'
-      + '@media (max-width:767px){' + K + ' [data-o~="tp-li"]{font-size:28px!important;padding-top:52px!important}' + K + ' [data-o~="tp-li"]::before{width:34px;height:28px}[data-o~="tp-cards"]{margin-top:64px!important}}';
-    const css = {
-      1: ST + '{--nm:clamp(56px,6.8vw,120px)!important}'
-        + P + '{right:0!important;height:calc(var(--bandh) + clamp(210px,28vh,320px))!important;-webkit-mask-image:radial-gradient(ellipse 66% 70% at 54% 52%,#000 46%,transparent 100%);mask-image:radial-gradient(ellipse 66% 70% at 54% 52%,#000 46%,transparent 100%)}'
-        + '@media (max-width:767px){[data-o~="tp-person"] ' + P + '{width:92%!important;height:auto!important;aspect-ratio:4/5!important;margin:28px 0 0 auto!important}}' + quote,
-      2: ST + '{--nm:clamp(56px,6.2vw,112px)!important}[data-o~="tp-a-hero"]{overflow:hidden}'
-        + P + '{top:calc(-1 * (72px + clamp(40px,7vh,88px)))!important;bottom:0!important;height:auto!important;right:calc((min(100vw - 96px,1400px) - 100vw) / 2)!important;aspect-ratio:auto!important;width:min(52vw,820px)!important;'
-        + '-webkit-mask-image:linear-gradient(to right,transparent 0,#000 34%),linear-gradient(to top,transparent 0,#000 16%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 34%),linear-gradient(to top,transparent 0,#000 16%);mask-composite:intersect}'
-        + P + ' img{object-position:50% 22%!important}'
-        + '@media (max-width:767px){[data-o~="tp-person"] ' + P + '{position:relative!important;top:auto!important;right:auto!important;width:100vw!important;height:auto!important;aspect-ratio:4/5!important;margin:28px 0 0 calc(50% - 50vw)!important;-webkit-mask-image:linear-gradient(to top,transparent 0,#000 22%);mask-image:linear-gradient(to top,transparent 0,#000 22%)}}' + quote,
-      3: ST + '{--nm:clamp(56px,7vw,124px)!important}'
-        + P + '{right:0!important;height:calc(var(--bandh) + clamp(200px,28vh,310px))!important}'
-        + '@media (max-width:767px){[data-o~="tp-person"] ' + P + '{height:auto!important;aspect-ratio:4/5!important;width:86%!important;margin:28px 0 0 auto!important}}' + quote
-    };
-    const bar = '#gfx-look{position:fixed;left:16px;bottom:16px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:999px;background:rgba(17,17,18,.86);border:1px solid rgba(244,243,240,.18);font:500 13px/1 "DM Sans",sans-serif;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}'
-      + '#gfx-look a{color:rgba(255,255,255,.72);text-decoration:none;padding:9px 13px;border-radius:999px}#gfx-look a[aria-current]{background:#f6f5f2;color:#111112}';
-    const st = D.createElement('style'); st.id = 'gfx-look-css'; st.textContent = bar + (css[LOOK] || ''); D.head.appendChild(st);
-    const ready = () => {
-      if (LOOK) D.querySelectorAll(K + ' [data-o~="tp-li"] span').forEach(s => { if (!s.children.length) s.textContent = s.textContent.replace(/^[\u201c"]\s*|\s*[\u201d"]$/g, ''); });
-      if (D.getElementById('gfx-look')) return;
-      const nav = D.createElement('nav'); nav.id = 'gfx-look'; nav.setAttribute('aria-label', 'Layout preview');
-      [['0', 'Current'], ['1', '1 Dissolve'], ['2', '2 Half'], ['3', '3 Aligned']].forEach(([k, t]) => {
-        const a = D.createElement('a'); a.href = location.pathname + '?look=' + k; a.textContent = t; if (+k === LOOK) a.setAttribute('aria-current', 'page'); nav.appendChild(a); });
-      D.body.appendChild(nav);
-    };
-    if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', ready); else ready();
-  }
-
+  /* (person 1.0.5, the founder 10/23: "go with 1", chosen from a live preview of three) THE PORTRAIT reaches the column's right
+     margin, a little larger, and its edges fade into the page (an oval fade), so the person comes out of the black; the name is a
+     step smaller to balance it. THE QUOTE ends the biography: no panel and no heading, the line in the serif under the site's
+     gold quote mark (the client quotes' mark); the typed quotation marks are dropped, the gold mark is the opening one. */
+  if (!D.getElementById('gfx-tp-look')) { const st = D.createElement('style'); st.id = 'gfx-tp-look';
+    st.textContent = "@media (min-width:768px){[data-o~=\"tp-a-stage\"]{--nm:clamp(56px,6.8vw,120px)}}[data-o~=\"tp-a-pic\"]{right:0;height:calc(var(--bandh) + clamp(210px,28vh,320px));-webkit-mask-image:radial-gradient(ellipse 66% 70% at 54% 52%,#000 46%,transparent 100%);mask-image:radial-gradient(ellipse 66% 70% at 54% 52%,#000 46%,transparent 100%)}@media (max-width:767px){[data-o~=\"tp-person\"] [data-o~=\"tp-a-pic\"]{width:92%;height:auto;aspect-ratio:4/5;margin:28px 0 0 auto}}[data-o~=\"tp-cards\"][data-o~=\"is-panels\"]{display:block;margin-top:96px}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-card-sheet\"],[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-card-h\"]{display:none}[data-o~=\"tp-cards\"][data-o~=\"is-panels\"] [aria-labelledby^=\"tp-c-know\"]{padding:0}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-list\"]{margin-top:0!important}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]{position:relative;border-top:0;padding:68px 0 0;min-height:0;font:300 40px/1.22 var(--tp-serif);letter-spacing:-.014em;color:var(--i1);max-width:17em}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]::before{content:\"\";position:absolute;left:0;top:0;width:44px;height:36px;background:url(https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6aac07e14a086611b4e0c064_quote_decoration_gold.svg) no-repeat 0 0/contain}@media (max-width:767px){[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]{font-size:28px;padding-top:52px}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]::before{width:34px;height:28px}[data-o~=\"tp-cards\"][data-o~=\"is-panels\"]{margin-top:64px}}";
+    D.head.appendChild(st); }
+  const quoteMarks = () => D.querySelectorAll('[aria-labelledby^="tp-c-know"] [data-o~="tp-li"] span').forEach(s => { if (!s.children.length) s.textContent = s.textContent.replace(/^[“"]s*|s*[”"]$/g, ''); });
   function dom() {
+    quoteMarks();
     root = $(O('tp-person'));
     $$(O('tp-ico-a') + '[href^="mailto:"]', root || D).forEach(a => { if (!$('svg', a)) a.insertAdjacentHTML('afterbegin', MAIL); });
     // the field: black from the top, the footer's own black at the end (no turn)
