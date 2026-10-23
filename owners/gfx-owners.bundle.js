@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.42 + owners 1.2.7. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.43 + owners 1.2.7. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.42';
+  const VERSION = '1.0.43';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1368,7 +1368,15 @@
     if ($('.gfx-skip') || !D.body) return;
     const first = $('main, .page-wrapper section'); if (!first) return;
     const a = D.createElement('a'); a.className = 'gfx-skip'; a.href = '#'; a.textContent = 'Skip to content';
-    a.addEventListener('click', e => { e.preventDefault(); first.setAttribute('tabindex', '-1'); first.focus({ preventScroll: true }); });
+    // (1.0.43, overnight audit 10/23) the page's <main> is display:contents, which cannot take focus: Enter did nothing and the
+    // next Tab went to the bar. Focus now lands on the page's heading (as owners.js did), brought into view if it is not; while
+    // Home's opening still holds the hero (the heading cannot take focus yet) it tries again until it can, for up to 4 s
+    a.addEventListener('click', e => {
+      e.preventDefault(); const t = $('h1') || first; t.setAttribute('tabindex', '-1'); t.setAttribute('data-gfx-skipto', ''); let n = 0;
+      const go = () => { t.focus({ preventScroll: true }); if (D.activeElement !== t && n++ < 40) { setTimeout(go, 100); return; } const r = t.getBoundingClientRect(); if (r.bottom < 0 || r.top > W.innerHeight) W.scrollTo(0, W.scrollY + r.top - 120); };
+      go();
+    });
+    if (!$('#gfx-skipto')) { const st = D.createElement('style'); st.id = 'gfx-skipto'; st.textContent = '[data-gfx-skipto]:focus{outline:none}'; (D.head || H).appendChild(st); }
     D.body.insertBefore(a, D.body.firstChild);
   });
   /* what IX2 left behind (its initial states), cleared before the rooms set their own */

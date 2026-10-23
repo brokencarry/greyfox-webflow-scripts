@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.42 + person 1.0.5 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.43 + person 1.0.5 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.42';
+const VERSION='1.0.43';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -1108,7 +1108,12 @@ const skipLink=()=>safe('skip',()=>{
 if($('.gfx-skip')||!D.body)return;
 const first=$('main, .page-wrapper section');if(!first)return;
 const a=D.createElement('a');a.className='gfx-skip';a.href='#';a.textContent='Skip to content';
-a.addEventListener('click',e=>{e.preventDefault();first.setAttribute('tabindex','-1');first.focus({preventScroll:true});});
+a.addEventListener('click',e=>{
+e.preventDefault();const t=$('h1')||first;t.setAttribute('tabindex','-1');t.setAttribute('data-gfx-skipto','');let n=0;
+const go=()=>{t.focus({preventScroll:true});if(D.activeElement!==t&&n++<40){setTimeout(go,100);return;}const r=t.getBoundingClientRect();if(r.bottom<0||r.top>W.innerHeight)W.scrollTo(0,W.scrollY+r.top-120);};
+go();
+});
+if(!$('#gfx-skipto')){const st=D.createElement('style');st.id='gfx-skipto';st.textContent='[data-gfx-skipto]:focus{outline:none}';(D.head||H).appendChild(st);}
 D.body.insertBefore(a,D.body.firstChild);
 });
 const cleanIX=()=>safe('clean ix',()=>{
