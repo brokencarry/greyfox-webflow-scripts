@@ -1,4 +1,4 @@
-/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.41 + person 1.0.2. Sources: core/gfx-core.js, person/gfx-person.js */
+/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.41 + person 1.0.3. Sources: core/gfx-core.js, person/gfx-person.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1535,7 +1535,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPerson) return;
-  W.__gfxPerson = '1.0.2';
+  W.__gfxPerson = '1.0.3';
   const H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE, G = gfx.G;
   const O = c => '[data-o~="' + c + '"]';
   // the local page's html classes, before the body is parsed (the ported stylesheet reads them); tp-m holds the arrival
@@ -1543,6 +1543,15 @@
   H.classList.add('gf-flow', 'gf-flow2', 'gf-flow3', 'gf-dark-black', 'ow-js', 'gfx-tp-js', 'tp', 'tp-v-a');
   if (REDUCE) H.classList.add('ow-reduce');
   else { H.classList.add('tp-m'); setTimeout(() => { if (!H.classList.contains('tp-go')) H.classList.remove('tp-m'); }, 4000); }
+  /* (person 1.0.3, the founder 10/22: one structure for the whole team) each page has one card, the person's quote under
+     'Something you should know' (Noteworthy is gone): the card runs the width of the column and the quote is set in the serif */
+  if (!D.getElementById('gfx-tp-quote')) { const st = D.createElement('style'); st.id = 'gfx-tp-quote';
+    st.textContent = '[data-o~="tp-cards"][data-o~="is-panels"]>[data-o~="tp-card"]:only-child{grid-column:1/-1}'
+      + '[aria-labelledby^="tp-c-know"] [data-o~="tp-li"]{font:300 26px/1.4 var(--tp-serif);letter-spacing:-.005em;color:var(--i1);min-height:0;padding:20px 0 6px}'
+      // a fact not written yet is hidden: the first fact shown then opens the list as the first one does (no rule above it)
+      + '[data-o~="tp-a-l"] [data-o~="tp-f"][data-o~="is-blank"]:first-child+[data-o~="tp-f"]{padding-top:0}[data-o~="tp-a-l"] [data-o~="tp-f"][data-o~="is-blank"]:first-child+[data-o~="tp-f"] [data-o~="tp-f-rule"]{display:none}'
+      + '@media (max-width:767px){[aria-labelledby^="tp-c-know"] [data-o~="tp-li"]{font-size:22px}}';
+    D.head.appendChild(st); }
   const MAIL = '<svg class="tp-ico-g" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.75" y="4.75" width="14.5" height="10.5" rx=".5"/><path d="M3.2 5.3 10 10.6l6.8-5.3"/></svg>';
   let root = null;
   const field = { rooms: [] };

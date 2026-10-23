@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.41 + person 1.0.2 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.41 + person 1.0.3 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1237,12 +1237,18 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxPerson)return;
-W.__gfxPerson='1.0.2';
+W.__gfxPerson='1.0.3';
 const H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE,G=gfx.G;
 const O=c=>'[data-o~="'+c+'"]';
 H.classList.add('gf-flow','gf-flow2','gf-flow3','gf-dark-black','ow-js','gfx-tp-js','tp','tp-v-a');
 if(REDUCE)H.classList.add('ow-reduce');
 else{H.classList.add('tp-m');setTimeout(()=>{if(!H.classList.contains('tp-go'))H.classList.remove('tp-m');},4000);}
+if(!D.getElementById('gfx-tp-quote')){const st=D.createElement('style');st.id='gfx-tp-quote';
+st.textContent='[data-o~="tp-cards"][data-o~="is-panels"]>[data-o~="tp-card"]:only-child{grid-column:1/-1}'
++'[aria-labelledby^="tp-c-know"] [data-o~="tp-li"]{font:300 26px/1.4 var(--tp-serif);letter-spacing:-.005em;color:var(--i1);min-height:0;padding:20px 0 6px}'
++'[data-o~="tp-a-l"] [data-o~="tp-f"][data-o~="is-blank"]:first-child+[data-o~="tp-f"]{padding-top:0}[data-o~="tp-a-l"] [data-o~="tp-f"][data-o~="is-blank"]:first-child+[data-o~="tp-f"] [data-o~="tp-f-rule"]{display:none}'
++'@media (max-width:767px){[aria-labelledby^="tp-c-know"] [data-o~="tp-li"]{font-size:22px}}';
+D.head.appendChild(st);}
 const MAIL='<svg class="tp-ico-g" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.75" y="4.75" width="14.5" height="10.5" rx=".5"/><path d="M3.2 5.3 10 10.6l6.8-5.3"/></svg>';
 let root=null;
 const field={rooms:[]};
