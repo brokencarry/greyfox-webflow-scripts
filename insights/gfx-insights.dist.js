@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.41 + pages 1.0.2 + insights 1.2.4 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.41 + pages 1.0.2 + insights 1.2.5 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1411,12 +1411,15 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.2.4';
+W.__gfxInsights='1.2.5';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 const eo=t=>1-Math.pow(1-t,3);
 const EXPO='expo.out';
+if(!D.getElementById('gfx-gi-tap')){const st=D.createElement('style');st.id='gfx-gi-tap';
+st.textContent='[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}';
+D.head.appendChild(st);}
 H.classList.add('gi-html');
 let gsap=null,anim=false;
 let FIELD=null;

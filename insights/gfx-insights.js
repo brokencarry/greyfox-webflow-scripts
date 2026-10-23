@@ -37,13 +37,18 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.4';
+  W.__gfxInsights = '1.2.5';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const eo = t => 1 - Math.pow(1 - t, 3);
   const EXPO = 'expo.out';
+  /* (1.2.5, overnight 10/23 audit) a source number in an article ([1]) was a 20 x 21 px target on a phone, fiddly under a
+     thumb: each gets an invisible 44 px tap area around it (Apple's minimum), centred on the number; nothing on screen changes */
+  if (!D.getElementById('gfx-gi-tap')) { const st = D.createElement('style'); st.id = 'gfx-gi-tap';
+    st.textContent = '[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}';
+    D.head.appendChild(st); }
   // the local page's html class (the ported stylesheet's tokens live on html.gi-html)
   H.classList.add('gi-html');
   let gsap = null, anim = false;
