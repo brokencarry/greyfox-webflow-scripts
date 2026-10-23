@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.40 + pages 1.0.2 + insights 1.2.4 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.41 + pages 1.0.2 + insights 1.2.4 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,12 +38,15 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.40';
+const VERSION='1.0.41';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
 const mq=q=>{try{return W.matchMedia(q).matches;}catch(e){return false;}};
 const REDUCE=!!G.reduced(),TOUCH=mq('(pointer: coarse)');
+const RESTORING=!REDUCE&&(()=>{try{const t=(performance.getEntriesByType('navigation')[0]||{}).type;if(t!=='reload'&&t!=='back_forward')return false;const sv=JSON.parse(W.sessionStorage.getItem('gfxFlowAt:'+location.pathname)||'null');return!!(sv&&(sv.i>0||sv.f>0.15));}catch(e){return false;}})();
+const unhide=()=>{if(!H.classList.contains('gfx-restoring'))return;H.classList.add('gfx-restore-in');H.classList.remove('gfx-restoring');setTimeout(()=>H.classList.remove('gfx-restore-in'),450);};
+if(RESTORING){H.classList.add('gfx-restoring');const st=D.createElement('style');st.id='gfx-restore';st.textContent='html.gfx-restoring .page-wrapper{opacity:0!important}html.gfx-restore-in .page-wrapper{transition:opacity .3s cubic-bezier(.16,1,.3,1)!important}';(D.head||H).appendChild(st);setTimeout(unhide,2200);}
 const store={get:k=>{try{return W.sessionStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{W.sessionStorage.setItem(k,v);}catch(e){}}};
 const GROUP=G.group,LEAVE=G.leave;
 const READ=W.GF_READ={v:600,rest:0.6,approach:0.35,min:0.5,film:1.6};
@@ -710,7 +713,7 @@ let rw=W.innerWidth,rh=W.innerHeight,rt=0;
 addEventListener('resize',e=>{if(e.target!==W)return;if(W.innerWidth===rw&&Math.abs(W.innerHeight-rh)<120&&TOUCH)return;holdPlace();rw=W.innerWidth;rh=W.innerHeight;clearTimeout(rt);rt=setTimeout(()=>{rhythm();ST.refresh();},220);},true);
 const nav=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0]||{}).type;
 let saved=null;try{saved=JSON.parse(W.sessionStorage.getItem(KEYP)||'null');}catch(e){}
-if(saved&&(nav==='reload'||nav==='back_forward')){pending=saved;clearTimeout(pendT);pendT=setTimeout(()=>{if(pending)goPlace(pending);pending=null;},1400);}
+if(saved&&(nav==='reload'||nav==='back_forward')){pending=saved;clearTimeout(pendT);pendT=setTimeout(()=>{if(pending)goPlace(pending);pending=null;requestAnimationFrame(()=>requestAnimationFrame(unhide));},1400);}
 addEventListener('pageshow',e=>{if(e.persisted&&saved)setTimeout(()=>goPlace(saved),300);});
 const idle=W.requestIdleCallback||(f=>setTimeout(f,60));
 fieldRooms.forEach(classify);

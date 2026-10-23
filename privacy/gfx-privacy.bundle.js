@@ -1,4 +1,4 @@
-/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.40 + pages 1.0.2 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
+/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.41 + pages 1.0.2 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,12 +68,19 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.40';
+  const VERSION = '1.0.41';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
   const mq = q => { try { return W.matchMedia(q).matches; } catch (e) { return false; } };
   const REDUCE = !!G.reduced(), TOUCH = mq('(pointer: coarse)');
+  /* (1.0.41, launch QA 10/22, Safari) a reload or Back mid-page that is NOT served from the back/forward cache: the browser puts
+     the reader at the old number before the pinned stages are built (Home: ~1800px short), so for ~0.5 s it showed a later part
+     of the story, then the place snapped back. The rooms stay out of sight until the place is restored, then fade in (0.3 s);
+     a 2.2 s safety always shows the page. A fresh visit, the page's top and reduced motion are untouched. */
+  const RESTORING = !REDUCE && (() => { try { const t = (performance.getEntriesByType('navigation')[0] || {}).type; if (t !== 'reload' && t !== 'back_forward') return false; const sv = JSON.parse(W.sessionStorage.getItem('gfxFlowAt:' + location.pathname) || 'null'); return !!(sv && (sv.i > 0 || sv.f > 0.15)); } catch (e) { return false; } })();
+  const unhide = () => { if (!H.classList.contains('gfx-restoring')) return; H.classList.add('gfx-restore-in'); H.classList.remove('gfx-restoring'); setTimeout(() => H.classList.remove('gfx-restore-in'), 450); };
+  if (RESTORING) { H.classList.add('gfx-restoring'); const st = D.createElement('style'); st.id = 'gfx-restore'; st.textContent = 'html.gfx-restoring .page-wrapper{opacity:0!important}html.gfx-restore-in .page-wrapper{transition:opacity .3s cubic-bezier(.16,1,.3,1)!important}'; (D.head || H).appendChild(st); setTimeout(unhide, 2200); }
   const store = { get: k => { try { return W.sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { W.sessionStorage.setItem(k, v); } catch (e) { /* private mode */ } } };
   const GROUP = G.group, LEAVE = G.leave;
   // the reading standard (sbx-m1.js GF_READ): a film is held to 1.6 s; a reader at 600 px/s
@@ -849,7 +856,7 @@
     addEventListener('resize', e => { if (e.target !== W) return; if (W.innerWidth === rw && Math.abs(W.innerHeight - rh) < 120 && TOUCH) return; holdPlace(); rw = W.innerWidth; rh = W.innerHeight; clearTimeout(rt); rt = setTimeout(() => { rhythm(); ST.refresh(); }, 220); }, true);
     const nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0] || {}).type;
     let saved = null; try { saved = JSON.parse(W.sessionStorage.getItem(KEYP) || 'null'); } catch (e) { /* none */ }
-    if (saved && (nav === 'reload' || nav === 'back_forward')) { pending = saved; clearTimeout(pendT); pendT = setTimeout(() => { if (pending) goPlace(pending); pending = null; }, 1400); }
+    if (saved && (nav === 'reload' || nav === 'back_forward')) { pending = saved; clearTimeout(pendT); pendT = setTimeout(() => { if (pending) goPlace(pending); pending = null; requestAnimationFrame(() => requestAnimationFrame(unhide)); }, 1400); }
     addEventListener('pageshow', e => { if (e.persisted && saved) setTimeout(() => goPlace(saved), 300); });
     const idle = W.requestIdleCallback || (f => setTimeout(f, 60));
     fieldRooms.forEach(classify);
