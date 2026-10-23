@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.44 + owners 1.2.7. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.45 + owners 1.2.7. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.44';
+  const VERSION = '1.0.45';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -971,6 +971,8 @@
       'html.gfx-f3 .gfx-nav:has(:focus-visible){--gfx-away:0!important}@media (max-width:767px){html.gfx-f3 .gfx-nav:has(:focus-visible){transform:none!important}}@media (min-width:992px){html.gfx-f3 .gfx-nav:has(:focus-visible) .navigation-wrap>*{opacity:1!important;transform:none!important}}html.gfx-f3 .gfx-nav:has(:focus-visible) .logo-link{opacity:1!important;visibility:visible!important;pointer-events:auto!important}' +
       // (1.0.44, pre-launch pass 10/23) the footer's lockup answers the pointer the way the bar's logo does (it was the one control with no hover)
       'html.gfx-f3 .gfx-fi-lockup{transition:opacity .25s}html.gfx-f3 .gfx-fi-lockup:hover{opacity:.8}' +
+      // (1.0.45) the LinkedIn mark in the legal row: the row's own size and tap box, no underline, green on hover like the footer's marks
+      'html.gfx-f3 .gfx-fi-legal{align-items:center}html.gfx-f3 .gfx-fi-linkedin{text-decoration:none!important;color:var(--gfx-ft-ink)!important;transition:color .25s}html.gfx-f3 .gfx-fi-linkedin svg{display:block;width:18px;height:18px}@media (hover:hover){html.gfx-f3 .gfx-fi-linkedin:hover{color:#2f9a6c!important}}html.gfx-f3 .gfx-fi-linkedin:focus-visible{outline:2px solid #2f9a6c;outline-offset:3px;border-radius:2px}@media (max-width:767px){html.gfx-f3 .gfx-fi-linkedin svg{width:20px;height:20px}}' +
       'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}' +
       'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}' +
       // (1.0.19, founder 10/20: "on iPhone the footer's grey lines push up against the logo, Navigate and the left column")
@@ -1177,7 +1179,10 @@
     foot.innerHTML = `<div class="gfx-fi-layer" aria-hidden="true"><i class="gfx-fi-lip"></i><div class="gfx-fi-lights"><i class="gfx-fi-bay"></i><i class="gfx-fi-bay"></i><i class="gfx-fi-bay"></i><i class="gfx-fi-bay"></i></div></div>` +
       `<div class="gfx-fi-wrap"><div class="gfx-fi"><div class="gfx-fi-grid">${col('brand', lockup)}${col('navc', nav)}${col('offices', offices)}${col('write', write)}</div>` +
       `<i class="gfx-fi-base" aria-hidden="true"></i><div class="gfx-fi-bar"><p class="gfx-fi-small gfx-fi-copy">${esc(data.copy)}</p><p class="gfx-fi-small gfx-fi-notice">${esc(data.notice)}</p>` +
-      `<ul class="gfx-fi-list gfx-fi-legal">${data.legal.map(([t, h]) => `<li><a class="gfx-fi-link" href="${esc(h)}">${esc(t)}</a></li>`).join('')}</ul></div></div></div>`;
+      `<ul class="gfx-fi-list gfx-fi-legal">${data.legal.map(([t, h]) => `<li><a class="gfx-fi-link" href="${esc(h)}">${esc(t)}</a></li>`).join('')}` +
+      // (1.0.45, founder 10/23: "footer LinkedIn link to the company page, the official logo") the mark sits in the legal row
+      // beside Privacy Policy, which already wraps and stacks the same way at every width
+      `<li class="gfx-fi-li-linkedin"><a class="gfx-fi-link gfx-fi-linkedin" href="https://www.linkedin.com/company/greyfoxpartners/" target="_blank" rel="noopener" aria-label="Grey Fox Partners on LinkedIn (opens in a new tab)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></li></ul></div></div></div>`;
     // the clocks: tick on the minute; the colons keep the seconds only while the footer is seen
     const fmts = {};
     const now = tz => { const f = fmts[tz] || (fmts[tz] = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true })); const p = f.formatToParts(new Date()), g = t => (p.find(x => x.type === t) || {}).value || ''; return { h: g('hour'), m: g('minute'), ap: ' ' + g('dayPeriod').toUpperCase() }; };
