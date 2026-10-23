@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.43 + pages 1.0.3 + insights 1.2.6. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.44 + pages 1.0.3 + insights 1.2.7. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.43';
+  const VERSION = '1.0.44';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -969,6 +969,8 @@
       // (1.0.42, overnight audit 10/23) the bar never hides what has keyboard focus (:focus-visible, so a mouse click never pins it): tabbing back to it at the page's end (the bar
       // slid away, or the fox flown to the footer) left focus on an invisible logo or link; while focus is in it, it is all there
       'html.gfx-f3 .gfx-nav:has(:focus-visible){--gfx-away:0!important}@media (max-width:767px){html.gfx-f3 .gfx-nav:has(:focus-visible){transform:none!important}}@media (min-width:992px){html.gfx-f3 .gfx-nav:has(:focus-visible) .navigation-wrap>*{opacity:1!important;transform:none!important}}html.gfx-f3 .gfx-nav:has(:focus-visible) .logo-link{opacity:1!important;visibility:visible!important;pointer-events:auto!important}' +
+      // (1.0.44, pre-launch pass 10/23) the footer's lockup answers the pointer the way the bar's logo does (it was the one control with no hover)
+      'html.gfx-f3 .gfx-fi-lockup{transition:opacity .25s}html.gfx-f3 .gfx-fi-lockup:hover{opacity:.8}' +
       'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}' +
       'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}' +
       // (1.0.19, founder 10/20: "on iPhone the footer's grey lines push up against the logo, Navigate and the left column")
@@ -1827,7 +1829,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.6';
+  W.__gfxInsights = '1.2.7';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -1840,7 +1842,9 @@
     st.textContent = '[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}' +
       // (1.2.6, polish 10/23) phones: the list's date · topic · reading time wrapped with the dot opening the second line; the
       // dot now ends the item before it, so a line breaks between items and never starts on a separator
-      '@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}';
+      '@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}' +
+      // (1.2.7, pre-launch pass 10/23) a footnote jump lands its source clear of the bar, not on the top edge
+      '[data-o~="gi-sources"] li{scroll-margin-top:96px}';
     D.head.appendChild(st); }
   // the local page's html class (the ported stylesheet's tokens live on html.gi-html)
   H.classList.add('gi-html');
@@ -2187,7 +2191,10 @@
       into.appendChild(n.tagName === 'BLOCKQUOTE' ? pq(n) : n);
     });
     // the source references: the built article's (a number in the margin's ink, its source named for a screen reader)
-    $$('sup', out).forEach(s => { const a = $('a[href^="#src-"]', s); if (!a) return; s.className = 'gfx-pg-gi-ref'; s.setAttribute('data-o', 'gi-ref'); if (!a.hasAttribute('aria-label')) a.setAttribute('aria-label', 'Source ' + a.textContent.trim()); });
+    $$('sup', out).forEach(s => { const a = $('a[href^="#src-"]', s); if (!a) return; s.className = 'gfx-pg-gi-ref'; s.setAttribute('data-o', 'gi-ref'); if (!a.hasAttribute('aria-label')) a.setAttribute('aria-label', 'Source ' + a.textContent.trim());
+      // (1.2.7, pre-launch pass 10/23) the jump to a source glides there clear of the bar and hands it focus, as the contents
+      // links do (the site's own smooth scroll took the anchor and put the source on the top edge)
+      a.addEventListener('click', e => { const t = D.getElementById(decodeURIComponent(a.hash.slice(1))); if (!t) return; e.preventDefault(); e.stopPropagation(); glideTo(t, t); try { history.replaceState(null, '', a.hash); } catch (err) { /* */ } }); });
     rt.replaceWith(out);
     return { secs, sources };
   }

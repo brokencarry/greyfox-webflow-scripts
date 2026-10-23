@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.6';
+  W.__gfxInsights = '1.2.7';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -50,7 +50,9 @@
     st.textContent = '[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}' +
       // (1.2.6, polish 10/23) phones: the list's date · topic · reading time wrapped with the dot opening the second line; the
       // dot now ends the item before it, so a line breaks between items and never starts on a separator
-      '@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}';
+      '@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}' +
+      // (1.2.7, pre-launch pass 10/23) a footnote jump lands its source clear of the bar, not on the top edge
+      '[data-o~="gi-sources"] li{scroll-margin-top:96px}';
     D.head.appendChild(st); }
   // the local page's html class (the ported stylesheet's tokens live on html.gi-html)
   H.classList.add('gi-html');
@@ -397,7 +399,10 @@
       into.appendChild(n.tagName === 'BLOCKQUOTE' ? pq(n) : n);
     });
     // the source references: the built article's (a number in the margin's ink, its source named for a screen reader)
-    $$('sup', out).forEach(s => { const a = $('a[href^="#src-"]', s); if (!a) return; s.className = 'gfx-pg-gi-ref'; s.setAttribute('data-o', 'gi-ref'); if (!a.hasAttribute('aria-label')) a.setAttribute('aria-label', 'Source ' + a.textContent.trim()); });
+    $$('sup', out).forEach(s => { const a = $('a[href^="#src-"]', s); if (!a) return; s.className = 'gfx-pg-gi-ref'; s.setAttribute('data-o', 'gi-ref'); if (!a.hasAttribute('aria-label')) a.setAttribute('aria-label', 'Source ' + a.textContent.trim());
+      // (1.2.7, pre-launch pass 10/23) the jump to a source glides there clear of the bar and hands it focus, as the contents
+      // links do (the site's own smooth scroll took the anchor and put the source on the top edge)
+      a.addEventListener('click', e => { const t = D.getElementById(decodeURIComponent(a.hash.slice(1))); if (!t) return; e.preventDefault(); e.stopPropagation(); glideTo(t, t); try { history.replaceState(null, '', a.hash); } catch (err) { /* */ } }); });
     rt.replaceWith(out);
     return { secs, sources };
   }

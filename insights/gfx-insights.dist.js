@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.43 + pages 1.0.3 + insights 1.2.6 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.44 + pages 1.0.3 + insights 1.2.7 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.43';
+const VERSION='1.0.44';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -788,6 +788,7 @@ if(!$('#gfx-bar-btn')){const st=D.createElement('style');st.id='gfx-bar-btn';st.
 'html body .w-nav-button.w--open [class*="hamburger_line"]:not(#gfx-mo){background-color:transparent!important}html body .w-nav .w-nav-brand{position:relative;z-index:3}'+
 'html.gfx-f3:has(.gfx-hero-sec) .gfx-nav.gfx-top :focus-visible{outline-color:#fff!important}'+
 'html.gfx-f3 .gfx-nav:has(:focus-visible){--gfx-away:0!important}@media (max-width:767px){html.gfx-f3 .gfx-nav:has(:focus-visible){transform:none!important}}@media (min-width:992px){html.gfx-f3 .gfx-nav:has(:focus-visible) .navigation-wrap>*{opacity:1!important;transform:none!important}}html.gfx-f3 .gfx-nav:has(:focus-visible) .logo-link{opacity:1!important;visibility:visible!important;pointer-events:auto!important}'+
+'html.gfx-f3 .gfx-fi-lockup{transition:opacity .25s}html.gfx-f3 .gfx-fi-lockup:hover{opacity:.8}'+
 'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}'+
 'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}'+
 '@media (max-width:767px){html.gfx-f3 .gfx-fi-rule{display:none!important}}'+
@@ -1440,7 +1441,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.2.6';
+W.__gfxInsights='1.2.7';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1448,7 +1449,8 @@ const eo=t=>1-Math.pow(1-t,3);
 const EXPO='expo.out';
 if(!D.getElementById('gfx-gi-tap')){const st=D.createElement('style');st.id='gfx-gi-tap';
 st.textContent='[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}'+
-'@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}';
+'@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}'+
+'[data-o~="gi-sources"] li{scroll-margin-top:96px}';
 D.head.appendChild(st);}
 H.classList.add('gi-html');
 let gsap=null,anim=false;
@@ -1747,7 +1749,8 @@ into.appendChild(n);out.appendChild(into);secs.push({id,text});return;
 if(!into){into=mkEl('div','gi-intro');out.appendChild(into);}
 into.appendChild(n.tagName==='BLOCKQUOTE'?pq(n):n);
 });
-$$('sup',out).forEach(s=>{const a=$('a[href^="#src-"]',s);if(!a)return;s.className='gfx-pg-gi-ref';s.setAttribute('data-o','gi-ref');if(!a.hasAttribute('aria-label'))a.setAttribute('aria-label','Source '+a.textContent.trim());});
+$$('sup',out).forEach(s=>{const a=$('a[href^="#src-"]',s);if(!a)return;s.className='gfx-pg-gi-ref';s.setAttribute('data-o','gi-ref');if(!a.hasAttribute('aria-label'))a.setAttribute('aria-label','Source '+a.textContent.trim());
+a.addEventListener('click',e=>{const t=D.getElementById(decodeURIComponent(a.hash.slice(1)));if(!t)return;e.preventDefault();e.stopPropagation();glideTo(t,t);try{history.replaceState(null,'',a.hash);}catch(err){}});});
 rt.replaceWith(out);
 return{secs,sources};
 }

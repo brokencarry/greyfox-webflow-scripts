@@ -1,4 +1,4 @@
-/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.43 + pages 1.0.3 + contact 1.0.9. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
+/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.44 + pages 1.0.3 + contact 1.0.10. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.43';
+  const VERSION = '1.0.44';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -969,6 +969,8 @@
       // (1.0.42, overnight audit 10/23) the bar never hides what has keyboard focus (:focus-visible, so a mouse click never pins it): tabbing back to it at the page's end (the bar
       // slid away, or the fox flown to the footer) left focus on an invisible logo or link; while focus is in it, it is all there
       'html.gfx-f3 .gfx-nav:has(:focus-visible){--gfx-away:0!important}@media (max-width:767px){html.gfx-f3 .gfx-nav:has(:focus-visible){transform:none!important}}@media (min-width:992px){html.gfx-f3 .gfx-nav:has(:focus-visible) .navigation-wrap>*{opacity:1!important;transform:none!important}}html.gfx-f3 .gfx-nav:has(:focus-visible) .logo-link{opacity:1!important;visibility:visible!important;pointer-events:auto!important}' +
+      // (1.0.44, pre-launch pass 10/23) the footer's lockup answers the pointer the way the bar's logo does (it was the one control with no hover)
+      'html.gfx-f3 .gfx-fi-lockup{transition:opacity .25s}html.gfx-f3 .gfx-fi-lockup:hover{opacity:.8}' +
       'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}' +
       'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}' +
       // (1.0.19, founder 10/20: "on iPhone the footer's grey lines push up against the logo, Navigate and the left column")
@@ -1808,7 +1810,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.9';
+  W.__gfxContact = '1.0.10';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -1914,6 +1916,15 @@
     $$('input[placeholder="Example text"], textarea[placeholder="Example text"]', form).forEach(i => i.removeAttribute('placeholder'));
     inputs().forEach(i => { if (i.getAttribute('data-kind') === 'reach') { i.setAttribute('inputmode', 'email'); i.spellcheck = false; i.setAttribute('autocapitalize', 'off'); } });
     let path = null, sent = false;
+    // (1.0.10, pre-launch pass 10/23) the note's grow() reads these; declared here so an arrival with ?for= (which chooses the
+    // path before the rest of this setup has run) no longer throws inside choose() and loses what follows
+    let lastH = 0;
+    const tas = $$('textarea' + O('r4-in'), form);
+    // the fields open below the choice: bring them into view if they open low on the screen, never so far that the chosen
+    // card goes under the bar (the cards keep 32 px below it)
+    const bringFields = () => { const r = fieldsBox.getBoundingClientRect(); if (r.top > W.innerHeight * 0.62) {
+      const doors = $(O('r4-doors'), room), cap = doors ? doors.getBoundingClientRect().top - (navBottom() + 32) : Infinity;
+      scrollTo(fieldsBox, -Math.round(W.innerHeight * 0.3) - Math.max(0, (r.top - Math.round(W.innerHeight * 0.3)) - cap)); } };
     const setFail = k => { if (!fail) return; const to = FAIL.to[k] || FAIL.to.investor; const p = $('p', fail) || fail; p.textContent = ''; p.append(FAIL.lead); const a = el('a', '', to); a.href = 'mailto:' + to; p.append(a, FAIL.end); };
     const choose = (k, byUser) => {
       if (k === path || sent) return;
@@ -1937,9 +1948,7 @@
         refresh(); grow();
         // the fields open below the choice: bring them into view if they open low on the screen (a pointer choice only),
         // never so far that the chosen card goes under the bar (the cards keep 32 px below it)
-        if (byUser && first) setTimeout(() => { const r = fieldsBox.getBoundingClientRect(); if (r.top > W.innerHeight * 0.62) {
-          const doors = $(O('r4-doors'), room), cap = doors ? doors.getBoundingClientRect().top - (navBottom() + 32) : Infinity;
-          scrollTo(fieldsBox, -Math.round(W.innerHeight * 0.3) - Math.max(0, (r.top - Math.round(W.innerHeight * 0.3)) - cap)); } }, 160);
+        if (byUser && first) setTimeout(bringFields, 160);
       };
       if (gs && leaving.length) gs.to(leaving, { opacity: 0, y: -8, duration: G.leave.duration, ease: G.leave.ease, onComplete: () => { gs.set(leaving, { clearProps: 'opacity,transform' }); show(); } });
       else show();
@@ -1949,7 +1958,10 @@
     radios.forEach(r => r.addEventListener('change', () => { if (r.checked) choose(r.value, true); }));
     // (1.0.8, founder 10/22) a link that names the reader (?for=owner or ?for=investor, from the door cards) opens the form
     // on that path, as if the reader had chosen it
-    safe('preselect', () => { const want = (new URLSearchParams(location.search).get('for') || '').toLowerCase(); const pre = radios.find(r => r.value === want); if (pre && !path) { pre.checked = true; choose(want, false); } });
+    safe('preselect', () => { const want = (new URLSearchParams(location.search).get('for') || '').toLowerCase(); const pre = radios.find(r => r.value === want); if (pre && !path) { pre.checked = true; choose(want, false);
+      // (1.0.10, pre-launch pass 10/23) once the page has settled, the arrival brings the fields into view as a hand-picked path
+      // does (a scroll issued during the opening was lost); a reader already scrolling is left alone
+      const go = () => setTimeout(() => { if (W.scrollY < 40) bringFields(); }, 700); if (D.readyState === 'complete') go(); else W.addEventListener('load', go, { once: true }); } });
     const pre = radios.find(r => r.checked); if (pre) choose(pre.value, false);   // (the browser restoring the choice on Back)
     // (1.0.9, polish 10/23) the door cards at the foot of this page name a path too (/contact?for=owner|investor): on Contact
     // itself they pick that path in the form above and bring the reader to it, instead of reloading the page at its top
@@ -2016,8 +2028,7 @@
     }, true);
 
     // the note grows with what is written: no scroll bar, no resize grip (final.js)
-    let lastH = 0;
-    const tas = $$('textarea' + O('r4-in'), form);
+    // (lastH and tas are declared with the form's state above: grow() runs from choose() before this point on an arrival)
     function grow() { tas.forEach(ta => { const min = parseFloat(getComputedStyle(ta).minHeight) || 96; ta.style.height = 'auto'; const h = Math.max(min, ta.scrollHeight + 2); ta.style.height = h + 'px'; if (Math.abs(h - lastH) > 1) { lastH = h; refresh(); } }); }
     tas.forEach(ta => ta.addEventListener('input', grow)); W.addEventListener('resize', grow);
   }

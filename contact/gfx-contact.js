@@ -18,7 +18,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.9';
+  W.__gfxContact = '1.0.10';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -124,6 +124,15 @@
     $$('input[placeholder="Example text"], textarea[placeholder="Example text"]', form).forEach(i => i.removeAttribute('placeholder'));
     inputs().forEach(i => { if (i.getAttribute('data-kind') === 'reach') { i.setAttribute('inputmode', 'email'); i.spellcheck = false; i.setAttribute('autocapitalize', 'off'); } });
     let path = null, sent = false;
+    // (1.0.10, pre-launch pass 10/23) the note's grow() reads these; declared here so an arrival with ?for= (which chooses the
+    // path before the rest of this setup has run) no longer throws inside choose() and loses what follows
+    let lastH = 0;
+    const tas = $$('textarea' + O('r4-in'), form);
+    // the fields open below the choice: bring them into view if they open low on the screen, never so far that the chosen
+    // card goes under the bar (the cards keep 32 px below it)
+    const bringFields = () => { const r = fieldsBox.getBoundingClientRect(); if (r.top > W.innerHeight * 0.62) {
+      const doors = $(O('r4-doors'), room), cap = doors ? doors.getBoundingClientRect().top - (navBottom() + 32) : Infinity;
+      scrollTo(fieldsBox, -Math.round(W.innerHeight * 0.3) - Math.max(0, (r.top - Math.round(W.innerHeight * 0.3)) - cap)); } };
     const setFail = k => { if (!fail) return; const to = FAIL.to[k] || FAIL.to.investor; const p = $('p', fail) || fail; p.textContent = ''; p.append(FAIL.lead); const a = el('a', '', to); a.href = 'mailto:' + to; p.append(a, FAIL.end); };
     const choose = (k, byUser) => {
       if (k === path || sent) return;
@@ -147,9 +156,7 @@
         refresh(); grow();
         // the fields open below the choice: bring them into view if they open low on the screen (a pointer choice only),
         // never so far that the chosen card goes under the bar (the cards keep 32 px below it)
-        if (byUser && first) setTimeout(() => { const r = fieldsBox.getBoundingClientRect(); if (r.top > W.innerHeight * 0.62) {
-          const doors = $(O('r4-doors'), room), cap = doors ? doors.getBoundingClientRect().top - (navBottom() + 32) : Infinity;
-          scrollTo(fieldsBox, -Math.round(W.innerHeight * 0.3) - Math.max(0, (r.top - Math.round(W.innerHeight * 0.3)) - cap)); } }, 160);
+        if (byUser && first) setTimeout(bringFields, 160);
       };
       if (gs && leaving.length) gs.to(leaving, { opacity: 0, y: -8, duration: G.leave.duration, ease: G.leave.ease, onComplete: () => { gs.set(leaving, { clearProps: 'opacity,transform' }); show(); } });
       else show();
@@ -159,7 +166,10 @@
     radios.forEach(r => r.addEventListener('change', () => { if (r.checked) choose(r.value, true); }));
     // (1.0.8, founder 10/22) a link that names the reader (?for=owner or ?for=investor, from the door cards) opens the form
     // on that path, as if the reader had chosen it
-    safe('preselect', () => { const want = (new URLSearchParams(location.search).get('for') || '').toLowerCase(); const pre = radios.find(r => r.value === want); if (pre && !path) { pre.checked = true; choose(want, false); } });
+    safe('preselect', () => { const want = (new URLSearchParams(location.search).get('for') || '').toLowerCase(); const pre = radios.find(r => r.value === want); if (pre && !path) { pre.checked = true; choose(want, false);
+      // (1.0.10, pre-launch pass 10/23) once the page has settled, the arrival brings the fields into view as a hand-picked path
+      // does (a scroll issued during the opening was lost); a reader already scrolling is left alone
+      const go = () => setTimeout(() => { if (W.scrollY < 40) bringFields(); }, 700); if (D.readyState === 'complete') go(); else W.addEventListener('load', go, { once: true }); } });
     const pre = radios.find(r => r.checked); if (pre) choose(pre.value, false);   // (the browser restoring the choice on Back)
     // (1.0.9, polish 10/23) the door cards at the foot of this page name a path too (/contact?for=owner|investor): on Contact
     // itself they pick that path in the form above and bring the reader to it, instead of reloading the page at its top
@@ -226,8 +236,7 @@
     }, true);
 
     // the note grows with what is written: no scroll bar, no resize grip (final.js)
-    let lastH = 0;
-    const tas = $$('textarea' + O('r4-in'), form);
+    // (lastH and tas are declared with the form's state above: grow() runs from choose() before this point on an arrival)
     function grow() { tas.forEach(ta => { const min = parseFloat(getComputedStyle(ta).minHeight) || 96; ta.style.height = 'auto'; const h = Math.max(min, ta.scrollHeight + 2); ta.style.height = h + 'px'; if (Math.abs(h - lastH) > 1) { lastH = h; refresh(); } }); }
     tas.forEach(ta => ta.addEventListener('input', grow)); W.addEventListener('resize', grow);
   }
