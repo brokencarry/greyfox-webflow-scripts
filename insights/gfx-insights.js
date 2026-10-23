@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.5';
+  W.__gfxInsights = '1.2.6';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -47,7 +47,10 @@
   /* (1.2.5, overnight 10/23 audit) a source number in an article ([1]) was a 20 x 21 px target on a phone, fiddly under a
      thumb: each gets an invisible 44 px tap area around it (Apple's minimum), centred on the number; nothing on screen changes */
   if (!D.getElementById('gfx-gi-tap')) { const st = D.createElement('style'); st.id = 'gfx-gi-tap';
-    st.textContent = '[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}';
+    st.textContent = '[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}' +
+      // (1.2.6, polish 10/23) phones: the list's date · topic · reading time wrapped with the dot opening the second line; the
+      // dot now ends the item before it, so a line breaks between items and never starts on a separator
+      '@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}';
     D.head.appendChild(st); }
   // the local page's html class (the ported stylesheet's tokens live on html.gi-html)
   H.classList.add('gi-html');
@@ -234,7 +237,8 @@
       if (first) first.textContent = `${rws.length} ${rws.length === 1 ? 'article' : 'articles'}`;
       const set = (el, s) => { if (!el) return; const sep = $(O('gi-sep'), el); el.textContent = s; if (sep) el.insertBefore(sep, el.firstChild); };
       mis.forEach(el => {
-        if (/topic/i.test(el.textContent)) set(el, `${k} ${k === 1 ? 'topic' : 'topics'}`);
+        // (1.2.6, polish 10/23) one topic is no count worth printing: the item waits, hidden, until there are two
+        if (/topic/i.test(el.textContent)) { if (k <= 1) { el.hidden = true; el.style.setProperty('display', 'none', 'important'); } else set(el, `${k} topics`); }
         else if (/^\s*since\b/i.test(el.textContent) && dates[0]) { const d = new Date(dates[0] + 'T12:00:00'); set(el, 'Since ' + d.toLocaleString('en-US', { month: 'long', year: 'numeric' })); }
       });
     }

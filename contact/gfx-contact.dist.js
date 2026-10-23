@@ -1,4 +1,4 @@
-/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.43 + pages 1.0.3 + contact 1.0.8 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
+/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.43 + pages 1.0.3 + contact 1.0.9 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1440,7 +1440,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxContact)return;
-W.__gfxContact='1.0.8';
+W.__gfxContact='1.0.9';
 const P=gfx.pages,O=P.O,mk=P.mk,H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const GROUP=G.group;
 const el=(tag,cls,text)=>{const n=D.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
@@ -1565,6 +1565,11 @@ if(byUser)tellIn(sayEl,k==='owner'?'The form for business owners follows.':'The 
 radios.forEach(r=>r.addEventListener('change',()=>{if(r.checked)choose(r.value,true);}));
 safe('preselect',()=>{const want=(new URLSearchParams(location.search).get('for')||'').toLowerCase();const pre=radios.find(r=>r.value===want);if(pre&&!path){pre.checked=true;choose(want,false);}});
 const pre=radios.find(r=>r.checked);if(pre)choose(pre.value,false);
+safe('doors here',()=>$$('a[href*="for="]').forEach(a=>{
+let u;try{u=new URL(a.getAttribute('href'),location.href);}catch(e){return;}if(u.pathname!==location.pathname)return;
+const want=(u.searchParams.get('for')||'').toLowerCase(),door=radios.find(r=>r.value===want);if(!door)return;
+a.addEventListener('click',e=>{e.preventDefault();if(!door.checked){door.checked=true;choose(want,false);}scrollTo(fieldsBox||form,-(navBottom()+24));setTimeout(()=>door.focus({preventScroll:true}),900);});
+}));
 const setErr=(f,msg)=>{f.setAttribute('aria-invalid',msg?'true':'false');const e=D.getElementById(f.id+'-err');if(e){e.textContent=msg||'';e.hidden=!msg;}};
 const check=()=>{
 const bad=[];

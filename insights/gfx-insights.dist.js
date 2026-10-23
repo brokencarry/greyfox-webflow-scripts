@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.43 + pages 1.0.3 + insights 1.2.5 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.43 + pages 1.0.3 + insights 1.2.6 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1440,14 +1440,15 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.2.5';
+W.__gfxInsights='1.2.6';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 const eo=t=>1-Math.pow(1-t,3);
 const EXPO='expo.out';
 if(!D.getElementById('gfx-gi-tap')){const st=D.createElement('style');st.id='gfx-gi-tap';
-st.textContent='[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}';
+st.textContent='[data-o~="gi-ref"] a{position:relative}[data-o~="gi-ref"] a::after{content:"";position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}'+
+'@media (max-width:767px){[data-o~="gi-row-r"]>span+span::before{content:none!important}[data-o~="gi-row-r"]>span:not(:last-child)::after{content:"";display:inline-block;width:3px;height:3px;margin:0 0 0 10px;border-radius:50%;background:currentColor;opacity:.7;transform:translateY(-3px)}}';
 D.head.appendChild(st);}
 H.classList.add('gi-html');
 let gsap=null,anim=false;
@@ -1606,7 +1607,7 @@ const dates=rws.map(r=>($('time[datetime]',r)||{getAttribute:()=>''}).getAttribu
 if(first)first.textContent=`${rws.length} ${rws.length===1?'article':'articles'}`;
 const set=(el,s)=>{if(!el)return;const sep=$(O('gi-sep'),el);el.textContent=s;if(sep)el.insertBefore(sep,el.firstChild);};
 mis.forEach(el=>{
-if(/topic/i.test(el.textContent))set(el,`${k} ${k===1?'topic':'topics'}`);
+if(/topic/i.test(el.textContent)){if(k<=1){el.hidden=true;el.style.setProperty('display','none','important');}else set(el,`${k} topics`);}
 else if(/^\s*since\b/i.test(el.textContent)&&dates[0]){const d=new Date(dates[0]+'T12:00:00');set(el,'Since '+d.toLocaleString('en-US',{month:'long',year:'numeric'}));}
 });
 }

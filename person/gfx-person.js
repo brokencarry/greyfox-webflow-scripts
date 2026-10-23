@@ -22,7 +22,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPerson) return;
-  W.__gfxPerson = '1.0.5';
+  W.__gfxPerson = '1.0.6';
   const H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE, G = gfx.G;
   const O = c => '[data-o~="' + c + '"]';
   // the local page's html classes, before the body is parsed (the ported stylesheet reads them); tp-m holds the arrival
@@ -49,6 +49,8 @@
   if (!D.getElementById('gfx-tp-look')) { const st = D.createElement('style'); st.id = 'gfx-tp-look';
     st.textContent = "@media (min-width:768px){[data-o~=\"tp-a-stage\"]{--nm:clamp(56px,6.8vw,120px)}}[data-o~=\"tp-a-pic\"]{right:0;height:calc(var(--bandh) + clamp(210px,28vh,320px));-webkit-mask-image:radial-gradient(ellipse 66% 70% at 54% 52%,#000 46%,transparent 100%);mask-image:radial-gradient(ellipse 66% 70% at 54% 52%,#000 46%,transparent 100%)}@media (max-width:767px){[data-o~=\"tp-person\"] [data-o~=\"tp-a-pic\"]{width:92%;height:auto;aspect-ratio:4/5;margin:28px 0 0 auto}}[data-o~=\"tp-cards\"][data-o~=\"is-panels\"]{display:block;margin-top:96px}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-card-sheet\"],[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-card-h\"]{display:none}[data-o~=\"tp-cards\"][data-o~=\"is-panels\"] [aria-labelledby^=\"tp-c-know\"]{padding:0}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-list\"]{margin-top:0!important}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]{position:relative;border-top:0;padding:68px 0 0;min-height:0;font:300 40px/1.22 var(--tp-serif);letter-spacing:-.014em;color:var(--i1);max-width:17em}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]::before{content:\"\";position:absolute;left:0;top:0;width:44px;height:36px;background:url(https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6aac07e14a086611b4e0c064_quote_decoration_gold.svg) no-repeat 0 0/contain}@media (max-width:767px){[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]{font-size:28px;padding-top:52px}[aria-labelledby^=\"tp-c-know\"] [data-o~=\"tp-li\"]::before{width:34px;height:28px}[data-o~=\"tp-cards\"][data-o~=\"is-panels\"]{margin-top:64px}}";
     D.head.appendChild(st); }
+  // (1.0.6, polish 10/23) the quote's lines are balanced: on a phone Tony's broke "There is no / try."
+  if (!D.getElementById('gfx-tp-qbal')) { const st = D.createElement('style'); st.id = 'gfx-tp-qbal'; st.textContent = '[aria-labelledby^="tp-c-know"] [data-o~="tp-li"],[aria-labelledby^="tp-c-know"] [data-o~="tp-li"] span{text-wrap:balance}'; D.head.appendChild(st); }
   const quoteMarks = () => D.querySelectorAll('[aria-labelledby^="tp-c-know"] [data-o~="tp-li"] span').forEach(s => { if (!s.children.length) s.textContent = s.textContent.replace(/^[“"]s*|s*[”"]$/g, ''); });
   function dom() {
     quoteMarks();

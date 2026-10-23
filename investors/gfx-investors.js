@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.18';
+  W.__gfxInvestors = '1.0.19';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -537,7 +537,7 @@
   const s2Button = () => {
     if (!S2.play || !S2.vids || !S2.vids.length) return;
     const cur = () => S2.vids[s2Act < 0 ? 0 : s2Act];
-    const lab = () => { const v = cur(), on = !!v && !v.paused && !v.ended, t = on ? 'Pause' : 'Play', s = S2.play.querySelector('span');
+    const lab = () => { const v = cur(), on = !!v && !v.paused && !v.ended, t = on ? 'Pause motion' : 'Play motion', s = S2.play.querySelector('span');   // (1.0.19, polish 10/23) one label site-wide, as on Home
       if (s && s.textContent !== t) s.textContent = t; S2.play.dataset.state = on ? 'pause' : 'play'; S2.play.setAttribute('aria-label', t); };
     S2.vids.forEach(v => ['play', 'pause', 'ended'].forEach(ev => v.addEventListener(ev, lab)));
     S2.play.hidden = false;
@@ -550,15 +550,15 @@
     const lab = (t, l) => { S2.play.querySelector('span').textContent = t; S2.play.setAttribute('aria-label', l); };
     const toggle = () => {
       const v = S2.vids[cur];
-      if (v.paused || v.ended) { vPlay(v); S2.play.dataset.state = 'pause'; lab('Pause', 'Pause'); }
-      else { v.pause(); S2.play.dataset.state = 'play'; lab('Play', 'Play: ' + S2.bbs[cur].querySelector(O('iv2-mw')).textContent); }
+      if (v.paused || v.ended) { vPlay(v); S2.play.dataset.state = 'pause'; lab('Pause motion', 'Pause motion'); }
+      else { v.pause(); S2.play.dataset.state = 'play'; lab('Play motion', 'Play motion: ' + S2.bbs[cur].querySelector(O('iv2-mw')).textContent); }
     };
     const pick = k => {
       cur = k;
       S2.vids.forEach((v, i) => { v.classList.toggle('is-on', i === k); v.toggleAttribute('aria-hidden', i !== k); if (i !== k) vPause(v); });
       S2.bbs.forEach((b, i) => b.setAttribute('aria-pressed', i === k ? 'true' : 'false'));
       S2.bs.forEach((b, i) => { b.style.setProperty('--on', i === k ? '1' : '0'); const bar = $('b', b); if (bar) bar.style.transform = i === k ? 'scaleX(1)' : 'scaleX(0)'; });
-      S2.play.dataset.state = 'play'; lab('Play', 'Play: ' + S2.bbs[k].querySelector(O('iv2-mw')).textContent);
+      S2.play.dataset.state = 'play'; lab('Play motion', 'Play motion: ' + S2.bbs[k].querySelector(O('iv2-mw')).textContent);
     };
     const phone = mq('(max-width: 767px)');   // (1.0.1) a phone shows the stills (mcPhone), so the films' posters are not fetched
     S2.vids.forEach(v => { if (!phone) v.poster = posterOf(v, 'last'); v.addEventListener('ended', () => { v.poster = posterOf(v, 'last'); S2.play.dataset.state = 'play'; S2.play.querySelector('span').textContent = 'Play'; }); });
