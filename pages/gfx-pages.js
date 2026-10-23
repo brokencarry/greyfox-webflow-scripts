@@ -20,7 +20,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.2';
+  W.__gfxPages = '1.0.3';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;
@@ -178,6 +178,9 @@
     if (h2) gfx.room({ trigger: h2, headline: h2, start: 'top 84%' });
     if (top && 'IntersectionObserver' in W) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { room.classList.add('gfc-in'); io.disconnect(); } }), { rootMargin: '0px 0px -28% 0px' }); io.observe(top); }
     else room.classList.add('gfc-in');
+    // (1.0.3, overnight audit 10/23) keyboard focus reaching the close brings its action in at once (Contact's button sat
+    // focused but invisible: the reveal waits for the close to be well inside the window, which a tab scroll may not reach)
+    room.addEventListener('focusin', () => room.classList.add('gfc-in'));
     let near = false, rq = 0;
     const seen = fa => { const b = fa.getBoundingClientRect(); if (!(b.width > 0 && b.top < W.innerHeight && b.bottom > 0)) return false; const e = D.elementFromPoint(Math.min(W.innerWidth - 1, Math.max(0, b.left + b.width / 2)), Math.min(W.innerHeight - 1, Math.max(0, b.top + b.height / 2))); return !!(e && e.closest('.footer_section_wrapper')); };
     const check = () => { rq = 0; const fa = $('.gfx-fi-act'); if (!fa) return; const cr = room.getBoundingClientRect(), k = Math.max(0, Math.min(cr.bottom, W.innerHeight) - Math.max(cr.top, 0)) / (cr.height || 1); room.classList.toggle('gfc-rest', near && k <= 0.4 && seen(fa)); };

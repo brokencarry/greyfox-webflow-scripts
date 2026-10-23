@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.41 + pages 1.0.2 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.42 + pages 1.0.3 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.41';
+  const VERSION = '1.0.42';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -80,6 +80,10 @@
      a 2.2 s safety always shows the page. A fresh visit, the page's top and reduced motion are untouched. */
   const RESTORING = !REDUCE && (() => { try { const t = (performance.getEntriesByType('navigation')[0] || {}).type; if (t !== 'reload' && t !== 'back_forward') return false; const sv = JSON.parse(W.sessionStorage.getItem('gfxFlowAt:' + location.pathname) || 'null'); return !!(sv && (sv.i > 0 || sv.f > 0.15)); } catch (e) { return false; } })();
   const unhide = () => { if (!H.classList.contains('gfx-restoring')) return; H.classList.add('gfx-restore-in'); H.classList.remove('gfx-restoring'); setTimeout(() => H.classList.remove('gfx-restore-in'), 450); };
+  // (1.0.42, overnight audit 10/23) the site's head code makes the same call before the first paint (the top of the page
+  // showed for ~0.3 s before this script ran) with its own 3.5 s safety; from here on this script decides
+  try { clearTimeout(W.__gfxRestoreT); } catch (e) { /* none */ }
+  if (!RESTORING) H.classList.remove('gfx-restoring');
   if (RESTORING) { H.classList.add('gfx-restoring'); const st = D.createElement('style'); st.id = 'gfx-restore'; st.textContent = 'html.gfx-restoring .page-wrapper{opacity:0!important}html.gfx-restore-in .page-wrapper{transition:opacity .3s cubic-bezier(.16,1,.3,1)!important}'; (D.head || H).appendChild(st); setTimeout(unhide, 2200); }
   const store = { get: k => { try { return W.sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { W.sessionStorage.setItem(k, v); } catch (e) { /* private mode */ } } };
   const GROUP = G.group, LEAVE = G.leave;
@@ -848,7 +852,9 @@
     addEventListener('pagehide', () => { try { W.sessionStorage.setItem(KEYP, JSON.stringify(placeNow())); } catch (e) { /* private */ } });
     let pending = null, pendT = 0, lpT = 0;
     addEventListener('scroll', () => { clearTimeout(lpT); lpT = setTimeout(() => { if (!pending) lastPlace = placeNow(true); }, 150); }, { passive: true });
-    const holdPlace = () => { if (!pending) pending = lastPlace || placeNow(true); clearTimeout(pendT); pendT = setTimeout(() => { if (pending) goPlace(pending); pending = null; }, 1700); };
+    // (1.0.42, overnight audit 10/23) a resize while a reload restores the place re-arms this timer, which replaced the one that
+    // shows the rooms again: the page stayed blank until the 2.2 s safety. Either timer now shows them once the place is back
+    const holdPlace = () => { if (!pending) pending = lastPlace || placeNow(true); clearTimeout(pendT); pendT = setTimeout(() => { if (pending) goPlace(pending); pending = null; requestAnimationFrame(() => requestAnimationFrame(unhide)); }, 1700); };
     rhythm();
     let rw = W.innerWidth, rh = W.innerHeight, rt = 0;
     // (final audit) only the window's own resize: a capture listener also hears a <video>'s "resize" (fired when its
@@ -856,7 +862,14 @@
     addEventListener('resize', e => { if (e.target !== W) return; if (W.innerWidth === rw && Math.abs(W.innerHeight - rh) < 120 && TOUCH) return; holdPlace(); rw = W.innerWidth; rh = W.innerHeight; clearTimeout(rt); rt = setTimeout(() => { rhythm(); ST.refresh(); }, 220); }, true);
     const nav = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0] || {}).type;
     let saved = null; try { saved = JSON.parse(W.sessionStorage.getItem(KEYP) || 'null'); } catch (e) { /* none */ }
-    if (saved && (nav === 'reload' || nav === 'back_forward')) { pending = saved; clearTimeout(pendT); pendT = setTimeout(() => { if (pending) goPlace(pending); pending = null; requestAnimationFrame(() => requestAnimationFrame(unhide)); }, 1400); }
+    // (1.0.42, overnight audit 10/23) the place is set once the page holds still (its height unchanged 0.4 s, fonts in), at
+    // most 1.4 s as before: this runs after load, so a fixed 1.4 s left a reload or Back blank until the 2.2 s safety
+    if (saved && (nav === 'reload' || nav === 'back_forward')) {
+      pending = saved; clearTimeout(pendT); const t0 = performance.now(); let lastH = -1, calm = 0;
+      const check = () => { const h = D.documentElement.scrollHeight; calm = Math.abs(h - lastH) < 2 ? calm + 1 : 0; lastH = h;
+        if ((calm >= 4 && (!D.fonts || D.fonts.status === 'loaded')) || performance.now() - t0 > 1400) { if (pending) goPlace(pending); pending = null; requestAnimationFrame(() => requestAnimationFrame(unhide)); } else pendT = setTimeout(check, 100); };
+      pendT = setTimeout(check, 100);
+    }
     addEventListener('pageshow', e => { if (e.persisted && saved) setTimeout(() => goPlace(saved), 300); });
     const idle = W.requestIdleCallback || (f => setTimeout(f, 60));
     fieldRooms.forEach(classify);
@@ -953,6 +966,9 @@
       'html body .w-nav-button.w--open [class*="hamburger_line"]:not(#gfx-mo){background-color:transparent!important}html body .w-nav .w-nav-brand{position:relative;z-index:3}' +
       // (1.0.38, launch QA 10/22) keyboard focus on the bar over Home's photo: the ring was near-black on the dark picture
       'html.gfx-f3:has(.gfx-hero-sec) .gfx-nav.gfx-top :focus-visible{outline-color:#fff!important}' +
+      // (1.0.42, overnight audit 10/23) the bar never hides what has keyboard focus (:focus-visible, so a mouse click never pins it): tabbing back to it at the page's end (the bar
+      // slid away, or the fox flown to the footer) left focus on an invisible logo or link; while focus is in it, it is all there
+      'html.gfx-f3 .gfx-nav:has(:focus-visible){--gfx-away:0!important}@media (max-width:767px){html.gfx-f3 .gfx-nav:has(:focus-visible){transform:none!important}}@media (min-width:992px){html.gfx-f3 .gfx-nav:has(:focus-visible) .navigation-wrap>*{opacity:1!important;transform:none!important}}html.gfx-f3 .gfx-nav:has(:focus-visible) .logo-link{opacity:1!important;visibility:visible!important;pointer-events:auto!important}' +
       'html body :is(.gfx-cta-sec .footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox){height:min(64vh,744px)!important}' +
       'html body :is(.gfx-cta-sec,[data-o~="ow-close"],.gfc-on):has(:is(.footer-logo-subtle,[data-o~="ow-close-fox"],[data-o~="gfc-fox"],.gfc-fox)){overflow-y:clip!important}' +
       // (1.0.19, founder 10/20: "on iPhone the footer's grey lines push up against the logo, Navigate and the left column")
@@ -970,7 +986,26 @@
       'html.gfx-f3 :is([data-o~="gi-tile-t"],[data-o~="gi-card-t"],[data-o~="ow-acc-h"]){text-wrap:balance}' +
       // (1.0.24) phone tap zones: the person pages' text links (36 and 29px tall) and an article's note numbers (23px)
       // answer a thumb across 44px or more; nothing moves, an invisible margin takes the touch
-      '@media (max-width:767px){html.gfx-f3 :is(.gfx-pg-tp-u,sup>a){position:relative}html.gfx-f3 :is(.gfx-pg-tp-u,sup>a)::after{content:"";position:absolute;inset:-9px -8px}}'; (D.head || H).appendChild(st); }
+      '@media (max-width:767px){html.gfx-f3 :is(.gfx-pg-tp-u,sup>a){position:relative}html.gfx-f3 :is(.gfx-pg-tp-u,sup>a)::after{content:"";position:absolute;inset:-9px -8px}}' +
+      // (1.0.42, overnight audit 10/23) print: a reader printing an article, the privacy policy or a bio got the bar and the
+      // footer's contact block on every sheet, dark panels, and text still waiting for its scroll reveal (most of a bio, an
+      // article's section heading). On paper everything is shown at rest in ink on white; the screen is untouched.
+      '@media print{@page{margin:14mm 14mm 16mm}html.gfx-f3,html.gfx-f3 body{background:#fff!important;color:#111!important;height:auto!important;overflow:visible!important}' +
+      'html.gfx-f3 body *{color:#111!important;-webkit-text-fill-color:#111!important;text-shadow:none!important;box-shadow:none!important;border-color:#c8c8c8!important}' +
+      'html.gfx-f3 body *:not(img,svg,svg *,video,canvas),html.gfx-f3 body *::before,html.gfx-f3 body *::after{background-color:transparent!important}html.gfx-f3 body .gfx-pg-t2-p-w{background-image:none!important}' +
+      // a filled button prints as an outlined one; a team card prints its photo with the name under it, not over it
+      'html.gfx-f3:not(#gfx-pa):not(#gfx-pb):not(#gfx-pc) body :is(a,button):is([data-o~="gfc-btn"],.button,.w-button,[class*="-btn"]){background:transparent!important;color:#111!important;-webkit-text-fill-color:#111!important;border:1px solid #111!important}' +
+      'html.gfx-f3 body .gfx-pg-t3-card{display:block!important;height:auto!important;min-height:0!important}html.gfx-f3 body .gfx-pg-t2-p-pic{position:relative!important;inset:auto!important;height:auto!important;aspect-ratio:5/8}html.gfx-f3 body .gfx-pg-t2-p-w{position:static!important;padding-top:10px!important}' +
+      'html.gfx-f3 body :is(.gfx-skip,.gfx-nav,.navigation_wrapper,.preloader,.gfx-intro-mark,.gfx-fly,.gfx-ftg-host>.footer_section_wrapper.gfx-foot,.footer_section_wrapper,video,.gfx-pull-mark,.gfx-pg-gfc-fox,[data-o~="gi-toc-m"],[data-o~="gi-aside"]){display:none!important}' +
+      'html.gfx-f3 .gfx-ftg-host{min-height:0!important;padding-bottom:0!important;margin-bottom:0!important}html.gfx-f3 :is(.gfx-pg-tp-facts,.gfx-pg-gi-aside-in,.gfx-pg-pv-toc){position:static!important}' +
+      'html.gfx-f3 body :is(p,h1,h2,h3,h4,h5,h6,blockquote,figcaption,figure,li,ul,ol,dl,dt,dd,img,picture,[data-o],[data-gfx-reveal],.team_member_description,.hero_buttons,.button_wrapper,.gfx-ink-card,.gfx-ink-r,.gfx-marq,.gfx-mk-steps):not(.gfx-mk-cap,.gfx-mk-cap *,.gfx-mk-sr,.gfx-fly *){opacity:1!important}' +
+      'html.gfx-f3 body :is(p,h1,h2,h3,h4,h5,h6,blockquote,figcaption,li,dt,dd,[data-gfx-reveal]):not([data-o~="gi-plate-in"] *,.gfx-mk-cap,.gfx-mk-cap *){transform:none!important;translate:none!important;scale:none!important}' +
+      'html.gfx-f3 body :is(img,picture,[data-o~="iv-case-bg"]){clip-path:none!important}html.gfx-f3:not(#gfx-pa) body [data-o~="gi-plate-hero"]{height:auto!important;aspect-ratio:16/10!important}' +
+      'html.gfx-f3:not(#gfx-pa) body [data-o~="ow-hero-pic"]{position:relative!important;inset:auto!important;grid-row:auto!important;grid-column:1/-1!important;margin-inline:0!important;clip-path:none!important;width:100%!important;height:auto!important;aspect-ratio:3/2;margin-top:8mm!important}' +
+      'html.gfx-f3 :is(h1,h2,h3,h4){break-after:avoid}html.gfx-f3 :is(img,figure,blockquote,li,dt,dd){break-inside:avoid}' +
+      // a paragraph split into screen lines runs as one paragraph again; icon links and addresses print no URL after them
+      'html.gfx-f3 p :is(.tp-sl-mask,.tp-sl){display:inline!important}html.gfx-f3 a:is([href^="mailto:"],[aria-label],:has(svg,img))::after{content:none!important}' +
+      'html.gfx-f3 body::after{content:"Grey Fox Partners  \\00B7  greyfoxpartners.com  \\00B7  inquiries@greyfoxpartners.com\\AGrey Fox Partners represents buyers. Nothing on this site is an offer or advice.";white-space:pre-line;display:block;margin-top:12mm;padding-top:4mm;border-top:1px solid #c8c8c8;font:11px/1.4 "DM Sans",sans-serif;color:#555!important;-webkit-text-fill-color:#555!important}}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
@@ -978,13 +1013,16 @@
       gsap.to(bar, { '--gfx-away': want ? 0 : 1, duration: 0.45, ease: barEase, overwrite: true });
       bar.classList.toggle('gfx-away', !want); H.classList.toggle('gfx-bar-away', !want);
     };
-    bar.addEventListener('focusin', () => setShown(true));
+    const kbFocus = () => { const a = D.activeElement; if (!a || !bar.contains(a)) return false; try { return a.matches(':focus-visible'); } catch (e) { return true; } };
+    bar.addEventListener('focusin', () => { if (kbFocus()) setShown(true); });
     const past = ST.create({ start: () => W.innerHeight * 0.5, end: 'max',
       onUpdate: s => {
         const y = s.scroll(), py = prevY == null ? y : prevY; prevY = y;
         if (s.direction > 0) upFrom = null; else if (upFrom == null) upFrom = py;
         const up = s.direction < 0 && upFrom != null && upFrom - y >= 6;
-        setShown(up || (showing && s.direction < 0) || s.progress < 0.002 || bar.contains(D.activeElement));
+        // (1.0.42, overnight audit 10/23) only keyboard focus holds the bar: a tap on the phone menu left the button focused
+        // and the bar stayed down for the rest of the page once the menu closed
+        setShown(up || (showing && s.direction < 0) || s.progress < 0.002 || kbFocus());
       },
       onEnter: () => navLook(false),
       onLeaveBack: () => { navLook(true); setShown(true); } });
@@ -1533,7 +1571,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.2';
+  W.__gfxPages = '1.0.3';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;
@@ -1691,6 +1729,9 @@
     if (h2) gfx.room({ trigger: h2, headline: h2, start: 'top 84%' });
     if (top && 'IntersectionObserver' in W) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { room.classList.add('gfc-in'); io.disconnect(); } }), { rootMargin: '0px 0px -28% 0px' }); io.observe(top); }
     else room.classList.add('gfc-in');
+    // (1.0.3, overnight audit 10/23) keyboard focus reaching the close brings its action in at once (Contact's button sat
+    // focused but invisible: the reveal waits for the close to be well inside the window, which a tab scroll may not reach)
+    room.addEventListener('focusin', () => room.classList.add('gfc-in'));
     let near = false, rq = 0;
     const seen = fa => { const b = fa.getBoundingClientRect(); if (!(b.width > 0 && b.top < W.innerHeight && b.bottom > 0)) return false; const e = D.elementFromPoint(Math.min(W.innerWidth - 1, Math.max(0, b.left + b.width / 2)), Math.min(W.innerHeight - 1, Math.max(0, b.top + b.height / 2))); return !!(e && e.closest('.footer_section_wrapper')); };
     const check = () => { rq = 0; const fa = $('.gfx-fi-act'); if (!fa) return; const cr = room.getBoundingClientRect(), k = Math.max(0, Math.min(cr.bottom, W.innerHeight) - Math.max(cr.top, 0)) / (cr.height || 1); room.classList.toggle('gfc-rest', near && k <= 0.4 && seen(fa)); };
