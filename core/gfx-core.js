@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.45';
+  const VERSION = '1.0.46';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1414,41 +1414,26 @@
     else if (v.dataset.gfxIdle) { delete v.dataset.gfxIdle; v.autoplay = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); }
   }));
   onReady(idleFilms); W.addEventListener('load', () => setTimeout(idleFilms, 200)); { let vt = 0; W.addEventListener('resize', () => { clearTimeout(vt); vt = setTimeout(idleFilms, 400); }); }
-  // (core 1.0.4, STAGING ONLY) while the Flow 3 pages live on their -v2 slugs, every link to the designer's Contact page
-  // reaches Contact v2 instead (the closes' "Start a conversation", footer I's action, the nav). Inert once the v2 pages
-  // replace the originals at launch (no page path carries "-v2" then): delete this block at launch
-  // (1.0.14) also every page on the staging host (the CMS article pages live at /insights/<slug>, no "-v2")
-  const STAGING = /(^|\/)[a-z0-9-]*-v2(-[a-z0-9-]+)?\/?$/.test(location.pathname) || /\.webflow\.io$/.test(location.hostname);
-  // (core 1.0.7) and the other built pages the shared nav and footer can't reach yet: Insights (it pointed at the live
-  // site), the footer's Team (Home's #team) and Privacy Policy ("#"). Terms of Service has no page; it stays as it is.
-  const toV2 = a => {
-    const h = a.getAttribute('href') || '', t = (a.textContent || '').trim();
-    if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/contact\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/\/contact\/?/, '/contact-v2'));
-    else if (/^(https?:\/\/[^/]*greyfox[^/]*)?\/insights\/?([?#].*)?$/.test(h)) a.setAttribute('href', '/insights-v2' + (h.match(/[?#].*$/) || [''])[0]);
-    else if (t === 'Team' && /^(\/team\/?|(\/[a-z0-9-]*)?#team)$/.test(h)) a.setAttribute('href', '/team-v2');
-    else if (/^privacy( policy)?$/i.test(t) && (h === '#' || /^\/privacy(-policy)?\/?$/.test(h))) a.setAttribute('href', '/privacy-v2');
-    else if (h === '/' || h === '/#') a.setAttribute('href', '/home-v2');   // (1.0.8) home links: the logos
-  };
-  /* (1.0.16, founder 10/20) THE ARTICLES MOVED: the list page keeps /insights and the CMS articles live at
+  /* (1.0.46, launch 10/23) THE PAGES MOVED TO THEIR FINAL SLUGS (/, /business-owners, /investors, /contact, /team,
+     /privacy, /insights): the staging-only "-v2" link rewrite of 1.0.4-1.0.14 is gone (every -v2 page address is a 404
+     now, and the person pages still carry "-v2" in their slugs, which used to switch that rewrite on). Only the article
+     redirects stay.
+     (1.0.16, founder 10/20) THE ARTICLES MOVED: the list page keeps /insights and the CMS articles live at
      /articles/<slug> (Webflow won't let a page and a collection share "insights"). Every page still holds the old
-     address (greyfoxpartners.com/insights/<slug>, and the static /insights-v2-article for the Plausible List); a link
+     address (greyfoxpartners.com/insights/<slug>, and the static /insights-article for the Plausible List); a link
      goes straight to the article, on every host, so nobody rides the launch 301 (/insights/(.*) -> /articles/%1). */
   const ART = '/articles/', PLAUSIBLE = 'ai-deal-origination-structural-risk-plausible-list-problem';
   const toArticle = a => {
     const h = a.getAttribute('href') || '', m = h.match(/^(?:https?:\/\/(?:www\.)?greyfoxpartners\.com)?\/insights\/([a-z0-9-]+)\/?([?#].*)?$/);
     if (m && m[1] !== 'category' && m[1] !== 'tag') a.setAttribute('href', ART + m[1] + (m[2] || ''));
-    else if (/^\/insights-v2-article\/?([?#].*)?$/.test(h)) a.setAttribute('href', ART + PLAUSIBLE);
-    // after launch the list page is /insights: a link still naming the staging slug (the template's way back) goes there
-    else if (!STAGING && /^\/insights-v2\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/^\/insights-v2\/?/, '/insights'));
+    else if (/^\/insights(-v2)?-article\/?([?#].*)?$/.test(h)) a.setAttribute('href', ART + PLAUSIBLE);
+    // a link still naming a retired staging slug goes to the page's final address
+    else if (/^\/insights-v2\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/^\/insights-v2\/?/, '/insights'));
+    else if (/^\/(home|contact|team|privacy|business-owners|investors)-v2\/?([?#].*)?$/.test(h)) a.setAttribute('href', h.replace(/^\/home-v2/, '/').replace(/-v2(\/|$)/, '$1'));
   };
   { const sweepA = () => D.querySelectorAll('a[href*="insights"]').forEach(toArticle);
     onReady(sweepA); W.addEventListener('load', () => { sweepA(); setTimeout(sweepA, 1500); });
     D.addEventListener('click', e => { const a = e.target && e.target.closest && e.target.closest('a[href]'); if (a) toArticle(a); }, true); }
-  if (STAGING) {
-    const sweep = () => D.querySelectorAll('a[href]').forEach(toV2);
-    onReady(sweep); W.addEventListener('load', () => { sweep(); setTimeout(sweep, 1500); });
-    D.addEventListener('click', e => { const a = e.target && e.target.closest && e.target.closest('a[href]'); if (a) toV2(a); }, true);
-  }
   const loadScript = src => new Promise((res, rej) => { const s = D.createElement('script'); s.src = src; s.async = false; s.onload = res; s.onerror = rej; (D.head || H).appendChild(s); });
   const haveGsap = () => !!(W.gsap && W.ScrollTrigger && W.SplitText);
   const ensureGsap = () => new Promise(res => {
