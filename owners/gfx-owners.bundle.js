@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.47 + owners 1.2.7. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.47 + owners 1.2.8. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1582,8 +1582,11 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.7';
+  W.__gfxOwners = '1.2.8';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
+  // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura): eight marks sit two
+  // rows of four instead of five and three. DELETE THIS RULE when the ten are back (the stylesheet's five columns return).
+  if (!$('#gfx-ow-firms-8')) { const st = D.createElement('style'); st.id = 'gfx-ow-firms-8'; st.textContent = '@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(4,minmax(0,1fr))!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const HOLDQ = '(min-width: 992px) and (min-height: 681px)', STACK = '(max-width: 991px)', SHORT = '(min-width: 992px) and (max-height: 680px)';
