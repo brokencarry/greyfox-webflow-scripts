@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.47 + pages 1.0.3 + insights 1.2.8 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.47 + pages 1.0.3 + insights 1.3.0 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1431,7 +1431,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.2.8';
+W.__gfxInsights='1.3.0';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1758,6 +1758,47 @@ ol.innerHTML=entries.map(e=>`<li><a href="#${e.id}">${escH(e.text)}</a></li>`).j
 if(!entries.length)box.hidden=true;
 }));
 }
+function feedIndex(){
+if($(O('gi-rt')))return false;
+const items=$$(O('gi-feed-i'));if(!items.length)return false;
+const grid=$(O('gi-collage-grid')),col=$(O('gi-collage'));if(!grid||!col)return false;
+const feed=items.map(e=>({
+slug:(e.getAttribute('data-slug')||'').trim(),name:(e.getAttribute('data-name')||'').trim(),summary:(e.getAttribute('data-summary')||'').trim(),
+date:parseDate(e.getAttribute('data-date')),mins:(e.getAttribute('data-mins')||'').trim(),topic:(e.getAttribute('data-topic')||'').trim(),
+cover:(e.getAttribute('data-cover')||'').trim(),author:(e.getAttribute('data-author')||'').trim()
+})).filter(a=>a.slug&&a.name);
+if(!feed.length)return false;
+feed.sort((a,b)=>(b.date?b.date.iso:'').localeCompare(a.date?a.date.iso:''));
+$$(O('gi-feed')).forEach(e=>e.remove());
+H.classList.add('gi-b');
+const url=a=>'/articles/'+a.slug;
+const k=a=>`<p class="gfx-pg-gi-tile-k" data-o="gi-tile-k"><span class="gfx-pg-gi-mi" data-o="gi-mi">${a.date?`<time datetime="${a.date.iso}">${escH(a.date.label)}</time>`:''}</span>${a.mins?SEP+`<span class="gfx-pg-gi-mi" data-o="gi-mi">${escH(a.mins)} min read</span>`:''}</p>`;
+const pic=(a,lead)=>`<a class="gfx-pg-gi-tile-pic" data-o="gi-tile-pic" href="${url(a)}" aria-hidden="true" tabindex="-1"><figure class="${lead?'gfx-pg-gi-plate-lead':'gfx-pg-gi-plate'}" data-o="gi-plate${lead?' gi-plate-lead':''}" data-gi-settle="" data-gi-cover="${escH(a.cover)}" data-gi-title="${escH(a.name)}"></figure></a>`;
+const words=(a,tag)=>`<div class="gfx-pg-gi-tile-txt" data-o="gi-tile-txt">${k(a)}<${tag} class="gfx-pg-gi-tile-t" data-o="gi-tile-t"><a class="gfx-pg-gi-tlink" data-o="gi-tlink" href="${url(a)}">${titleHtml(escH(a.name))}</a></${tag}>${a.summary?`<p class="gfx-pg-gi-dek" data-o="gi-dek">${escH(a.summary)}</p>`:''}</div>`;
+const author=$(O('gi-author-lead'));
+$$('[data-gi-tile]',grid).forEach(t=>t.remove());grid.textContent='';
+const list=$(O('gi-list'));if(list){const sec=list.closest('section')||list.parentElement;if(sec&&sec!==col)sec.remove();else list.remove();}
+const topicsBox=$(O('gi-topics'));if(topicsBox)topicsBox.remove();
+const f=feed[0];
+const feat=mkEl('article','gi-tile gi-b-feat',{'data-gi-tile':'0'});
+feat.innerHTML=pic(f,true)+words(f,'h2');
+if(author){$(O('gi-tile-txt'),feat).appendChild(author);}
+const all=mkEl('h2','gi-h2 gi-b-all',{id:'all'});all.textContent='All articles';
+const g=mkEl('div','gi-b-grid');
+feed.slice(1).forEach((a,i)=>{const c=mkEl('article','gi-tile gi-b-card',{'data-gi-tile':String(i+1)});c.innerHTML=pic(a,false)+words(a,'h3');g.appendChild(c);});
+grid.append(feat,all,g);
+$$('figure[data-gi-cover]',grid).forEach(fig=>plate(fig,fig.getAttribute('data-gi-cover'),fig.getAttribute('data-gi-title')||''));
+const cnt=$(O('gi-open-count'));
+if(cnt){
+const first=$('.gfx-pg-t',cnt)||cnt.firstElementChild,mis=$$(O('gi-mi'),cnt),dates=feed.map(a=>(a.date?a.date.iso:'')).filter(Boolean).sort();
+if(first)first.textContent=`${feed.length} ${feed.length===1?'article':'articles'}`;
+const topicsN=new Set(feed.map(a=>a.topic).filter(Boolean)).size;
+mis.forEach(el=>{const sep=$(O('gi-sep'),el);
+if(/topic/i.test(el.textContent)){if(topicsN<=1){el.hidden=true;el.style.setProperty('display','none','important');}else{el.textContent=`${topicsN} topics`;if(sep)el.insertBefore(sep,el.firstChild);}}
+else if(/^\s*since\b/i.test(el.textContent)&&dates[0]){const d=new Date(dates[0]+'T12:00:00');el.textContent='Since '+d.toLocaleString('en-US',{month:'long',year:'numeric'});if(sep)el.insertBefore(sep,el.firstChild);}});
+}
+return true;
+}
 function template(){
 const rt=$(O('gi-rt'));if(!rt)return false;
 H.classList.add('gi-cms');
@@ -1830,6 +1871,7 @@ P.run({
 current:'Insights',
 dom:()=>{
 safe('cms template',template);
+safe('feed',feedIndex);
 safe('prune',prune);
 if(FIELD){FIELD.rooms=rooms();FIELD.drawnCovers=true;}
 safe('share',share);safe('contents',contents);safe('topics',topics);
