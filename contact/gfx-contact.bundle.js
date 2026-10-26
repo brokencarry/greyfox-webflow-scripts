@@ -1,4 +1,4 @@
-/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.46 + pages 1.0.3 + contact 1.0.10. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
+/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.47 + pages 1.0.3 + contact 1.0.11. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.46';
+  const VERSION = '1.0.47';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -960,6 +960,10 @@
     /* (1.0.18, founder 10/20: "is the size of the fox on every footer the same? should be consistent") the close's fox at
        Home's size on every page: 64% of the screen's height (Home's 577px on 1440x900), at most 744px, where it was 88%
        of each close (314px on Insights to 589px on Home). A close shorter than the drawing trims it above and below. */
+    // (1.0.47, designer 10/26: "the logo is hidden while scrolling on mobile") the fox yields to words and pictures passing
+    // under it so it never sits on content; on a phone the bar has its paper backing at every scroll, nothing passes under
+    // the fox, and the yielding only read as a missing logo. Phones keep the fox whenever the bar is on screen.
+    if (!$('#gfx-fox-phone')) { const st = D.createElement('style'); st.id = 'gfx-fox-phone'; st.textContent = '@media (max-width:767px){html.gfx-f3 .gfx-nav.gfx-fox-away .logo-link{opacity:1!important;pointer-events:auto;transition-duration:.35s}}'; (D.head || H).appendChild(st); }
     if (!$('#gfx-bar-btn')) { const st = D.createElement('style'); st.id = 'gfx-bar-btn'; st.textContent = 'html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}' +
       // (1.0.36, launch QA 10/22) the open menu's icon is the two turning bars alone (the outer bars stayed white across the X), and the
       // fox stays above the menu while it closes (it was lifted only while open, so the closing panel covered it for ~0.3 s)
@@ -1800,7 +1804,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.10';
+  W.__gfxContact = '1.0.11';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -2026,7 +2030,16 @@
   P.run({
     current: 'contact',
     heroDetail,
-    dom: () => { safe('clocks', clocksBuild); safe('qswitch', qswitchWire); safe('form', formWire); safe('window', fitWindow); },
+    dom: () => {
+      // (1.0.11, designer 10/26: "remove the dash on the contact form, only show text when there is an error") a field's
+      // error line is hidden until it has words: the attribute is set here as well as in the Designer, and a rule keeps
+      // the line away whether it is hidden or merely empty (a display rule anywhere would otherwise beat the attribute)
+      safe('errs', () => { $$(O('r4-err')).forEach(e => { if (!e.textContent.trim()) e.hidden = true; });
+        if (!D.getElementById('gfx-r4-err')) { const st = D.createElement('style'); st.id = 'gfx-r4-err'; st.textContent = '[data-o~="r4-err"][hidden],[data-o~="r4-err"]:empty{display:none!important}' +
+          // (1.0.11, designer 10/26: "the success message's style should match the other pages") the ported sheet's rule for
+          // Webflow's own done block (html body .w-form-done h2, bold) outranked the heading's light serif; the weight is restored
+          'html body h2[data-o~="r4-done-h"],html body .w-form-done h2[data-o~="r4-done-h"]{font-weight:200!important}'; (D.head || H).appendChild(st); } });
+      safe('clocks', clocksBuild); safe('qswitch', qswitchWire); safe('form', formWire); safe('window', fitWindow); },
     still: () => { H.classList.add('r4-shown'); rollIn(); }
   });
 })();

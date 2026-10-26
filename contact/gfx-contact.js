@@ -18,7 +18,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.10';
+  W.__gfxContact = '1.0.11';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -244,7 +244,16 @@
   P.run({
     current: 'contact',
     heroDetail,
-    dom: () => { safe('clocks', clocksBuild); safe('qswitch', qswitchWire); safe('form', formWire); safe('window', fitWindow); },
+    dom: () => {
+      // (1.0.11, designer 10/26: "remove the dash on the contact form, only show text when there is an error") a field's
+      // error line is hidden until it has words: the attribute is set here as well as in the Designer, and a rule keeps
+      // the line away whether it is hidden or merely empty (a display rule anywhere would otherwise beat the attribute)
+      safe('errs', () => { $$(O('r4-err')).forEach(e => { if (!e.textContent.trim()) e.hidden = true; });
+        if (!D.getElementById('gfx-r4-err')) { const st = D.createElement('style'); st.id = 'gfx-r4-err'; st.textContent = '[data-o~="r4-err"][hidden],[data-o~="r4-err"]:empty{display:none!important}' +
+          // (1.0.11, designer 10/26: "the success message's style should match the other pages") the ported sheet's rule for
+          // Webflow's own done block (html body .w-form-done h2, bold) outranked the heading's light serif; the weight is restored
+          'html body h2[data-o~="r4-done-h"],html body .w-form-done h2[data-o~="r4-done-h"]{font-weight:200!important}'; (D.head || H).appendChild(st); } });
+      safe('clocks', clocksBuild); safe('qswitch', qswitchWire); safe('form', formWire); safe('window', fitWindow); },
     still: () => { H.classList.add('r4-shown'); rollIn(); }
   });
 })();

@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.46 + pages 1.0.3 + insights 1.2.7. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.47 + pages 1.0.3 + insights 1.2.8. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.46';
+  const VERSION = '1.0.47';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -960,6 +960,10 @@
     /* (1.0.18, founder 10/20: "is the size of the fox on every footer the same? should be consistent") the close's fox at
        Home's size on every page: 64% of the screen's height (Home's 577px on 1440x900), at most 744px, where it was 88%
        of each close (314px on Insights to 589px on Home). A close shorter than the drawing trims it above and below. */
+    // (1.0.47, designer 10/26: "the logo is hidden while scrolling on mobile") the fox yields to words and pictures passing
+    // under it so it never sits on content; on a phone the bar has its paper backing at every scroll, nothing passes under
+    // the fox, and the yielding only read as a missing logo. Phones keep the fox whenever the bar is on screen.
+    if (!$('#gfx-fox-phone')) { const st = D.createElement('style'); st.id = 'gfx-fox-phone'; st.textContent = '@media (max-width:767px){html.gfx-f3 .gfx-nav.gfx-fox-away .logo-link{opacity:1!important;pointer-events:auto;transition-duration:.35s}}'; (D.head || H).appendChild(st); }
     if (!$('#gfx-bar-btn')) { const st = D.createElement('style'); st.id = 'gfx-bar-btn'; st.textContent = 'html.gfx-f3 .gfx-nav:not(.gfx-top) .button_wrapper.show{display:block!important}' +
       // (1.0.36, launch QA 10/22) the open menu's icon is the two turning bars alone (the outer bars stayed white across the X), and the
       // fox stays above the menu while it closes (it was lifted only while open, so the closing panel covered it for ~0.3 s)
@@ -1819,7 +1823,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.2.7';
+  W.__gfxInsights = '1.2.8';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -1964,12 +1968,24 @@
 
   /* ========================= share: the four marks (single ink strokes, green on hover), copy the link ========================= */
   const G = d => `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`;
+  // (1.2.8, designer 10/26: "the authentic icons of social media") the three networks' own marks (Simple Icons, the same
+  // LinkedIn path the footer carries), filled in the current ink; the copy-link glyph stays a stroke
+  const GB = d => `<svg viewBox="0 0 24 24" class="gi-brand" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`;
   const GLYPH = {
-    in: G('M6.5 10v8M6.5 6.2v.1M10.5 18v-8M10.5 13.6c0-2.3 1.4-3.6 3.3-3.6s3.2 1.2 3.2 3.6V18'),
-    x: G('M5.5 5.5l13 13M18.5 5.5l-13 13'),
-    fb: G('M14.5 4.5h-1.6a3 3 0 0 0-3 3v12M7.5 11h6.5'),
+    in: GB('M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z'),
+    x: GB('M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z'),
+    fb: GB('M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z'),
     copy: G('M10 14l4-4M9 11.5l-2 2a3 3 0 0 0 4.2 4.3l2-2M15 12.5l2-2a3 3 0 0 0-4.2-4.3l-2 2')
   };
+  /* (1.2.8, designer 10/26) three of his notes, as rules the pinned stylesheet can't carry yet: the brand marks are
+     fills, 18 px in the 44 px box; a card's title no longer draws its underline under the pointer (the keyboard focus
+     line stays); the pull quote sits on the text column instead of hanging two columns into the margin, where on some
+     screens it crossed the page's left edge. */
+  if (!D.getElementById('gfx-gi-designer')) { const st = D.createElement('style'); st.id = 'gfx-gi-designer';
+    st.textContent = '[data-o~="gi-sh"] svg.gi-brand{width:18px;height:18px}[data-o~="gi-sh"] svg.gi-brand path{fill:currentColor!important;stroke:none!important}' +
+      '@media (hover:hover){html [data-o~="gi-tlink"]:hover,html [data-o~="gi-tile"]:hover [data-o~="gi-tlink"],html [data-o~="gi-next-grid"]:hover [data-o~="gi-tlink"],html [data-o~="gi-list"] > [data-o~="gi-row"]:hover [data-o~="gi-row-t"]{background-size:0% 1px}}' +
+      '[data-o~="gi-pq"]{margin-left:0!important}[data-o~="gi-pq-rule"]{width:96px!important}';
+    (D.head || D.documentElement).appendChild(st); }
   function share() {
     $$('[data-gi-ico]').forEach(a => { const g = GLYPH[a.getAttribute('data-gi-ico')]; if (g && !$('svg', a)) a.insertAdjacentHTML('afterbegin', g); });
     $$('[data-gi-copy]').forEach(b => {
