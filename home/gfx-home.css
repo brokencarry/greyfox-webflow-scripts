@@ -327,6 +327,13 @@ html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 36px; }
   html.gfx-f3:not(.gfx-m) .gfx-logos .gfx-marq-track { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 36px; column-gap: 20px !important; }
 }
 
+/* (home 1.1.19, Reduce Motion pass 10/26) THE MARKET ROOM'S COUNTERS ON A STILL DESKTOP: the DOM step builds the odometer
+   reels and hides the typed value for the film, but only the film sets the reels, so a desktop with Reduce Motion on (or
+   no motion library) read "00,000" and "000", and so did a 1366 x 650 window with motion on, whose market room is the still
+   one (gfx-mk-still, under 680px tall). Both show the typed values (92,631 and 100), as the phone does. */
+html.gfx-f3:is(.gfx-mk-still, :not(.gfx-m)) .gfx-mk .gfx-mk-reels:not(#gfx-p) { display: none !important; }
+html.gfx-f3:is(.gfx-mk-still, :not(.gfx-m)) .gfx-mk .gfx-mk-val-off:not(#gfx-p) { display: inline !important; }
+
 /* ---------- the reduced page (and no motion library): every chapter in view, the climb's rail set aside ---------- */
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-tl { height: auto !important; }
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-rail { display: none !important; }

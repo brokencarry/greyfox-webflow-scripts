@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.18';
+  W.__gfxHome = '1.1.19';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -675,8 +675,6 @@
     if (!box) return;
     const cover = $$('.gfx-ins-pic-lead .gfx-ins-cvsvg', box), leadWords = $$('.gfx-ink-lead > *', box);
     const top = $('.gfx-ink-top', box);
-    // (1.1.18) the lead's cover is a second link to the same article; the designer's block left it at an older one
-    if (top) { const lead = $('.gfx-ink-lead', top), frame = $('.gfx-ins-frame', top); if (lead && frame && lead.getAttribute('href')) frame.setAttribute('href', lead.getAttribute('href')); }
     if (top) gfx.room({ trigger: top, start: 'top 80%', pictures: cover, detail: leadWords, arriving: box });
     const three = $('.gfx-ink-three', box);
     if (three) gfx.room({ trigger: three, start: 'top 88%', hairline: $('.gfx-ink-rule', box), detail: $$('.gfx-ink-card', box), group: true });
@@ -728,7 +726,9 @@
     foot: { close: '.gfx-cta-sec' },
     fox: '.gfx-cta-sec .footer-logo-subtle',
     foxZone: [2, 6, false],
-    dom: () => { marketDom(); safe('mirror', () => gfx.onField(mirror)); },
+    // (1.1.19) the reading list's lead cover is a second link to the lead's article; the designer's block left it at an
+    // older one. Set at DOM time, so the still page (Reduce Motion, no motion library) gets it too, not only the rooms.
+    dom: () => { marketDom(); safe('mirror', () => gfx.onField(mirror)); safe('inslead', () => { const top = $('.gfx-ins-sec .gfx-ink-top'); if (!top) return; const lead = $('.gfx-ink-lead', top), frame = $('.gfx-ins-frame', top); if (lead && frame && lead.getAttribute('href')) frame.setAttribute('href', lead.getAttribute('href')); }); },
     start: () => {
       gsap = gfx.gsap; ST = gfx.ST;
       let intro = null;
