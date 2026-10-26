@@ -513,7 +513,7 @@ html.gi-b [data-o~="gi-b-card"] [data-o~="gi-dek"] { margin-top: 8px !important;
 [data-o~="gi-tile-5"] { grid-column: 6 / span 7; grid-row: 3; padding-top: clamp(28px, 3.5vh, 40px); border-top: 1px solid var(--gi-rule); padding-left: var(--gi-gap); }
 [data-o~="gi-tile-pic"] { display: block; }
 [data-o~="gi-tile-txt"] { margin-top: 20px; }
-[data-o~="gi-tile-k"] { display: flex; flex-wrap: wrap; font: 400 14px/1.5 var(--gi-sans); color: var(--gi-ink-3); font-variant-numeric: tabular-nums lining-nums; }
+[data-o~="gi-tile-k"] { display: flex; flex-wrap: wrap; align-items: baseline; font: 400 14px/1.5 var(--gi-sans); color: var(--gi-ink-3); font-variant-numeric: tabular-nums lining-nums; }
 [data-o~="gi-tile-t"] { margin: 10px 0 0; font: 300 clamp(22px, 1.75vw, 27px)/1.2 var(--gi-serif); letter-spacing: -.008em; color: var(--gi-ink); text-wrap: balance; }
 [data-o~="gi-tile-1"] [data-o~="gi-tile-txt"] { margin-top: 28px; }
 [data-o~="gi-tile-1"] [data-o~="gi-tile-t"] { font-size: clamp(34px, 3vw, 48px); line-height: 1.1; letter-spacing: -.012em; max-width: 16em; }

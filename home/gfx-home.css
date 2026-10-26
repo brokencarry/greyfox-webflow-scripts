@@ -316,6 +316,17 @@ html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 36px; }
   html.gfx-f3 .gfx-logos img.testimonial_logo { margin: 0 !important; flex: 0 1 auto !important; min-width: 0; max-width: 9.2% !important; object-fit: contain; }
 }
 
+/* (home 1.1.18, 10/26) THE FIRMS WHEN THE LINE DOES NOT MOVE: an iPhone with Reduce Motion on (any page without the motion
+   class) kept Webflow's wrapped row with the moving line's 72px gaps, a ragged two-column stack with holes. Under 992px the
+   still page lays the marks in the Business Owners grid instead: three across on a phone (3 / 3 / 2), four on a tablet. */
+@media (max-width: 991px) {
+  html.gfx-f3:not(.gfx-m) .gfx-logos .gfx-marq-track { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 40px; row-gap: 20px !important; column-gap: 24px !important; align-items: center; justify-items: center; width: 100% !important; animation: none !important; transform: none !important; }
+  html.gfx-f3:not(.gfx-m) .gfx-logos img.testimonial_logo { margin: 0 !important; min-width: 0; max-width: 100% !important; object-fit: contain; height: var(--lh, 30px) !important; max-height: var(--lh, 30px) !important; }
+}
+@media (max-width: 767px) {
+  html.gfx-f3:not(.gfx-m) .gfx-logos .gfx-marq-track { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 36px; column-gap: 20px !important; }
+}
+
 /* ---------- the reduced page (and no motion library): every chapter in view, the climb's rail set aside ---------- */
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-tl { height: auto !important; }
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-rail { display: none !important; }
@@ -449,3 +460,18 @@ html .gfx-door-e { color: #ffffff; }   /* was #f4f3f0 (native gfx- class styles)
 /* (10/22 peer review) the hero headline is the page's real H1 now (was a div with role="heading"); the H1 element's base
    margins (20 / 15 px) are cleared so it sits exactly where the div did */
 html .hero_title h1.gfx-hero-h { margin: 0; }
+/* (home 1.1.18, founder 10/26) THE READING LIST ON A PHONE KEEPS ITS COVERS: the designer's sheet hid every cover under
+   768px (the lead's frame under 480px), so the room read as four blocks of text. Each cover now sits above its words at
+   the column's full width, the lead's first, each in the green frame with the ear's cut corner, as the Insights page shows
+   them on a phone. The three keep their 20px rows; the covers' own cut (22px) stays. */
+@media (max-width: 767px) {
+  html.gfx-f3 .gfx-ins-sec .gfx-ins-frame { display: block !important; width: 100%; margin: 0 !important; padding: 0 !important; }
+  html.gfx-f3 .gfx-ins-sec .gfx-ins-pic-lead { display: block !important; width: 100%; aspect-ratio: 1200 / 628; margin: 0; }
+  html.gfx-f3 .gfx-ins-sec .gfx-ins-pic-lead > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  html.gfx-f3 .gfx-ins-sec .gfx-ink-top { row-gap: 20px; }
+  /* the lead sits in a Webflow column (10px side padding) the three never had: the lead and the three share one left edge */
+  html.gfx-f3 .gfx-ins-sec .collection-list-2 > .w-col { padding-left: 0; padding-right: 0; }
+  html.gfx-f3 .gfx-ins-sec .gfx-ink-card { padding-top: 24px !important; padding-bottom: 24px !important; }
+  html.gfx-f3 .gfx-ins-sec .gfx-ink-card > a:first-child { display: block; width: 100%; }
+  html.gfx-f3 .gfx-ins-sec .gfx-ink-card .div { padding-top: 18px !important; }
+}

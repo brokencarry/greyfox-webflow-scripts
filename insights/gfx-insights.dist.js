@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.47 + pages 1.0.3 + insights 1.3.0 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.47 + pages 1.0.3 + insights 1.3.1 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1431,7 +1431,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.3.0';
+W.__gfxInsights='1.3.1';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));

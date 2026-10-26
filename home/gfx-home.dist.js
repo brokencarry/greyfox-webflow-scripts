@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.47 + home 1.1.17 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.47 + home 1.1.18 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1256,7 +1256,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.17';
+W.__gfxHome='1.1.18';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-mk-idx-fit')){const st=D.createElement('style');st.id='gfx-mk-idx-fit';st.textContent='@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
@@ -1822,6 +1822,7 @@ gfx.room({trigger:head||sec,headline:head,body:$('.gfx-ink-r',sec),hairline:$('.
 if(!box)return;
 const cover=$$('.gfx-ins-pic-lead .gfx-ins-cvsvg',box),leadWords=$$('.gfx-ink-lead > *',box);
 const top=$('.gfx-ink-top',box);
+if(top){const lead=$('.gfx-ink-lead',top),frame=$('.gfx-ins-frame',top);if(lead&&frame&&lead.getAttribute('href'))frame.setAttribute('href',lead.getAttribute('href'));}
 if(top)gfx.room({trigger:top,start:'top 80%',pictures:cover,detail:leadWords,arriving:box});
 const three=$('.gfx-ink-three',box);
 if(three)gfx.room({trigger:three,start:'top 88%',hairline:$('.gfx-ink-rule',box),detail:$$('.gfx-ink-card',box),group:true});

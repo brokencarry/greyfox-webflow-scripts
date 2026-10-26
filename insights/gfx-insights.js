@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.0';
+  W.__gfxInsights = '1.3.1';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
