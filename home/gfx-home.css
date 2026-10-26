@@ -84,7 +84,7 @@ html.gfx-f3 .gfx-case-when { line-height: 1.08 !important; letter-spacing: -.015
 }
 @media (min-width: 992px) { html.gfx-f3 .gfx-case-ch { grid-template-columns: 7fr 5fr !important; } }
 /* the pin: the climb's frame sticks in its host, made the hold taller (sbx4.js holdTrack) */
-@media (min-width: 992px) and (min-height: 681.01px) {
+@media (min-width: 992px) and (min-height: 641.01px) {
   html.gfx-pinned .gfx-case-content { min-height: calc(100vh + var(--gfx-hold-cases, 2) * 100vh); }
   html.gfx-pinned .gfx-case-tl { position: sticky; top: 0; }
 }
@@ -224,15 +224,47 @@ html.gfx-f3 .gfx-cta-sec.gfx-cta-rest .gfx-cta-title .button { opacity: 0 !impor
 html.gfx-f3 .gfx-cta-sec .gfx-cta-content > .divider.subtle:last-child { visibility: hidden; }
 
 /* ---------- short desktops (800 px tall and under; sbx11.css + sbx-polish.css, the pin's own rules kept in Flow) ---------- */
+/* (home 1.1.17, founder 10/26: "all laptops get the climb") THE HELD CHAPTER FITS THE SCREEN. The founder's proof copy of
+   10/23 made the first chapter six lines; the fallback (1.1.9) then found the chapter past the held screen's foot on every
+   screen under 1050px tall and gave them the stacked page, so the climb showed only on large desktops. Three tiers now
+   compress the chapter instead: 960px and under takes the outcome and figures a size down; 800 and under tightens the
+   rail, the heading, the lede and the numbers; 700 and under (13-inch laptops, 641-700px with the browser's bars) takes
+   the shortest rail and leaders. Measured: every chapter ends above the foot from 641px up, so the pin holds there. */
+@media (min-width: 992px) and (max-height: 960px) {
+  html.gfx-f3 .gfx-case-tl { padding-top: calc(var(--gfx-zone) + 10px) !important; padding-bottom: 16px !important; }
+  html.gfx-f3 .gfx-case-rail { height: 16vh !important; margin-top: 7vh !important; }
+  html.gfx-f3 .gfx-case-head .paragraph { font-size: 18px !important; line-height: 1.5 !important; }
+  html.gfx-f3 .gfx-case-ch .gfx-case-outcome { font-size: 17px !important; line-height: 1.5 !important; }
+  html.gfx-f3 .gfx-case-figs > * { padding-top: 12px !important; }
+  html.gfx-f3 .gfx-case-cap { margin-top: 10px !important; }
+}
 @media (min-width: 992px) and (max-height: 800px) {
-  html.gfx-f3 .gfx-case-tl { padding-top: 84px !important; padding-bottom: 20px !important; }
-  html.gfx-f3 .gfx-case-rail { height: 11vh !important; margin-top: 6.5vh !important; }
+  html.gfx-f3 .gfx-case-tl { padding-top: 84px !important; padding-bottom: 14px !important; }
+  html.gfx-f3 .gfx-case-rail { height: 10vh !important; margin-top: 6vh !important; }
   html.gfx-f3 .gfx-case-stage { margin-top: 12px !important; }
-  html.gfx-f3 .gfx-case-ch { row-gap: 14px !important; }
-  html.gfx-f3 .gfx-case-when { font-size: 48px !important; }
+  html.gfx-f3 .gfx-case-ch { row-gap: 12px !important; }
+  html.gfx-f3 .gfx-case-when { font-size: 44px !important; }
+  html.gfx-f3 .gfx-case-head .paragraph { font-size: 17px !important; line-height: 1.5 !important; }
+  html.gfx-f3 .gfx-case-ch .gfx-case-outcome { font-size: 17px !important; line-height: 1.5 !important; }
+  html.gfx-f3 .gfx-case-num, html.gfx-f3 .gfx-case-num-lead { font-size: 48px !important; }
   html.gfx-f3 .gfx-case-leader-a { height: 56px !important; } html.gfx-f3 .gfx-case-lbl-a { bottom: 66px !important; }
   html.gfx-f3 .gfx-case-leader-b { height: 44px !important; } html.gfx-f3 .gfx-case-lbl-b { bottom: 54px !important; }
   html.gfx-f3 .gfx-case-leader-c { height: 26px !important; } html.gfx-f3 .gfx-case-lbl-c { bottom: 36px !important; }
+}
+@media (min-width: 992px) and (max-height: 700px) {
+  html.gfx-f3 .gfx-case-tl.gfx-case-tl { padding-top: calc(var(--gfx-zone) + 6px) !important; padding-bottom: 4px !important; }
+  html.gfx-f3 .gfx-case-rail { height: 7.5vh !important; margin-top: 4vh !important; }
+  html.gfx-f3 .gfx-case-stage { margin-top: 4px !important; }
+  html.gfx-f3 .gfx-case-ch { row-gap: 6px !important; }
+  html.gfx-f3 .gfx-case-when { font-size: 38px !important; }
+  html.gfx-f3 .gfx-case-head .paragraph { font-size: 15px !important; line-height: 1.45 !important; max-width: 600px !important; }
+  html.gfx-f3 .gfx-case-ch .gfx-case-outcome { font-size: 16px !important; line-height: 1.4 !important; }
+  html.gfx-f3 .gfx-case-num, html.gfx-f3 .gfx-case-num-lead { font-size: 38px !important; }
+  html.gfx-f3 .gfx-case-cap { margin-top: 6px !important; font-size: 12px !important; }
+  html.gfx-f3 .gfx-case-figs > * { padding-top: 8px !important; }
+  html.gfx-f3 .gfx-case-leader-a { height: 44px !important; } html.gfx-f3 .gfx-case-lbl-a { bottom: 54px !important; }
+  html.gfx-f3 .gfx-case-leader-b { height: 34px !important; } html.gfx-f3 .gfx-case-lbl-b { bottom: 44px !important; }
+  html.gfx-f3 .gfx-case-leader-c { height: 20px !important; } html.gfx-f3 .gfx-case-lbl-c { bottom: 30px !important; }
 }
 @media (min-width: 992px) and (min-height: 681px) and (max-height: 800px) {
   html.gfx-f3 .gfx-case-tl.gfx-case-tl { padding-top: calc(var(--gfx-zone) + 16px) !important; padding-bottom: 18px !important; }
@@ -291,7 +323,7 @@ html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-stage { display: block !i
 html.gfx-f3:is(.gfx-still-page, .gfx-static) .gfx-case-ch { position: relative !important; opacity: 1 !important; pointer-events: auto; padding: 56px 0 !important; border-top: 1px solid var(--gfx-line-l); }
 /* (home 1.1.7, final audit) a desktop under 681px tall cannot pin the climb (PIN needs 681px): the three chapters sat in one
    grid cell, all on, printed over each other. It gets the reduced page's case layout: every chapter in turn, rail aside. */
-@media (min-width: 992px) and (max-height: 680.99px) {
+@media (min-width: 992px) and (max-height: 640.99px) {
   html.gfx-f3 .gfx-case-tl { height: auto !important; }
   html.gfx-f3 .gfx-case-rail { display: none !important; }
   html.gfx-f3 .gfx-case-stage { display: block !important; height: auto !important; margin-top: clamp(14px, 2.6vh, 28px) !important; }
