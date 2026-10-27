@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.50 + home 1.1.19 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.50 + home 1.1.20 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1286,7 +1286,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.19';
+W.__gfxHome='1.1.20';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-mk-idx-fit')){const st=D.createElement('style');st.id='gfx-mk-idx-fit';st.textContent='@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
@@ -1319,7 +1319,31 @@ return ym;}}
 const MK={};
 const reel=n=>'<span class="gfx-mk-reels">'+[...n.toLocaleString('en-US')].map(c=>c===','?'<span class="gfx-mk-c">,</span>':
 '<span class="gfx-mk-d"><span class="gfx-mk-r">'+'0123456789'.split('').map(d=>`<i>${d}</i>`).join('')+'<i>0</i></span></span>').join('')+'</span>';
+function mkCardStyle(){
+if(!$('.gfx-mk-portal-in[data-gfx-card]')||$('#gfx-mkc-css'))return;
+const st=D.createElement('style');st.id='gfx-mkc-css';
+st.textContent=
+'html .gfx-mkc{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,3.6vw,64px);'+
+'background:var(--gfx-raised,#151515);border:1px solid var(--gfx-line-d,rgba(242,241,238,.12));box-sizing:border-box}'+
+'html .gfx-mkc-k{margin:0 0 clamp(18px,2.2vw,32px)!important;font:500 12px/1.2 var(--gfx-sans,"DM Sans",sans-serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gfx-green-d,#2f9a6c)}'+
+'html .gfx-mkc-row{position:relative;padding:clamp(16px,1.8vw,24px) 0;border-top:1px solid var(--gfx-line-d,rgba(242,241,238,.14))}'+
+'html .gfx-mkc-row:last-child{border-bottom:1px solid var(--gfx-line-d,rgba(242,241,238,.14))}'+
+'html .gfx-mkc-t{margin:0 0 6px!important;font-family:var(--gfx-serif,Sentient,Georgia,serif);font-weight:300;font-size:clamp(21px,1.75vw,30px);line-height:1.15;color:var(--gfx-ink-d1,#f2f1ee)}'+
+'html .gfx-mkc-d{margin:0!important;max-width:36ch;font:400 clamp(14px,1.05vw,16px)/1.5 var(--gfx-sans,"DM Sans",sans-serif);color:var(--gfx-ink-d2,rgba(242,241,238,.66))}'+
+'html.gfx-m:not(.gfx-mk-still) .gfx-mkc-k,html.gfx-m:not(.gfx-mk-still) .gfx-mkc-row{opacity:0;transform:translateY(10px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}'+
+'html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-k,html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row{opacity:1;transform:none}'+
+'html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(2){transition-delay:.12s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(3){transition-delay:.22s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(4){transition-delay:.32s}'+
+'@media (prefers-reduced-motion:reduce){html .gfx-mkc-k,html .gfx-mkc-row{opacity:1!important;transform:none!important;transition:none!important}}'+
+'@media (max-width:767px){html .gfx-mkc{padding:28px 24px}html .gfx-mkc-t{font-size:22px}}';
+(D.head||H).appendChild(st);
+const portal=$('.gfx-mk-portal');if(!portal)return;
+const on=()=>{const v=getComputedStyle(portal);const open=v.visibility!=='hidden'&&parseFloat(v.opacity||'1')>0.4&&!/inset\(0(px|%)? (5\d|[6-9]\d|100)/.test(v.clipPath||'');portal.classList.toggle('gfx-mkc-on',open);};
+new MutationObserver(on).observe(portal,{attributes:true,attributeFilter:['style']});
+if('IntersectionObserver'in W)new IntersectionObserver(on).observe(portal);
+on();
+}
 function marketDom(){
+safe('mk card',mkCardStyle);
 const sec=$('.gfx-mk');if(!sec)return;
 const stage=$('.gfx-mk-stage',sec);
 MK.sec=sec;MK.stage=stage;
@@ -1698,7 +1722,7 @@ const capList=['.gfx-mk-cap-a','.gfx-mk-cap-b','.gfx-mk-cap-c','.gfx-mk-cap-d'].
 const ixs=$$('.gfx-mk-ix',sec);ixs.forEach(li=>{li._bar=$('.gfx-mk-ix-fill',li);});
 const hls=$$('.gfx-mk-hlt',sec),lede=$('.gfx-mk-lede',sec),gatesBox=$('.gfx-mk-gates',sec),gates=$$('.gfx-mk-gate',sec),steps=$('.gfx-mk-steps',sec);
 let demo=null,demoWant=null;
-const ensureDemo=()=>{if(demo||!portalIn)return;demo='loading';loadPortal().then(ok=>{if(!ok)return;demo=W.GFPortalDemo.mount(portalIn,{theme:'dark',autoplay:false,loop:false,reducedMotion:REDUCE,frame:true,fit:'fill',label:'A client’s pipeline in the Grey Fox portal: the handoff stage, with one company’s note open. Illustrative companies and notes.'});if(demoWant)demo[demoWant]();});};
+const ensureDemo=()=>{if(demo||!portalIn||portalIn.hasAttribute('data-gfx-card'))return;demo='loading';loadPortal().then(ok=>{if(!ok)return;demo=W.GFPortalDemo.mount(portalIn,{theme:'dark',autoplay:false,loop:false,reducedMotion:REDUCE,frame:true,fit:'fill',label:'A client’s pipeline in the Grey Fox portal: the handoff stage, with one company’s note open. Illustrative companies and notes.'});if(demoWant)demo[demoWant]();});};
 const demoDo=k=>{demoWant=k;if(demo&&demo!=='loading')demo[k]();};
 const STEP_AT=[0.22,0.42,0.6],WIN=[[0,0.22],[0.22,0.42],[0.42,0.6],[0.6,1]];
 const stepOf=p=>(p<STEP_AT[0]?0:p<STEP_AT[1]?1:p<STEP_AT[2]?2:3);
@@ -1792,7 +1816,7 @@ const sec=MK.sec;if(!sec)return;
 H.classList.add('gfx-mk-still');
 $$('.gfx-mk-ix',sec).forEach(li=>li.classList.add('gfx-on'));$$('.gfx-mk-gate',sec).forEach(g=>g.style.setProperty('--g','1'));
 const portalIn=$('.gfx-mk-portal-in',sec);
-if(portalIn)loadPortal().then(ok=>{if(ok){const d=W.GFPortalDemo.mount(portalIn,{theme:'dark',autoplay:false,loop:false,reducedMotion:true,label:'A client’s pipeline in the Grey Fox portal. Illustrative companies and notes.'});d.settle();}});
+if(portalIn&&!portalIn.hasAttribute('data-gfx-card'))loadPortal().then(ok=>{if(ok){const d=W.GFPortalDemo.mount(portalIn,{theme:'dark',autoplay:false,loop:false,reducedMotion:true,label:'A client’s pipeline in the Grey Fox portal. Illustrative companies and notes.'});d.settle();}});
 }
 let portalP=null;
 function loadPortal(){
