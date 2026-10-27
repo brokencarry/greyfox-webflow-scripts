@@ -68,6 +68,13 @@
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
   const VERSION = '1.0.50';
+  /* (1.0.51, founder 10/27) one site config: the owners-only site on greyfox-partners.com sets window.GFX_SITE in its
+     head so nothing it prints names the main domain (its address, its inbox, the footer's fallback links). Without it,
+     greyfoxpartners.com is unchanged. */
+  const SITE = Object.assign({
+    domain: 'greyfoxpartners.com', mail: 'inquiries@greyfoxpartners.com',
+    nav: [['Business Owners', '/business-owners'], ['Investors', '/investors'], ['Team', '#team'], ['Insights', 'https://www.greyfoxpartners.com/insights'], ['Contact', '/contact']]
+  }, W.GFX_SITE || {});
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -947,7 +954,7 @@
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
     const href = (cta && cta.getAttribute('href')) || '/contact';
-    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:${SITE.mail}"><span>Write to us</span>${SITE.mail}</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
   }
   /* (1.0.11) the logo link is two images with empty alt text, so it had no name for a screen reader: it is named here */
   function navName() {
@@ -1048,7 +1055,7 @@
       'html.gfx-f3 :is(h1,h2,h3,h4){break-after:avoid}html.gfx-f3 :is(img,figure,blockquote,li,dt,dd){break-inside:avoid}' +
       // a paragraph split into screen lines runs as one paragraph again; icon links and addresses print no URL after them
       'html.gfx-f3 p :is(.tp-sl-mask,.tp-sl){display:inline!important}html.gfx-f3 a:is([href^="mailto:"],[aria-label],:has(svg,img))::after{content:none!important}' +
-      'html.gfx-f3 body::after{content:"Grey Fox Partners  \\00B7  greyfoxpartners.com  \\00B7  inquiries@greyfoxpartners.com\\AGrey Fox Partners represents buyers. Nothing on this site is an offer or advice.";white-space:pre-line;display:block;margin-top:12mm;padding-top:4mm;border-top:1px solid #c8c8c8;font:11px/1.4 "DM Sans",sans-serif;color:#555!important;-webkit-text-fill-color:#555!important}}'; (D.head || H).appendChild(st); }
+      'html.gfx-f3 body::after{content:"Grey Fox Partners  \\00B7  ' + SITE.domain + '  \\00B7  ' + SITE.mail + '\\AGrey Fox Partners represents buyers. Nothing on this site is an offer or advice.";white-space:pre-line;display:block;margin-top:12mm;padding-top:4mm;border-top:1px solid #c8c8c8;font:11px/1.4 "DM Sans",sans-serif;color:#555!important;-webkit-text-fill-color:#555!important}}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
@@ -1190,7 +1197,7 @@
     const cols = $$('.footer_item_wrapper', foot);
     const navA = cols[0] ? $$('a[href]', cols[0]) : [];
     const data = {
-      nav: navA.length ? navA.map(a => [txt(a), a.getAttribute('href')]) : [['Business Owners', '/business-owners'], ['Investors', '/investors'], ['Team', '#team'], ['Insights', 'https://www.greyfoxpartners.com/insights'], ['Contact', '/contact']],
+      nav: navA.length ? navA.map(a => [txt(a), a.getAttribute('href')]) : SITE.nav,
       mail: $$('a[href^="mailto:"]', foot).map(a => a.getAttribute('href').slice(7)),
       tel: (() => { const t = $('a[href^="tel:"]', foot); return t ? [txt(t), t.getAttribute('href')] : ['(646) 946-6641', 'tel:+16469466641']; })(),
       offices: [{ full: 'New York, NY', tz: 'America/New_York' }, { full: 'Austin, TX', tz: 'America/Chicago' }],
@@ -1199,7 +1206,7 @@
       notice: txt($('.gfx-notice', foot)) || 'Grey Fox Partners represents buyers. Nothing on this site is an offer or advice.'
     };
     // (1.0.28, founder 10/22) one public address for owners and investors alike
-    if (!data.mail.length) data.mail = ['inquiries@greyfoxpartners.com'];
+    if (!data.mail.length) data.mail = [SITE.mail];
     // (1.0.28) the footer's year follows the clock (it was typed "2026")
     data.copy = data.copy.split(/\b20\d\d\b/).join(String(new Date().getFullYear()));
     // (1.0.26, founder 10/21: "remove Terms") no Terms page: the legal row carries the Privacy Policy alone

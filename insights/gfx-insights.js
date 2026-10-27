@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.1';
+  W.__gfxInsights = '1.3.2';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -329,7 +329,8 @@
     'value-leaks': 'sha384-e7cfHyADER+q7wU6rddlToAxGwhH9e/+1tlgd0NZyDLqmiU3Bu7h/nmb090YbVCB',
     'what-inning': 'sha384-/SUk/cdWwPXOCeZrgj9Z1yQjL4PIYWjM+Wn6yqZqZBVvzk+0eXNxK8VBHKjTzaaA'
   };
-  const SITE = 'https://www.greyfoxpartners.com';
+  // (1.3.2) the site's own address: the owners site (window.GFX_SITE) shares and describes its articles on its own domain
+  const SITE = 'https://' + ((W.GFX_SITE && W.GFX_SITE.domain) || 'www.greyfoxpartners.com');
   // (1.2.4) the firm's mark for the article publisher, and each author's page after the launch renames (LAUNCH.txt 1b)
   const LOGO = 'https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6ad9b63e75f1cad7b6871bde_gfx-logo-mark-256.png';
   const PEOPLE = { 'Shivam Shirolawala': '/shivam-shirolawala', 'Tony Giudice': '/tony-giudice', 'Burke Widhelm': '/burke-widhelm' };
@@ -443,10 +444,14 @@
     const feed = items.map(e => ({
       slug: (e.getAttribute('data-slug') || '').trim(), name: (e.getAttribute('data-name') || '').trim(), summary: (e.getAttribute('data-summary') || '').trim(),
       date: parseDate(e.getAttribute('data-date')), mins: (e.getAttribute('data-mins') || '').trim(), topic: (e.getAttribute('data-topic') || '').trim(),
-      cover: (e.getAttribute('data-cover') || '').trim(), author: (e.getAttribute('data-author') || '').trim()
+      cover: (e.getAttribute('data-cover') || '').trim(), author: (e.getAttribute('data-author') || '').trim(),
+      featured: /^(true|1|yes)$/i.test((e.getAttribute('data-featured') || '').trim())
     })).filter(a => a.slug && a.name);
     if (!feed.length) return false;
     feed.sort((a, b) => (b.date ? b.date.iso : '').localeCompare(a.date ? a.date.iso : ''));
+    // (1.3.2, founder 10/27: the owners site) an item marked featured in the CMS leads instead of the newest; without one,
+    // the newest leads as before
+    const fi = feed.findIndex(a => a.featured); if (fi > 0) feed.unshift(feed.splice(fi, 1)[0]);
     $$(O('gi-feed')).forEach(e => e.remove());
     H.classList.add('gi-b');
     const url = a => '/articles/' + a.slug;

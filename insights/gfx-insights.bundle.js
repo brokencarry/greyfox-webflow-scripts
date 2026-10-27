@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.50 + pages 1.0.3 + insights 1.3.1. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.50 + pages 1.0.3 + insights 1.3.2. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -69,6 +69,13 @@
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
   const VERSION = '1.0.50';
+  /* (1.0.51, founder 10/27) one site config: the owners-only site on greyfox-partners.com sets window.GFX_SITE in its
+     head so nothing it prints names the main domain (its address, its inbox, the footer's fallback links). Without it,
+     greyfoxpartners.com is unchanged. */
+  const SITE = Object.assign({
+    domain: 'greyfoxpartners.com', mail: 'inquiries@greyfoxpartners.com',
+    nav: [['Business Owners', '/business-owners'], ['Investors', '/investors'], ['Team', '#team'], ['Insights', 'https://www.greyfoxpartners.com/insights'], ['Contact', '/contact']]
+  }, W.GFX_SITE || {});
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -948,7 +955,7 @@
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
     const href = (cta && cta.getAttribute('href')) || '/contact';
-    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:${SITE.mail}"><span>Write to us</span>${SITE.mail}</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
   }
   /* (1.0.11) the logo link is two images with empty alt text, so it had no name for a screen reader: it is named here */
   function navName() {
@@ -1049,7 +1056,7 @@
       'html.gfx-f3 :is(h1,h2,h3,h4){break-after:avoid}html.gfx-f3 :is(img,figure,blockquote,li,dt,dd){break-inside:avoid}' +
       // a paragraph split into screen lines runs as one paragraph again; icon links and addresses print no URL after them
       'html.gfx-f3 p :is(.tp-sl-mask,.tp-sl){display:inline!important}html.gfx-f3 a:is([href^="mailto:"],[aria-label],:has(svg,img))::after{content:none!important}' +
-      'html.gfx-f3 body::after{content:"Grey Fox Partners  \\00B7  greyfoxpartners.com  \\00B7  inquiries@greyfoxpartners.com\\AGrey Fox Partners represents buyers. Nothing on this site is an offer or advice.";white-space:pre-line;display:block;margin-top:12mm;padding-top:4mm;border-top:1px solid #c8c8c8;font:11px/1.4 "DM Sans",sans-serif;color:#555!important;-webkit-text-fill-color:#555!important}}'; (D.head || H).appendChild(st); }
+      'html.gfx-f3 body::after{content:"Grey Fox Partners  \\00B7  ' + SITE.domain + '  \\00B7  ' + SITE.mail + '\\AGrey Fox Partners represents buyers. Nothing on this site is an offer or advice.";white-space:pre-line;display:block;margin-top:12mm;padding-top:4mm;border-top:1px solid #c8c8c8;font:11px/1.4 "DM Sans",sans-serif;color:#555!important;-webkit-text-fill-color:#555!important}}'; (D.head || H).appendChild(st); }
     let showing = true, upFrom = null, prevY = null;
     gsap.set(bar, { '--gfx-away': 0 });
     const setShown = want => {
@@ -1191,7 +1198,7 @@
     const cols = $$('.footer_item_wrapper', foot);
     const navA = cols[0] ? $$('a[href]', cols[0]) : [];
     const data = {
-      nav: navA.length ? navA.map(a => [txt(a), a.getAttribute('href')]) : [['Business Owners', '/business-owners'], ['Investors', '/investors'], ['Team', '#team'], ['Insights', 'https://www.greyfoxpartners.com/insights'], ['Contact', '/contact']],
+      nav: navA.length ? navA.map(a => [txt(a), a.getAttribute('href')]) : SITE.nav,
       mail: $$('a[href^="mailto:"]', foot).map(a => a.getAttribute('href').slice(7)),
       tel: (() => { const t = $('a[href^="tel:"]', foot); return t ? [txt(t), t.getAttribute('href')] : ['(646) 946-6641', 'tel:+16469466641']; })(),
       offices: [{ full: 'New York, NY', tz: 'America/New_York' }, { full: 'Austin, TX', tz: 'America/Chicago' }],
@@ -1200,7 +1207,7 @@
       notice: txt($('.gfx-notice', foot)) || 'Grey Fox Partners represents buyers. Nothing on this site is an offer or advice.'
     };
     // (1.0.28, founder 10/22) one public address for owners and investors alike
-    if (!data.mail.length) data.mail = ['inquiries@greyfoxpartners.com'];
+    if (!data.mail.length) data.mail = [SITE.mail];
     // (1.0.28) the footer's year follows the clock (it was typed "2026")
     data.copy = data.copy.split(/\b20\d\d\b/).join(String(new Date().getFullYear()));
     // (1.0.26, founder 10/21: "remove Terms") no Terms page: the legal row carries the Privacy Policy alone
@@ -1862,7 +1869,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.1';
+  W.__gfxInsights = '1.3.2';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -2154,7 +2161,8 @@
     'value-leaks': 'sha384-e7cfHyADER+q7wU6rddlToAxGwhH9e/+1tlgd0NZyDLqmiU3Bu7h/nmb090YbVCB',
     'what-inning': 'sha384-/SUk/cdWwPXOCeZrgj9Z1yQjL4PIYWjM+Wn6yqZqZBVvzk+0eXNxK8VBHKjTzaaA'
   };
-  const SITE = 'https://www.greyfoxpartners.com';
+  // (1.3.2) the site's own address: the owners site (window.GFX_SITE) shares and describes its articles on its own domain
+  const SITE = 'https://' + ((W.GFX_SITE && W.GFX_SITE.domain) || 'www.greyfoxpartners.com');
   // (1.2.4) the firm's mark for the article publisher, and each author's page after the launch renames (LAUNCH.txt 1b)
   const LOGO = 'https://cdn.prod.website-files.com/67c0e116387e8248a0d7e10a/6ad9b63e75f1cad7b6871bde_gfx-logo-mark-256.png';
   const PEOPLE = { 'Shivam Shirolawala': '/shivam-shirolawala', 'Tony Giudice': '/tony-giudice', 'Burke Widhelm': '/burke-widhelm' };
@@ -2268,10 +2276,14 @@
     const feed = items.map(e => ({
       slug: (e.getAttribute('data-slug') || '').trim(), name: (e.getAttribute('data-name') || '').trim(), summary: (e.getAttribute('data-summary') || '').trim(),
       date: parseDate(e.getAttribute('data-date')), mins: (e.getAttribute('data-mins') || '').trim(), topic: (e.getAttribute('data-topic') || '').trim(),
-      cover: (e.getAttribute('data-cover') || '').trim(), author: (e.getAttribute('data-author') || '').trim()
+      cover: (e.getAttribute('data-cover') || '').trim(), author: (e.getAttribute('data-author') || '').trim(),
+      featured: /^(true|1|yes)$/i.test((e.getAttribute('data-featured') || '').trim())
     })).filter(a => a.slug && a.name);
     if (!feed.length) return false;
     feed.sort((a, b) => (b.date ? b.date.iso : '').localeCompare(a.date ? a.date.iso : ''));
+    // (1.3.2, founder 10/27: the owners site) an item marked featured in the CMS leads instead of the newest; without one,
+    // the newest leads as before
+    const fi = feed.findIndex(a => a.featured); if (fi > 0) feed.unshift(feed.splice(fi, 1)[0]);
     $$(O('gi-feed')).forEach(e => e.remove());
     H.classList.add('gi-b');
     const url = a => '/articles/' + a.slug;
