@@ -1,4 +1,4 @@
-/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.50 + pages 1.0.3 + contact 1.0.11 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
+/*! Grey Fox · Contact v2 (Flow 3) · core 1.0.50 + pages 1.0.3 + contact 1.0.12 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + contact/gfx-contact.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1461,7 +1461,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxContact)return;
-W.__gfxContact='1.0.11';
+W.__gfxContact='1.0.12';
 const P=gfx.pages,O=P.O,mk=P.mk,H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const GROUP=G.group;
 const el=(tag,cls,text)=>{const n=D.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
@@ -1534,7 +1534,8 @@ setTimeout(refresh,60);
 $$(O('r4-qb'),sw).forEach(b=>b.addEventListener('click',()=>showQs(b.getAttribute('data-q'))));
 });
 }
-const COPY={subject:{owner:'Contact page: a business owner',investor:'Contact page: an investor'},fail:['This did not send. Please try again, or write to ','.'],failTo:{owner:'inquiries@greyfoxpartners.com',investor:'inquiries@greyfoxpartners.com'}};
+const MAIL=(W.GFX_SITE&&W.GFX_SITE.mail)||'inquiries@greyfoxpartners.com';
+const COPY={subject:{owner:'Contact page: a business owner',investor:'Contact page: an investor'},fail:['This did not send. Please try again, or write to ','.'],failTo:{owner:MAIL,investor:MAIL}};
 const EMAIL= /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const okReach=v=>EMAIL.test(v)||(/^[\d\s()+.\-]+$/.test(v)&&v.replace(/\D/g,'').length>=7);
 const navBottom=()=>{const n=$('.navigation_wrapper');if(!n)return 74;const b=Math.max(n.getBoundingClientRect().bottom,n.offsetHeight);return b>0&&b<W.innerHeight / 2?b:74;};
