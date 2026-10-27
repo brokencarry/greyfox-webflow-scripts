@@ -21,15 +21,15 @@
  },
  "owners/gfx-owners.dist.js": {
   "bytes": 117064,
-  "sri": "sha384-HlRNt2fjtm9/k2MJbOiixU7U1f0HaL/f5OUlgK+X1WEqHm47EyMrNeAh2fTay8LD"
+  "sri": "sha384-vXoNI51SADQp370qwLrPLNK7Jf/ix0wnpKi1eOm9y/5QIWCpZ0mn1GDwurrEOtv8"
  },
  "owners/gfx-owners.dist.css": {
   "bytes": 50706,
-  "sri": "sha384-oT1Kol4A5fKb+A1qv1COmSVzAnWrzgH7FmZyn1eWjVL2zMGxWyApNxr82yd4Ecy2"
+  "sri": "sha384-GIVSRySWe2sLN0unhr0gegtTx7xpWUAYm0o7i7PYXOlQ5hVN1Tr/LbUPh9EYHZhP"
  },
  "owners/pt/pt-film.js": {
-  "bytes": 107870,
-  "sri": "sha384-+PYpydyv2ntY5vUMTATzjhF2vwdSia3Z/BdMTEFWW8qWdRjf8X8CmANRErTw5aYa"
+  "bytes": 107965,
+  "sri": "sha384-eiYhunOz0VGWnJC4tNP7cCwt2DfEwnWNiqw+BdkIwuFfKG3fO2XCqBM4VqqRC8ED"
  },
  "contact/gfx-contact.dist.js": {
   "bytes": 111976,
@@ -82,7 +82,7 @@
  "_versions": {
   "core": "1.0.47",
   "home": "1.1.19",
-  "owners": "1.2.8",
+  "owners": "1.2.9",
   "pages": "1.0.3",
   "contact": "1.0.11",
   "privacy": "1.0.2",

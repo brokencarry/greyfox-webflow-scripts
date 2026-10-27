@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.8';
+  W.__gfxOwners = '1.2.9';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura): eight marks sit two
   // rows of four instead of five and three. DELETE THIS RULE when the ten are back (the stylesheet's five columns return).

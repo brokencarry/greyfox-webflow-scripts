@@ -178,7 +178,8 @@ const play=()=>{if(playing||done)return;playing=true;last=performance.now();requ
 const reset=()=>{t=0;done=false;cur=-1;sec.classList.remove('is-done');setStep(0,true);tlFill.style.strokeDashoffset=1;};
 drawTl();frame();reset();
 if(reduce){sec.classList.add('is-seen');t=END;cur=-1;setStep(7,true);tlFill.style.strokeDashoffset=0;done=true;sec.classList.add('is-done');}
-else if(w.IntersectionObserver){let to=0;new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){sec.classList.add('is-seen');clearTimeout(to);to=setTimeout(play,600);}else{clearTimeout(to);playing=false;}}),{threshold:0.45}).observe(film);}
+else if(w.IntersectionObserver){let to=0;
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){sec.classList.add('is-seen');clearTimeout(to);to=setTimeout(play,600);}else{clearTimeout(to);playing=false;}}),{threshold:Math.min(0.45,Math.max(0.1,(w.innerHeight*0.7) / Math.max(1,film.getBoundingClientRect().height)))}).observe(film);}
 else play();
 replay.addEventListener('click',()=>{playing=false;reset();requestAnimationFrame(()=>play());});
 addEventListener('resize',()=>{drawTl();frame();tlFill.style.strokeDashoffset=done?0:1-clamp((t-P0) / (P1-P0),0,1);tlDots.forEach(c=>c.classList.toggle('is-in',cur-1>=+c.dataset.i));});
