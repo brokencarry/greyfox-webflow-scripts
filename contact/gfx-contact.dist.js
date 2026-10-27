@@ -1590,6 +1590,7 @@ if(byUser)tellIn(sayEl,k==='owner'?'The form for business owners follows.':'The 
 radios.forEach(r=>r.addEventListener('change',()=>{if(r.checked)choose(r.value,true);}));
 safe('preselect',()=>{const want=(new URLSearchParams(location.search).get('for')||'').toLowerCase();const pre=radios.find(r=>r.value===want);if(pre&&!path){pre.checked=true;choose(want,false);
 const go=()=>setTimeout(()=>{if(W.scrollY<40)bringFields();},700);if(D.readyState==='complete')go();else W.addEventListener('load',go,{once:true});}});
+if(radios.length===1&&!path){radios[0].checked=true;const fs=radios[0].closest('fieldset');if(fs)fs.hidden=true;}
 const pre=radios.find(r=>r.checked);if(pre)choose(pre.value,false);
 safe('doors here',()=>$$('a[href*="for="]').forEach(a=>{
 let u;try{u=new URL(a.getAttribute('href'),location.href);}catch(e){return;}if(u.pathname!==location.pathname)return;

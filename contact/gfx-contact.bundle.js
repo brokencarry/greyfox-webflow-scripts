@@ -2004,6 +2004,9 @@
       // (1.0.10, pre-launch pass 10/23) once the page has settled, the arrival brings the fields into view as a hand-picked path
       // does (a scroll issued during the opening was lost); a reader already scrolling is left alone
       const go = () => setTimeout(() => { if (W.scrollY < 40) bringFields(); }, 700); if (D.readyState === 'complete') go(); else W.addEventListener('load', go, { once: true }); } });
+    // (1.0.12, the owners site) one path only: the choice is taken for the reader and its block leaves (Webflow drops a
+    // static "checked" or "hidden" attribute, so the script sets both)
+    if (radios.length === 1 && !path) { radios[0].checked = true; const fs = radios[0].closest('fieldset'); if (fs) fs.hidden = true; }
     const pre = radios.find(r => r.checked); if (pre) choose(pre.value, false);   // (the browser restoring the choice on Back)
     // (1.0.9, polish 10/23) the door cards at the foot of this page name a path too (/contact?for=owner|investor): on Contact
     // itself they pick that path in the form above and bring the reader to it, instead of reloading the page at its top
