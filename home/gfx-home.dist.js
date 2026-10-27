@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.50 + home 1.1.21 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.50 + home 1.1.22 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1286,7 +1286,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.21';
+W.__gfxHome='1.1.22';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-mk-idx-fit')){const st=D.createElement('style');st.id='gfx-mk-idx-fit';st.textContent='@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
@@ -1764,8 +1764,14 @@ if(arrived){const s=stepOf(P);if(s!==step){const from=step;step=s;enterStep(s,fr
 ixs.forEach((li,i)=>{const f=`scaleX(${clamp(seg(P,WIN[i][0],WIN[i][1]-0.01),0,1).toFixed(4)})`;if(li._f!==f&&li._bar){li._bar.style.transform=f;li._f=f;}});
 gates.forEach((g,i)=>{const r=gateReach(i).toFixed(3);if(g._g!==r){g.style.setProperty('--g',r);g._g=r;}});
 if(!phone()&&portal){
-const k=arrived?ss(seg(P,0.6,0.76)):0,o=(1-eo(portalIn&&portalIn.hasAttribute('data-gfx-card')?clamp((X-0.3) / 0.45,0,1):X)).toFixed(3);
+const k=arrived?ss(seg(P,0.6,0.76)):0,o=(1-eo(X)).toFixed(3);
+if(portalIn&&portalIn.hasAttribute('data-gfx-card')){
+const l=ss(clamp((X-0.25) / 0.45,0,1)),c=`inset(0% ${((1-k)*100).toFixed(2)}% 0% ${(l*100).toFixed(2)}%)`;
+if(portal._c!==c){portal._c=c;portalK.k=k;setPortal(k);portal.style.clipPath=c;if(l>0.999)portal.style.visibility='hidden';}
+if(portal._o!=='1'){portal.style.opacity='1';portal._o='1';}
+}else{
 if(portalK.k!==k){portalK.k=k;setPortal(k);}if(portal._o!==o){portal.style.opacity=o;portal._o=o;}
+}
 if(k>0.5&&!portalK.played){portalK.played=true;demoDo('play');}else if(k===0)portalK.played=false;
 }
 };

@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.21';
+  W.__gfxHome = '1.1.22';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -572,10 +572,17 @@
       ixs.forEach((li, i) => { const f = `scaleX(${clamp(seg(P, WIN[i][0], WIN[i][1] - 0.01), 0, 1).toFixed(4)})`; if (li._f !== f && li._bar) { li._bar.style.transform = f; li._f = f; } });
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
       if (!phone() && portal) {
-        // (1.1.21, the owners site) the first-call card holds through the first third of the release, then leaves
-        // quickly and whole, so it never ghosts with the lines running through its words
-        const k = arrived ? ss(seg(P, 0.6, 0.76)) : 0, o = (1 - eo(portalIn && portalIn.hasAttribute('data-gfx-card') ? clamp((X - 0.3) / 0.45, 0, 1) : X)).toFixed(3);
-        if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; }
+        const k = arrived ? ss(seg(P, 0.6, 0.76)) : 0, o = (1 - eo(X)).toFixed(3);
+        if (portalIn && portalIn.hasAttribute('data-gfx-card')) {
+          // (1.1.22, the owners site) the first-call card never fades (a fading card ghosts, the lines drawn through its
+          // words): it holds through the first quarter of the release, then the wipe that brought it in carries on and
+          // takes it off to the right, uncovering the lines as they run on to the edge
+          const l = ss(clamp((X - 0.25) / 0.45, 0, 1)), c = `inset(0% ${((1 - k) * 100).toFixed(2)}% 0% ${(l * 100).toFixed(2)}%)`;
+          if (portal._c !== c) { portal._c = c; portalK.k = k; setPortal(k); portal.style.clipPath = c; if (l > 0.999) portal.style.visibility = 'hidden'; }
+          if (portal._o !== '1') { portal.style.opacity = '1'; portal._o = '1'; }
+        } else {
+          if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; }
+        }
         // the client's window plays once it is half open, and again each time it opens from closed
         if (k > 0.5 && !portalK.played) { portalK.played = true; demoDo('play'); } else if (k === 0) portalK.played = false;
       }

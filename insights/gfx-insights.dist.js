@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.50 + pages 1.0.3 + insights 1.3.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.50 + pages 1.0.3 + insights 1.3.4 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1461,7 +1461,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.3.3';
+W.__gfxInsights='1.3.4';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1826,7 +1826,7 @@ const first=$('.gfx-pg-t',cnt)||cnt.firstElementChild,mis=$$(O('gi-mi'),cnt),dat
 if(first)first.textContent=`${feed.length} ${feed.length===1?'article':'articles'}`;
 const topicsN=new Set(feed.map(a=>a.topic).filter(Boolean)).size;
 mis.forEach(el=>{const sep=$(O('gi-sep'),el);
-if(/topic/i.test(el.textContent)){if(topicsN<=1){el.hidden=true;el.style.setProperty('display','none','important');}else{el.textContent=`${topicsN} topics`;if(sep)el.insertBefore(sep,el.firstChild);}}
+if(/topic/i.test(el.textContent)){if(topicsN<=1||!$(O('gi-topics'))){el.hidden=true;el.style.setProperty('display','none','important');}else{el.textContent=`${topicsN} topics`;if(sep)el.insertBefore(sep,el.firstChild);}}
 else if(/^\s*since\b/i.test(el.textContent)&&dates[0]){const d=new Date(dates[0]+'T12:00:00');el.textContent='Since '+d.toLocaleString('en-US',{month:'long',year:'numeric'});if(sep)el.insertBefore(sep,el.firstChild);}});
 }
 return true;
@@ -1834,11 +1834,18 @@ return true;
 function ownersFit(){
 if(D.getElementById('gfx-gi-fit'))return;
 const st=D.createElement('style');st.id='gfx-gi-fit';
-st.textContent='html [data-o~="gi-next-t"].gfx-gi-long{font-size:clamp(28px,2.6vw,44px)!important;line-height:1.08!important}'+
-'html [data-o~="gi-ameta"]{flex-wrap:wrap;row-gap:6px}html [data-o~="gi-ameta"]>*{white-space:nowrap}';
+st.textContent='html [data-o~="gi-next-t"]{font-size:clamp(28px,2.6vw,44px)!important;line-height:1.08!important}'+
+'html [data-o~="gi-ameta"]{flex-wrap:wrap;row-gap:6px}html [data-o~="gi-ameta"]>*{white-space:nowrap}'+
+'html [data-o~="gi-acat"]:not([href]){text-decoration:none!important;cursor:auto}';
 (D.head||H).appendChild(st);
-const tag=()=>$$(O('gi-next-t')).forEach(t=>{if(t.textContent.replace(/\s+/g,' ').trim().length>60)t.classList.add('gfx-gi-long');});
-tag();W.setTimeout(tag,0);W.addEventListener('load',tag,{once:true});
+const settle=()=>{
+$$(`${O('gi-meta')}, ${O('gi-ameta')}, ${O('gi-tile-k')}`).forEach(m=>$$(O('gi-sep'),m).forEach(s=>{
+if(s.hasAttribute('data-gi-moved'))return;
+const it=s.parentElement,prev=it===m?s.previousElementSibling:(it&&it.firstChild===s&&it.parentElement===m?it.previousElementSibling:null);
+if(prev){prev.appendChild(s);s.setAttribute('data-gi-moved','');}}));
+const cat=$(O('gi-acat'));if(cat&&cat.hasAttribute('href'))cat.removeAttribute('href');
+};
+settle();W.setTimeout(settle,0);W.addEventListener('load',settle,{once:true});
 }
 function template(){
 safe('owners fit',ownersFit);

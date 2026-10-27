@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.3';
+  W.__gfxInsights = '1.3.4';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -480,7 +480,9 @@
       if (first) first.textContent = `${feed.length} ${feed.length === 1 ? 'article' : 'articles'}`;
       const topicsN = new Set(feed.map(a => a.topic).filter(Boolean)).size;
       mis.forEach(el => { const sep = $(O('gi-sep'), el);
-        if (/topic/i.test(el.textContent)) { if (topicsN <= 1) { el.hidden = true; el.style.setProperty('display', 'none', 'important'); } else { el.textContent = `${topicsN} topics`; if (sep) el.insertBefore(sep, el.firstChild); } }
+        // (1.3.4, the owners site) this layout has no topic filter, so the count of topics is not printed (it promised a
+        // choice the page does not offer)
+        if (/topic/i.test(el.textContent)) { if (topicsN <= 1 || !$(O('gi-topics'))) { el.hidden = true; el.style.setProperty('display', 'none', 'important'); } else { el.textContent = `${topicsN} topics`; if (sep) el.insertBefore(sep, el.firstChild); } }
         else if (/^\s*since\b/i.test(el.textContent) && dates[0]) { const d = new Date(dates[0] + 'T12:00:00'); el.textContent = 'Since ' + d.toLocaleString('en-US', { month: 'long', year: 'numeric' }); if (sep) el.insertBefore(sep, el.firstChild); } });
     }
     return true;
@@ -492,12 +494,23 @@
   function ownersFit() {
     if (D.getElementById('gfx-gi-fit')) return;
     const st = D.createElement('style'); st.id = 'gfx-gi-fit';
-    st.textContent = 'html [data-o~="gi-next-t"].gfx-gi-long{font-size:clamp(28px,2.6vw,44px)!important;line-height:1.08!important}' +
-      'html [data-o~="gi-ameta"]{flex-wrap:wrap;row-gap:6px}html [data-o~="gi-ameta"]>*{white-space:nowrap}';
+    // (1.3.4, round-3 review) one size for every "Next" title, long or short: a short title no longer balloons to one
+    // word a line
+    st.textContent = 'html [data-o~="gi-next-t"]{font-size:clamp(28px,2.6vw,44px)!important;line-height:1.08!important}' +
+      'html [data-o~="gi-ameta"]{flex-wrap:wrap;row-gap:6px}html [data-o~="gi-ameta"]>*{white-space:nowrap}' +
+      'html [data-o~="gi-acat"]:not([href]){text-decoration:none!important;cursor:auto}';
     (D.head || H).appendChild(st);
-    // (the teaser is built from the feed after this runs: tag it once the page has been composed)
-    const tag = () => $$(O('gi-next-t')).forEach(t => { if (t.textContent.replace(/\s+/g, ' ').trim().length > 60) t.classList.add('gfx-gi-long'); });
-    tag(); W.setTimeout(tag, 0); W.addEventListener('load', tag, { once: true });
+    // (the teaser and the cards are built from the feed after this runs: settle them once the page has been composed)
+    // a meta line's dot ends the item before it, so a wrapped line never opens on a dot; and with no topic filter on
+    // this site's index, the article's topic reads as a label, not a link that lands on the unfiltered list
+    const settle = () => {
+      $$(`${O('gi-meta')}, ${O('gi-ameta')}, ${O('gi-tile-k')}`).forEach(m => $$(O('gi-sep'), m).forEach(s => {
+        if (s.hasAttribute('data-gi-moved')) return;
+        const it = s.parentElement, prev = it === m ? s.previousElementSibling : (it && it.firstChild === s && it.parentElement === m ? it.previousElementSibling : null);
+        if (prev) { prev.appendChild(s); s.setAttribute('data-gi-moved', ''); } }));
+      const cat = $(O('gi-acat')); if (cat && cat.hasAttribute('href')) cat.removeAttribute('href');
+    };
+    settle(); W.setTimeout(settle, 0); W.addEventListener('load', settle, { once: true });
   }
   function template() {
     safe('owners fit', ownersFit);
