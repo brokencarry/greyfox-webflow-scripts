@@ -482,3 +482,13 @@ html .hero_title h1.gfx-hero-h { margin: 0; }
   html.gfx-f3 .gfx-ins-sec .gfx-ink-card > a:first-child { display: block; width: 100%; }
   html.gfx-f3 .gfx-ins-sec .gfx-ink-card .div { padding-top: 18px !important; }
 }
+
+/* ---------- (10/26) room headlines on one fewer line ----------
+   The standard room's title column: the designer's 7fr/5fr grid held "for how companies change hands." at his fixed 48px; on the
+   core H2 token (up to 52px on wide screens) the line fell a few pixels short at every desktop width (738 needed vs 728 at 1440,
+   800 vs 761 at 1920) and the heading ran three lines. The pull quote shares the grid, so it keeps the lead's column. */
+@media (min-width: 992px) { html.gfx-f3 .gfx-std-grid { grid-template-columns: 7.6fr 4.4fr; } }
+/* The hero at 1366 to 1392: the page embed's narrow-desktop hero rule (lead 420px wide) stops at 1365px, one pixel short of the
+   commonest laptop width, where "Grey Fox gives owners" (725px at 72px) lost 7px and the H1 ran three lines. From 1393 the
+   designer's 520px lead leaves the title its two lines. */
+@media (min-width: 1366px) and (max-width: 1392px) { html.gfx-f3 .gfx-hero-in .hero_title { flex: 1 1 auto; min-width: 0; } html.gfx-f3 .gfx-hero-in .gfx-hero-content { flex: 0 0 420px; } }

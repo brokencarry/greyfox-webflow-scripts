@@ -368,6 +368,8 @@ html:not(#gfx-o) [data-o~="ow-pt"] {
   column-gap: clamp(48px, 5vw, 88px); row-gap: 0; align-content: center; padding: 128px 48px 0; background: var(--pt-paper); color: var(--pt-ink);   /* the top gap is the house rhythm (Owners layer, tier standard) */
 }
 @media (min-width: 1101px) { html:not(#gfx-o) [data-o~="ow-pt"] { grid-template-columns: minmax(480px, .95fr) minmax(0, 1.4fr); } }
+/* (10/26) from 1281px the head column holds the chapter's heading on two lines ("What a partnership can" / "mean for your business." needs 520px at 48px; the .95fr share gave 486 to 514 up to 1440 and the heading ran three) */
+@media (min-width: 1281px) { html:not(#gfx-o) [data-o~="ow-pt"] { grid-template-columns: minmax(540px, .95fr) minmax(0, 1.4fr); } }
 @media (min-width: 768px) and (max-width: 1100px) { html:not(#gfx-o) [data-o~="ow-pt"] { padding-left: 40px; padding-right: 40px; } }
 html:not(#gfx-o) [data-o~="pt-head"] { grid-area: head; align-self: end; }
 html:not(#gfx-o) [data-o~="pt-h2"] { margin: 0; font-family: var(--pt-serif); font-weight: 200; font-size: 48px; line-height: 1.08; letter-spacing: -0.015em; color: var(--pt-ink); text-wrap: balance; }

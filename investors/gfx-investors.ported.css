@@ -226,6 +226,8 @@ html { --gf-zone: 74px; }
 [data-o~="iv-cq"] figcaption { font-size: var(--t-body); }
 }
 [data-o~="iv-std-grid"] { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gap); align-items: start; }
+/* (10/26) "We underwrite you too." stays on one line above 1440px: the H2 token reaches 52px there and the 5fr column (543px at the 1400px container) was 5px short */
+@media (min-width: 1441px) { [data-o~="iv-std-grid"] { grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr); } }
 [data-o~="iv-std-ps"] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-5); margin-top: var(--s-5); padding-top: var(--s-3); border-top: 1px solid var(--rule); }
 [data-o~="iv-std-p"] { font-size: var(--t-body); color: var(--ink-2); }
 @media (max-width: 991px) {

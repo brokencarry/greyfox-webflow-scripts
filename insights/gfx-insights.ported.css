@@ -486,7 +486,7 @@ html.gi-html body { transition: none !important; }
 html.gi-b [data-o~="gi-collage-grid"] { display: block !important; }
 html.gi-b [data-o~="gi-b-feat"] { display: grid; grid-template-columns: 7fr 5fr; column-gap: var(--gi-gap); align-items: center; padding-bottom: clamp(40px, 6vh, 64px); border-bottom: 1px solid var(--gi-rule); }
 html.gi-b [data-o~="gi-b-feat"] [data-o~="gi-tile-txt"] { margin-top: 0 !important; }
-html:not(#tk1):not(#tk2):not(#tk3).gi-b [data-o~="gi-b-feat"] [data-o~="gi-tile-t"] { margin: 12px 0 0 !important; font: 200 clamp(34px, 3.1vw, 50px)/1.08 var(--gi-serif) !important; letter-spacing: -.015em !important; max-width: 14em; }
+html:not(#tk1):not(#tk2):not(#tk3).gi-b [data-o~="gi-b-feat"] [data-o~="gi-tile-t"] { margin: 12px 0 0 !important; font: 200 clamp(34px, 3.1vw, 46px)/1.08 var(--gi-serif) !important; letter-spacing: -.015em !important; max-width: 14em; }   /* (10/26) 46px, not 50: at 50px the newest title ran four lines in its 573px column above 1600px */
 html.gi-b [data-o~="gi-b-feat"] [data-o~="gi-dek"] { margin-top: 16px !important; font-size: 18px; max-width: 30em; }
 html.gi-b [data-o~="gi-b-feat"] [data-o~="gi-author"] { margin-top: 24px; }
 html.gi-b [data-o~="gi-b-all"] { margin: clamp(40px, 6vh, 64px) 0 clamp(24px, 3vh, 32px) !important; }
