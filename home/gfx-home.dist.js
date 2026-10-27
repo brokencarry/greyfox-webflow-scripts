@@ -1334,7 +1334,8 @@ st.textContent=
 'html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-k,html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row{opacity:1;transform:none}'+
 'html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(2){transition-delay:.12s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(3){transition-delay:.22s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(4){transition-delay:.32s}'+
 '@media (prefers-reduced-motion:reduce){html .gfx-mkc-k,html .gfx-mkc-row{opacity:1!important;transform:none!important;transition:none!important}}'+
-'@media (max-width:767px){html .gfx-mkc{padding:28px 24px}html .gfx-mkc-t{font-size:22px}}';
+'@media (max-width:767px){html .gfx-mkc{padding:28px 24px}html .gfx-mkc-t{font-size:22px}}'+
+'html .gfx-ins-sec .gfx-ink-card a,html .gfx-ins-sec .gfx-ink-lead{text-decoration:none!important}';
 (D.head||H).appendChild(st);
 const portal=$('.gfx-mk-portal');if(!portal)return;
 const on=()=>{const v=getComputedStyle(portal);const open=v.visibility!=='hidden'&&parseFloat(v.opacity||'1')>0.4&&!/inset\(0(px|%)? (5\d|[6-9]\d|100)/.test(v.clipPath||'');portal.classList.toggle('gfx-mkc-on',open);};

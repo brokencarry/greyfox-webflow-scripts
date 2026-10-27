@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.2';
+  W.__gfxInsights = '1.3.3';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -486,7 +486,21 @@
     return true;
   }
 
+  /* (1.3.3, the owners site) the founder articles carry long titles: the "Next" teaser keeps them to a readable measure
+     (a smaller display size once a title runs past ~60 characters), and the article meta line wraps between its parts,
+     never through the topic link's underline */
+  function ownersFit() {
+    if (D.getElementById('gfx-gi-fit')) return;
+    const st = D.createElement('style'); st.id = 'gfx-gi-fit';
+    st.textContent = 'html [data-o~="gi-next-t"].gfx-gi-long{font-size:clamp(28px,2.6vw,44px)!important;line-height:1.08!important}' +
+      'html [data-o~="gi-ameta"]{flex-wrap:wrap;row-gap:6px}html [data-o~="gi-ameta"]>*{white-space:nowrap}';
+    (D.head || H).appendChild(st);
+    // (the teaser is built from the feed after this runs: tag it once the page has been composed)
+    const tag = () => $$(O('gi-next-t')).forEach(t => { if (t.textContent.replace(/\s+/g, ' ').trim().length > 60) t.classList.add('gfx-gi-long'); });
+    tag(); W.setTimeout(tag, 0); W.addEventListener('load', tag, { once: true });
+  }
   function template() {
+    safe('owners fit', ownersFit);
     const rt = $(O('gi-rt')); if (!rt) return false;
     H.classList.add('gi-cms');
     // the hidden list of every item (newest first), then out of the page

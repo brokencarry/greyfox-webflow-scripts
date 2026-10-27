@@ -1692,7 +1692,9 @@
       'html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-k,html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row{opacity:1;transform:none}' +
       'html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(2){transition-delay:.12s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(3){transition-delay:.22s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(4){transition-delay:.32s}' +
       '@media (prefers-reduced-motion:reduce){html .gfx-mkc-k,html .gfx-mkc-row{opacity:1!important;transform:none!important;transition:none!important}}' +
-      '@media (max-width:767px){html .gfx-mkc{padding:28px 24px}html .gfx-mkc-t{font-size:22px}}';
+      '@media (max-width:767px){html .gfx-mkc{padding:28px 24px}html .gfx-mkc-t{font-size:22px}}' +
+      // (the reading list's cards are whole-card links: no browser underline under their words at any width)
+      'html .gfx-ins-sec .gfx-ink-card a,html .gfx-ins-sec .gfx-ink-lead{text-decoration:none!important}';
     (D.head || H).appendChild(st);
     // the rows settle once the portal is more than half open, and leave again when it closes (scrolling back)
     const portal = $('.gfx-mk-portal'); if (!portal) return;

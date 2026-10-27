@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.50 + pages 1.0.3 + insights 1.3.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.50 + pages 1.0.3 + insights 1.3.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1461,7 +1461,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.3.2';
+W.__gfxInsights='1.3.3';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1831,7 +1831,17 @@ else if(/^\s*since\b/i.test(el.textContent)&&dates[0]){const d=new Date(dates[0]
 }
 return true;
 }
+function ownersFit(){
+if(D.getElementById('gfx-gi-fit'))return;
+const st=D.createElement('style');st.id='gfx-gi-fit';
+st.textContent='html [data-o~="gi-next-t"].gfx-gi-long{font-size:clamp(28px,2.6vw,44px)!important;line-height:1.08!important}'+
+'html [data-o~="gi-ameta"]{flex-wrap:wrap;row-gap:6px}html [data-o~="gi-ameta"]>*{white-space:nowrap}';
+(D.head||H).appendChild(st);
+const tag=()=>$$(O('gi-next-t')).forEach(t=>{if(t.textContent.replace(/\s+/g,' ').trim().length>60)t.classList.add('gfx-gi-long');});
+tag();W.setTimeout(tag,0);W.addEventListener('load',tag,{once:true});
+}
 function template(){
+safe('owners fit',ownersFit);
 const rt=$(O('gi-rt'));if(!rt)return false;
 H.classList.add('gi-cms');
 const feed=$$(O('gi-feed-i')).map(e=>({
