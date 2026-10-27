@@ -291,20 +291,24 @@ html.gfx-f3 .gfx-cta-sec .heading-2 { text-wrap: balance; }
   html.gfx-f3 .gfx-ins-sec .gfx-ink-all { min-height: 44px; }
 }
 
-/* ---------- the firms: one optical weight, set by eye (gf-line.css + gf-flow3.css --lh), 72 px apart in the moving line ---------- */
+/* ---------- the firms: one optical weight, set by eye (gf-line.css + gf-flow3.css --lh), 72 px apart in the moving line ----------
+   (10/27, the founder: "fix all logo sizes") five of the designer's files carried transparent padding (Vantage, Tauber, Interconn
+   and Robots up to 95 px a side; ClearGate 23 px top and bottom), so the 72 px gap ran 72 to 165 px of real space and a box's
+   centre was not its mark's. The files are now trimmed (logo_*-trim.png, pixels untouched): a box is its mark, and the heights
+   below are the marks' own, set to one optical weight (ink areas within ~15% of each other in the line). */
 html.gfx-f3 .gfx-logos .gfx-marq-track { gap: 0 !important; align-items: center; }
 html.gfx-f3 .gfx-logos img.testimonial_logo { height: var(--lh, 30px) !important; max-height: var(--lh, 30px) !important; width: auto !important; max-width: none !important; flex: none !important; margin: 0 72px 0 0 !important; }
-html.gfx-f3 .gfx-logos img[src*="logo_cleargate"] { --lh: 26px; }
-html.gfx-f3 .gfx-logos img[src*="fellow"] { --lh: 30px; }
-html.gfx-f3 .gfx-logos img[src*="logo_vantage"] { --lh: 34px; }
+html.gfx-f3 .gfx-logos img[src*="logo_cleargate"] { --lh: 15.5px; }
+html.gfx-f3 .gfx-logos img[src*="fellow"] { --lh: 31px; }
+html.gfx-f3 .gfx-logos img[src*="logo_vantage"] { --lh: 25px; }
 html.gfx-f3 .gfx-logos img[src*="accord"] { --lh: 14.5px; }
-html.gfx-f3 .gfx-logos img[src*="logo_tauber"] { --lh: 28px; }
-html.gfx-f3 .gfx-logos img[src*="nextsp"] { --lh: 18px; }
+html.gfx-f3 .gfx-logos img[src*="logo_tauber"] { --lh: 17px; }
+html.gfx-f3 .gfx-logos img[src*="nextsp"] { --lh: 16px; }
 html.gfx-f3 .gfx-logos img[src*="white-w"] { --lh: 33px; }
-html.gfx-f3 .gfx-logos img[src*="tarn"] { --lh: 34px; }   /* (10/27) Tarn Capital Partners, in White Wing's slot: mark + name + line, Vantage's height */
-html.gfx-f3 .gfx-logos img[src*="logo_interconn"] { --lh: 38px; }
+html.gfx-f3 .gfx-logos img[src*="tarn"] { --lh: 28px; }   /* (10/27) Tarn Capital Partners, in White Wing's slot: mark + name + line, Vantage's height */
+html.gfx-f3 .gfx-logos img[src*="logo_interconn"] { --lh: 17.5px; }
 html.gfx-f3 .gfx-logos img[src*="ventur"] { --lh: 23px; }
-html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 36px; }
+html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 29px; }
 /* (home 1.1.8, founder 10/20) the designer's size: his row sets these files at 55 px; the line keeps its optical balance and
    averages his 55 (x1.7), 768 px and up (his row overflows a phone, so the phone keeps its size). The strip is ~1.41x
    longer, so the loop is too: the line moves at the same speed as before. */

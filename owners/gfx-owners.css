@@ -59,18 +59,18 @@ html:not(#gfx-o) [data-o~=ow-marq] { flex: 1 1 auto; min-width: 0; margin: 0; ov
 html:not(#gfx-o) [data-o~=ow-marq-track] { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: 40px; row-gap: clamp(16px, 2.6vh, 24px); column-gap: clamp(16px, 2vw, 32px); align-items: center; justify-items: center; width: auto; margin: 0; padding: 0; list-style: none; animation: none !important; transform: none !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] > li { display: flex; align-items: center; justify-content: center; min-width: 0; max-width: 100%; height: 40px; margin: 0; padding: 0; overflow: visible; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img { display: block; width: auto !important; max-width: 100%; height: 30px !important; max-height: none !important; object-fit: contain; filter: brightness(0); opacity: .76; }
-/* (Flow 3) one optical weight, by eye, the same set as Home's */
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_cleargate"] { height: 26px !important; }
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="fellow-health"] { height: 30px !important; }
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_vantage"] { height: 34px !important; }
+/* (Flow 3) one optical weight, by eye, the same set as Home's (10/27: on the trimmed files; see home/gfx-home.css) */
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_cleargate"] { height: 15.5px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="fellow-health"] { height: 31px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_vantage"] { height: 25px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="accordion"] { height: 14.5px !important; }
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_tauber"] { height: 28px !important; }
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="nextsparc"] { height: 18px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_tauber"] { height: 17px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="nextsparc"] { height: 16px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="white-wing"] { height: 33px !important; }
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="tarn"] { height: 34px !important; }
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_interconn"] { height: 38px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="tarn"] { height: 28px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_interconn"] { height: 17.5px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="ventura"] { height: 23px !important; }
-html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_robots"] { height: 36px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_robots"] { height: 29px !important; }
 /* the opening's waiting state (the script plays it at once; a failsafe shows everything) */
 html.gfx-m:not(.gfx-ow3-hero-on):not(.gfx-failsafe) :is([data-o~=ow-h1], [data-o~=ow-hero-lede], [data-o~=ow-hero] [data-o~=ow-actions], [data-o~=ow-hero-pic], [data-o~=ow-firms]) { opacity: 0; animation: gfx-late .6s ease 3.5s forwards; }
 /* the slide-over (hero → the call) */
