@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.48 + owners 1.2.9. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.49 + owners 1.2.9. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.48';
+  const VERSION = '1.0.49';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -921,6 +921,9 @@
   /* (core 1.0.9) THE PHONE MENU'S FOOT: the open menu on phones and tablets was four links on a dark panel. Under them,
      quietly: the house action and the direct lines (the owners' and investors' addresses, the telephone), so a reader
      reaches the firm in one tap. Shown only where the menu is the overlay (CSS, max-width 991px). */
+  /* (1.0.49) each desktop link reserves its bold width (the css draws a hidden 600-weight copy of its text from data-gfx-t), so
+     the page's own link, set at 600, no longer moves its neighbours from page to page. Runs in the DOM phase, every mode. */
+  function navReserve() { $$('.nav_desktop > a.navigation-item').forEach(a => { if (!a.hasAttribute('data-gfx-t')) a.setAttribute('data-gfx-t', a.textContent.trim()); }); }
   function menuFoot() {
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
@@ -1499,6 +1502,7 @@
     skipLink(); stopIX2(); cleanIX();
     W.addEventListener('load', () => { stopIX2(); setTimeout(ix3Late, 3000); }, { once: true });
     if (!PAGE) { H.classList.add('gfx-ready'); return; }
+    safe('nav reserve', navReserve);
     safe('page dom', () => PAGE.dom && PAGE.dom(api));
     safe('footer I', footBuild);
     // (1.0.39, launch QA 10/22) an article's picture link repeats its title link: one stop and one name per article for

@@ -6,8 +6,9 @@
 @property --fx { syntax: '<length>'; inherits: false; initial-value: 0px; }
 :root { --ink: #1e1e1e; --ink-2: #585e6b; --paper: #ffffff; --rule: #e7e8ea; --black: #0e0e0e; --charcoal: #161616; --deep: #0f3b2a; --green: #156946; --green-lit: #3aa678; --green-label-deep: #5cbf8f;   /* labels on deep green: 5.5:1 */ --on-dark: #ffffff; --on-dark-2: rgba(255, 255, 255, .72); --on-dark-3: #ffffff8a; --rule-dark: rgba(255,255,255,.14); --t-display: 72px; --t-h2: 48px; --t-h3: 36px; --t-h4: 28px; --t-h5: 22px; --t-lead: 19px; --t-body: 16px; --t-small: 14px; --t-label: 12px; --wrap: 1400px; --gutter: 48px; --gap: 96px; --s-1: 8px; --s-2: 16px; --s-3: 24px; --s-4: 32px; --s-5: 48px; --s-6: 64px; --s-7: 96px; --s-8: 128px; --s-section: 144px; --tan: 0.78687;            /* tan(38.2°): the fox ear, the mark, the arrow, the facet */ --ease: cubic-bezier(.19, 1, .22, 1); --serif: Sentient, Georgia, serif; --sans: "DM Sans", "DM Sans Fallback", sans-serif; --nav-h: 72px; /* the container's width and the margin beside it: a picture that bleeds to the edge is measured from these */ --cw: min(calc(100vw - 2 * var(--gutter)), var(--wrap)); --side: calc((100vw - var(--cw)) / 2); }
 @media (max-width: 991px) {
-  :root { --gutter: 20px; --gap: 48px; --s-section: 96px; --t-display: 56px; --t-h2: 40px; --t-h3: 32px; --t-lead: 17px; }
+  :root { --gutter: 32px; --gap: 48px; --s-section: 96px; --t-display: 56px; --t-h2: 40px; --t-h3: 32px; --t-lead: 17px; }
 }
+@media (max-width: 767px) { :root { --gutter: 20px; } }   /* (10/27) phones keep 20; the 991 rule above hands tablets the site's one 32px gutter */
 @media (max-width: 767px) {
   :root { --t-display: 50px; --t-h2: 36px; --t-h3: 28px; --t-h4: 24px; }
 }

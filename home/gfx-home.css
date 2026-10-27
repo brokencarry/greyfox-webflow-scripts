@@ -497,3 +497,18 @@ html .hero_title h1.gfx-hero-h { margin: 0; }
    commonest laptop width, where "Grey Fox gives owners" (725px at 72px) lost 7px and the H1 ran three lines. From 1393 the
    designer's 520px lead leaves the title its two lines. */
 @media (min-width: 1366px) and (max-width: 1392px) { html.gfx-f3 .gfx-hero-in .hero_title { flex: 1 1 auto; min-width: 0; } html.gfx-f3 .gfx-hero-in .gfx-hero-content { flex: 0 0 420px; } }
+
+/* ---------- (10/27 polish pass) ---------- */
+/* the insights lead: its Webflow column carried 10px of side padding at every width, so its title and line sat 10px in from
+   the gutter the hairline and the three cards hold (the phone block above already zeroed it there) */
+html.gfx-f3 .gfx-ins-sec .collection-list-2 > .w-col { padding-left: 0; padding-right: 0; }
+/* one tablet gutter, 32px (core 1.0.49): the hero (48 + 16), the standard room (20 + 16), the proof, team and insights rooms (20),
+   the market room (48) and the close (48) all take it */
+@media (min-width: 768px) and (max-width: 991px) {
+  html.gfx-f3 .gfx-hero-in { padding-left: 32px !important; padding-right: 32px !important; }
+  html.gfx-f3 .gfx-hero-sec .intro-text.intro-text { padding-left: 0 !important; padding-right: 0 !important; }
+  html.gfx-f3 :is(.quote_section_wrapper, .proof_section_wrapper, .who_we_are_section_wrapper, .insights_section) { padding-left: 32px !important; padding-right: 32px !important; }
+  html.gfx-f3 .quote_wrapper.gfx-std-wrap { padding-left: 0 !important; padding-right: 0 !important; }
+  html.gfx-f3 .gfx-mk-col { padding-left: 32px !important; padding-right: 32px !important; }
+  html.gfx-f3 .gfx-cta-pad { padding-left: 32px !important; padding-right: 32px !important; }
+}

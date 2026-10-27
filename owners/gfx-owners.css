@@ -16,6 +16,7 @@
   /* (the core's paper body ink, as the local Owners page sets it: the close read on the paper takes it) */
   --gfx-ink-l2: #585e6b;
 }
+@media (min-width: 768px) and (max-width: 991px) { :root { --ow3-gut: 32px; } }   /* (10/27) the site's one tablet gutter */
 @media (max-width: 767px) { :root { --ow3-gut: 20px; --ow3-gap: 16px; } }
 
 /* ---------- the page: one paper; the rooms' own caps stand aside (the bar has its own backing) ---------- */
@@ -371,7 +372,8 @@ html:not(#gfx-o) [data-o~="ow-pt"] {
 @media (min-width: 1101px) { html:not(#gfx-o) [data-o~="ow-pt"] { grid-template-columns: minmax(480px, .95fr) minmax(0, 1.4fr); } }
 /* (10/26) from 1281px the head column holds the chapter's heading on two lines ("What a partnership can" / "mean for your business." needs 520px at 48px; the .95fr share gave 486 to 514 up to 1440 and the heading ran three) */
 @media (min-width: 1281px) { html:not(#gfx-o) [data-o~="ow-pt"] { grid-template-columns: minmax(540px, .95fr) minmax(0, 1.4fr); } }
-@media (min-width: 768px) and (max-width: 1100px) { html:not(#gfx-o) [data-o~="ow-pt"] { padding-left: 40px; padding-right: 40px; } }
+@media (min-width: 992px) and (max-width: 1100px) { html:not(#gfx-o) [data-o~="ow-pt"] { padding-left: 48px; padding-right: 48px; } }   /* (10/27) the page gutter, not 40 */
+@media (min-width: 768px) and (max-width: 991px) { html:not(#gfx-o) [data-o~="ow-pt"] { padding-left: 32px; padding-right: 32px; } }
 html:not(#gfx-o) [data-o~="pt-head"] { grid-area: head; align-self: end; }
 html:not(#gfx-o) [data-o~="pt-h2"] { margin: 0; font-family: var(--pt-serif); font-weight: 200; font-size: 48px; line-height: 1.08; letter-spacing: -0.015em; color: var(--pt-ink); text-wrap: balance; }
 html:not(#gfx-o) [data-o~="pt-para"] { grid-area: para; margin: 24px 0 0; max-width: 46ch; font: 400 18px/1.6 var(--pt-sans); color: var(--pt-muted); }
