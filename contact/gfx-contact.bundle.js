@@ -1,4 +1,4 @@
-/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.49 + pages 1.0.3 + contact 1.0.11. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
+/* Grey Fox · Contact v2 (Flow 3) page script: core 1.0.50 + pages 1.0.3 + contact 1.0.11. Sources: core/gfx-core.js, pages/gfx-pages.js, contact/gfx-contact.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.49';
+  const VERSION = '1.0.50';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -415,7 +415,7 @@
       // the zone: the mark is hidden while its words are under the header's clear band (the band's depth read once)
       var zoneZ = 0, zq = 0, zoneOut = false, zone = function () { zq = 0; if (!near) return; var r0 = rng(); if (!r0) return; var rs = r0.getClientRects(); if (!rs.length) return;
         var z = zoneZ || (zoneZ = parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--gf-zone')) || 74), top = rs[rs.length - 1].top;
-        var out = top < z - 2; if (out !== zoneOut) { zoneOut = out; svg.style.opacity = out ? '0' : ''; } };
+        var out = top < z - 2 && !H.classList.contains('gfx-bar-away'); if (out !== zoneOut) { zoneOut = out; svg.style.opacity = out ? '0' : ''; } };
       var zoneSoon = function () { if (!zq) { zq = 1; postFrame(zone); } };
       addEventListener('scroll', function () { if (near) zoneSoon(); }, { passive: true });
       if (W.lenis && W.lenis.on) W.lenis.on('scroll', function () { if (near) zoneSoon(); });
@@ -923,6 +923,26 @@
      reaches the firm in one tap. Shown only where the menu is the overlay (CSS, max-width 991px). */
   /* (1.0.49) each desktop link reserves its bold width (the css draws a hidden 600-weight copy of its text from data-gfx-t), so
      the page's own link, set at 600, no longer moves its neighbours from page to page. Runs in the DOM phase, every mode. */
+  /* (core 1.0.50, 10/27, the founder's pick A: "the panel, composed") THE PHONE MENU. Webflow's own menu slid in from the
+     right over a full second on ease-in-out, the only stock moment on the site. Its button and links are kept; the opening
+     is ours: html.gfx-menu-open, the panel settling on the house curve (css), the links rising in a stagger, the foot at
+     the foot. Webflow's handler never sees the button (its tap and click are stopped on the way down), so the menu stays in
+     the bar's markup and never moves into Webflow's overlay. The page behind holds still (overflow, and Lenis paused). */
+  function phoneMenu() {
+    const bar = $('.w-nav'), btn = $('.w-nav-button', bar), menu = $('.w-nav-menu', bar); if (!bar || !btn || !menu) return;
+    let open = false, liveT = 0;
+    /* gfx-menu-live outlives the close by its fade: on phones the bar is a transformed ancestor (its own hiding), so while
+       the panel is on screen the bar's transform is lifted, or the panel would be fixed to the bar instead of the screen. */
+    const set = on => { open = on; clearTimeout(liveT); if (on) H.classList.add('gfx-menu-live'); else liveT = setTimeout(() => H.classList.remove('gfx-menu-live'), 420); H.classList.toggle('gfx-menu-open', on); btn.classList.toggle('w--open', on); btn.setAttribute('aria-expanded', on ? 'true' : 'false'); menu.setAttribute('aria-hidden', on ? 'false' : 'true');
+      if (W.lenis && W.lenis.stop && W.lenis.start) { try { on ? W.lenis.stop() : W.lenis.start(); } catch (e) {} } };
+    const swallow = e => { if (e.target === btn || btn.contains(e.target)) e.stopPropagation(); };
+    D.addEventListener('touchstart', swallow, true); D.addEventListener('touchend', swallow, true); D.addEventListener('mousedown', swallow, true);
+    D.addEventListener('click', e => { if (e.target === btn || btn.contains(e.target)) { e.stopPropagation(); e.preventDefault(); set(!open); } }, true);
+    $$('a', menu).forEach(a => a.addEventListener('click', () => { if (open) set(false); }));
+    D.addEventListener('keydown', e => { if ((e.key === 'Escape' || e.key === 'Esc') && open) { set(false); btn.focus(); } }, true);
+    addEventListener('resize', () => { if (open && W.innerWidth >= 992) set(false); });
+    menu.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false');
+  }
   function navReserve() { $$('.nav_desktop > a.navigation-item').forEach(a => { if (!a.hasAttribute('data-gfx-t')) a.setAttribute('data-gfx-t', a.textContent.trim()); }); }
   function menuFoot() {
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
@@ -966,7 +986,6 @@
     setInterval(() => { if (!D.hidden && performance.now() - poked < 2000) soon(); }, 500); run();
   }
   function navInit() {
-    safe('menu foot', menuFoot);
     safe('nav name', navName);
     safe('top tint', topTint);
     const bar = $('.gfx-nav'); if (!bar) return;
@@ -1503,6 +1522,8 @@
     W.addEventListener('load', () => { stopIX2(); setTimeout(ix3Late, 3000); }, { once: true });
     if (!PAGE) { H.classList.add('gfx-ready'); return; }
     safe('nav reserve', navReserve);
+    safe('menu foot', menuFoot);
+    safe('phone menu', phoneMenu);
     safe('page dom', () => PAGE.dom && PAGE.dom(api));
     safe('footer I', footBuild);
     // (1.0.39, launch QA 10/22) an article's picture link repeats its title link: one stop and one name per article for

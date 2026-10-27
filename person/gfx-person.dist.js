@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.49 + person 1.0.6 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.50 + person 1.0.6 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.49';
+const VERSION='1.0.50';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -324,7 +324,7 @@ if(o.el&&'MutationObserver'in W)new MutationObserver(function(){kept=null;re();}
 if(o.el){o.el.addEventListener('transitionend',re);o.el.addEventListener('animationend',re);}
 var zoneZ=0,zq=0,zoneOut=false,zone=function(){zq=0;if(!near)return;var r0=rng();if(!r0)return;var rs=r0.getClientRects();if(!rs.length)return;
 var z=zoneZ||(zoneZ=parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--gf-zone'))||74),top=rs[rs.length-1].top;
-var out=top<z-2;if(out!==zoneOut){zoneOut=out;svg.style.opacity=out?'0':'';}};
+var out=top<z-2&&!H.classList.contains('gfx-bar-away');if(out!==zoneOut){zoneOut=out;svg.style.opacity=out?'0':'';}};
 var zoneSoon=function(){if(!zq){zq=1;postFrame(zone);}};
 addEventListener('scroll',function(){if(near)zoneSoon();},{passive:true});
 if(W.lenis&&W.lenis.on)W.lenis.on('scroll',function(){if(near)zoneSoon();});
@@ -756,6 +756,19 @@ navTop=top;
 $$('.'+NAV_VAR+', [data-gfx-var]',bar).forEach(e=>{e.setAttribute('data-gfx-var','');e.classList.toggle(NAV_VAR,!top);});
 bar.classList.toggle('gfx-top',top);H.classList.toggle('gfx-bar-top',top);
 });
+function phoneMenu(){
+const bar=$('.w-nav'),btn=$('.w-nav-button',bar),menu=$('.w-nav-menu',bar);if(!bar||!btn||!menu)return;
+let open=false,liveT=0;
+const set=on=>{open=on;clearTimeout(liveT);if(on)H.classList.add('gfx-menu-live');else liveT=setTimeout(()=>H.classList.remove('gfx-menu-live'),420);H.classList.toggle('gfx-menu-open',on);btn.classList.toggle('w--open',on);btn.setAttribute('aria-expanded',on?'true':'false');menu.setAttribute('aria-hidden',on?'false':'true');
+if(W.lenis&&W.lenis.stop&&W.lenis.start){try{on?W.lenis.stop():W.lenis.start();}catch(e){}}};
+const swallow=e=>{if(e.target===btn||btn.contains(e.target))e.stopPropagation();};
+D.addEventListener('touchstart',swallow,true);D.addEventListener('touchend',swallow,true);D.addEventListener('mousedown',swallow,true);
+D.addEventListener('click',e=>{if(e.target===btn||btn.contains(e.target)){e.stopPropagation();e.preventDefault();set(!open);}},true);
+$$('a',menu).forEach(a=>a.addEventListener('click',()=>{if(open)set(false);}));
+D.addEventListener('keydown',e=>{if((e.key==='Escape'||e.key==='Esc')&&open){set(false);btn.focus();}},true);
+addEventListener('resize',()=>{if(open&&W.innerWidth>=992)set(false);});
+menu.setAttribute('aria-hidden','true');btn.setAttribute('aria-expanded','false');
+}
 function navReserve(){$$('.nav_desktop > a.navigation-item').forEach(a=>{if(!a.hasAttribute('data-gfx-t'))a.setAttribute('data-gfx-t',a.textContent.trim());});}
 function menuFoot(){
 const menu=$('.w-nav-menu');if(!menu||$('.gfx-menu-foot',menu))return;
@@ -791,7 +804,6 @@ addEventListener('scroll',poke,{passive:true});addEventListener('resize',poke);D
 setInterval(()=>{if(!D.hidden&&performance.now()-poked<2000)soon();},500);run();
 }
 function navInit(){
-safe('menu foot',menuFoot);
 safe('nav name',navName);
 safe('top tint',topTint);
 const bar=$('.gfx-nav');if(!bar)return;
@@ -1205,6 +1217,8 @@ skipLink();stopIX2();cleanIX();
 W.addEventListener('load',()=>{stopIX2();setTimeout(ix3Late,3000);},{once:true});
 if(!PAGE){H.classList.add('gfx-ready');return;}
 safe('nav reserve',navReserve);
+safe('menu foot',menuFoot);
+safe('phone menu',phoneMenu);
 safe('page dom',()=>PAGE.dom&&PAGE.dom(api));
 safe('footer I',footBuild);
 safe('pic links',()=>{const named=new Set($$('a[href*="/articles/"]').filter(x=>!x.querySelector('svg, img, picture')&&x.textContent.trim()).map(x=>x.getAttribute('href')));$$('a[href*="/articles/"]').forEach(x=>{if(x.querySelector('svg, img, picture')&&named.has(x.getAttribute('href'))){x.setAttribute('aria-hidden','true');x.tabIndex=-1;}});});
