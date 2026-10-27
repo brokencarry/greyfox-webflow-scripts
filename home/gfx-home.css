@@ -301,6 +301,7 @@ html.gfx-f3 .gfx-logos img[src*="accord"] { --lh: 14.5px; }
 html.gfx-f3 .gfx-logos img[src*="logo_tauber"] { --lh: 28px; }
 html.gfx-f3 .gfx-logos img[src*="nextsp"] { --lh: 18px; }
 html.gfx-f3 .gfx-logos img[src*="white-w"] { --lh: 33px; }
+html.gfx-f3 .gfx-logos img[src*="tarn"] { --lh: 34px; }   /* (10/27) Tarn Capital Partners, in White Wing's slot: mark + name + line, Vantage's height */
 html.gfx-f3 .gfx-logos img[src*="logo_interconn"] { --lh: 38px; }
 html.gfx-f3 .gfx-logos img[src*="ventur"] { --lh: 23px; }
 html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 36px; }

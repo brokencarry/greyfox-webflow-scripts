@@ -67,6 +67,7 @@ html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="accordion"] { height: 14.5px 
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_tauber"] { height: 28px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="nextsparc"] { height: 18px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="white-wing"] { height: 33px !important; }
+html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="tarn"] { height: 34px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_interconn"] { height: 38px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="ventura"] { height: 23px !important; }
 html:not(#gfx-o) [data-o~=ow-marq-track] img[src*="logo_robots"] { height: 36px !important; }
