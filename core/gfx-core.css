@@ -154,8 +154,8 @@ html.gfx-f3 .gfx-nav .logo-link.gfx-breath1 img { animation: gfx-breath 2.4s cub
 /* ---------- THE ARROW (gf-site.js gfArrow): one device; ink and head are fills in the context's green ---------- */
 html.gfx-f3 svg.gfa { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 1; transition: opacity .4s cubic-bezier(.16, 1, .3, 1); }
 html.gfx-f3 svg :is(.gfa-ink, .gfa-b) { fill: var(--gfa-c, var(--gfx-green-d)) !important; stroke: none !important; }
-/* (10/26, the founder: the close mark under "human." looked grainy on his monitor) the mark is a tapered ribbon 0.7 to 1 px thick along its shaft; on a 1x screen that straddles two pixel rows at half cover and reads dim and ragged. There only, a .7px stroke in the ink's own colour fills it out to a line; 2x screens draw it as it is. The :not() pair outranks the pages' own stroke: none (html:not(#gf-c) ...) */
-@media (max-resolution: 1.5dppx) { html.gfx-f3:not(#gfx-x):not(#gfx-y) svg :is(.gfa-ink, .gfa-b) { stroke: var(--gfa-c, var(--gfx-green-d)) !important; stroke-width: .7px !important; stroke-linejoin: round; } }
+/* (core 1.0.48, 10/27, the founder's pick) the headline mark and the opening's line are one even 1.6px stroke, the head's ears the same; the :not() pair outranks the pages' own rules for the old ribbon's classes */
+html.gfx-f3:not(#gfx-x):not(#gfx-y) svg :is(.gfa-s, .gfa-se) { fill: none !important; stroke: var(--gfa-c, var(--gfx-green-d)) !important; stroke-width: 1.6px !important; stroke-linecap: round; stroke-linejoin: round; }
 :where(svg.gfa-icon) { overflow: visible; }
 :where(svg.gfa-icon) path { fill: none; stroke: currentColor; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 /* (core 1.0.2) the glyph is the house mark, filled: its inked shaft and the two ears (gfArrow.icon) */
