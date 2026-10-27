@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.20';
+  W.__gfxHome = '1.1.21';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -95,9 +95,10 @@
       // (the reading list's cards are whole-card links: no browser underline under their words at any width)
       'html .gfx-ins-sec .gfx-ink-card a,html .gfx-ins-sec .gfx-ink-lead{text-decoration:none!important}';
     (D.head || H).appendChild(st);
-    // the rows settle once the portal is more than half open, and leave again when it closes (scrolling back)
+    // the rows settle as the wipe uncovers them (a fifth open: no empty slab mid-wipe), and leave again only when it
+    // closes (scrolling back); (1.1.21, round-2 review) not when the card fades with the stage, which it does whole
     const portal = $('.gfx-mk-portal'); if (!portal) return;
-    const on = () => { const v = getComputedStyle(portal); const open = v.visibility !== 'hidden' && parseFloat(v.opacity || '1') > 0.4 && !/inset\(0(px|%)? (5\d|[6-9]\d|100)/.test(v.clipPath || ''); portal.classList.toggle('gfx-mkc-on', open); };
+    const on = () => { const v = getComputedStyle(portal); const open = v.visibility !== 'hidden' && !/inset\(0(px|%)? (8\d|9\d|100)/.test(v.clipPath || ''); portal.classList.toggle('gfx-mkc-on', open); };
     new MutationObserver(on).observe(portal, { attributes: true, attributeFilter: ['style'] });
     if ('IntersectionObserver' in W) new IntersectionObserver(on).observe(portal);
     on();
@@ -571,7 +572,9 @@
       ixs.forEach((li, i) => { const f = `scaleX(${clamp(seg(P, WIN[i][0], WIN[i][1] - 0.01), 0, 1).toFixed(4)})`; if (li._f !== f && li._bar) { li._bar.style.transform = f; li._f = f; } });
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
       if (!phone() && portal) {
-        const k = arrived ? ss(seg(P, 0.6, 0.76)) : 0, o = (1 - eo(X)).toFixed(3);
+        // (1.1.21, the owners site) the first-call card holds through the first third of the release, then leaves
+        // quickly and whole, so it never ghosts with the lines running through its words
+        const k = arrived ? ss(seg(P, 0.6, 0.76)) : 0, o = (1 - eo(portalIn && portalIn.hasAttribute('data-gfx-card') ? clamp((X - 0.3) / 0.45, 0, 1) : X)).toFixed(3);
         if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; }
         // the client's window plays once it is half open, and again each time it opens from closed
         if (k > 0.5 && !portalK.played) { portalK.played = true; demoDo('play'); } else if (k === 0) portalK.played = false;
