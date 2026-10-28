@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.50 + owners 1.2.10. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.51 + owners 1.2.11. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.50';
+  const VERSION = '1.0.51';
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -740,12 +740,17 @@
   /* rhythm: the tier's gap runs from the last thing seen in the room before to the first thing seen in this one */
   const TIERS = () => {
     const vh = W.innerHeight, phone = W.innerWidth <= 991, cl = (a, v, b) => Math.min(b, Math.max(a, v));
-    const turn = Math.max(224, vh * 0.35);
+    const turn = Math.max(224 * cl(0.6, vh / 900, 1), vh * 0.35);
     /* (1.0.10) below 768px the gap is the designer's Webflow variable phone / section-gap (80px), the one the other pages'
        rooms use; breath stays 1.6 times it */
     if (W.innerWidth <= 767) { const g = parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--_phone---section-gap')) || 80; return { tight: g, standard: g, breath: Math.round(g * 1.6), turn: Math.max(192, vh * 0.3) }; }
     if (phone) return { tight: 80, standard: 96, breath: 128, turn: Math.max(192, vh * 0.3) };
-    return { tight: cl(64, vh * 0.0711, 93) * 2, standard: cl(96, vh * 0.1067, 139) + cl(64, vh * 0.0711, 93), breath: cl(192, vh * 0.2133, 278) + cl(96, vh * 0.1067, 139), turn };
+    /* (1.0.51, the hole matrix 10/28) the floors (160 standard, 288 breath, 224 turn) were set for a 900px window; a
+       1280x500 window kept them and showed 272px of nothing between the firms and "The proof comes after the close." (54%
+       of the screen; 30% on 900, the designed proportion). Under 900px tall the floors scale with the window (never below
+       60%: 96, 173 and 134 on a 500px window), so the gap keeps the designed share of the screen. */
+    const k = cl(0.6, vh / 900, 1);
+    return { tight: cl(64 * k, vh * 0.0711, 93) * 2, standard: cl(96 * k, vh * 0.1067, 139) + cl(64 * k, vh * 0.0711, 93), breath: cl(192 * k, vh * 0.2133, 278) + cl(96 * k, vh * 0.1067, 139), turn };
   };
   let STICKY = new Set();
   const stickyShift = (el, rm) => {
@@ -943,7 +948,57 @@
     addEventListener('resize', () => { if (open && W.innerWidth >= 992) set(false); });
     menu.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false');
   }
-  function navReserve() { $$('.nav_desktop > a.navigation-item').forEach(a => { if (!a.hasAttribute('data-gfx-t')) a.setAttribute('data-gfx-t', a.textContent.trim()); }); }
+  function navReserve() { $('.nav_desktop > a.navigation-item').forEach(a => { if (!a.hasAttribute('data-gfx-t')) a.setAttribute('data-gfx-t', a.textContent.trim()); }); }
+  /* ========================= the layout report (1.0.51, 10/28) ========================= */
+  /* A visitor's own window reports the two things a test matrix cannot foresee: the window itself, and a hole in the
+     layout at that window. A hole is a stretch of the screen with nothing on it (no text, picture, canvas, video, drawing
+     or rule across a band of at least 45% of the height, or a column of at least 40% of the width below the top twelfth),
+     or a section covering the screen whose content fills under 60% of a desktop width (the research room at 1267x634,
+     found in a replay on 10/28). One gfx_viewport event per page view (2.5 s in); at most one gfx_layout_hole, the first
+     found, looked for 0.6 s into each burst of scrolling and confirmed 1.2 s later at the same place, at most forty looks a view (a page is 15-30 stops), on windows 992 and wider. A test browser
+     (navigator.webdriver: the harness) reports nothing and stops FullStory's recording of itself. */
+  function layoutReport() {
+    const fs = function () { try { if (typeof W.FS === 'function') W.FS.apply(null, arguments); } catch (e) { /* no FullStory */ } };
+    if (navigator.webdriver) { fs('shutdown'); return; }
+    const page = location.pathname;
+    const base = () => ({ w: W.innerWidth, h: W.innerHeight, dpr: +(W.devicePixelRatio || 1).toFixed(2), touch: TOUCH, page: page, core: VERSION });
+    setTimeout(() => fs('trackEvent', { name: 'gfx_viewport', properties: base() }), 2500);
+    let sent = false, n = 0, t = 0;
+    const scan = () => {
+      const vw = W.innerWidth, vh = W.innerHeight, cols = 24, rows = 24, grid = new Uint8Array(cols * rows);
+      const mark = r => { const x0 = Math.max(0, Math.floor(r.left / vw * cols)), x1 = Math.min(cols - 1, Math.floor((r.right - 1) / vw * cols)), y0 = Math.max(0, Math.floor(r.top / vh * rows)), y1 = Math.min(rows - 1, Math.floor((r.bottom - 1) / vh * rows)); for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) grid[y * cols + x] = 1; };
+      const spans = new Map();
+      for (const e of D.body.querySelectorAll('*')) {
+        if (e.closest('.gfx-nav, .w-nav, .gfx-skip')) continue;
+        const r = e.getBoundingClientRect(); if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw || r.width < 6 || r.height < 6) continue;
+        const cs = getComputedStyle(e); if (cs.visibility === 'hidden' || +cs.opacity < 0.08) continue;
+        const tag = e.tagName; let content = /^(IMG|CANVAS|VIDEO|SVG|PICTURE|IFRAME)$/.test(tag);
+        let text = false; if (!content) { for (const c of e.childNodes) { if (c.nodeType === 3 && c.textContent.trim()) { text = true; try { const rg = D.createRange(); rg.selectNodeContents(c); for (const lr of rg.getClientRects()) if (lr.width > 1 && lr.height > 1) mark(lr); } catch (x) { mark(r); } } } }
+        if (!content && !text) { if (cs.borderTopStyle !== 'none' && cs.borderTopWidth !== '0px') mark({ left: r.left, right: r.right, top: r.top, bottom: r.top + 2 }); if (cs.borderBottomStyle !== 'none' && cs.borderBottomWidth !== '0px') mark({ left: r.left, right: r.right, top: r.bottom - 2, bottom: r.bottom }); if (cs.backgroundImage !== 'none' && r.width < vw * 0.98) content = true; }
+        if (!content && !text) continue;
+        if (content) mark(r); const s = e.closest('section, footer, .gfx-fr'); if (s) { const o = spans.get(s) || { l: 1e9, r: 0 }; o.l = Math.min(o.l, r.left); o.r = Math.max(o.r, r.right); spans.set(s, o); }
+      }
+      let run = 0, band = 0; for (let y = 0; y < rows; y++) { let empty = true; for (let x = 0; x < cols; x++) if (grid[y * cols + x]) { empty = false; break; } run = empty ? run + 1 : 0; if (run > band) band = run; }
+      run = 0; let col = 0; for (let x = 0; x < cols; x++) { let empty = true; for (let y = 2; y < rows; y++) if (grid[y * cols + x]) { empty = false; break; } run = empty ? run + 1 : 0; if (run > col) col = run; }
+      let found = null;
+      if (band / rows >= 0.45) found = { kind: 'band', share: +(band / rows).toFixed(2) };
+      else if (col / cols >= 0.4) found = { kind: 'column', share: +(col / cols).toFixed(2) };
+      else spans.forEach((o, s) => { if (found) return; const sr = s.getBoundingClientRect(); if (sr.top > vh * 0.1 || sr.bottom < vh * 0.9) return; const share = (o.r - o.l) / vw; if (share < 0.6) found = { kind: 'narrow', share: +share.toFixed(2), sec: (s.className || '').toString().slice(0, 40) }; });
+      return found;
+    };
+    // a hole counts when it is still there 1.2 s later at the same place (a section mid-reveal, a footer rising, are not holes)
+    const measure = () => {
+      if (sent || n++ > 40 || W.innerWidth < 992 || D.hidden) return;
+      const f = scan(); if (!f) return; const y = W.scrollY;
+      setTimeout(() => { if (sent || Math.abs(W.scrollY - y) > 5) return; const g = scan(); if (!g) return; sent = true; fs('trackEvent', { name: 'gfx_layout_hole', properties: Object.assign(base(), { y: Math.round(y) }, g) }); if (DEBUG) log('layout hole', JSON.stringify(g)); }, 1200);
+    };
+    // the wheel rarely rests on a smooth scroll: a look 0.6 s into each burst of scrolling, and the confirmation above
+    // (1.2 s at the same place) decides whether the visitor stopped at the hole
+    const arm = () => { if (!t) t = setTimeout(() => { t = 0; measure(); }, 600); };
+    addEventListener('scroll', arm, { passive: true }); addEventListener('resize', arm);
+    setTimeout(measure, 3000);
+    W.gfxLayoutReport = measure;
+  }
   function menuFoot() {
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
@@ -1570,6 +1625,7 @@
           safe('footer I motion', () => footInit(PAGE.foot));
           if (PAGE.fox) safe('fox step', () => foxStep(PAGE.fox));
           safe('fox watch', () => foxWatch(PAGE.foxZone));
+          safe('layout report', layoutReport);
           H.classList.add('gfx-rooms');
           ST.refresh();
           /* (1.0.22) every scroll beat measures the page at a refresh. A page that changes height afterwards (images,
@@ -1621,7 +1677,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.10';
+  W.__gfxOwners = '1.2.11';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.2.8, founder 10/26) firms' marks are off the row until they confirm (Accordion, Ventura; 1.2.10, 10/28: Tarn until the
   // agreement signs): seven marks sit four over three, the three centred (eight half-columns, each mark two, the fifth

@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.10';
+  W.__gfxOwners = '1.2.11';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.2.8, founder 10/26) firms' marks are off the row until they confirm (Accordion, Ventura; 1.2.10, 10/28: Tarn until the
   // agreement signs): seven marks sit four over three, the three centred (eight half-columns, each mark two, the fifth
