@@ -145,3 +145,10 @@ html.iv-f2 [data-o~="iv-cases-open"] > [data-o~="ow-open-r"]:not(:has(*)) { disp
 @media (min-width: 992px) {
   html.iv-f2 [data-o~="iv-cases-open"][data-o~="ow-open"]:not(:has(> [data-o~="ow-open-r"] *)) { grid-template-columns: 7fr 5fr; }
 }
+
+/* (investors 1.0.20, the hole matrix 10/28) THE FUNNEL'S HEADING ON A NARROW DESKTOP: at 992-1150px the heading's column
+   (467-560px) is narrower than "introductions within weeks." at 40px, and the split lines do not wrap, so the line ran
+   under the lede (1024: "weeks" cut). The size follows the width there: 33.7px at 992, 40px from 1176. */
+@media (min-width: 992px) and (max-width: 1279px) {
+  html.gfx-f3 body:not(#gfx-ts1):not(#gfx-ts2) .gfx-iv3-h:not(#gfx-x) { font-size: clamp(30px, 3.4vw, 40px) !important; }
+}

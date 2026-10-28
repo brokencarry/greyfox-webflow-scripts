@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.51 + investors 1.0.19 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.51 + investors 1.0.20 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,7 +1323,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.19';
+W.__gfxInvestors='1.0.20';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1631,7 +1631,7 @@ const hit=i===0?clamp(E*1.6-0.8,0,1):ss(seg(f,L.stops[i]-0.01,L.stops[i]+0.002))
 const start=i===0?1:ss(seg(P,a-0.02,a+0.01)),end=i===3?0:ss(seg(P,a+STEP-0.02,a+STEP+0.01));
 setVar(li,'--hit',Math.max(hit,i===0?hit:0));
 setVar(li,'--on',Math.min(i===0?clamp(E*1.6-0.8,0,1):start,1-end));
-if(li._num){const on=P>a+0.003;if(on!==!!li._on){li._on=on;figTo(li,on);}}
+if(li._num){const on=i===0?(E>=0.99||P>0.003):P>a+0.003;if(on!==!!li._on){li._on=on;figTo(li,on);}}
 });
 if(S1.vrule){const t=`scaleX(${eo(clamp(E*1.8-0.95,0,1)).toFixed(4)})`;if(S1.vrule._t!==t){S1.vrule.style.transform=t;S1.vrule._t=t;}}
 S1.vs.forEach((v,i)=>show(v,eo(seg(P,3*STEP+BEAT+0.005+i*0.02,3*STEP+BEAT+0.06+i*0.02)),16));

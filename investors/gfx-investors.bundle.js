@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.51 + investors 1.0.19. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.51 + investors 1.0.20. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1681,7 +1681,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.19';
+  W.__gfxInvestors = '1.0.20';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -2041,7 +2041,9 @@
       const start = i === 0 ? 1 : ss(seg(P, a - 0.02, a + 0.01)), end = i === 3 ? 0 : ss(seg(P, a + STEP - 0.02, a + STEP + 0.01));
       setVar(li, '--hit', Math.max(hit, i === 0 ? hit : 0));
       setVar(li, '--on', Math.min(i === 0 ? clamp(E * 1.6 - 0.8, 0, 1) : start, 1 - end));
-      if (li._num) { const on = P > a + 0.003; if (on !== !!li._on) { li._on = on; figTo(li, on); } }
+      // (investors 1.0.20, the hole matrix 10/28) the first figure is on as soon as the stage has arrived (E), not only
+      // once the pin has moved (P): a reader who stopped at the pin's start saw the labels over an empty half-screen
+      if (li._num) { const on = i === 0 ? (E >= 0.99 || P > 0.003) : P > a + 0.003; if (on !== !!li._on) { li._on = on; figTo(li, on); } }
     });
     if (S1.vrule) { const t = `scaleX(${eo(clamp(E * 1.8 - 0.95, 0, 1)).toFixed(4)})`; if (S1.vrule._t !== t) { S1.vrule.style.transform = t; S1.vrule._t = t; } }
     S1.vs.forEach((v, i) => show(v, eo(seg(P, 3 * STEP + BEAT + 0.005 + i * 0.02, 3 * STEP + BEAT + 0.06 + i * 0.02)), 16));
