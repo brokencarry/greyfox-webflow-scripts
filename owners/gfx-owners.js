@@ -27,13 +27,13 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.13';
+  W.__gfxOwners = '1.2.14';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
-  // (1.2.8, founder 10/26) firms' marks are off the row until they confirm (Accordion, Ventura; 10/28: Tarn until the
-  // agreement signs; Fellow Health approved and back 10/28 pm): seven marks sit four over three, the three centred (eight
-  // half-columns, each mark two, the fifth from the second). When a mark returns, set the rule for the count (eight: repeat(4));
-  // DELETE IT when the ten are back (the stylesheet's five columns return).
-  if (!$('#gfx-ow-firms-8')) { const st = D.createElement('style'); st.id = 'gfx-ow-firms-8'; st.textContent = '@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(8,minmax(0,1fr))!important}html:not(#gfx-o) [data-o~=ow-marq-track]>li{grid-column:span 2}html:not(#gfx-o) [data-o~=ow-marq-track]>li:nth-child(5){grid-column:2/span 2}}'; (D.head || H).appendChild(st); }
+  // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura; Tarn signed and back
+  // 10/28, Fellow Health approved 10/28): eight marks sit two rows of four instead of five and three. When a mark comes
+  // off, set the rule for the count (seven: repeat(8) with each mark spanning 2 and the fifth from column 2; six:
+  // repeat(3)); DELETE IT when the ten are back (the stylesheet's five columns return).
+  if (!$('#gfx-ow-firms-8')) { const st = D.createElement('style'); st.id = 'gfx-ow-firms-8'; st.textContent = '@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(4,minmax(0,1fr))!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const HOLDQ = '(min-width: 992px) and (min-height: 681px)', STACK = '(max-width: 991px)', SHORT = '(min-width: 992px) and (max-height: 680px)';

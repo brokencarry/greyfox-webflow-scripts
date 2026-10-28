@@ -20,12 +20,12 @@
   "sri": "sha384-wGOwqAfyGMMFPf9OPRIbu+IPlSRwZP85820QSFNvE1BMLaNpQ73+LHzFUy6gipoV"
  },
  "owners/gfx-owners.dist.js": {
-  "bytes": 122643,
-  "sri": "sha384-u/uz1QaKfQFjyR/lgFlr2lhU6Vwnb7SwbkDJmO2cTgXhkEYK2zznKP9Ua35sHvCW"
+  "bytes": 122502,
+  "sri": "sha384-vGXUD3m4h2+NFp6dq86bte2n2HuP37PF0GtyJPD0rX7vZ3HJ89NA+OjCbnjbXi+X"
  },
  "owners/gfx-owners.dist.css": {
   "bytes": 51229,
-  "sri": "sha384-H/iMmRQlTj96t3CzJdSoY1PZ1E7wowSNt9OQFdJnc3dh+GpKVAopXi1Qztjyrx5Z"
+  "sri": "sha384-UFwMZzmwjWO/QNtmMubyXnGjPI3IWc3QhddLXOTCW6SxwMUsPWlyaEtEBimRVC8G"
  },
  "owners/pt/pt-film.js": {
   "bytes": 108183,
@@ -82,7 +82,7 @@
  "_versions": {
   "core": "1.0.51",
   "home": "1.1.21",
-  "owners": "1.2.13",
+  "owners": "1.2.14",
   "pages": "1.0.3",
   "contact": "1.0.11",
   "privacy": "1.0.2",
