@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.22';
+  W.__gfxHome = '1.1.23';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -50,14 +50,15 @@
       { el: '.gfx-case-sec', native: 'L', tone: 'L', tier: 'breath' },
       // (the turn into the market waits until the climb's room has all but left: its foot within the top fifth)
       { el: '.gfx-mk', native: 'D', tone: 'D', turnAt: (ym, c) => { const pv = c.prev.el, out = c.docTop(pv) + pv.offsetHeight - c.vh * 0.2; return out > ym ? Math.min(out, c.max - c.vh * 0.05) : ym; } },
-      // (back to paper once the stage has released and its portal has faded, its foot at 70%, and not before the
-      // market's last line has left the screen)
-      { el: '.gfx-team-sec', native: 'L', tone: 'L', tier: 'standard', turnAt: (ym, c) => {
+      // (back to paper once the stage has released, its foot at 70%, and not before the market's last line has left the
+      // screen) (1.1.23, the owners site) the founder's note is the first room on paper; the team follows it
+      { el: '[data-o~="gn-sec"]', native: 'L', tone: 'L', tier: 'standard', turnAt: (ym, c) => {
         const pv = c.prev.el, out = c.docTop(pv) + pv.offsetHeight - c.vh * 0.7; if (out > ym) ym = Math.min(out, c.max - c.vh * 0.05);
         const stg = $('.gfx-mk-stage', pv);
         if (stg) { const st = stg.getBoundingClientRect().top; let lo = 0; $$('p, h2, h3, .gfx-mk-cap, .gfx-mk-ill, .gfx-mk-fig, .gfx-mk-steps, li', stg).forEach(e => { if (e.closest('.gfx-mk-sr')) return; const r = e.getBoundingClientRect(); if (r.height > 1 && r.width > 1) lo = Math.max(lo, r.bottom - st); });
           const gone = c.docTop(pv) + pv.offsetHeight - stg.offsetHeight + lo; if (lo && gone > ym) ym = Math.min(gone, c.max - c.vh * 0.05); }
         return ym; } },
+      { el: '.gfx-team-sec', native: 'L', tone: 'L', tier: 'standard' },
       { el: '.gfx-ins-sec', native: 'L', tone: 'L', tier: 'standard' },
       // (the close's turn waits for the thinking's last line to rise into the top eighth; it is black by the time its
       // headline is in the lower seventh)
@@ -72,39 +73,38 @@
   const MK = {};
   const reel = n => '<span class="gfx-mk-reels">' + [...n.toLocaleString('en-US')].map(c => c === ',' ? '<span class="gfx-mk-c">,</span>' :
     '<span class="gfx-mk-d"><span class="gfx-mk-r">' + '0123456789'.split('').map(d => `<i>${d}</i>`).join('') + '<i>0</i></span></span>').join('') + '</span>';
-  /* (1.1.20, the owners site) step 04 opens on the owner's side of the call instead of a buyer's pipeline: a card in the
-     portal's place (portal-in carries data-gfx-card; its words are static elements, editable in the Designer). It takes the
-     portal's own entrance (the wipe from the left) and its rows settle in after it, on the field's dark inks. */
-  function mkCardStyle() {
-    if (!$('.gfx-mk-portal-in[data-gfx-card]') || $('#gfx-mkc-css')) return;
-    const st = D.createElement('style'); st.id = 'gfx-mkc-css';
+  /* (1.1.23, the owners site, founder 10/28) the first-call card is gone: the market has no window on the right, so step 04
+     gathers the prioritized strands into one point (marketInit). The founder's note is its own room on paper, after the
+     market and before the team: the photograph on the left, the letter on the right, the signature under it. Its words are
+     static elements, editable in the Designer (data-o gn-*). */
+  function ownersStyle() {
+    if ($('#gfx-owners-css')) return;
+    const st = D.createElement('style'); st.id = 'gfx-owners-css';
     st.textContent =
-      'html .gfx-mkc{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,3.6vw,64px);' +
-      'background:var(--gfx-raised,#151515);border:1px solid var(--gfx-line-d,rgba(242,241,238,.12));box-sizing:border-box}' +
-      'html .gfx-mkc-k{margin:0 0 clamp(18px,2.2vw,32px)!important;font:500 12px/1.2 var(--gfx-sans,"DM Sans",sans-serif);letter-spacing:.14em;text-transform:uppercase;color:var(--gfx-green-d,#2f9a6c)}' +
-      'html .gfx-mkc-row{position:relative;padding:clamp(16px,1.8vw,24px) 0;border-top:1px solid var(--gfx-line-d,rgba(242,241,238,.14))}' +
-      'html .gfx-mkc-row:last-child{border-bottom:1px solid var(--gfx-line-d,rgba(242,241,238,.14))}' +
-      'html .gfx-mkc-t{margin:0 0 6px!important;font-family:var(--gfx-serif,Sentient,Georgia,serif);font-weight:300;font-size:clamp(21px,1.75vw,30px);line-height:1.15;color:var(--gfx-ink-d1,#f2f1ee)}' +
-      'html .gfx-mkc-d{margin:0!important;max-width:36ch;font:400 clamp(14px,1.05vw,16px)/1.5 var(--gfx-sans,"DM Sans",sans-serif);color:var(--gfx-ink-d2,rgba(242,241,238,.66))}' +
-      // the rows follow the wipe: each settles a beat after the one above (motion only where the page moves)
-      'html.gfx-m:not(.gfx-mk-still) .gfx-mkc-k,html.gfx-m:not(.gfx-mk-still) .gfx-mkc-row{opacity:0;transform:translateY(10px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}' +
-      'html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-k,html.gfx-m .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row{opacity:1;transform:none}' +
-      'html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(2){transition-delay:.12s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(3){transition-delay:.22s}html .gfx-mk-portal.gfx-mkc-on .gfx-mkc-row:nth-child(4){transition-delay:.32s}' +
-      '@media (prefers-reduced-motion:reduce){html .gfx-mkc-k,html .gfx-mkc-row{opacity:1!important;transform:none!important;transition:none!important}}' +
-      '@media (max-width:767px){html .gfx-mkc{padding:28px 24px}html .gfx-mkc-t{font-size:22px}}' +
+      'html [data-o~="gn-in"]{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);column-gap:clamp(40px,7vw,128px);align-items:start;max-width:var(--gfx-max,1320px);margin:0 auto;padding:0 var(--gfx-gutter,clamp(24px,4vw,64px));box-sizing:border-box}' +
+      'html [data-o~="gn-pic"]{position:sticky;top:clamp(96px,14vh,140px);aspect-ratio:4/3;overflow:hidden;background:#e9e7e2}' +
+      'html [data-o~="gn-img"]{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%}' +
+      'html [data-o~="gn-txt"]{max-width:36em}' +
+      'html [data-o~="gn-sec"] .heading-2{margin:0 0 clamp(28px,3vw,44px)!important}' +
+      'html [data-o~="gn-p"]{margin:0 0 1.15em!important;font:400 clamp(17px,1.3vw,20px)/1.62 var(--gfx-sans,"DM Sans",sans-serif);color:var(--gfx-ink-l1,#111112);text-wrap:pretty}' +
+      'html [data-o~="gn-sign"]{margin-top:clamp(32px,3.4vw,48px);padding-top:clamp(20px,2vw,28px);border-top:1px solid var(--gfx-line-l,rgba(17,17,18,.14))}' +
+      'html [data-o~="gn-name"]{margin:0 0 4px!important;font-family:var(--gfx-serif,Sentient,Georgia,serif);font-weight:300;font-size:clamp(22px,1.7vw,28px);line-height:1.2;color:var(--gfx-ink-l1,#111112)}' +
+      'html [data-o~="gn-role"]{margin:0!important}' +
+      '@media (max-width:991px){html [data-o~="gn-in"]{grid-template-columns:1fr;row-gap:clamp(32px,6vw,48px)}html [data-o~="gn-pic"]{position:relative;top:auto;max-width:640px}}' +
       // (the reading list's cards are whole-card links: no browser underline under their words at any width)
       'html .gfx-ins-sec .gfx-ink-card a,html .gfx-ins-sec .gfx-ink-lead{text-decoration:none!important}';
     (D.head || H).appendChild(st);
-    // the rows settle as the wipe uncovers them (a fifth open: no empty slab mid-wipe), and leave again only when it
-    // closes (scrolling back); (1.1.21, round-2 review) not when the card fades with the stage, which it does whole
-    const portal = $('.gfx-mk-portal'); if (!portal) return;
-    const on = () => { const v = getComputedStyle(portal); const open = v.visibility !== 'hidden' && !/inset\(0(px|%)? (8\d|9\d|100)/.test(v.clipPath || ''); portal.classList.toggle('gfx-mkc-on', open); };
-    new MutationObserver(on).observe(portal, { attributes: true, attributeFilter: ['style'] });
-    if ('IntersectionObserver' in W) new IntersectionObserver(on).observe(portal);
-    on();
+  }
+  function noteInit() {
+    const sec = $('[data-o~="gn-sec"]'); if (!sec) return;
+    const head = $('.heading-2', sec), pic = $('[data-o~="gn-pic"]', sec), img = $('[data-o~="gn-img"]', sec);
+    gfx.room({ trigger: head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), detail: $$('[data-o~="gn-sign"]', sec), pictures: pic ? [pic] : [] });
+    // the photograph settles from 1.06 to 1 as it rises into view, as the team's portraits do
+    if (img) { if (img.srcset) img.sizes = '(max-width: 991px) 92vw, 40vw'; let last = ''; img.style.scale = '1.06';
+      ST.create({ trigger: pic || img, start: 'top bottom', end: 'top 35%', onUpdate: s => { const v = (1.06 - 0.06 * eo(s.progress)).toFixed(4); if (v !== last) { img.style.scale = v; last = v; } } }); }
   }
   function marketDom() {
-    safe('mk card', mkCardStyle);
+    safe('owners css', ownersStyle);
     const sec = $('.gfx-mk'); if (!sec) return;
     const stage = $('.gfx-mk-stage', sec);
     MK.sec = sec; MK.stage = stage;
@@ -473,7 +473,9 @@
     // returning bar cut them; 900px-tall screens and up are unchanged (14% is already past 118px). CSS .gfx-mk-gate matches
     // (1.1.11) tablets carry their labels on two lines, so their gates start a little lower (132)
     const fieldR = () => phone() ? { x0: -8, x1: Wd + 8, top: Hd * 0.36, bot: Hd * 0.6 } : { x0: -Wd * 0.04, x1: Wd * 1.02, top: Math.max(Hd * 0.14, W.innerWidth < 992 ? 132 : 118), bot: Hd * 0.9 };
-    const PORTAL_U = () => (phone() ? 1.02 : 0.575);
+    // (1.1.23, the owners site) without the window the gathered line ends in a point three quarters across: the one owner
+    // the whole market narrowed to; as the stage releases, the line runs on to the edge and the point lets go
+    const PORTAL_U = () => (!portal ? (phone() ? 0.86 : 0.8) : phone() ? 1.02 : 0.575);
     const GATES = [0.6, 0.71, 0.82];
     /* (home 1.1.5, founder 10/20: "feels like your scroll is moving the lines") each step's change runs across the first
        two thirds of its window, so the strands move for as long as the reader scrolls and rest once the step has said
@@ -513,6 +515,15 @@
       group(pr, gInk, 0.2 * birthK * (1 - c), 1);
       group(pr, gGreen, birthK * lerp(0, 0.6, c) * (1 - d * 0.35), lerp(1, 1.25, c));
       if (d > 0.01) { ctx.globalAlpha = d; ctx.strokeStyle = gGreen; ctx.lineWidth = 1.75; ctx.beginPath(); ctx.moveTo(F.x0 + (F.x1 - F.x0) * 0.3, yc); ctx.lineTo(F.x0 + (F.x1 - F.x0) * uEnd, yc); ctx.stroke(); }
+      if (!portal) {
+        // the point: it forms once the strands have gathered, a single ring opens from it with the scroll, and it lets go
+        // as the line runs on past it
+        const k = ss(seg(P, 0.7, 0.8)) * (1 - ss(clamp(X * 1.6, 0, 1))), px = F.x0 + (F.x1 - F.x0) * PORTAL_U();
+        if (k > 0.01) {
+          ctx.globalAlpha = k; ctx.fillStyle = GREEN; ctx.beginPath(); ctx.arc(px, yc, 4.5, 0, Math.PI * 2); ctx.fill();
+          const r = ss(seg(P, 0.74, 0.92)); if (r > 0.01 && r < 0.99) { ctx.globalAlpha = k * 0.55 * (1 - r); ctx.strokeStyle = GREEN; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(px, yc, 4.5 + r * 26, 0, Math.PI * 2); ctx.stroke(); }
+        }
+      }
       ctx.globalAlpha = 1;
     };
     const odoSet = (el, v) => {
@@ -573,16 +584,7 @@
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
       if (!phone() && portal) {
         const k = arrived ? ss(seg(P, 0.6, 0.76)) : 0, o = (1 - eo(X)).toFixed(3);
-        if (portalIn && portalIn.hasAttribute('data-gfx-card')) {
-          // (1.1.22, the owners site) the first-call card never fades (a fading card ghosts, the lines drawn through its
-          // words): it holds through the first quarter of the release, then the wipe that brought it in carries on and
-          // takes it off to the right, uncovering the lines as they run on to the edge
-          const l = ss(clamp((X - 0.25) / 0.45, 0, 1)), c = `inset(0% ${((1 - k) * 100).toFixed(2)}% 0% ${(l * 100).toFixed(2)}%)`;
-          if (portal._c !== c) { portal._c = c; portalK.k = k; setPortal(k); portal.style.clipPath = c; if (l > 0.999) portal.style.visibility = 'hidden'; }
-          if (portal._o !== '1') { portal.style.opacity = '1'; portal._o = '1'; }
-        } else {
-          if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; }
-        }
+        if (portalK.k !== k) { portalK.k = k; setPortal(k); } if (portal._o !== o) { portal.style.opacity = o; portal._o = o; }
         // the client's window plays once it is half open, and again each time it opens from closed
         if (k > 0.5 && !portalK.played) { portalK.played = true; demoDo('play'); } else if (k === 0) portalK.played = false;
       }
@@ -624,7 +626,7 @@
     // no longer fade with it) and the gathered line runs on past the window to the edge, so nothing cuts off
     const rd = () => { dirty = true; wake(); };
     if (!phone()) ST.create({ trigger: sec, start: 'bottom bottom', end: 'bottom 55%', onUpdate: s => { X = s.progress; dirty = true; words(); wake(); }, onRefresh: s => { X = s.progress; } });
-    else ST.create({ trigger: sec, start: 'bottom 95%', onEnter: () => gsap.to(portal, { opacity: 0, duration: 0.45, ease: 'power2.in', overwrite: 'auto', onUpdate: rd, onComplete: rd }),
+    else if (portal) ST.create({ trigger: sec, start: 'bottom 95%', onEnter: () => gsap.to(portal, { opacity: 0, duration: 0.45, ease: 'power2.in', overwrite: 'auto', onUpdate: rd, onComplete: rd }),
       onLeaveBack: () => gsap.to(portal, { opacity: 1, duration: 0.6, ease: 'expo.out', overwrite: 'auto', onUpdate: rd, onComplete: rd }) });
     words(); wake();
     // (home 1.1.3) on a phone the room is a plain stack (gfx-home.css, "THE MARKET ROOM ON A PHONE"): the client's window
@@ -780,7 +782,7 @@
       safe('marquee', marqueeInit);
       safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-std-sec'), 0.32));
     },
-    rooms: () => { [standardInit, casesInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
+    rooms: () => { [standardInit, casesInit, noteInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
     // (1.1.7) a window under 680px tall (a 1366x768 laptop with the browser's bars) has no room for the pinned market stage
     // even with the count fitted: it gets the still stage (every step shown, as with reduced motion). Decided at load.
     late: () => { const short = W.innerWidth > 767 && W.innerHeight < 680; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
