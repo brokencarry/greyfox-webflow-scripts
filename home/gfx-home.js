@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.25';
+  W.__gfxHome = '1.1.26';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -90,7 +90,13 @@
       'html [data-o~="gn-txt"]{max-width:36em}' +
       'html [data-o~="gn-sec"] .heading-2{margin:0 0 clamp(28px,3vw,44px)!important}' +
       'html [data-o~="gn-p"]{margin:0 0 1.15em!important;font:400 clamp(17px,1.3vw,20px)/1.62 var(--gfx-sans,"DM Sans",sans-serif);color:var(--gfx-ink-l1,#111112);text-wrap:pretty}' +
-      'html [data-o~="gn-sign"]{margin-top:clamp(32px,3.4vw,48px);padding-top:clamp(20px,2vw,28px);border-top:1px solid var(--gfx-line-l,rgba(17,17,18,.14))}' +
+      // (1.1.26) the photograph arrives as the portraits do (a cover of the field lifting off it), and the signature's rule
+      // is drawn, not shown
+      'html [data-o~="gn-cover"]{position:absolute;inset:0;z-index:2;background-color:var(--gfx-field,#f6f5f2);transform-origin:50% 0;pointer-events:none}' +
+      'html [data-o~="gn-sign"]{position:relative;margin-top:clamp(32px,3.4vw,48px);padding-top:clamp(20px,2vw,28px)}' +
+      'html [data-o~="gn-rule"]{position:absolute;left:0;right:0;top:0;height:1px;background:var(--gfx-line-l,rgba(17,17,18,.14));transform-origin:0 50%}' +
+      'html.gfx-tone-dark [data-o~="gn-rule"]{background:var(--gfx-line-d,rgba(242,241,238,.14))}' +
+      'html.gfx-failsafe [data-o~="gn-cover"]{display:none!important}' +
       'html [data-o~="gn-name"]{margin:0 0 4px!important;font-family:var(--gfx-serif,Sentient,Georgia,serif);font-weight:300;font-size:clamp(22px,1.7vw,28px);line-height:1.2;color:var(--gfx-ink-l1,#111112)}' +
       'html [data-o~="gn-role"]{margin:0!important}' +
       '@media (max-width:991px){html [data-o~="gn-in"]{grid-template-columns:1fr;row-gap:clamp(32px,6vw,48px)}html [data-o~="gn-pic"]{position:relative;top:auto}}' +
@@ -100,8 +106,14 @@
   }
   function noteInit() {
     const sec = $('[data-o~="gn-sec"]'); if (!sec) return;
-    const head = $('.heading-2', sec), pic = $('[data-o~="gn-pic"]', sec), img = $('[data-o~="gn-img"]', sec);
-    gfx.room({ trigger: head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), detail: $$('[data-o~="gn-sign"]', sec), pictures: pic ? [pic] : [] });
+    const head = $('.heading-2', sec), pic = $('[data-o~="gn-pic"]', sec), img = $('[data-o~="gn-img"]', sec), sign = $('[data-o~="gn-sign"]', sec);
+    const mk = (host, o) => { if (!host) return null; let e = $(`[data-o~="${o}"]`, host); if (!e) { e = D.createElement('i'); e.setAttribute('data-o', o); e.setAttribute('aria-hidden', 'true'); host.prepend(e); } return e; };
+    const cover = REDUCE ? null : mk(pic, 'gn-cover'), rule = mk(sign, 'gn-rule');
+    if (cover && covers) covers.push(cover);
+    // one film, in the house order: the headline rises, the letter follows, the photograph is uncovered, the rule under
+    // the letter is drawn, and the name settles
+    gfx.room({ trigger: head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), hairline: rule, detail: $$('[data-o~="gn-name"], [data-o~="gn-role"]', sec), extraPicture: !!cover,
+      extra: (tl, at) => { if (cover) tl.to(cover, { scaleY: 0, duration: G.picture.duration, ease: G.DRAW }, at('picture')); } });
     // the photograph settles from 1.06 to 1 as it rises into view, as the team's portraits do
     if (img) { if (img.srcset) img.sizes = '(max-width: 991px) 92vw, 420px'; let last = ''; img.style.scale = '1.06';
       ST.create({ trigger: pic || img, start: 'top bottom', end: 'top 35%', onUpdate: s => { const v = (1.06 - 0.06 * eo(s.progress)).toFixed(4); if (v !== last) { img.style.scale = v; last = v; } } }); }
@@ -765,7 +777,7 @@
      follows the page's (the close runs on into the footer as one black). */
   let covers = null, rootT = 0;
   const mirror = s => {
-    (covers || (covers = $$('.gfx-team-sec .reveal_block'))).forEach(e => e.style.setProperty('--gfx-field', s));
+    (covers || (covers = $$('.gfx-team-sec .reveal_block, [data-o~="gn-cover"]'))).forEach(e => e.style.setProperty('--gfx-field', s));
     clearTimeout(rootT); rootT = setTimeout(() => H.style.setProperty('--gfx-field', s), 160);
     // (core 1.0.31) the footer is see-through; the page's background shows behind it
   };
