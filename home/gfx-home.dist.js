@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.20 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.21 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,7 +1323,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.20';
+W.__gfxHome='1.1.21';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-mk-idx-fit')){const st=D.createElement('style');st.id='gfx-mk-idx-fit';st.textContent='@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
@@ -1842,11 +1842,29 @@ const s=D.createElement('script');s.src=base+'desktop-portal.js';s.async=true;s.
 });
 return portalP;
 }
+function pullReveal(fig,trigger){
+const q=$('.gfx-pull-q',fig),markImg=$('.gfx-pull-mark',fig),attr=$('.gfx-attr',fig),pic=$('.gfx-attr-pic',fig);
+let lines=[],split=null,played=false;
+if(q)split=W.SplitText.create(q,{type:'lines',mask:'lines',aria:'none',autoSplit:true,onSplit:self=>{lines=self.lines;if(!played)gsap.set(self.lines,{yPercent:G.headline.yPercent});}});
+if(markImg)gsap.set(markImg,{opacity:0,y:10});
+if(pic)gsap.set(pic,{clipPath:G.picture.clipFrom,scale:G.picture.scaleFrom});
+if(attr){attr.setAttribute('data-gfx-reveal','');gsap.set(attr,{opacity:0,y:G.detail.y});}
+const play=()=>{if(played)return;played=true;
+gfx.fitFilm(gsap.timeline({onComplete:()=>{if(split)split.revert();D.dispatchEvent(new Event('gfx:resplit'));}})
+.to(lines,{yPercent:0,duration:G.headline.duration,stagger:G.headline.stagger,ease:G.SETTLE},0)
+.to(markImg||{},{opacity:1,y:0,duration:G.detail.duration,ease:G.SETTLE},0)
+.to(pic||{},{clipPath:'inset(0% 0% 0% 0%)',duration:G.picture.duration,ease:G.DRAW},G.picture.at)
+.to(pic||{},{scale:1,duration:G.picture.duration,ease:G.SETTLE},G.picture.at)
+.to(attr||{},{opacity:1,y:0,duration:G.detail.duration,ease:G.SETTLE},G.detail.at));};
+ST.create({trigger:trigger||fig,start:'top 84%',once:true,onEnter:play});
+return play;
+}
 function teamInit(){
 const sec=$('.gfx-team-sec');if(!sec)return;
 const head=$('.gfx-team-head .heading-2',sec);
 gfx.room({trigger:head||sec,headline:head,body:$('.gfx-team-head .gfx-lead, .gfx-team-head .paragraph',sec),hairline:$('.gfx-team-hr',sec)});
-const imgs=$$('.gfx-team-img',sec),members=$$('.gfx-team-m',sec),stacked=W.innerWidth<768;
+const imgs=$('.gfx-team-img',sec),members=$('.gfx-team-m',sec),stacked=W.innerWidth<768;
+const tq=$('[data-o~="team-quote"]',sec);if(tq&&$('.gfx-pull',tq))safe('team quote',()=>pullReveal($('.gfx-pull',tq),tq));
 const byRow=ms=>{const rows=[];ms.forEach(m=>{const t=m.getBoundingClientRect().top+W.scrollY,r=rows.find(x=>Math.abs(x.t-t)<8);if(r)r.ms.push(m);else rows.push({t,ms:[m]});});return rows.map(x=>x.ms);};
 (stacked?byRow(members):[members]).forEach(group=>{
 if(!group.length)return;

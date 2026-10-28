@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.20';
+  W.__gfxHome = '1.1.21';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -622,12 +622,34 @@
     return portalP;
   }
 
+  /* (home 1.1.21, 10/28) A SECOND PULL QUOTE ON THE PAGE: the people room carries Lindsay's words under the three portraits
+     (data-o team-quote, the standard room's figure form). It arrives the way the standard room's does: the lines rise, the
+     mark settles, the portrait draws in, the name follows; once, as the figure reaches the lower sixth of the screen. */
+  function pullReveal(fig, trigger) {
+    const q = $('.gfx-pull-q', fig), markImg = $('.gfx-pull-mark', fig), attr = $('.gfx-attr', fig), pic = $('.gfx-attr-pic', fig);
+    let lines = [], split = null, played = false;
+    if (q) split = W.SplitText.create(q, { type: 'lines', mask: 'lines', aria: 'none', autoSplit: true, onSplit: self => { lines = self.lines; if (!played) gsap.set(self.lines, { yPercent: G.headline.yPercent }); } });
+    if (markImg) gsap.set(markImg, { opacity: 0, y: 10 });
+    if (pic) gsap.set(pic, { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom });
+    if (attr) { attr.setAttribute('data-gfx-reveal', ''); gsap.set(attr, { opacity: 0, y: G.detail.y }); }
+    const play = () => { if (played) return; played = true;
+      gfx.fitFilm(gsap.timeline({ onComplete: () => { if (split) split.revert(); D.dispatchEvent(new Event('gfx:resplit')); } })
+        .to(lines, { yPercent: 0, duration: G.headline.duration, stagger: G.headline.stagger, ease: G.SETTLE }, 0)
+        .to(markImg || {}, { opacity: 1, y: 0, duration: G.detail.duration, ease: G.SETTLE }, 0)
+        .to(pic || {}, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: G.DRAW }, G.picture.at)
+        .to(pic || {}, { scale: 1, duration: G.picture.duration, ease: G.SETTLE }, G.picture.at)
+        .to(attr || {}, { opacity: 1, y: 0, duration: G.detail.duration, ease: G.SETTLE }, G.detail.at)); };
+    ST.create({ trigger: trigger || fig, start: 'top 84%', once: true, onEnter: play });
+    return play;
+  }
   /* ========================= the team and its statement (sbx-m1.js + gf-line.js) ========================= */
   function teamInit() {
     const sec = $('.gfx-team-sec'); if (!sec) return;
     const head = $('.gfx-team-head .heading-2', sec);
     gfx.room({ trigger: head || sec, headline: head, body: $('.gfx-team-head .gfx-lead, .gfx-team-head .paragraph', sec), hairline: $('.gfx-team-hr', sec) });
-    const imgs = $$('.gfx-team-img', sec), members = $$('.gfx-team-m', sec), stacked = W.innerWidth < 768;
+    const imgs = $('.gfx-team-img', sec), members = $('.gfx-team-m', sec), stacked = W.innerWidth < 768;
+    // (1.1.21) Lindsay's words under the portraits
+    const tq = $('[data-o~="team-quote"]', sec); if (tq && $('.gfx-pull', tq)) safe('team quote', () => pullReveal($('.gfx-pull', tq), tq));
     const byRow = ms => { const rows = []; ms.forEach(m => { const t = m.getBoundingClientRect().top + W.scrollY, r = rows.find(x => Math.abs(x.t - t) < 8); if (r) r.ms.push(m); else rows.push({ t, ms: [m] }); }); return rows.map(x => x.ms); };
     (stacked ? byRow(members) : [members]).forEach(group => {
       if (!group.length) return;

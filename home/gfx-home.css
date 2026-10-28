@@ -532,3 +532,21 @@ html.gfx-f3 .gfx-ins-sec .collection-list-2 > .w-col { padding-left: 0; padding-
   html.gfx-f3 .gfx-mk-col { padding-left: 32px !important; padding-right: 32px !important; }
   html.gfx-f3 .gfx-cta-pad { padding-left: 32px !important; padding-right: 32px !important; }
 }
+
+/* (home 1.1.21, 10/28) RICKY ROMAN IN THE STANDARD ROOM, LINDSAY IN THE PEOPLE ROOM. The standard room's pull quote (now
+   Accordion's Head of M&A, sixty words) takes a reading measure on desktop: the house 22px with the leading opened to 1.6
+   and the column widened from the grid's 458px to 640px, right-aligned under the lede (six lines of about sixty
+   characters; the figure spans the grid and keeps to the right). Lindsay's quote moves to the people room under the three
+   portraits (data-o team-quote): the same figure in the same right column, a hairline above, before "grown through its
+   partners". Phones keep the house setting. */
+html.gfx-f3 .gfx-pull .gfx-pull-q { line-height: 1.5; }
+@media (min-width: 992px) {
+  html.gfx-f3 .gfx-pull .gfx-pull-q { line-height: 1.6; }
+  html.gfx-f3 .quote_section_wrapper .gfx-pull { grid-column: 1 / -1; width: 100%; max-width: 640px; margin-left: auto; justify-self: end; }
+  html.gfx-f3 [data-o~="team-quote"] { display: grid; grid-template-columns: 7.6fr 4.4fr; column-gap: 0; border-top: 1px solid var(--gfx-line-l, rgba(30, 30, 30, .12)); margin-top: 72px; padding-top: 56px; }
+  html.gfx-f3 [data-o~="team-quote"] .gfx-pull { grid-column: 2; margin: 0; }
+}
+@media (max-width: 991px) {
+  html.gfx-f3 [data-o~="team-quote"] { border-top: 1px solid var(--gfx-line-l, rgba(30, 30, 30, .12)); margin-top: 56px; padding-top: 40px; }
+  html.gfx-f3 [data-o~="team-quote"] .gfx-pull { margin: 0; }
+}
