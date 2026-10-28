@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.51 + owners 1.2.12 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.51 + owners 1.2.13 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,9 +1323,9 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.2.12';
+W.__gfxOwners='1.2.13';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
-if(!$('#gfx-ow-firms-8')){const st=D.createElement('style');st.id='gfx-ow-firms-8';st.textContent='@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(3,minmax(0,1fr))!important}}';(D.head||H).appendChild(st);}
+if(!$('#gfx-ow-firms-8')){const st=D.createElement('style');st.id='gfx-ow-firms-8';st.textContent='@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(8,minmax(0,1fr))!important}html:not(#gfx-o) [data-o~=ow-marq-track]>li{grid-column:span 2}html:not(#gfx-o) [data-o~=ow-marq-track]>li:nth-child(5){grid-column:2/span 2}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
 const HOLDQ='(min-width: 992px) and (min-height: 681px)',STACK='(max-width: 991px)',SHORT='(min-width: 992px) and (max-height: 680px)';
