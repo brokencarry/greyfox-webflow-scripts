@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.23';
+  W.__gfxHome = '1.1.24';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -81,7 +81,9 @@
     if ($('#gfx-owners-css')) return;
     const st = D.createElement('style'); st.id = 'gfx-owners-css';
     st.textContent =
-      'html [data-o~="gn-in"]{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);column-gap:clamp(40px,7vw,128px);align-items:start;max-width:var(--gfx-max,1320px);margin:0 auto;padding:0 var(--gfx-gutter,clamp(24px,4vw,64px));box-sizing:border-box}' +
+      // (1.1.24) the room keeps the team's gutter and width, so the photograph lines up with the team's left edge below
+      'html [data-o~="gn-sec"]{padding-left:var(--gfx-gutter,48px)!important;padding-right:var(--gfx-gutter,48px)!important}' +
+      'html [data-o~="gn-in"]{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);column-gap:clamp(40px,7vw,128px);align-items:start;max-width:1400px;margin:0 auto;padding:0;box-sizing:border-box}' +
       'html [data-o~="gn-pic"]{position:sticky;top:clamp(96px,14vh,140px);aspect-ratio:4/3;overflow:hidden;background:#e9e7e2}' +
       'html [data-o~="gn-img"]{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%}' +
       'html [data-o~="gn-txt"]{max-width:36em}' +
@@ -490,7 +492,7 @@
       const uEnd = lerp(lerp(1, PORTAL_U(), d), 1, ss(X)) * birthK, SEG = phone() ? 14 : 28;
       const laneY = k => yc + (k - 5.5) * fh * 0.052 * (1 - d * 0.85);
       if (!phone()) {
-        const gIn = gateIn(), gA = gIn * (1 - c * 0.85);
+        const gIn = gateIn(), gA = gIn * (1 - c * 0.85) * (portal ? 1 : 1 - d);   // (1.1.24) the checks step aside for the point
         if (gA > 0.01) GATES.forEach((g, i) => { const r = gateReach(i), x = F.x0 + (F.x1 - F.x0) * g, y1 = F.top + fh * gIn; ctx.lineWidth = 1;
           if (r < 0.99) { ctx.globalAlpha = gA * 0.45 * (1 - r); ctx.strokeStyle = ink(0.4); ctx.beginPath(); ctx.moveTo(x, F.top); ctx.lineTo(x, y1); ctx.stroke(); }
           if (r > 0.01) { ctx.globalAlpha = gA * 0.8 * r; ctx.strokeStyle = '#2f9a6c'; ctx.beginPath(); ctx.moveTo(x, F.top); ctx.lineTo(x, y1); ctx.stroke(); } });
@@ -498,7 +500,9 @@
       const y = (t, u) => {
         let amp = t.amp * fh * (1 - c * 0.7) * (1 - d);
         if (b > 0) for (const g of GATES) if (u > g) amp *= 1 - 0.28 * b;
-        const wave = Math.sin(t.ph + u * t.f * 6.283) * amp, spread = F.top + t.y0 * fh, funnel = ss(clamp((u - 0.25) / 0.75, 0, 1));
+        // (1.1.24) without the window the funnel closes at the point, not at the edge, so the strands meet in it
+        const uf = portal ? u : u / lerp(1, PORTAL_U(), d);
+        const wave = Math.sin(t.ph + u * t.f * 6.283) * amp, spread = F.top + t.y0 * fh, funnel = ss(clamp((uf - 0.25) / 0.75, 0, 1));
         const sorted = laneY(t.lane) + (t.y0 - 0.5) * fh * 0.04;
         let tgt = lerp(lerp(spread, yc + (t.y0 - 0.5) * fh * 0.62, a * 0.35), sorted, c);
         if (t.pri) tgt = lerp(tgt, yc, d);
