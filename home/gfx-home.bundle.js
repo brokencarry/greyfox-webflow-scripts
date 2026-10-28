@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.50 + home 1.1.19. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.50 + home 1.1.20. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1621,7 +1621,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.19';
+  W.__gfxHome = '1.1.20';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -2333,9 +2333,10 @@
       safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-std-sec'), 0.32));
     },
     rooms: () => { [standardInit, casesInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
-    // (1.1.7) a window under 680px tall (a 1366x768 laptop with the browser's bars) has no room for the pinned market stage
-    // even with the count fitted: it gets the still stage (every step shown, as with reduced motion). Decided at load.
-    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 680; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
+    // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
+    // Decided at load. (1.1.20, a visitor's replay at 1267x634) the line was 680px; the film fits from 560px with the
+    // column set for the short screen (gfx-home.css), so a laptop with the browser's bars keeps the strands and the window.
+    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 560; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
     still: () => {
       gsap = W.gsap || null; ST = W.ScrollTrigger || null;
       $$('.gfx-case-ch').forEach(c => c.classList.add('gfx-on'));
