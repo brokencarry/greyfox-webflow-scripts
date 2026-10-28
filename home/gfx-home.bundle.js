@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.50 + home 1.1.26. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.50 + home 1.1.27. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1628,7 +1628,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.26';
+  W.__gfxHome = '1.1.27';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -1651,15 +1651,16 @@
       { el: '.gfx-case-sec', native: 'L', tone: 'L', tier: 'breath' },
       // (the turn into the market waits until the climb's room has all but left: its foot within the top fifth)
       { el: '.gfx-mk', native: 'D', tone: 'D', turnAt: (ym, c) => { const pv = c.prev.el, out = c.docTop(pv) + pv.offsetHeight - c.vh * 0.2; return out > ym ? Math.min(out, c.max - c.vh * 0.05) : ym; } },
-      // (back to paper once the stage has released, its foot at 70%, and not before the market's last line has left the
-      // screen) (1.1.23, the owners site) the founder's note is the first room on paper; the team follows it
-      { el: '[data-o~="gn-sec"]', native: 'L', tone: 'L', tier: 'standard', turnAt: (ym, c) => {
-        const pv = c.prev.el, out = c.docTop(pv) + pv.offsetHeight - c.vh * 0.7; if (out > ym) ym = Math.min(out, c.max - c.vh * 0.05);
-        const stg = $('.gfx-mk-stage', pv);
-        if (stg) { const st = stg.getBoundingClientRect().top; let lo = 0; $$('p, h2, h3, .gfx-mk-cap, .gfx-mk-ill, .gfx-mk-fig, .gfx-mk-steps, li', stg).forEach(e => { if (e.closest('.gfx-mk-sr')) return; const r = e.getBoundingClientRect(); if (r.height > 1 && r.width > 1) lo = Math.max(lo, r.bottom - st); });
-          const gone = c.docTop(pv) + pv.offsetHeight - stg.offsetHeight + lo; if (lo && gone > ym) ym = Math.min(gone, c.max - c.vh * 0.05); }
+      // (1.1.27, the owners site; desktop review 10/28: on paper the letter was read on black and turned mid-read) the
+      // founder's note belongs to the black chapter: the market narrows to one owner, and the next thing on the black is
+      // who is calling. One turn follows, into the team.
+      { el: '[data-o~="gn-sec"]', native: 'D', tone: 'D', tier: 'standard' },
+      // (back to paper once the letter has all but left: its last line in the top eighth, and black-free by the time the
+      // team's headline is in the lower seventh, as the close's turn is placed)
+      { el: '.gfx-team-sec', native: 'L', tone: 'L', tier: 'turn', turnAt: (ym, c) => {
+        const lb = c.lastBottom(c.prev.el); if (Number.isFinite(lb) && lb - c.vh * 0.12 > ym) ym = Math.min(lb - c.vh * 0.12, c.max - c.vh * 0.05);
+        const hd = $('.heading-2', c.room.el); if (hd) ym = Math.min(ym, c.docTop(hd) - c.vh * 0.86);
         return ym; } },
-      { el: '.gfx-team-sec', native: 'L', tone: 'L', tier: 'standard' },
       { el: '.gfx-ins-sec', native: 'L', tone: 'L', tier: 'standard' },
       // (the close's turn waits for the thinking's last line to rise into the top eighth; it is black by the time its
       // headline is in the lower seventh)
@@ -1684,23 +1685,27 @@
     st.textContent =
       // (1.1.24) the room keeps the team's gutter and width, so the photograph lines up with the team's left edge below
       'html [data-o~="gn-sec"]{padding-left:var(--gfx-gutter,48px)!important;padding-right:var(--gfx-gutter,48px)!important}' +
-      'html [data-o~="gn-in"]{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);column-gap:clamp(40px,7vw,128px);align-items:start;max-width:1400px;margin:0 auto;padding:0;box-sizing:border-box}' +
+      // (1.1.27, desktop review 10/28) the letter keeps the quote room's prose column (the last 34% of the content width, at
+      // every width), and the photograph stands just left of it, one unit with the letter
+      'html [data-o~="gn-in"]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,34.1%);column-gap:0;align-items:start;max-width:1400px;margin:0 auto;padding:0;box-sizing:border-box}' +
       // (1.1.25, founder 10/28: his outdoor photo, head and shoulders) a portrait frame, held to the photograph's own width
-      'html [data-o~="gn-pic"]{position:sticky;top:clamp(96px,14vh,140px);width:100%;max-width:420px;aspect-ratio:4/5;overflow:hidden;background:#e9e7e2}' +
+      'html [data-o~="gn-pic"]{position:sticky;top:clamp(96px,14vh,140px);justify-self:end;width:100%;max-width:420px;margin-right:clamp(64px,7vw,128px);aspect-ratio:4/5;overflow:hidden;background:#1b1b1c}' +
       'html [data-o~="gn-img"]{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 50%}' +
-      'html [data-o~="gn-txt"]{max-width:36em}' +
-      'html [data-o~="gn-sec"] .heading-2{margin:0 0 clamp(28px,3vw,44px)!important}' +
-      'html [data-o~="gn-p"]{margin:0 0 1.15em!important;font:400 clamp(17px,1.3vw,20px)/1.62 var(--gfx-sans,"DM Sans",sans-serif);color:var(--gfx-ink-l1,#111112);text-wrap:pretty}' +
+      // (1.1.27) the room is native to the black: its inks are the dark field's
+      'html [data-o~="gn-sec"] .heading-2{margin:0 0 clamp(28px,3vw,44px)!important;color:var(--gfx-ink-d1,#f2f1ee)}' +
+      'html [data-o~="gn-p"]{margin:0 0 1.15em!important;font:400 clamp(17px,1.3vw,20px)/1.62 var(--gfx-sans,"DM Sans",sans-serif);color:var(--gfx-ink-d1,#f2f1ee);text-wrap:pretty}' +
       // (1.1.26) the photograph arrives as the portraits do (a cover of the field lifting off it), and the signature's rule
       // is drawn, not shown
       'html [data-o~="gn-cover"]{position:absolute;inset:0;z-index:2;background-color:var(--gfx-field,#f6f5f2);transform-origin:50% 0;pointer-events:none}' +
       'html [data-o~="gn-sign"]{position:relative;margin-top:clamp(32px,3.4vw,48px);padding-top:clamp(20px,2vw,28px)}' +
-      'html [data-o~="gn-rule"]{position:absolute;left:0;right:0;top:0;height:1px;background:var(--gfx-line-l,rgba(17,17,18,.14));transform-origin:0 50%}' +
-      'html.gfx-tone-dark [data-o~="gn-rule"]{background:var(--gfx-line-d,rgba(242,241,238,.14))}' +
+      'html [data-o~="gn-rule"]{position:absolute;left:0;right:0;top:0;height:1px;background:var(--gfx-line-d,rgba(242,241,238,.16));transform-origin:0 50%}' +
+      'html.gfx-tone-light [data-o~="gn-rule"]{background:var(--gfx-line-l,rgba(17,17,18,.14))}' +
       'html.gfx-failsafe [data-o~="gn-cover"]{display:none!important}' +
-      'html [data-o~="gn-name"]{margin:0 0 4px!important;font-family:var(--gfx-serif,Sentient,Georgia,serif);font-weight:300;font-size:clamp(22px,1.7vw,28px);line-height:1.2;color:var(--gfx-ink-l1,#111112)}' +
+      'html [data-o~="gn-name"]{margin:0 0 4px!important;font-family:var(--gfx-serif,Sentient,Georgia,serif);font-weight:300;font-size:clamp(22px,1.7vw,28px);line-height:1.2;color:var(--gfx-ink-d1,#f2f1ee)}' +
       'html [data-o~="gn-role"]{margin:0!important}' +
-      '@media (max-width:991px){html [data-o~="gn-in"]{grid-template-columns:1fr;row-gap:clamp(32px,6vw,48px)}html [data-o~="gn-pic"]{position:relative;top:auto}}' +
+      '@media (max-width:991px){html [data-o~="gn-in"]{grid-template-columns:1fr;row-gap:clamp(32px,6vw,48px)}html [data-o~="gn-pic"]{position:relative;top:auto;justify-self:start;margin-right:0}}' +
+      // (desktop review 10/28) the pull quote breaks evenly: no word left alone on its last line
+      'html .gfx-pull-q{text-wrap:pretty}' +
       // (the reading list's cards are whole-card links: no browser underline under their words at any width)
       'html .gfx-ins-sec .gfx-ink-card a,html .gfx-ins-sec .gfx-ink-lead{text-decoration:none!important}';
     (D.head || H).appendChild(st);
@@ -2091,7 +2096,10 @@
     const fieldR = () => phone() ? { x0: -8, x1: Wd + 8, top: Hd * 0.36, bot: Hd * 0.6 } : { x0: -Wd * 0.04, x1: Wd * 1.02, top: Math.max(Hd * 0.14, W.innerWidth < 992 ? 132 : 118), bot: Hd * 0.9 };
     // (1.1.23, the owners site) without the window the gathered line ends in a point three quarters across: the one owner
     // the whole market narrowed to; as the stage releases, the line runs on to the edge and the point lets go
-    const PORTAL_U = () => (!portal ? (phone() ? 0.86 : 0.8) : phone() ? 1.02 : 0.575);
+    // (1.1.27, desktop review 10/28: at 1920 the point sat well inside the content, the right third empty) on a desktop the
+    // point stands on the content's right edge (32px in, room for its ring), where the window's own edge was
+    const pointU = () => { const cw = Math.min(Wd - 96, 1400), xr = (Wd + cw) / 2 - 32; return (xr + Wd * 0.04) / (Wd * 1.06); };
+    const PORTAL_U = () => (!portal ? (phone() ? 0.86 : pointU()) : phone() ? 1.02 : 0.575);
     const GATES = [0.6, 0.71, 0.82];
     /* (home 1.1.5, founder 10/20: "feels like your scroll is moving the lines") each step's change runs across the first
        two thirds of its window, so the strands move for as long as the reader scrolls and rest once the step has said
