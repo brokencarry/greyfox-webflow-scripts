@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.51 + investors 1.0.20 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.51 + investors 1.0.21 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,7 +1323,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.20';
+W.__gfxInvestors='1.0.21';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1554,6 +1554,7 @@ if(skip)tl.progress(1);});
 const clientQuoteInit=()=>{
 quoteRowInit(R.del,R.del&&$(O('iv-cq')+O('is-client'),R.del));
 quoteRowInit(R.cases,R.cases&&$(O('iv-cq')+O('is-cases'),R.cases));
+quoteRowInit(R.res,R.res&&$(O('iv-cq')+O('is-fun'),R.res));
 };
 function casesInit(){
 const room=R.cases,list=room&&$(O('iv-case-list'),room);if(!list)return;

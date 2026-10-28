@@ -115,13 +115,13 @@ html.iv-f2 [data-o~="iv2-mplay"] { transition: color .2s cubic-bezier(.25, 1, .5
    our clients in minutes.", whose lede is "When a firm lets us speak in its name...": the client says it back. It takes Home's
    testimonial (Lindsay Lewellen's) whole: the house quote mark over the serif quote, the round 81 px headshot 18 px from the
    name over the role, in the room's right column (the lede's), under a hairline in the room's rule colour */
-html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"]) { display: grid; grid-template-columns: 7fr 5fr; column-gap: var(--gap); max-width: none;
+html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"], [data-o~="is-fun"]) { display: grid; grid-template-columns: 7fr 5fr; column-gap: var(--gap); max-width: none;
   margin: clamp(32px, 5vh, 56px) 0 0; padding-top: clamp(40px, 6vh, 56px); border-top: 1px solid var(--c-rule, #e7e8ea); }
-html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"]) > * { grid-column: 2; min-width: 0; }
+html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"], [data-o~="is-fun"]) > * { grid-column: 2; min-width: 0; }
 html.iv-f2 [data-o~="iv-cq-mark"] { display: block; width: 28px; height: 22px; margin: 0 0 19px; filter: brightness(0); }
-html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"]) blockquote { margin: 0; padding: 0; border: 0; }
-html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"]) blockquote p { margin: 0; max-width: none; font: 200 22px/1.35 Sentient, Georgia, serif; text-indent: 0; text-wrap: pretty; }
-html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"]) figcaption { display: flex; align-items: center; column-gap: 18px; margin-top: 25px; }
+html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"], [data-o~="is-fun"]) blockquote { margin: 0; padding: 0; border: 0; }
+html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"], [data-o~="is-fun"]) blockquote p { margin: 0; max-width: none; font: 200 22px/1.35 Sentient, Georgia, serif; text-indent: 0; text-wrap: pretty; }
+html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"], [data-o~="is-fun"]) figcaption { display: flex; align-items: center; column-gap: 18px; margin-top: 25px; }
 html.iv-f2 [data-o~="iv-cq-pic"] { flex: none; width: 81px; height: 81px; border-radius: 50%; object-fit: cover; display: block; }
 html.iv-f2 [data-o~="iv-cq-id"] { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 html.iv-f2 :is([data-o~="iv-cq-name"], [data-o~="iv-cq-role"]) { margin: 0; text-indent: 0; }
@@ -135,8 +135,8 @@ html.iv-f2 [data-o~="iv-cq"] [data-o~="iv-cq-role"]:not(#gfx-q1):not(#gfx-q2) { 
    (white, the room's secondary white, its rule), the mark (both quotes) turned white whenever the field is dark */
 html.iv-f2.iv2-dt [data-o~="iv-cq-mark"] { filter: brightness(0) invert(1); }
 @media (max-width: 991px) {
-  html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"]) { grid-template-columns: minmax(0, 1fr); }
-  html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"]) > * { grid-column: 1; }
+  html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"], [data-o~="is-fun"]) { grid-template-columns: minmax(0, 1fr); }
+  html.iv-f2 [data-o~="iv-cq"]:is([data-o~="is-client"], [data-o~="is-cases"], [data-o~="is-fun"]) > * { grid-column: 1; }
   html.iv-f2 [data-o~="iv-cq-role"] { font-size: 16px; }   /* as Lindsay's on a phone */
 }
 /* the cases room's right column held the quote; with the quote in the client room it is empty, so the heading takes the house

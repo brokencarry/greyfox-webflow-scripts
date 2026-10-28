@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.20';
+  W.__gfxInvestors = '1.0.21';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -306,6 +306,8 @@
   const clientQuoteInit = () => {
     quoteRowInit(R.del, R.del && $(O('iv-cq') + O('is-client'), R.del));
     quoteRowInit(R.cases, R.cases && $(O('iv-cq') + O('is-cases'), R.cases));
+    // (1.0.21, 10/28) Lindsay Lewellen's quote (from Home) closes the research room under the four-stage funnel: the pace, then a client on the partnership
+    quoteRowInit(R.res, R.res && $(O('iv-cq') + O('is-fun'), R.res));
   };
   /* ========================= 5 · three searches (investors.js §5) ========================= */
   function casesInit() {
