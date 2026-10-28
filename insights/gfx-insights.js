@@ -37,7 +37,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.4';
+  W.__gfxInsights = '1.3.5';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -498,7 +498,8 @@
     // word a line
     st.textContent = 'html [data-o~="gi-next-t"]{font-size:clamp(28px,2.6vw,44px)!important;line-height:1.08!important}' +
       'html [data-o~="gi-ameta"]{flex-wrap:wrap;row-gap:6px}html [data-o~="gi-ameta"]>*{white-space:nowrap}' +
-      'html [data-o~="gi-acat"]:not([href]){text-decoration:none!important;cursor:auto}';
+      // (1.3.5, phone review 10/28) the label's link underline is a drawn background, and it ran on under the dot
+      'html [data-o~="gi-acat"]:not([href]){text-decoration:none!important;background-image:none!important;cursor:auto}';
     (D.head || H).appendChild(st);
     // (the teaser and the cards are built from the feed after this runs: settle them once the page has been composed)
     // a meta line's dot ends the item before it, so a wrapped line never opens on a dot; and with no topic filter on
@@ -507,7 +508,9 @@
       $$(`${O('gi-meta')}, ${O('gi-ameta')}, ${O('gi-tile-k')}`).forEach(m => $$(O('gi-sep'), m).forEach(s => {
         if (s.hasAttribute('data-gi-moved')) return;
         const it = s.parentElement, prev = it === m ? s.previousElementSibling : (it && it.firstChild === s && it.parentElement === m ? it.previousElementSibling : null);
-        if (prev) { prev.appendChild(s); s.setAttribute('data-gi-moved', ''); } }));
+        // (1.3.5, phone review 10/28) the article's meta carries a dot both between its items and at the head of the next
+        // one: an item that already ends on a dot takes no second ("February 5, 2025 • • 3 min read")
+        if (prev) { const last = prev.lastElementChild; if (last && last.matches(O('gi-sep'))) { s.remove(); return; } prev.appendChild(s); s.setAttribute('data-gi-moved', ''); } }));
       const cat = $(O('gi-acat')); if (cat && cat.hasAttribute('href')) cat.removeAttribute('href');
     };
     settle(); W.setTimeout(settle, 0); W.addEventListener('load', settle, { once: true });

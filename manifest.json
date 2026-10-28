@@ -1,15 +1,15 @@
 {
  "home/gfx-home.dist.js": {
-  "bytes": 137361,
-  "sri": "sha384-ptKaD97IZt3RKEMZnaqxavdn4ltaas97uvCZi6/f385zCf0IK7b+QwsVyCgHhdPI"
+  "bytes": 141533,
+  "sri": "sha384-T5IptebhBxqJdvnm78N3hZmBG/hDI2DACmD+nysn7Qn7CFqAFJitI5QxvbHte+uJ"
  },
  "core/gfx-core.dist.css": {
   "bytes": 34523,
-  "sri": "sha384-cefs+R3VxsRdb/NHWqMsxl18y6FBOdPDrHp5qD/oxGPDS0F1HwokGqr6DL2Nuou/"
+  "sri": "sha384-JYLJm6XM6L06P3soodyZnfE0zmZZlRmEMCojmG7wy3SvldF33DY9sHuyTaAVlTrr"
  },
  "home/gfx-home.dist.css": {
-  "bytes": 33892,
-  "sri": "sha384-WLbJXEvkZ3KRJ2dv8tuwJs/tnaVGSiUgcKiz4itZvv4SHR6ep7MaXrCiB8FAPH2Y"
+  "bytes": 34914,
+  "sri": "sha384-3DVJPRjymv7lCwosn01n11xv27Ax0BRoMHVzeWccJnnsZRrZiRBqbT4kYJvYka6Z"
  },
  "portal/desktop-portal.js": {
   "bytes": 9244,
@@ -20,74 +20,74 @@
   "sri": "sha384-xM/J5qNZhadqmlr9nxTSyFXfgwa9MRuX9L7YtP7zgTxSFgwprSUvU/xmvlcGPDEn"
  },
  "owners/gfx-owners.dist.js": {
-  "bytes": 119132,
-  "sri": "sha384-FkT39Kz+RiaD2v7pSMdWguZZMMhg7yUxk16p0/gzkEbQKpFZMxdXS8p12o4LCdKy"
+  "bytes": 122552,
+  "sri": "sha384-BgHOrgVvjbSxR6cSBv0UPlPreZvISYEGQbarQ8sUOXaFcUBpk8O1pcZFpKHn+fgI"
  },
  "owners/gfx-owners.dist.css": {
-  "bytes": 51100,
-  "sri": "sha384-tbe1+4XJqiJSm0uuflKJ1wTHCIyPKOF3ajwPnWGlveDagaBzbLzrG/aBTzOyyVT2"
+  "bytes": 51229,
+  "sri": "sha384-IqP8n9C5il2+AeCB5zj/wKXwDW349w9lkeBfvZzJV5sz3ifz4EaIABqGqNDesHKV"
  },
  "owners/pt/pt-film.js": {
-  "bytes": 107965,
-  "sri": "sha384-eiYhunOz0VGWnJC4tNP7cCwt2DfEwnWNiqw+BdkIwuFfKG3fO2XCqBM4VqqRC8ED"
+  "bytes": 108183,
+  "sri": "sha384-9Bkb3x0gmXUxROz8Rz7G2ewiuh69dNFnP5G1mPe6rjcOqDwy10WZUKVyBEjSNQrP"
  },
  "contact/gfx-contact.dist.js": {
-  "bytes": 114179,
-  "sri": "sha384-6WFObzNXZjH/IGPY5J4BpbJYUoFwq4tALUdkT4KHeiAvoCi8+DvRmYkEJknHwRNk"
+  "bytes": 117597,
+  "sri": "sha384-31Sk10K6YNJBqQQq1tSeGEJ77b+4+5Uvic6GsQ6N2sBTg0eckghCOxiVPtFqsnN+"
  },
  "contact/gfx-contact.dist.css": {
   "bytes": 44038,
   "sri": "sha384-0hMe86zH9Sjx9lvKgY/OE7/CdOFl66KgHwddMf5DCUjVoAZqR6NqVk1MGYsSivSB"
  },
  "privacy/gfx-privacy.dist.js": {
-  "bytes": 104402,
-  "sri": "sha384-5j6RCws1o/ysPmpbj9Vep9muYc1EiiNH52R5JP6nETMawzrNURB9khdexQjLSIJX"
+  "bytes": 107820,
+  "sri": "sha384-BLtkEHA/Ww1Xz7bhwBIQLX79cRjHbo5diK4vlcZqT46HNS10S5M+gIrleBq3xLhO"
  },
  "privacy/gfx-privacy.dist.css": {
   "bytes": 23783,
   "sri": "sha384-OfwtoTtVeGE7PaqPG0Qut/t+bnX1UHPPEZZsgs5Rv4Z262ciiSIQJDTLf6qjommK"
  },
  "team/gfx-team.dist.js": {
-  "bytes": 112933,
-  "sri": "sha384-gb+1WYoSG1ywgNRPmDPKf4lqAp7MAPEhI5P8Gyj6/uoTWSx5bdow6Mz+RWiFWZ0z"
+  "bytes": 116351,
+  "sri": "sha384-rgqWejNl5ziCCKS0mP4/i4t8lPWZUaBKH/dgWSa+0R4AaCzOFnQiuaGo3suyL9Zm"
  },
  "team/gfx-team.dist.css": {
   "bytes": 34948,
   "sri": "sha384-RZlRYkD45gHOXehBMPip5jkDsda7D7TVaoJkEKyfwOkBYzq1YuCEX1zWqxbIoA0t"
  },
  "insights/gfx-insights.dist.js": {
-  "bytes": 136227,
-  "sri": "sha384-OpjZjMWOUjwbxUzIeBVUTtFzb7IJZ2XHoVHblOTQAtAF8flQKVwj84XMzDErHcN4"
+  "bytes": 139765,
+  "sri": "sha384-+duNktR5HqT5U/46h6FRjV5BNV93EFb+0LIUKv7zFuoJmOSrNUYVVFOaN4ipKVJY"
  },
  "insights/gfx-insights.dist.css": {
   "bytes": 55387,
-  "sri": "sha384-mTk0YqcP0a9Kmu9skY7PH5yxJEMxwFAgR8XspP2SWF4MjkkQ0jo0Jpj8EGrBkO97"
+  "sri": "sha384-PmiVUMPXwBzJ0vGyaht9K3gXawVjbz3K+rv1OQZBilWgUZEAjZTP5rrZP9cPWwL+"
  },
  "person/gfx-person.dist.js": {
-  "bytes": 97844,
-  "sri": "sha384-TBWU+v8k5TOmoNSEy0t0pNuX/Gt63mEPg0HtTPXv/Jqo6ABTpv5Kdu73iqXWXtwN"
+  "bytes": 101262,
+  "sri": "sha384-1pN13fkW33I+ecdXtvgmZDJXyPD8Zg0S4lM32AUmU1PchpWWUznSOtOejS9+h63D"
  },
  "person/gfx-person.dist.css": {
   "bytes": 17032,
   "sri": "sha384-dhb/S1yI7H6qcvG8GVO7U5lLiMNLqVwL+4VI0CaST3hfJZhIAGdjB7D7flT2E0W8"
  },
  "investors/gfx-investors.dist.js": {
-  "bytes": 132242,
-  "sri": "sha384-4zHFLiR9kwJSEFgs5tJAjp63c7eHaIWPw01xBeW5ipodBAgIzztmnE6OdPTv+dk0"
+  "bytes": 135660,
+  "sri": "sha384-/fsZOwC5d5Scw5eGZECULEzSKuL6xsbMvOGPcuxiZUKEWB8dfO1x67pjxIb0W5Xy"
  },
  "investors/gfx-investors.dist.css": {
   "bytes": 63224,
   "sri": "sha384-NWoEv+SXV3GZ4tuwKR3ORp3Jfsua51YKO8io5aDizEs/SlZiXo+ssyVDCjMwokTd"
  },
  "_versions": {
-  "core": "1.0.50",
-  "home": "1.1.22",
-  "owners": "1.2.9",
+  "core": "1.0.52",
+  "home": "1.1.28",
+  "owners": "1.2.11",
   "pages": "1.0.3",
   "contact": "1.0.12",
   "privacy": "1.0.2",
   "team": "1.0.3",
-  "insights": "1.3.4",
+  "insights": "1.3.5",
   "person": "1.0.6",
   "investors": "1.0.19"
  }

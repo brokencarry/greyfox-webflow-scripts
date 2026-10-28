@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.50 + person 1.0.6 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.52 + person 1.0.6 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.50';
+const VERSION='1.0.52';
 const SITE=Object.assign({
 domain:'greyfoxpartners.com',mail:'inquiries@greyfoxpartners.com',
 nav:[['Business Owners','/business-owners'],['Investors','/investors'],['Team','#team'],['Insights','https://www.greyfoxpartners.com/insights'],['Contact','/contact']]
@@ -613,10 +613,11 @@ return inkQ.length>0;
 };
 const TIERS=()=>{
 const vh=W.innerHeight,phone=W.innerWidth<=991,cl=(a,v,b)=>Math.min(b,Math.max(a,v));
-const turn=Math.max(224,vh*0.35);
+const turn=Math.max(224*cl(0.6,vh / 900,1),vh*0.35);
 if(W.innerWidth<=767){const g=parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--_phone---section-gap'))||80;return{tight:g,standard:g,breath:Math.round(g*1.6),turn:Math.max(192,vh*0.3)};}
 if(phone)return{tight:80,standard:96,breath:128,turn:Math.max(192,vh*0.3)};
-return{tight:cl(64,vh*0.0711,93)*2,standard:cl(96,vh*0.1067,139)+cl(64,vh*0.0711,93),breath:cl(192,vh*0.2133,278)+cl(96,vh*0.1067,139),turn};
+const k=cl(0.6,vh / 900,1);
+return{tight:cl(64*k,vh*0.0711,93)*2,standard:cl(96*k,vh*0.1067,139)+cl(64*k,vh*0.0711,93),breath:cl(192*k,vh*0.2133,278)+cl(96*k,vh*0.1067,139),turn};
 };
 let STICKY=new Set();
 const stickyShift=(el,rm)=>{
@@ -773,7 +774,46 @@ D.addEventListener('keydown',e=>{if((e.key==='Escape'||e.key==='Esc')&&open){set
 addEventListener('resize',()=>{if(open&&W.innerWidth>=992)set(false);});
 menu.setAttribute('aria-hidden','true');btn.setAttribute('aria-expanded','false');
 }
-function navReserve(){$$('.nav_desktop > a.navigation-item').forEach(a=>{if(!a.hasAttribute('data-gfx-t'))a.setAttribute('data-gfx-t',a.textContent.trim());});}
+function navReserve(){$('.nav_desktop > a.navigation-item').forEach(a=>{if(!a.hasAttribute('data-gfx-t'))a.setAttribute('data-gfx-t',a.textContent.trim());});}
+function layoutReport(){
+const fs=function(){try{if(typeof W.FS==='function')W.FS.apply(null,arguments);}catch(e){}};
+if(navigator.webdriver){fs('shutdown');return;}
+const page=location.pathname;
+const base=()=>({w:W.innerWidth,h:W.innerHeight,dpr:+(W.devicePixelRatio||1).toFixed(2),touch:TOUCH,page:page,core:VERSION});
+setTimeout(()=>fs('trackEvent',{name:'gfx_viewport',properties:base()}),2500);
+let sent=false,n=0,t=0;
+const scan=()=>{
+const vw=W.innerWidth,vh=W.innerHeight,cols=24,rows=24,grid=new Uint8Array(cols*rows);
+const mark=r=>{const x0=Math.max(0,Math.floor(r.left / vw*cols)),x1=Math.min(cols-1,Math.floor((r.right-1) / vw*cols)),y0=Math.max(0,Math.floor(r.top / vh*rows)),y1=Math.min(rows-1,Math.floor((r.bottom-1) / vh*rows));for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)grid[y*cols+x]=1;};
+const spans=new Map();
+for(const e of D.body.querySelectorAll('*')){
+if(e.closest('.gfx-nav, .w-nav, .gfx-skip'))continue;
+const r=e.getBoundingClientRect();if(r.bottom<=0||r.top>=vh||r.right<=0||r.left>=vw||r.width<6||r.height<6)continue;
+const cs=getComputedStyle(e);if(cs.visibility==='hidden'||+cs.opacity<0.08)continue;
+const tag=e.tagName;let content= /^(IMG|CANVAS|VIDEO|SVG|PICTURE|IFRAME)$/.test(tag);
+let text=false;if(!content){for(const c of e.childNodes){if(c.nodeType===3&&c.textContent.trim()){text=true;try{const rg=D.createRange();rg.selectNodeContents(c);for(const lr of rg.getClientRects())if(lr.width>1&&lr.height>1)mark(lr);}catch(x){mark(r);}}}}
+if(!content&&!text){if(cs.borderTopStyle!=='none'&&cs.borderTopWidth!=='0px')mark({left:r.left,right:r.right,top:r.top,bottom:r.top+2});if(cs.borderBottomStyle!=='none'&&cs.borderBottomWidth!=='0px')mark({left:r.left,right:r.right,top:r.bottom-2,bottom:r.bottom});if(cs.backgroundImage!=='none'&&r.width<vw*0.98)content=true;}
+if(!content&&!text)continue;
+if(content)mark(r);const s=e.closest('section, footer, .gfx-fr');if(s){const o=spans.get(s)||{l:1e9,r:0};o.l=Math.min(o.l,r.left);o.r=Math.max(o.r,r.right);spans.set(s,o);}
+}
+let run=0,band=0;for(let y=0;y<rows;y++){let empty=true;for(let x=0;x<cols;x++)if(grid[y*cols+x]){empty=false;break;}run=empty?run+1:0;if(run>band)band=run;}
+run=0;let col=0;for(let x=0;x<cols;x++){let empty=true;for(let y=2;y<rows;y++)if(grid[y*cols+x]){empty=false;break;}run=empty?run+1:0;if(run>col)col=run;}
+let found=null;
+if(band / rows>=0.45)found={kind:'band',share:+(band / rows).toFixed(2)};
+else if(col / cols>=0.4)found={kind:'column',share:+(col / cols).toFixed(2)};
+else spans.forEach((o,s)=>{if(found)return;const sr=s.getBoundingClientRect();if(sr.top>vh*0.1||sr.bottom<vh*0.9)return;const share=(o.r-o.l) / vw;if(share<0.6)found={kind:'narrow',share:+share.toFixed(2),sec:(s.className||'').toString().slice(0,40)};});
+return found;
+};
+const measure=()=>{
+if(sent||n++>40||W.innerWidth<992||D.hidden)return;
+const f=scan();if(!f)return;const y=W.scrollY;
+setTimeout(()=>{if(sent||Math.abs(W.scrollY-y)>5)return;const g=scan();if(!g)return;sent=true;fs('trackEvent',{name:'gfx_layout_hole',properties:Object.assign(base(),{y:Math.round(y)},g)});if(DEBUG)log('layout hole',JSON.stringify(g));},1200);
+};
+const arm=()=>{if(!t)t=setTimeout(()=>{t=0;measure();},600);};
+addEventListener('scroll',arm,{passive:true});addEventListener('resize',arm);
+setTimeout(measure,3000);
+W.gfxLayoutReport=measure;
+}
 function menuFoot(){
 const menu=$('.w-nav-menu');if(!menu||$('.gfx-menu-foot',menu))return;
 const cta=$$('.gfx-nav a, .w-nav a').find(a=> /^start a conversation$/i.test(a.textContent.trim()));
@@ -1267,6 +1307,7 @@ safe('page late',()=>PAGE.late&&PAGE.late(api));
 safe('footer I motion',()=>footInit(PAGE.foot));
 if(PAGE.fox)safe('fox step',()=>foxStep(PAGE.fox));
 safe('fox watch',()=>foxWatch(PAGE.foxZone));
+safe('layout report',layoutReport);
 H.classList.add('gfx-rooms');
 ST.refresh();
 safe('height watch',()=>{

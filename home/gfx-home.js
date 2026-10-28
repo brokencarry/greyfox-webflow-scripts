@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.27';
+  W.__gfxHome = '1.1.28';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -117,7 +117,10 @@
     if (cover && covers) covers.push(cover);
     // one film, in the house order: the headline rises, the letter follows, the photograph is uncovered, the rule under
     // the letter is drawn, and the name settles
-    gfx.room({ trigger: head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), hairline: rule, detail: $$('[data-o~="gn-name"], [data-o~="gn-role"]', sec), extraPicture: !!cover,
+    // (1.1.28, phone review 10/28) stacked (991px and down) the photograph stands above the heading: the film starts as the
+    // photograph arrives, or its cover held a black block for a screen until the heading came up
+    const stacked = W.innerWidth <= 991;
+    gfx.room({ trigger: (stacked && pic) || head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), hairline: rule, detail: $$('[data-o~="gn-name"], [data-o~="gn-role"]', sec), extraPicture: !!cover,
       extra: (tl, at) => { if (cover) tl.to(cover, { scaleY: 0, duration: G.picture.duration, ease: G.DRAW }, at('picture')); } });
     // the photograph settles from 1.06 to 1 as it rises into view, as the team's portraits do
     if (img) { if (img.srcset) img.sizes = '(max-width: 991px) 92vw, 420px'; let last = ''; img.style.scale = '1.06';
@@ -808,9 +811,10 @@
       safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-std-sec'), 0.32));
     },
     rooms: () => { [standardInit, casesInit, noteInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
-    // (1.1.7) a window under 680px tall (a 1366x768 laptop with the browser's bars) has no room for the pinned market stage
-    // even with the count fitted: it gets the still stage (every step shown, as with reduced motion). Decided at load.
-    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 680; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
+    // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
+    // Decided at load. (1.1.20, a visitor's replay at 1267x634) the line was 680px; the film fits from 560px with the
+    // column set for the short screen (gfx-home.css), so a laptop with the browser's bars keeps the strands and the window.
+    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 560; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
     still: () => {
       gsap = W.gsap || null; ST = W.ScrollTrigger || null;
       $$('.gfx-case-ch').forEach(c => c.classList.add('gfx-on'));

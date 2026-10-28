@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.50 + home 1.1.27. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.52 + home 1.1.28. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.50';
+  const VERSION = '1.0.52';   // (owners branch) main's 1.0.51 (the layout report, the rhythm floors) + the site config
   /* (1.0.51, founder 10/27) one site config: the owners-only site on greyfox-partners.com sets window.GFX_SITE in its
      head so nothing it prints names the main domain (its address, its inbox, the footer's fallback links). Without it,
      greyfoxpartners.com is unchanged. */
@@ -747,12 +747,17 @@
   /* rhythm: the tier's gap runs from the last thing seen in the room before to the first thing seen in this one */
   const TIERS = () => {
     const vh = W.innerHeight, phone = W.innerWidth <= 991, cl = (a, v, b) => Math.min(b, Math.max(a, v));
-    const turn = Math.max(224, vh * 0.35);
+    const turn = Math.max(224 * cl(0.6, vh / 900, 1), vh * 0.35);
     /* (1.0.10) below 768px the gap is the designer's Webflow variable phone / section-gap (80px), the one the other pages'
        rooms use; breath stays 1.6 times it */
     if (W.innerWidth <= 767) { const g = parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--_phone---section-gap')) || 80; return { tight: g, standard: g, breath: Math.round(g * 1.6), turn: Math.max(192, vh * 0.3) }; }
     if (phone) return { tight: 80, standard: 96, breath: 128, turn: Math.max(192, vh * 0.3) };
-    return { tight: cl(64, vh * 0.0711, 93) * 2, standard: cl(96, vh * 0.1067, 139) + cl(64, vh * 0.0711, 93), breath: cl(192, vh * 0.2133, 278) + cl(96, vh * 0.1067, 139), turn };
+    /* (1.0.51, the hole matrix 10/28) the floors (160 standard, 288 breath, 224 turn) were set for a 900px window; a
+       1280x500 window kept them and showed 272px of nothing between the firms and "The proof comes after the close." (54%
+       of the screen; 30% on 900, the designed proportion). Under 900px tall the floors scale with the window (never below
+       60%: 96, 173 and 134 on a 500px window), so the gap keeps the designed share of the screen. */
+    const k = cl(0.6, vh / 900, 1);
+    return { tight: cl(64 * k, vh * 0.0711, 93) * 2, standard: cl(96 * k, vh * 0.1067, 139) + cl(64 * k, vh * 0.0711, 93), breath: cl(192 * k, vh * 0.2133, 278) + cl(96 * k, vh * 0.1067, 139), turn };
   };
   let STICKY = new Set();
   const stickyShift = (el, rm) => {
@@ -950,7 +955,57 @@
     addEventListener('resize', () => { if (open && W.innerWidth >= 992) set(false); });
     menu.setAttribute('aria-hidden', 'true'); btn.setAttribute('aria-expanded', 'false');
   }
-  function navReserve() { $$('.nav_desktop > a.navigation-item').forEach(a => { if (!a.hasAttribute('data-gfx-t')) a.setAttribute('data-gfx-t', a.textContent.trim()); }); }
+  function navReserve() { $('.nav_desktop > a.navigation-item').forEach(a => { if (!a.hasAttribute('data-gfx-t')) a.setAttribute('data-gfx-t', a.textContent.trim()); }); }
+  /* ========================= the layout report (1.0.51, 10/28) ========================= */
+  /* A visitor's own window reports the two things a test matrix cannot foresee: the window itself, and a hole in the
+     layout at that window. A hole is a stretch of the screen with nothing on it (no text, picture, canvas, video, drawing
+     or rule across a band of at least 45% of the height, or a column of at least 40% of the width below the top twelfth),
+     or a section covering the screen whose content fills under 60% of a desktop width (the research room at 1267x634,
+     found in a replay on 10/28). One gfx_viewport event per page view (2.5 s in); at most one gfx_layout_hole, the first
+     found, looked for 0.6 s into each burst of scrolling and confirmed 1.2 s later at the same place, at most forty looks a view (a page is 15-30 stops), on windows 992 and wider. A test browser
+     (navigator.webdriver: the harness) reports nothing and stops FullStory's recording of itself. */
+  function layoutReport() {
+    const fs = function () { try { if (typeof W.FS === 'function') W.FS.apply(null, arguments); } catch (e) { /* no FullStory */ } };
+    if (navigator.webdriver) { fs('shutdown'); return; }
+    const page = location.pathname;
+    const base = () => ({ w: W.innerWidth, h: W.innerHeight, dpr: +(W.devicePixelRatio || 1).toFixed(2), touch: TOUCH, page: page, core: VERSION });
+    setTimeout(() => fs('trackEvent', { name: 'gfx_viewport', properties: base() }), 2500);
+    let sent = false, n = 0, t = 0;
+    const scan = () => {
+      const vw = W.innerWidth, vh = W.innerHeight, cols = 24, rows = 24, grid = new Uint8Array(cols * rows);
+      const mark = r => { const x0 = Math.max(0, Math.floor(r.left / vw * cols)), x1 = Math.min(cols - 1, Math.floor((r.right - 1) / vw * cols)), y0 = Math.max(0, Math.floor(r.top / vh * rows)), y1 = Math.min(rows - 1, Math.floor((r.bottom - 1) / vh * rows)); for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) grid[y * cols + x] = 1; };
+      const spans = new Map();
+      for (const e of D.body.querySelectorAll('*')) {
+        if (e.closest('.gfx-nav, .w-nav, .gfx-skip')) continue;
+        const r = e.getBoundingClientRect(); if (r.bottom <= 0 || r.top >= vh || r.right <= 0 || r.left >= vw || r.width < 6 || r.height < 6) continue;
+        const cs = getComputedStyle(e); if (cs.visibility === 'hidden' || +cs.opacity < 0.08) continue;
+        const tag = e.tagName; let content = /^(IMG|CANVAS|VIDEO|SVG|PICTURE|IFRAME)$/.test(tag);
+        let text = false; if (!content) { for (const c of e.childNodes) { if (c.nodeType === 3 && c.textContent.trim()) { text = true; try { const rg = D.createRange(); rg.selectNodeContents(c); for (const lr of rg.getClientRects()) if (lr.width > 1 && lr.height > 1) mark(lr); } catch (x) { mark(r); } } } }
+        if (!content && !text) { if (cs.borderTopStyle !== 'none' && cs.borderTopWidth !== '0px') mark({ left: r.left, right: r.right, top: r.top, bottom: r.top + 2 }); if (cs.borderBottomStyle !== 'none' && cs.borderBottomWidth !== '0px') mark({ left: r.left, right: r.right, top: r.bottom - 2, bottom: r.bottom }); if (cs.backgroundImage !== 'none' && r.width < vw * 0.98) content = true; }
+        if (!content && !text) continue;
+        if (content) mark(r); const s = e.closest('section, footer, .gfx-fr'); if (s) { const o = spans.get(s) || { l: 1e9, r: 0 }; o.l = Math.min(o.l, r.left); o.r = Math.max(o.r, r.right); spans.set(s, o); }
+      }
+      let run = 0, band = 0; for (let y = 0; y < rows; y++) { let empty = true; for (let x = 0; x < cols; x++) if (grid[y * cols + x]) { empty = false; break; } run = empty ? run + 1 : 0; if (run > band) band = run; }
+      run = 0; let col = 0; for (let x = 0; x < cols; x++) { let empty = true; for (let y = 2; y < rows; y++) if (grid[y * cols + x]) { empty = false; break; } run = empty ? run + 1 : 0; if (run > col) col = run; }
+      let found = null;
+      if (band / rows >= 0.45) found = { kind: 'band', share: +(band / rows).toFixed(2) };
+      else if (col / cols >= 0.4) found = { kind: 'column', share: +(col / cols).toFixed(2) };
+      else spans.forEach((o, s) => { if (found) return; const sr = s.getBoundingClientRect(); if (sr.top > vh * 0.1 || sr.bottom < vh * 0.9) return; const share = (o.r - o.l) / vw; if (share < 0.6) found = { kind: 'narrow', share: +share.toFixed(2), sec: (s.className || '').toString().slice(0, 40) }; });
+      return found;
+    };
+    // a hole counts when it is still there 1.2 s later at the same place (a section mid-reveal, a footer rising, are not holes)
+    const measure = () => {
+      if (sent || n++ > 40 || W.innerWidth < 992 || D.hidden) return;
+      const f = scan(); if (!f) return; const y = W.scrollY;
+      setTimeout(() => { if (sent || Math.abs(W.scrollY - y) > 5) return; const g = scan(); if (!g) return; sent = true; fs('trackEvent', { name: 'gfx_layout_hole', properties: Object.assign(base(), { y: Math.round(y) }, g) }); if (DEBUG) log('layout hole', JSON.stringify(g)); }, 1200);
+    };
+    // the wheel rarely rests on a smooth scroll: a look 0.6 s into each burst of scrolling, and the confirmation above
+    // (1.2 s at the same place) decides whether the visitor stopped at the hole
+    const arm = () => { if (!t) t = setTimeout(() => { t = 0; measure(); }, 600); };
+    addEventListener('scroll', arm, { passive: true }); addEventListener('resize', arm);
+    setTimeout(measure, 3000);
+    W.gfxLayoutReport = measure;
+  }
   function menuFoot() {
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
@@ -1577,6 +1632,7 @@
           safe('footer I motion', () => footInit(PAGE.foot));
           if (PAGE.fox) safe('fox step', () => foxStep(PAGE.fox));
           safe('fox watch', () => foxWatch(PAGE.foxZone));
+          safe('layout report', layoutReport);
           H.classList.add('gfx-rooms');
           ST.refresh();
           /* (1.0.22) every scroll beat measures the page at a refresh. A page that changes height afterwards (images,
@@ -1628,7 +1684,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.27';
+  W.__gfxHome = '1.1.28';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -1718,7 +1774,10 @@
     if (cover && covers) covers.push(cover);
     // one film, in the house order: the headline rises, the letter follows, the photograph is uncovered, the rule under
     // the letter is drawn, and the name settles
-    gfx.room({ trigger: head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), hairline: rule, detail: $$('[data-o~="gn-name"], [data-o~="gn-role"]', sec), extraPicture: !!cover,
+    // (1.1.28, phone review 10/28) stacked (991px and down) the photograph stands above the heading: the film starts as the
+    // photograph arrives, or its cover held a black block for a screen until the heading came up
+    const stacked = W.innerWidth <= 991;
+    gfx.room({ trigger: (stacked && pic) || head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), hairline: rule, detail: $$('[data-o~="gn-name"], [data-o~="gn-role"]', sec), extraPicture: !!cover,
       extra: (tl, at) => { if (cover) tl.to(cover, { scaleY: 0, duration: G.picture.duration, ease: G.DRAW }, at('picture')); } });
     // the photograph settles from 1.06 to 1 as it rises into view, as the team's portraits do
     if (img) { if (img.srcset) img.sizes = '(max-width: 991px) 92vw, 420px'; let last = ''; img.style.scale = '1.06';
@@ -2409,9 +2468,10 @@
       safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-std-sec'), 0.32));
     },
     rooms: () => { [standardInit, casesInit, noteInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
-    // (1.1.7) a window under 680px tall (a 1366x768 laptop with the browser's bars) has no room for the pinned market stage
-    // even with the count fitted: it gets the still stage (every step shown, as with reduced motion). Decided at load.
-    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 680; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
+    // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
+    // Decided at load. (1.1.20, a visitor's replay at 1267x634) the line was 680px; the film fits from 560px with the
+    // column set for the short screen (gfx-home.css), so a laptop with the browser's bars keeps the strands and the window.
+    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 560; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
     still: () => {
       gsap = W.gsap || null; ST = W.ScrollTrigger || null;
       $$('.gfx-case-ch').forEach(c => c.classList.add('gfx-on'));
