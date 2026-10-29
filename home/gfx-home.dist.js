@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.24 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.25 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,7 +1323,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.24';
+W.__gfxHome='1.1.25';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-mk-idx-fit')){const st=D.createElement('style');st.id='gfx-mk-idx-fit';st.textContent='@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
@@ -1770,8 +1770,8 @@ ixs.forEach(li=>li.classList.remove('gfx-on'));step=-1;
 }
 };
 const words=()=>{
-if(!led&&E>0.35)lead(true);else if(led&&E<0.25)lead(false);
-if(!arrived&&E>0.84)arrive(true);else if(arrived&&E<0.74)arrive(false);
+if(!led&&E>0.35)lead(true);
+if(!arrived&&E>0.84)arrive(true);
 if(arrived){const s=stepOf(P);if(s!==step){const from=step;step=s;enterStep(s,from);}}
 ixs.forEach((li,i)=>{const f=`scaleX(${clamp(seg(P,WIN[i][0],WIN[i][1]-0.01),0,1).toFixed(4)})`;if(li._f!==f&&li._bar){li._bar.style.transform=f;li._f=f;}});
 gates.forEach((g,i)=>{const r=gateReach(i).toFixed(3);if(g._g!==r){g.style.setProperty('--g',r);g._g=r;}});

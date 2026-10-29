@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.51 + home 1.1.24. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.51 + home 1.1.25. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1677,7 +1677,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.24';   // 1.1.24 (10/29): the unheld climb's chapters arrive once (a second pass no longer empties their figures for a second); 1.1.23 was the firms' line spacing (stylesheet only)
+  W.__gfxHome = '1.1.25';   // 1.1.25 (10/29): the market's words and figures arrive once (a return no longer empties the stage for a second); 1.1.24: the unheld climb's chapters arrive once; 1.1.23: the firms' line spacing (stylesheet only)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -2188,8 +2188,13 @@
       }
     };
     const words = () => {
-      if (!led && E > 0.35) lead(true); else if (led && E < 0.25) lead(false);
-      if (!arrived && E > 0.84) arrive(true); else if (arrived && E < 0.74) arrive(false);
+      /* (1.1.25, 10/29) THE MARKET'S WORDS AND FIGURES ARRIVE ONCE. A reader who went back up above the market and came
+         down again had the headline rise away and the lede, the count and the captions fade out, then play their arrival
+         again (lede 1.2 s, figures 0.9 s): a black stage with nothing on it for a second each time, which a FullStory replay
+         frame lands in (the same fault as the unheld climb's chapters, 1.1.24). Once led and once arrived they stay; the
+         stage's own scroll (the strands, the steps, the window) still reads from P and X as before. */
+      if (!led && E > 0.35) lead(true);
+      if (!arrived && E > 0.84) arrive(true);
       if (arrived) { const s = stepOf(P); if (s !== step) { const from = step; step = s; enterStep(s, from); } }
       ixs.forEach((li, i) => { const f = `scaleX(${clamp(seg(P, WIN[i][0], WIN[i][1] - 0.01), 0, 1).toFixed(4)})`; if (li._f !== f && li._bar) { li._bar.style.transform = f; li._f = f; } });
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
