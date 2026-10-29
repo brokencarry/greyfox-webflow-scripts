@@ -29,7 +29,9 @@ const measure = ({ NAV }) => {
     if (e.closest('.gfx-pg-ow-acc-p, [data-o~="ow-acc-p"], .gfx-pg-ow-acc-in')) continue;   // a closed question's answer
     if (e.closest('[data-o~="iv2-stage"]')) continue;   // Investors stage 1 is scrubbed: each median settles as its step is reached
     if (e.closest('.navbar, .nav_desktop, .nav_mobile, [class*="navigation"], .w-nav-overlay')) continue;   // the bar and its menu
-    if (e.closest('footer, .footer_section_wrapper') && scrollY < document.documentElement.scrollHeight - vh * 1.6) continue;   // the footer lights up at the end
+    if (e.closest('footer, .footer_section_wrapper') && scrollY < document.documentElement.scrollHeight - vh - 2) continue;   // the footer lights up at the very end
+    // a Business Owners room plays its one film from its top at 45% of the window (owners-v2-motion.js); above that line nothing is due
+    const owRoom = e.closest('[data-o~="ow-room"]'); if (owRoom && owRoom.getBoundingClientRect().top > vh * 0.45) continue;
     if (document.documentElement.classList.contains('gfx-pinned') && e.closest('.gfx-case-ch, .gfx-case-rail')) continue;   // its chapters swap with the scroll (a 1.2 s cut), its ridge's labels come as it is climbed
     const inHero = !!e.closest('.gfx-hero-sec, [class*="hero"]');
     const tag = e.tagName; let text = '';
@@ -96,7 +98,8 @@ const key = (i) => i.tag + '|' + i.text;
           const m = await stopHere(pass);
           same = m.sy === last ? same + 1 : 0; last = m.sy;
           if (dir > 0 ? m.sy >= m.max - 2 : m.sy <= 1) break;
-          if (same >= 5) break;
+          if (same >= 5) { // the wheel no longer moves the page (smooth scroll settling at an end): go there outright and measure once more
+            await p.evaluate((d) => window.scrollTo(0, d > 0 ? document.documentElement.scrollHeight : 0), dir); await p.waitForTimeout(800); await stopHere(pass); break; }
           await p.mouse.wheel(0, Math.round(h * STEP) * dir);
         }
       };
