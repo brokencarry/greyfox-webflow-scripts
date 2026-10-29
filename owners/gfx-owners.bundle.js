@@ -1,4 +1,4 @@
-/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.51 + owners 1.2.14. Sources: core/gfx-core.js, owners/gfx-owners.js */
+/* Grey Fox · Business Owners v2 (Flow 3) page script: core 1.0.51 + owners 1.2.15. Sources: core/gfx-core.js, owners/gfx-owners.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1677,7 +1677,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.14';
+  W.__gfxOwners = '1.2.15';   // 1.2.15 (10/29): the call's film and the partnership's words arrive once (no reset or reverse on the way back up)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura; Tarn signed and back
   // 10/28, Fellow Health approved 10/28): eight marks sit two rows of four instead of five and three. When a mark comes
@@ -2022,8 +2022,10 @@
       const f = gsap.timeline({ onUpdate: paintDraw }); film(f, chIn(f)); tl.add(f, 0.2);
       tl.timeScale(tl.duration() / 2.2);   // (the whole film in 2.2 s, the house's longest timed beat)
       const sts = [
-        ST.create({ trigger: room, start: 'top 45%', onEnter: () => { if (tl.progress() < 1) tl.play(); } }),
-        ST.create({ trigger: room, start: 'top bottom', onLeaveBack: () => { tl.pause(0); zero(); paintDraw(); gsap.set(hl(), { yPercent: 106 }); } })
+        ST.create({ trigger: room, start: 'top 45%', onEnter: () => { if (tl.progress() < 1) tl.play(); } })
+        /* (1.2.15, 10/29) the call's film no longer resets when the reader goes back above the room: it played again on the
+           way down, which left the room empty (headline masked, line undrawn, the owner's words faded) for up to 2.2 s, and
+           a replay frame lands in that (the revisit pass, 1280x631 and 1440x789). Once played, the room stays as it settled. */
       ];
       D.addEventListener('gfx:resplit', () => { if (tl.progress() >= 1) gsap.set(hl(), { yPercent: 0 }); });
       // (arriving mid-page, a reload or a link: the room is simply there)
@@ -2160,7 +2162,7 @@
       .fromTo(hl(), { yPercent: 106 }, { yPercent: 0, duration: 1.4, ease: 'expo.out', stagger: 0.09 }, 0)
       .fromTo([lede].filter(Boolean), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.4, ease: 'expo.out' }, 0.2);
     let tl = mk();
-    ST.create({ trigger: room, start: 'top 78%', onEnter: () => tl.play(), onLeaveBack: () => tl.reverse() });
+    ST.create({ trigger: room, start: 'top 78%', onEnter: () => tl.play() });   // (1.2.15) no reverse on the way back up: the words stay
     D.addEventListener('gfx:resplit', () => { const p = tl.progress(), fwd = !tl.reversed(); tl.kill(); tl = mk(); tl.progress(p); if (p > 0 && p < 1) { if (fwd) tl.play(); else tl.reverse(); } });
     if (room.getBoundingClientRect().top < W.innerHeight * 0.78) tl.progress(1);
   }

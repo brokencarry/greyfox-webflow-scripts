@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.51 + owners 1.2.14 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.51 + owners 1.2.15 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,7 +1323,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.2.14';
+W.__gfxOwners='1.2.15';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-ow-firms-8')){const st=D.createElement('style');st.id='gfx-ow-firms-8';st.textContent='@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(4,minmax(0,1fr))!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
@@ -1612,8 +1612,7 @@ tl.fromTo(hl(),{y:0,yPercent:106},{y:0,yPercent:0,duration:1.2,ease:'expo.out',s
 const f=gsap.timeline({onUpdate:paintDraw});film(f,chIn(f));tl.add(f,0.2);
 tl.timeScale(tl.duration() / 2.2);
 const sts=[
-ST.create({trigger:room,start:'top 45%',onEnter:()=>{if(tl.progress()<1)tl.play();}}),
-ST.create({trigger:room,start:'top bottom',onLeaveBack:()=>{tl.pause(0);zero();paintDraw();gsap.set(hl(),{yPercent:106});}})
+ST.create({trigger:room,start:'top 45%',onEnter:()=>{if(tl.progress()<1)tl.play();}})
 ];
 D.addEventListener('gfx:resplit',()=>{if(tl.progress()>=1)gsap.set(hl(),{yPercent:0});});
 requestAnimationFrame(()=>{if(room.getBoundingClientRect().top<W.innerHeight*0.45){tl.progress(1);paintDraw();}});
@@ -1729,7 +1728,7 @@ const mk=()=>gsap.timeline({paused:true})
 .fromTo(hl(),{yPercent:106},{yPercent:0,duration:1.4,ease:'expo.out',stagger:0.09},0)
 .fromTo([lede].filter(Boolean),{opacity:0,y:14},{opacity:1,y:0,duration:1.4,ease:'expo.out'},0.2);
 let tl=mk();
-ST.create({trigger:room,start:'top 78%',onEnter:()=>tl.play(),onLeaveBack:()=>tl.reverse()});
+ST.create({trigger:room,start:'top 78%',onEnter:()=>tl.play()});
 D.addEventListener('gfx:resplit',()=>{const p=tl.progress(),fwd=!tl.reversed();tl.kill();tl=mk();tl.progress(p);if(p>0&&p<1){if(fwd)tl.play();else tl.reverse();}});
 if(room.getBoundingClientRect().top<W.innerHeight*0.78)tl.progress(1);
 }
