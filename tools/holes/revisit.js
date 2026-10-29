@@ -23,12 +23,20 @@ const measure = ({ NAV }) => {
     // climb's figures leave with the field as it turns to the black (gfx-home.css: html.gfx-tone-dark .gfx-case-figs)
     if (e.closest('.footer-logo-subtle, [data-o~="ow-close-fox"], .gfc-fox, .gfx-fi-logo')) continue;
     if (document.documentElement.classList.contains('gfx-tone-dark') && e.closest('.gfx-case-figs')) continue;
+    // by design: a drawing's own labels come with the drawing (svg text), and the held climb shows one chapter at a time
+    if (e.closest('svg') && e.tagName !== 'svg') continue;
+    if (e.closest('.gfx-ow-pt [data-o~="pt-later"], .gfx-ow-pt tfoot')) continue;   // the partnership ledger's last rows fill as the five-year film ends
+    if (document.documentElement.classList.contains('gfx-pinned') && e.closest('.gfx-case-ch:not(.gfx-on), .gfx-case-rail')) continue;   // and its ridge's labels come as it is climbed
     const inHero = !!e.closest('.gfx-hero-sec, [class*="hero"]');
     const tag = e.tagName; let text = '';
     if (/^(IMG|CANVAS|VIDEO|SVG|PICTURE)$/.test(tag)) text = '<' + tag.toLowerCase() + (e.alt ? ' ' + e.alt : '') + '>';
     else { for (const n of e.childNodes) if (n.nodeType === 3 && n.textContent.trim().length > 1) text += n.textContent.trim() + ' '; if (!text) continue; }
     const r = e.getBoundingClientRect(); if (r.width < 4 || r.height < 4) continue;
-    const top = Math.max(r.top, NAV), bottom = Math.min(r.bottom, vh); if (bottom - top < Math.min(8, r.height * 0.5)) continue;
+    // judged only once a fair part of it is on the screen: at least half of it, or 40px, below the header's band, and its
+    // top above the reveal line (Flow plays a block as it reaches 88% of the window; below that line nothing has arrived yet)
+    const top = Math.max(r.top, NAV), bottom = Math.min(r.bottom, vh); if (bottom - top < Math.min(40, r.height * 0.5)) continue;
+    if (r.top > vh * 0.85) continue;
+    if (/^(BUTTON)$/.test(tag) || e.getAttribute('role') === 'button' || e.closest('button, [role="button"]')) continue;   // controls appear when their film allows
     if (r.right <= 0 || r.left >= vw) continue;
     const cx = Math.min(vw - 2, Math.max(2, (Math.max(r.left, 0) + Math.min(r.right, vw)) / 2)), cy = (top + bottom) / 2;
     const op = effOpacity(e);
