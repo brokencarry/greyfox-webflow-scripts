@@ -336,6 +336,14 @@ html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 29px; }
   html.gfx-f3 .gfx-logos img.testimonial_logo { height: calc(var(--lh, 30px) * 1.7) !important; max-height: calc(var(--lh, 30px) * 1.7) !important; }
   html.gfx-m .gfx-marq .gfx-marq-track { animation-duration: 62s; }
 }
+/* (home 1.1.23, founder 10/29: "a bit more padding between client logos so they don't all look smushed") at the 1.7x size
+   the marks average 139 px wide, so 72 px between them was half a mark. From 768 px up the gap is 120 px, about one mark,
+   and the loop runs 76 s instead of 62 (the strip is 2072 px a set instead of 1688), so the line moves at the same speed.
+   A phone keeps 72 px with its 1x marks; the still rows (Reduce Motion) set their own spacing and are untouched. */
+@media (min-width: 768px) {
+  html.gfx-f3 .gfx-logos img.testimonial_logo { margin-right: 120px !important; }
+  html.gfx-m .gfx-marq .gfx-marq-track { animation-duration: 76s; }
+}
 @media (prefers-reduced-motion: reduce) and (min-width: 992px) {
   html.gfx-f3 .gfx-logos .gfx-marq-track { flex-wrap: nowrap !important; justify-content: space-between !important; width: 100% !important; transform: none !important; }
   html.gfx-f3 .gfx-logos img.testimonial_logo { margin: 0 !important; flex: 0 1 auto !important; min-width: 0; max-width: 9.2% !important; object-fit: contain; }
