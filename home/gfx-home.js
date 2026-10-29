@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.21';
+  W.__gfxHome = '1.1.22';   // 1.1.22 (10/28): the portraits' selectors lost their second $ in 1.1.21 (a .replace() slip): the three portraits never drew
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -647,7 +647,7 @@
     const sec = $('.gfx-team-sec'); if (!sec) return;
     const head = $('.gfx-team-head .heading-2', sec);
     gfx.room({ trigger: head || sec, headline: head, body: $('.gfx-team-head .gfx-lead, .gfx-team-head .paragraph', sec), hairline: $('.gfx-team-hr', sec) });
-    const imgs = $('.gfx-team-img', sec), members = $('.gfx-team-m', sec), stacked = W.innerWidth < 768;
+    const imgs = $$('.gfx-team-img', sec), members = $$('.gfx-team-m', sec), stacked = W.innerWidth < 768;
     // (1.1.21) Lindsay's words under the portraits
     const tq = $('[data-o~="team-quote"]', sec); if (tq && $('.gfx-pull', tq)) safe('team quote', () => pullReveal($('.gfx-pull', tq), tq));
     const byRow = ms => { const rows = []; ms.forEach(m => { const t = m.getBoundingClientRect().top + W.scrollY, r = rows.find(x => Math.abs(x.t - t) < 8); if (r) r.ms.push(m); else rows.push({ t, ms: [m] }); }); return rows.map(x => x.ms); };

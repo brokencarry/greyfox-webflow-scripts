@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.21 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.22 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,7 +1323,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.21';
+W.__gfxHome='1.1.22';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-mk-idx-fit')){const st=D.createElement('style');st.id='gfx-mk-idx-fit';st.textContent='@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
@@ -1863,7 +1863,7 @@ function teamInit(){
 const sec=$('.gfx-team-sec');if(!sec)return;
 const head=$('.gfx-team-head .heading-2',sec);
 gfx.room({trigger:head||sec,headline:head,body:$('.gfx-team-head .gfx-lead, .gfx-team-head .paragraph',sec),hairline:$('.gfx-team-hr',sec)});
-const imgs=$('.gfx-team-img',sec),members=$('.gfx-team-m',sec),stacked=W.innerWidth<768;
+const imgs=$$('.gfx-team-img',sec),members=$$('.gfx-team-m',sec),stacked=W.innerWidth<768;
 const tq=$('[data-o~="team-quote"]',sec);if(tq&&$('.gfx-pull',tq))safe('team quote',()=>pullReveal($('.gfx-pull',tq),tq));
 const byRow=ms=>{const rows=[];ms.forEach(m=>{const t=m.getBoundingClientRect().top+W.scrollY,r=rows.find(x=>Math.abs(x.t-t)<8);if(r)r.ms.push(m);else rows.push({t,ms:[m]});});return rows.map(x=>x.ms);};
 (stacked?byRow(members):[members]).forEach(group=>{
