@@ -35,6 +35,10 @@ const run = (size) => new Promise((res) => {
   const mins = Math.round((Date.now() - t0) / 60000);
   const summary = { day, minutes: mins, combos, flagged };
   fs.writeFileSync(path.join(OUT, 'summary.json'), JSON.stringify(summary, null, 1));
+  // every load failed: the site was unreachable from here (a sandbox without the host, a machine without a network), which
+  // says nothing about the site; no verdict goes to Mission Control, the log says why
+  const loads = flagged.filter((f) => f.items.some((i) => /^load /.test(i)));
+  if (combos && loads.length === combos) { console.log('The site could not be reached from here (' + loads[0].items[0].slice(0, 90) + '); nothing was checked and no verdict is sent.'); return; }
   const pages = [...new Set(flagged.map((f) => f.pg))];
   const line = flagged.length
     ? ('Revisit pass: ' + flagged.length + ' flagged on ' + pages.slice(0, 3).join(', ') + (pages.length > 3 ? ' and ' + (pages.length - 3) + ' more' : '') + '.').slice(0, 140)
