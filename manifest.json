@@ -1,7 +1,7 @@
 {
  "home/gfx-home.dist.js": {
-  "bytes": 139083,
-  "sri": "sha384-cSJVpmUM/LJyuMW9IFY/utdotMXH3gRmQBW1uNbQEG/M7T06FEMjWaAbxOl2cchx"
+  "bytes": 139165,
+  "sri": "sha384-q4+yF1UCQm/+vhAX6qHv2Te3NlOkeAVoP3RSIfsZQSwxuayq+heIfIYLmZQbWdIb"
  },
  "core/gfx-core.dist.css": {
   "bytes": 34523,
@@ -9,11 +9,11 @@
  },
  "home/gfx-home.dist.css": {
   "bytes": 35785,
-  "sri": "sha384-ly4epOBYLXQVtVjh0klLIOB1qYKMFXx7qZYTS9XhW99wxszNg3yQnHgZm+7rht0U"
+  "sri": "sha384-urYe2HY7c8bTWMoSKw3rkpfJ85MUP6dFmK4bpdj4XkDlN5HZBzAOFeGrhuD7xl9T"
  },
  "portal/desktop-portal.js": {
-  "bytes": 9150,
-  "sri": "sha384-IsGMnVfTJOCFKLIvUJ7Dozb3YOYqXd3M2Fxd6AVVfdFvmknOTsIBVp8JYCnZAmL9"
+  "bytes": 9519,
+  "sri": "sha384-6tWh9gGcBqHVY6H6iKY8HkDVXtvD+EFjHIx/ZxoQiw71kTRFuirwGBCJYkhR/O3J"
  },
  "portal/desktop-portal.css": {
   "bytes": 4777,
@@ -81,7 +81,7 @@
  },
  "_versions": {
   "core": "1.0.51",
-  "home": "1.1.22",
+  "home": "1.1.24",
   "owners": "1.2.14",
   "pages": "1.0.3",
   "contact": "1.0.12",

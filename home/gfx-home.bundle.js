@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.51 + home 1.1.22. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.51 + home 1.1.24. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1677,7 +1677,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.22';   // 1.1.22 (10/28): the portraits' selectors lost their second $ in 1.1.21 (a .replace() slip): the three portraits never drew
+  W.__gfxHome = '1.1.24';   // 1.1.24 (10/29): the unheld climb's chapters arrive once (a second pass no longer empties their figures for a second); 1.1.23 was the firms' line spacing (stylesheet only)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -2052,7 +2052,11 @@
         gsap.set(leaders.concat(labels).filter(Boolean), { clearProps: 'all' });
       };
     });
-    mm.add(UNPIN, () => { parts.forEach((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => enter(i), onLeave: () => enter(i).progress(1) })); return undefined; });
+    /* (1.1.24, 10/29) THE UNHELD CHAPTERS ARRIVE ONCE. A FullStory replay at 1280x631 (a reader who went back up to the firms
+       and down again) showed "The first 18 months" with no figures: every pass re-ran the chapter's arrival, which starts
+       with the numbers, captions and hairlines invisible and brings them back over ~1.8 s (numbers at 0.8 s, captions at
+       1.1 s), so a second visit opened on an empty block. A chapter seen once stays as it settled; nothing replays. */
+    mm.add(UNPIN, () => { const seen = []; parts.forEach((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => { if (seen[i]) return; seen[i] = true; enter(i); }, onLeave: () => { if (seen[i]) return; seen[i] = true; enter(i).progress(1); } })); return undefined; });
     };
     // decided on the held layout (the class off), again after a resize that changes the answer
     const decide = () => { H.classList.remove('gfx-case-short'); const s = caseShort(); H.classList.toggle('gfx-case-short', s); return s; };
