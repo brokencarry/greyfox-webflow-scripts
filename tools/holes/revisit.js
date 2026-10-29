@@ -25,8 +25,12 @@ const measure = ({ NAV }) => {
     if (document.documentElement.classList.contains('gfx-tone-dark') && e.closest('.gfx-case-figs')) continue;
     // by design: a drawing's own labels come with the drawing (svg text), and the held climb shows one chapter at a time
     if (e.closest('svg') && e.tagName !== 'svg') continue;
-    if (e.closest('.gfx-ow-pt [data-o~="pt-later"], .gfx-ow-pt tfoot')) continue;   // the partnership ledger's last rows fill as the five-year film ends
-    if (document.documentElement.classList.contains('gfx-pinned') && e.closest('.gfx-case-ch:not(.gfx-on), .gfx-case-rail')) continue;   // and its ridge's labels come as it is climbed
+    if (e.closest('[data-o~="pt-later"], [data-o~="pt-t"] tfoot, [data-o~="pt-mearn"]')) continue;   // the partnership ledger's last rows fill as the five-year film ends
+    if (e.closest('.gfx-pg-ow-acc-p, [data-o~="ow-acc-p"], .gfx-pg-ow-acc-in')) continue;   // a closed question's answer
+    if (e.closest('[data-o~="iv2-stage"]')) continue;   // Investors stage 1 is scrubbed: each median settles as its step is reached
+    if (e.closest('.navbar, .nav_desktop, .nav_mobile, [class*="navigation"], .w-nav-overlay')) continue;   // the bar and its menu
+    if (e.closest('footer, .footer_section_wrapper') && scrollY < document.documentElement.scrollHeight - vh * 1.6) continue;   // the footer lights up at the end
+    if (document.documentElement.classList.contains('gfx-pinned') && e.closest('.gfx-case-ch, .gfx-case-rail')) continue;   // its chapters swap with the scroll (a 1.2 s cut), its ridge's labels come as it is climbed
     const inHero = !!e.closest('.gfx-hero-sec, [class*="hero"]');
     const tag = e.tagName; let text = '';
     if (/^(IMG|CANVAS|VIDEO|SVG|PICTURE)$/.test(tag)) text = '<' + tag.toLowerCase() + (e.alt ? ' ' + e.alt : '') + '>';
@@ -48,7 +52,7 @@ const measure = ({ NAV }) => {
     if (!why) { // under a mask: the line box is clipped out by an overflow-hidden ancestor (SplitText masks)
       let n = e.parentElement; while (n && n !== document.body) { const cs = getComputedStyle(n); if (/hidden|clip/.test(cs.overflowY) || /hidden|clip/.test(cs.overflow)) { const q = n.getBoundingClientRect(); if (r.top >= q.bottom - 1 || r.bottom <= q.top + 1) { why = 'masked'; break; } } n = n.parentElement; }
     }
-    out.push({ why: why || '', text: text.trim().slice(0, 60), y: Math.round(r.top + scrollY), tag: tag.toLowerCase() });
+    out.push({ why: why || '', text: text.trim().slice(0, 60), y: Math.round(r.top + scrollY), tag: tag.toLowerCase(), foot: !!e.closest('footer, .footer_section_wrapper') });
   }
   return { sy: Math.round(scrollY), max: document.documentElement.scrollHeight - vh, items: out };
 };
@@ -73,7 +77,7 @@ const key = (i) => i.tag + '|' + i.text;
         await p.waitForTimeout(SETTLE);
         let m = await p.evaluate(measure, { NAV });
         // on a return (pass 2 or 3): content painted on the first pass and unpainted now replays its reveal: a flag at once
-        const replays = pass > 1 ? m.items.filter((i) => i.why && painted.has(key(i))).map((i) => ({ ...i, why: 'replays (' + i.why + ')' })) : [];
+        const replays = pass > 1 ? m.items.filter((i) => i.why && !i.foot && painted.has(key(i))).map((i) => ({ ...i, why: 'replays (' + i.why + ')' })) : [];   // the footer lights up on each arrival at the end, by design
         let late = m.items.filter((i) => i.why);
         if (late.length) { await p.waitForTimeout(LATE); m = await p.evaluate(measure, { NAV }); late = m.items.filter((i) => i.why).map((i) => ({ ...i, why: 'stuck (' + i.why + ')' })); }
         if (pass === 1) for (const i of m.items) if (!i.why) painted.add(key(i));

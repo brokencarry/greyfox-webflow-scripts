@@ -1,4 +1,4 @@
-/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.25 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
+/*! Grey Fox · Home v2 (Flow 3) · core 1.0.51 + home 1.1.26 · minified bundle of core/gfx-core.js + home/gfx-home.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1323,7 +1323,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxHome)return;
-W.__gfxHome='1.1.25';
+W.__gfxHome='1.1.26';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-mk-idx-fit')){const st=D.createElement('style');st.id='gfx-mk-idx-fit';st.textContent='@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE,GROUP=G.group,LEAVE=G.leave;
@@ -1564,7 +1564,7 @@ fit();ST.addEventListener('refresh',fit);
 return()=>{ST.removeEventListener('refresh',fit);if(rail)rail.style.removeProperty('margin-top');};
 };
 mm.add('(min-width: 992px) and (max-height: 680.99px)',shortClear);
-if(SHORT){mm.add(PIN,()=>{const off=shortClear();const sts=parts.map((p,i)=>ST.create({trigger:p.ch,start:'top 88%',onEnter:()=>enter(i),onLeave:()=>enter(i).progress(1)}));return()=>{off();sts.forEach(s=>s.kill());};});}
+if(SHORT){mm.add(PIN,()=>{const off=shortClear();const seen=[];const sts=parts.map((p,i)=>ST.create({trigger:p.ch,start:'top 88%',onEnter:()=>{if(seen[i])return;seen[i]=true;enter(i);},onLeave:()=>{if(seen[i])return;seen[i]=true;enter(i).progress(1);}}));return()=>{off();sts.forEach(s=>s.kill());};});}
 else mm.add(PIN,()=>{
 const arrow=$('.gfx-rail-arrow',rail),stops=['a','b','c'].map(k=>$('.gfx-case-stop-'+k,rail)).filter(Boolean);
 const svg=$('.gfx-climb-svg',rail),cTrack=$('.gfx-climb-track',rail),cRect=$('#gfxc-rect',rail)||$('clipPath rect',rail);

@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.51 + home 1.1.25. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.51 + home 1.1.26. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1677,7 +1677,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.25';   // 1.1.25 (10/29): the market's words and figures arrive once (a return no longer empties the stage for a second); 1.1.24: the unheld climb's chapters arrive once; 1.1.23: the firms' line spacing (stylesheet only)
+  W.__gfxHome = '1.1.26';   // 1.1.26 (10/29): the short held screen's chapters arrive once as well (1366x657); 1.1.25: the market's words and figures arrive once; 1.1.24: the unheld climb's chapters arrive once; 1.1.23: the firms' line spacing (stylesheet only)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -1958,7 +1958,8 @@
       return () => { ST.removeEventListener('refresh', fit); if (rail) rail.style.removeProperty('margin-top'); };
     };
     mm.add('(min-width: 992px) and (max-height: 680.99px)', shortClear);
-    if (SHORT) { mm.add(PIN, () => { const off = shortClear(); const sts = parts.map((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => enter(i), onLeave: () => enter(i).progress(1) })); return () => { off(); sts.forEach(s => s.kill()); }; }); }
+    // (1.1.26, 10/29) the short held screen's chapters arrive once too (1366x657 replayed "The first 18 months" on a return, the revisit pass)
+    if (SHORT) { mm.add(PIN, () => { const off = shortClear(); const seen = []; const sts = parts.map((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => { if (seen[i]) return; seen[i] = true; enter(i); }, onLeave: () => { if (seen[i]) return; seen[i] = true; enter(i).progress(1); } })); return () => { off(); sts.forEach(s => s.kill()); }; }); }
     else mm.add(PIN, () => {
       const arrow = $('.gfx-rail-arrow', rail), stops = ['a', 'b', 'c'].map(k => $('.gfx-case-stop-' + k, rail)).filter(Boolean);
       const svg = $('.gfx-climb-svg', rail), cTrack = $('.gfx-climb-track', rail), cRect = $('#gfxc-rect', rail) || $('clipPath rect', rail);
