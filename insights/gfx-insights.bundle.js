@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.51 + pages 1.0.3 + insights 1.3.3. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.51 + pages 1.0.3 + insights 1.3.4. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1918,7 +1918,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.3';
+  W.__gfxInsights = '1.3.4';
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -2195,7 +2195,7 @@
     'fifty-email': 'sha384-3ntOLDx7YzSLeqtWH9n65uEZa+hHAip/VYrgM7Ku0O+kS4gobMBqnqOWnRhIUYZJ',
     'fire-twenty': 'sha384-oCsqhyHIACfKxr5K73OrRA7DvvyLcctIMR/SIoUZax/B7m9uKg4xoKfbiQftl2DR',
     'first-five-minutes': 'sha384-/OQug0DzaaJvpUCrHI/Fap7WGhy6VtOokNwXKaytFPmzIRzQp6Gc1eURu2E5s7Bc',
-    'first-conversation': 'sha384-JyJmmKfd7EWGroDqJpjD1UXr8+k/YITNtbbH6gQxJau/zzZrPBKnK0vwCjDgLGp5',
+    'first-conversation': 'sha384-T3TCRFIVK3vcHqWzjZK0D++3fAjJCcgB0iMaYuDZ4wH4SzrGUwJlQ/vg6cLEEz6o',
     'five-metrics': 'sha384-gQ2RBQNSXyIJ4S0bEPQfS2zQ/D4A8F7gZuOWcezvJPy1Rnb0CtTAUblU/0N4ZX3e',
     'founder-dependency': 'sha384-gzcbLXTH8ECdU3E9JiPQtvuRwAFj5J1mdzl57uVHaI16uIn0LbJdq/46bWfiQRwa',
     'hidden-forty': 'sha384-VDofMCeeokXxgehzPZMGE0sTUQSfdNflgsxd0iz7US3Nkvwqbzs4tDquO7WzeV0a',
