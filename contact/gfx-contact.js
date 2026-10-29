@@ -18,7 +18,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxContact) return;
-  W.__gfxContact = '1.0.11';
+  W.__gfxContact = '1.0.12';
   const P = gfx.pages, O = P.O, mk = P.mk, H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const GROUP = G.group;
   const el = (tag, cls, text) => { const n = D.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -105,7 +105,17 @@
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const okReach = v => EMAIL.test(v) || (/^[\d\s()+.\-]+$/.test(v) && v.replace(/\D/g, '').length >= 7);
   const navBottom = () => { const n = $('.navigation_wrapper'); if (!n) return 74; const b = Math.max(n.getBoundingClientRect().bottom, n.offsetHeight); return b > 0 && b < W.innerHeight / 2 ? b : 74; };
-  const scrollTo = (target, offset) => { const y = target.getBoundingClientRect().top + W.scrollY + offset; gfx.scrollToY(y, 1.2); };
+  // (1.0.12, engine pass 10/29) on a touch screen there is no Lenis: the scroll is the browser's own smooth scroll, and a
+  // ScrollTrigger refresh landing during it (the page grows as the fields open or the error lines show) parks the page and puts
+  // it back where it was, which cancels the scroll: a phone reader stayed below the first error, the fields stayed low. Each
+  // refresh in the next 1.6 s aims the scroll again once the refresh has finished (a touch of the reader's own ends that)
+  const scrollTo = (target, offset) => {
+    const aim = () => gfx.scrollToY(target.getBoundingClientRect().top + W.scrollY + offset, 1.2); aim();
+    const ST = W.ScrollTrigger; if (gfx.lenis || !ST || !ST.addEventListener) return;
+    let t = 0; const again = () => { clearTimeout(t); t = setTimeout(aim, 40); };
+    const quit = () => { ST.removeEventListener('refresh', again); W.removeEventListener('touchstart', quit); };
+    ST.addEventListener('refresh', again); W.addEventListener('touchstart', quit, { passive: true }); setTimeout(quit, 1600);
+  };
   function formWire() {
     // (Webflow's Form Block wrapper and its success/error states carry no data-o: they are found by class)
     const box = $(O('r4-form')) || $('.gfx-pg-r4a-form') || $('.w-form'), form = box && $('form', box); if (!form) return;
