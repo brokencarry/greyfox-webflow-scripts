@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.52 + home 1.1.28. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.52 + home 1.1.29. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -1684,7 +1684,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.28';
+  W.__gfxHome = '1.1.29';
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -1701,29 +1701,33 @@
   /* ========================= the rooms and their chapters (gf-flow.js homeLine3) ========================= */
   const field = {
     phoneRhythm: 'phone',   // (1.1.6) the house phone rhythm on every room (phones only: the tablet market hold keeps its own tiers)
+    // (1.1.29, the owners site, founder 10/28: "it needs to flow and not feel bandaged together") one owner's story, in
+    // three chapters: on the black, why we called (the hero, then the market narrowing to one owner); on paper, who the
+    // buyer is (the standard, an owner's word, the firms, the proof after the close), the people and the reading; on the
+    // black again, the founder's letter, the close and the footer. Two turns on the whole page.
     rooms: [
-      { el: '.gfx-hero-sec', native: 'M', tone: 'L' },
-      { el: '.gfx-std-sec', native: 'L', tone: 'L', tier: 'standard' },
+      { el: '.gfx-hero-sec', native: 'M', tone: 'D' },
+      { el: '.gfx-mk', native: 'D', tone: 'D' },
+      // (back to paper once the market's last words, "Only then do we call the owner.", have risen into the top sixth. The
+      // stage is held for the whole film, so its last line is found on the stage as it is released, not in the page's
+      // flow: the standard's headline comes up on the black and the paper arrives under it)
+      { el: '.gfx-std-sec', native: 'L', tone: 'L', tier: 'turn', turnAt: (ym, c) => {
+        // (a phone's market is a list in the page's flow, not a held stage: its last line is step 04's own words, where they
+        // stand in the page)
+        const mk = c.prev.el, st = $('.gfx-mk-stage', mk), cap = $('.gfx-mk-cap-d', mk), held = st && cap && cap.offsetHeight && getComputedStyle(st).position === 'sticky';
+        const words = $$('.gfx-mk-capp, .gfx-mk-cap-d', mk).filter(e => e.offsetHeight).map(e => e.getBoundingClientRect().bottom + W.scrollY);
+        const last = held ? c.docTop(mk) + mk.offsetHeight - st.offsetHeight + (cap.getBoundingClientRect().bottom - st.getBoundingClientRect().top) : words.length ? Math.max(...words) : NaN;
+        return Number.isFinite(last) ? Math.min(Math.max(ym, last - c.vh * 0.16), c.max - c.vh * 0.05) : ym; } },
       { el: '.gfx-case-sec', native: 'L', tone: 'L', tier: 'breath' },
-      // (the turn into the market waits until the climb's room has all but left: its foot within the top fifth)
-      { el: '.gfx-mk', native: 'D', tone: 'D', turnAt: (ym, c) => { const pv = c.prev.el, out = c.docTop(pv) + pv.offsetHeight - c.vh * 0.2; return out > ym ? Math.min(out, c.max - c.vh * 0.05) : ym; } },
-      // (1.1.27, the owners site; desktop review 10/28: on paper the letter was read on black and turned mid-read) the
-      // founder's note belongs to the black chapter: the market narrows to one owner, and the next thing on the black is
-      // who is calling. One turn follows, into the team.
-      { el: '[data-o~="gn-sec"]', native: 'D', tone: 'D', tier: 'standard' },
-      // (back to paper once the letter has all but left: its last line in the top eighth, and black-free by the time the
-      // team's headline is in the lower seventh, as the close's turn is placed)
-      { el: '.gfx-team-sec', native: 'L', tone: 'L', tier: 'turn', turnAt: (ym, c) => {
+      { el: '.gfx-team-sec', native: 'L', tone: 'L', tier: 'breath' },
+      { el: '.gfx-ins-sec', native: 'L', tone: 'L', tier: 'standard' },
+      // (the letter's turn waits for the reading list's last line to rise into the top eighth, as the close's did)
+      { el: '[data-o~="gn-sec"]', native: 'D', tone: 'D', tier: 'turn', turnAt: (ym, c) => {
         const lb = c.lastBottom(c.prev.el); if (Number.isFinite(lb) && lb - c.vh * 0.12 > ym) ym = Math.min(lb - c.vh * 0.12, c.max - c.vh * 0.05);
         const hd = $('.heading-2', c.room.el); if (hd) ym = Math.min(ym, c.docTop(hd) - c.vh * 0.86);
         return ym; } },
-      { el: '.gfx-ins-sec', native: 'L', tone: 'L', tier: 'standard' },
-      // (the close's turn waits for the thinking's last line to rise into the top eighth; it is black by the time its
-      // headline is in the lower seventh)
-      { el: '.gfx-cta-sec', native: 'D', tone: 'D', tier: 'turn', opaque: true, foot: true, turnAt: (ym, c) => {
-        const lb = c.lastBottom(c.prev.el); if (Number.isFinite(lb) && lb - c.vh * 0.12 > ym) ym = Math.min(lb - c.vh * 0.12, c.max - c.vh * 0.04);
-        const hd = $('.heading-2', c.room.el); if (hd) ym = Math.min(ym, c.docTop(hd) - c.vh * 0.86);
-        return ym; } }
+      // the close follows the letter on the same black, a breath after its signature
+      { el: '.gfx-cta-sec', native: 'D', tone: 'D', tier: 'breath', opaque: true, foot: true }
     ]
   };
 
@@ -1741,11 +1745,14 @@
     st.textContent =
       // (1.1.24) the room keeps the team's gutter and width, so the photograph lines up with the team's left edge below
       'html [data-o~="gn-sec"]{padding-left:var(--gfx-gutter,48px)!important;padding-right:var(--gfx-gutter,48px)!important}' +
-      // (1.1.27, desktop review 10/28) the letter keeps the quote room's prose column (the last 34% of the content width, at
-      // every width), and the photograph stands just left of it, one unit with the letter
-      'html [data-o~="gn-in"]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,34.1%);column-gap:0;align-items:start;max-width:1400px;margin:0 auto;padding:0;box-sizing:border-box}' +
+      // (1.1.29, founder 10/28: "not bandaged together") the room is laid out as every room on the page is: the headline on
+      // the left with the photograph under it on the team's left edge, the letter in the standard room's prose column (the
+      // last 34.1%) beside them. The extra height of a long letter goes under the photograph, never between the headline and it.
+      'html [data-o~="gn-in"]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,34.1%);grid-template-rows:auto 1fr;grid-template-areas:"h t" "p t";column-gap:0;align-items:start;max-width:1400px;margin:0 auto;padding:0;box-sizing:border-box}' +
+      'html [data-o~="gn-in"] > .heading-2{grid-area:h}' +
+      'html [data-o~="gn-txt"]{grid-area:t}' +
       // (1.1.25, founder 10/28: his outdoor photo, head and shoulders) a portrait frame, held to the photograph's own width
-      'html [data-o~="gn-pic"]{position:sticky;top:clamp(96px,14vh,140px);justify-self:end;width:100%;max-width:420px;margin-right:clamp(64px,7vw,128px);aspect-ratio:4/5;overflow:hidden;background:#1b1b1c}' +
+      'html [data-o~="gn-pic"]{grid-area:p;position:relative;justify-self:start;width:100%;max-width:420px;aspect-ratio:4/5;overflow:hidden;background:#1b1b1c}' +
       'html [data-o~="gn-img"]{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 50%}' +
       // (1.1.27) the room is native to the black: its inks are the dark field's
       'html [data-o~="gn-sec"] .heading-2{margin:0 0 clamp(28px,3vw,44px)!important;color:var(--gfx-ink-d1,#f2f1ee)}' +
@@ -1759,9 +1766,16 @@
       'html.gfx-failsafe [data-o~="gn-cover"]{display:none!important}' +
       'html [data-o~="gn-name"]{margin:0 0 4px!important;font-family:var(--gfx-serif,Sentient,Georgia,serif);font-weight:300;font-size:clamp(22px,1.7vw,28px);line-height:1.2;color:var(--gfx-ink-d1,#f2f1ee)}' +
       'html [data-o~="gn-role"]{margin:0!important}' +
-      '@media (max-width:991px){html [data-o~="gn-in"]{grid-template-columns:1fr;row-gap:clamp(32px,6vw,48px)}html [data-o~="gn-pic"]{position:relative;top:auto;justify-self:start;margin-right:0}}' +
+      '@media (max-width:991px){html [data-o~="gn-in"]{grid-template-columns:1fr;grid-template-rows:none;grid-template-areas:"h" "p" "t";row-gap:clamp(28px,6vw,44px)}html [data-o~="gn-in"] > .heading-2{margin-bottom:0!important}}' +
       // (desktop review 10/28) the pull quote breaks evenly: no word left alone on its last line
       'html .gfx-pull-q{text-wrap:pretty}' +
+      // (1.1.29) an owner's one line is set as the room's second statement, under the headline on its column, not as a
+      // small note in the prose column with half the room empty beside it
+      '@media (min-width:992px){html .gfx-std-sec .gfx-pull{grid-column:1/2;max-width:min(100%,46rem);margin-top:clamp(8px,1vw,16px)}' +
+      'html .gfx-std-sec .gfx-pull-q{font-size:clamp(26px,2.3vw,34px)!important;line-height:1.24!important;letter-spacing:-.012em}}' +
+      // (1.1.29) the market follows the hero: while it comes over the hero it carries the black itself (the hero travels
+      // under it); once the hero has gone the market is see-through again, as the field's rooms are
+      'html.gfx-f3 .gfx-mk.gfx-in.gfx-covering{background-color:rgb(17,17,18)!important}' +
       // (the reading list's cards are whole-card links: no browser underline under their words at any width)
       'html .gfx-ins-sec .gfx-ink-card a,html .gfx-ins-sec .gfx-ink-lead{text-decoration:none!important}';
     (D.head || H).appendChild(st);
@@ -1776,8 +1790,9 @@
     // the letter is drawn, and the name settles
     // (1.1.28, phone review 10/28) stacked (991px and down) the photograph stands above the heading: the film starts as the
     // photograph arrives, or its cover held a black block for a screen until the heading came up
-    const stacked = W.innerWidth <= 991;
-    gfx.room({ trigger: (stacked && pic) || head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), hairline: rule, detail: $$('[data-o~="gn-name"], [data-o~="gn-role"]', sec), extraPicture: !!cover,
+    // (1.1.29) the headline now stands first in the room (above the photograph when stacked), so it starts the film
+    const stacked = W.innerWidth <= 991, headFirst = !!(head && pic && (head.compareDocumentPosition(pic) & 4));
+    gfx.room({ trigger: (stacked && !headFirst && pic) || head || sec, headline: head, body: $$('[data-o~="gn-p"]', sec), hairline: rule, detail: $$('[data-o~="gn-name"], [data-o~="gn-role"]', sec), extraPicture: !!cover,
       extra: (tl, at) => { if (cover) tl.to(cover, { scaleY: 0, duration: G.picture.duration, ease: G.DRAW }, at('picture')); } });
     // the photograph settles from 1.06 to 1 as it rises into view, as the team's portraits do
     if (img) { if (img.srcset) img.sizes = '(max-width: 991px) 92vw, 420px'; let last = ''; img.style.scale = '1.06';
@@ -1899,7 +1914,7 @@
     // (1.1.12, iPad walk) clamp: where the next room already shows at the top of the page (a hero shorter than a tall
     // tablet), the slide starts at 0 instead of half-way through (it had pushed the hero 184px down at load on 834x1194)
     ST.create({ trigger: inn, start: 'clamp(top bottom)', end: 'top top', invalidateOnRefresh: true,
-      onUpdate: s => { const p = s.progress, dist = s.end - s.start, t = `translate3d(0, ${(p * dist * 0.4).toFixed(1)}px, 0)`; if (t !== last) { out.style.transform = p > 0 ? t : ''; last = t; dim.style.opacity = (dimMax * eo(p)).toFixed(3); } },
+      onUpdate: s => { const p = s.progress; inn.classList.toggle('gfx-covering', p > 0 && p < 1); const dist = s.end - s.start, t = `translate3d(0, ${(p * dist * 0.4).toFixed(1)}px, 0)`; if (t !== last) { out.style.transform = p > 0 ? t : ''; last = t; dim.style.opacity = (dimMax * eo(p)).toFixed(3); } },
       onLeave: () => { out.style.transform = ''; dim.style.opacity = '0'; last = ''; out.style.visibility = 'hidden'; },
       onEnterBack: () => { out.style.visibility = ''; } });
   }
@@ -2465,7 +2480,7 @@
       pauseControl();
       safe('hero', () => heroInit(intro));
       safe('marquee', marqueeInit);
-      safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-std-sec'), 0.32));
+      safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-mk') || $('.gfx-std-sec'), 0.32));
     },
     rooms: () => { [standardInit, casesInit, noteInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
     // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
