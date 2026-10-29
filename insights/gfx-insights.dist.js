@@ -1,4 +1,4 @@
-/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.51 + pages 1.0.3 + insights 1.3.1 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
+/*! Grey Fox · Insights v2 (Flow 3) · core 1.0.51 + pages 1.0.3 + insights 1.3.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + insights/gfx-insights.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -1498,7 +1498,7 @@ gfx.pages=api;
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.pages||W.__gfxInsights)return;
-W.__gfxInsights='1.3.1';
+W.__gfxInsights='1.3.2';
 const SRC=(D.currentScript&&D.currentScript.src)||'';
 const P=gfx.pages,O=P.O,H=D.documentElement,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -1726,6 +1726,7 @@ const COVER_SRI={
 'fifty-email':'sha384-3ntOLDx7YzSLeqtWH9n65uEZa+hHAip/VYrgM7Ku0O+kS4gobMBqnqOWnRhIUYZJ',
 'fire-twenty':'sha384-oCsqhyHIACfKxr5K73OrRA7DvvyLcctIMR/SIoUZax/B7m9uKg4xoKfbiQftl2DR',
 'first-five-minutes':'sha384-/OQug0DzaaJvpUCrHI/Fap7WGhy6VtOokNwXKaytFPmzIRzQp6Gc1eURu2E5s7Bc',
+'first-conversation':'sha384-8RD4rE09lTU1oy2pm2eCfyL6xUL2REJWGDrzElrPlqfslfcwMDZLPYhVVHMP5PYS',
 'five-metrics':'sha384-gQ2RBQNSXyIJ4S0bEPQfS2zQ/D4A8F7gZuOWcezvJPy1Rnb0CtTAUblU/0N4ZX3e',
 'founder-dependency':'sha384-gzcbLXTH8ECdU3E9JiPQtvuRwAFj5J1mdzl57uVHaI16uIn0LbJdq/46bWfiQRwa',
 'hidden-forty':'sha384-VDofMCeeokXxgehzPZMGE0sTUQSfdNflgsxd0iz7US3Nkvwqbzs4tDquO7WzeV0a',
