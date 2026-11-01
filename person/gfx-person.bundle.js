@@ -1,4 +1,4 @@
-/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.52 + person 1.0.6. Sources: core/gfx-core.js, person/gfx-person.js */
+/* Grey Fox · person pages v2 (Flow 3) page script: core 1.0.53 + person 1.0.6. Sources: core/gfx-core.js, person/gfx-person.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.52';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall
+  const VERSION = '1.0.53';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload holds for a started form, a fullscreen video and a reload storm
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -84,8 +84,21 @@
      the dev tools opened: never a phone's bars, TOUCH) reloads 0.6 s after the resize settles; the reader's place is saved
      on pagehide and restored on the reload (fieldInit), so the page reopens as the other kind at the same line. */
   let film0 = null, gateT = 0;
+  /* (1.0.53) The reload is skipped when it would cost the reader something: a form they have started (Contact), a video they
+     put in fullscreen (the window's size changes with it), or a reload this gate made less than 10 s ago (a scrollbar that
+     comes and goes at exactly 720px tall would otherwise reload the page for ever). The page then keeps the stages it was
+     built with, as every window did before 1.0.52, until the next visit. */
+  // words the reader has typed into a field they can see (the hidden fields a page fills itself and the door's radio, which
+  // the URL carries across a reload, do not count)
+  const TYPED = 'input:not([type]), input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="search"], input[type="number"], textarea';
+  const dirty = el => el.getAttribute('aria-hidden') !== 'true' && !!el.getClientRects().length && el.value !== el.defaultValue;
+  const gateHolds = () => { try {
+    if (D.fullscreenElement || D.webkitFullscreenElement) return true;
+    if ([].some.call(D.querySelectorAll(TYPED), dirty)) return true;
+    return Date.now() - (+store.get('gfx-gate-reload') || 0) < 10000;
+  } catch (e) { return false; } };
   const filmGate = () => { const on = mq(FILM); H.classList.toggle('gfx-film', on); H.classList.toggle('gfx-doc', !on);
-    if (film0 === null) film0 = on; else if (on !== film0 && !TOUCH) { clearTimeout(gateT); gateT = setTimeout(() => { if (mq(FILM) !== film0) location.reload(); }, 600); }
+    if (film0 === null) film0 = on; else if (on !== film0 && !TOUCH) { clearTimeout(gateT); gateT = setTimeout(() => { if (mq(FILM) !== film0 && !gateHolds()) { store.set('gfx-gate-reload', String(Date.now())); location.reload(); } }, 600); }
     return on; };
   /* (1.0.41, launch QA 10/22, Safari) a reload or Back mid-page that is NOT served from the back/forward cache: the browser puts
      the reader at the old number before the pinned stages are built (Home: ~1800px short), so for ~0.5 s it showed a later part
