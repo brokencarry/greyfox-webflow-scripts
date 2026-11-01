@@ -1,4 +1,4 @@
-/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.51 + investors 1.0.21 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
+/*! Grey Fox · Investors v2 (Flow 3) · core 1.0.52 + investors 1.1.0 · minified bundle of core/gfx-core.js + investors/gfx-investors.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,12 +38,17 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.51';
+const VERSION='1.0.52';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
 const mq=q=>{try{return W.matchMedia(q).matches;}catch(e){return false;}};
 const REDUCE=!!G.reduced(),TOUCH=mq('(pointer: coarse)');
+const FILM='(min-width: 992px) and (min-height: 720px)',DOC='(max-width: 991px), (max-height: 719.99px)';
+let film0=null,gateT=0;
+const filmGate=()=>{const on=mq(FILM);H.classList.toggle('gfx-film',on);H.classList.toggle('gfx-doc',!on);
+if(film0===null)film0=on;else if(on!==film0&&!TOUCH){clearTimeout(gateT);gateT=setTimeout(()=>{if(mq(FILM)!==film0)location.reload();},600);}
+return on;};
 const RESTORING=!REDUCE&&(()=>{try{const t=(performance.getEntriesByType('navigation')[0]||{}).type;if(t!=='reload'&&t!=='back_forward')return false;const sv=JSON.parse(W.sessionStorage.getItem('gfxFlowAt:'+location.pathname)||'null');return!!(sv&&(sv.i>0||sv.f>0.15));}catch(e){return false;}})();
 const unhide=()=>{if(!H.classList.contains('gfx-restoring'))return;H.classList.add('gfx-restore-in');H.classList.remove('gfx-restoring');setTimeout(()=>H.classList.remove('gfx-restore-in'),450);};
 try{clearTimeout(W.__gfxRestoreT);}catch(e){}
@@ -56,6 +61,7 @@ W.GF_LEAVE=LEAVE;W.GF_GROUP=GROUP;
 safe('head',()=>{
 H.classList.add('gfx-js','gfx-f3');
 if(!REDUCE)H.classList.add('gfx-m');
+filmGate();W.addEventListener('resize',filmGate);
 const qs=location.search;
 const intro=!REDUCE&&!/[?&]intro=0(&|$)/.test(qs)&&(/[?&]intro(&|=1|$)/.test(qs)||(!location.hash&&!store.get('gfx-intro-seen')));
 if(intro)H.classList.add('gfx-intro');
@@ -612,8 +618,9 @@ const vh=W.innerHeight,phone=W.innerWidth<=991,cl=(a,v,b)=>Math.min(b,Math.max(a
 const turn=Math.max(224*cl(0.6,vh / 900,1),vh*0.35);
 if(W.innerWidth<=767){const g=parseFloat(getComputedStyle(D.documentElement).getPropertyValue('--_phone---section-gap'))||80;return{tight:g,standard:g,breath:Math.round(g*1.6),turn:Math.max(192,vh*0.3)};}
 if(phone)return{tight:80,standard:96,breath:128,turn:Math.max(192,vh*0.3)};
-const k=cl(0.6,vh / 900,1);
-return{tight:cl(64*k,vh*0.0711,93)*2,standard:cl(96*k,vh*0.1067,139)+cl(64*k,vh*0.0711,93),breath:cl(192*k,vh*0.2133,278)+cl(96*k,vh*0.1067,139),turn};
+if(vh<720)return{tight:80,standard:112,breath:160,turn:192};
+const vm=Math.min(W.innerWidth,vh),k=cl(0.8,vm / 900,1);
+return{tight:cl(64*k,vm*0.0711,93)*2,standard:cl(96*k,vm*0.1067,139)+cl(64*k,vm*0.0711,93),breath:cl(192*k,vm*0.2133,278)+cl(96*k,vm*0.1067,139),turn:Math.max(224*k,vm*0.35)};
 };
 let STICKY=new Set();
 const stickyShift=(el,rm)=>{
@@ -1243,7 +1250,7 @@ return Promise.race([fr,cap]);
 };
 let PAGE=null;
 const api={
-core:VERSION,G,$,$$,safe,mq,store,clamp,docTop,NS,TAN,BASE,REDUCE,TOUCH,READ,
+core:VERSION,G,$,$$,safe,mq,store,clamp,docTop,NS,TAN,BASE,REDUCE,TOUCH,READ,FILM,DOC,film:()=>mq(FILM),
 room,lineSplit,fitFilm,rooms,scrollToY,refresh,esc,postFrame,
 get gsap(){return gsap;},get ST(){return ST;},get lenis(){return shared;},scrollNow,
 arrow:()=>W.gfArrow,turn:()=>W.gfTurn,
@@ -1323,7 +1330,7 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxInvestors)return;
-W.__gfxInvestors='1.0.21';
+W.__gfxInvestors='1.1.0';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
@@ -1338,7 +1345,7 @@ let gsap=null,ST=null;
 const refresh=()=>gfx.refresh();
 const sy=()=>gfx.scrollNow();
 let live=false;
-const decideLive=()=>{live=!REDUCE&&mq('(min-width: 992px)');H.classList.toggle('iv2-live',live);};
+const decideLive=()=>{live=!REDUCE&&mq(gfx.FILM);H.classList.toggle('iv2-live',live);};
 safe('head',()=>{H.classList.remove('gfx-intro');H.classList.add('gfx-iv3','iv-f2','gf-flow3','ow-js');if(REDUCE)H.classList.add('ow-reduce');decideLive();});
 const R={};
 const findRooms=()=>{const k=c=>$(O(c));R.hero=k('ow-hero');R.res=k('iv-fun');R.del=k('iv-client');R.mc=k('iv-mc');R.cases=k('iv-cases');R.care=k('iv-std');R.close=k('iv-close');};

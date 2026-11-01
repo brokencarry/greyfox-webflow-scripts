@@ -12,6 +12,7 @@ const OUT = process.argv[2]; fs.mkdirSync(OUT + '/shots', { recursive: true });
 const PAGES = (process.argv[3] || '/,/business-owners,/investors,/insights,/contact,/team,/tony-giudice,/articles/the-work-behind-a-first-conversation,/privacy').split(',');
 const SIZES = (process.argv[4] || '1280x631,1366x657,1440x789,1536x746,1920x969,390x844,1280x800').split(',').map((s) => s.split('x').map(Number));
 const STEP = 0.5, SETTLE = 500, LATE = 1200, NAV = 90;
+const BASE = process.env.BASE || 'https://www.greyfoxpartners.com';   // BASE=http://localhost:4820 walks a local build the same way
 const results = [];
 const measure = ({ NAV }) => {
   const vw = innerWidth, vh = innerHeight, out = [];
@@ -70,9 +71,18 @@ const key = (i) => i.tag + '|' + i.text;
       if (process.env.SWAP) {
         const [file, src] = process.env.SWAP.split('=');
         await p.route(new RegExp('greyfox-webflow-scripts@[0-9a-f]+/' + file.replace(/[.]/g, '\\.')), async (r) => { if (/^https?:/.test(src)) { const res = await r.fetch({ url: src }); r.fulfill({ response: res }); } else r.fulfill({ status: 200, contentType: 'application/javascript', body: fs.readFileSync(src, 'utf8') }); });
-        await p.route('https://www.greyfoxpartners.com/**', async (r) => { if (r.request().resourceType() !== 'document') return r.continue(); const res = await r.fetch(); const html = (await res.text()).replace(/\sintegrity="[^"]+"/g, '').replace(/\scrossorigin="[^"]+"/g, ''); r.fulfill({ status: 200, contentType: 'text/html', body: html }); });
       }
-      try { await p.goto('https://www.greyfoxpartners.com' + pg + '?rv=' + Date.now(), { waitUntil: 'load', timeout: 60000 }); } catch (e) { results.push({ pg, w, h, err: 'load ' + e.message.slice(0, 60) }); await p.close(); continue; }
+      // LOCALREPO=<path to the scripts repo>: EVERY served repo file (the bundles, the stylesheets, the portal, the partnership film)
+      // comes from that working copy, whatever commit the page pins: a whole unstaged build walked on the live page (10/31)
+      if (process.env.LOCALREPO) {
+        const path = require('path'), TYPES = { js: 'application/javascript', css: 'text/css', svg: 'image/svg+xml', json: 'application/json', webp: 'image/webp', png: 'image/png', html: 'text/plain' };
+        await p.route(/cdn\.jsdelivr\.net\/gh\/brokencarry\/greyfox-webflow-scripts@[0-9a-f]+\/[^?]+/, (r) => { const rel = r.request().url().replace(/^.*greyfox-webflow-scripts@[0-9a-f]+\//, '').split('?')[0], f = path.join(process.env.LOCALREPO, rel);
+          if (!fs.existsSync(f)) return r.continue(); r.fulfill({ status: 200, contentType: TYPES[rel.split('.').pop()] || 'application/octet-stream', body: fs.readFileSync(f), headers: { 'access-control-allow-origin': '*' } }); });
+      }
+      if (process.env.SWAP || process.env.LOCALREPO) {
+        await p.route((u) => u.href.startsWith(BASE), async (r) => { if (r.request().resourceType() !== 'document') return r.continue(); try { const res = await r.fetch(); const html = (await res.text()).replace(/\sintegrity="[^"]+"/g, '').replace(/\scrossorigin="[^"]+"/g, ''); await r.fulfill({ status: 200, contentType: 'text/html', body: html }); } catch (e) { try { await r.abort(); } catch (x) { /* gone */ } } });   // (a network hiccup fails that one load, not the run)
+      }
+      try { await p.goto(BASE + pg + '?rv=' + Date.now(), { waitUntil: 'load', timeout: 60000 }); } catch (e) { results.push({ pg, w, h, err: 'load ' + e.message.slice(0, 60) }); await p.close(); continue; }
       await p.waitForTimeout(3500); await p.mouse.move(w / 2, h / 2);
       const flags = []; let stops = 0, shots = 0; const painted = new Set();   // everything seen painted on the first pass
       const stopHere = async (pass) => {

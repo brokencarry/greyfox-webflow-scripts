@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.15';   // 1.2.15 (10/29): the call's film and the partnership's words arrive once (no reset or reverse on the way back up)
+  W.__gfxOwners = '1.3.0';   // 1.3.0 (10/31): the site's film gate (core FILM) replaces the page's own hold gate; the 820 bands are gone (stylesheet). 1.2.15 (10/29): the call's film and the partnership's words arrive once
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura; Tarn signed and back
   // 10/28, Fellow Health approved 10/28): eight marks sit two rows of four instead of five and three. When a mark comes
@@ -36,7 +36,7 @@
   if (!$('#gfx-ow-firms-8')) { const st = D.createElement('style'); st.id = 'gfx-ow-firms-8'; st.textContent = '@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(4,minmax(0,1fr))!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
-  const HOLDQ = '(min-width: 992px) and (min-height: 681px)', STACK = '(max-width: 991px)', SHORT = '(min-width: 992px) and (max-height: 680px)';
+  const HOLDQ = gfx.FILM, STACK = '(max-width: 991px)', SHORT = gfx.DOC;   // (1.3.0) the site's one film gate (992 x 720 and up)
   const eo = t => 1 - Math.pow(1 - t, 3), seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
   const c01 = v => Math.min(1, Math.max(0, +v || 0)), f1 = n => (+n).toFixed(1), nv = (v, d) => (v == null ? d : v);
   const expo = t => (t <= 0 ? 0 : t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));

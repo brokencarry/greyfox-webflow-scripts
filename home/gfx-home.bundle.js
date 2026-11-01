@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.51 + home 1.1.26. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.52 + home 1.2.0. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,12 +68,25 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.51';
+  const VERSION = '1.0.52';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
   const mq = q => { try { return W.matchMedia(q).matches; } catch (e) { return false; } };
   const REDUCE = !!G.reduced(), TOUCH = mq('(pointer: coarse)');
+  /* (1.0.52, 10/31, the founder: "we're solving the issue incorrectly") THE FILM GATE. The site's rooms were composed as screens for
+     a 900px-tall window and patched, window by window, for the laptops that showed them at 631 to 760px tall (a browser's bars).
+     One rule now: a room is held, pinned or slid only where the stage fits, 992 x 720 and up (FILM); under that the page is a
+     document (DOC): every room sized to its content, in flow, on the document rhythm (TIERS), nothing measured per window.
+     The pages read gfx.FILM / gfx.DOC and html.gfx-film / html.gfx-doc; the stylesheets key the same gate on the media query. */
+  const FILM = '(min-width: 992px) and (min-height: 720px)', DOC = '(max-width: 991px), (max-height: 719.99px)';
+  /* The gate is decided at load (each page builds its stages once). A window that crosses it mid-read (a window un-maximised,
+     the dev tools opened: never a phone's bars, TOUCH) reloads 0.6 s after the resize settles; the reader's place is saved
+     on pagehide and restored on the reload (fieldInit), so the page reopens as the other kind at the same line. */
+  let film0 = null, gateT = 0;
+  const filmGate = () => { const on = mq(FILM); H.classList.toggle('gfx-film', on); H.classList.toggle('gfx-doc', !on);
+    if (film0 === null) film0 = on; else if (on !== film0 && !TOUCH) { clearTimeout(gateT); gateT = setTimeout(() => { if (mq(FILM) !== film0) location.reload(); }, 600); }
+    return on; };
   /* (1.0.41, launch QA 10/22, Safari) a reload or Back mid-page that is NOT served from the back/forward cache: the browser puts
      the reader at the old number before the pinned stages are built (Home: ~1800px short), so for ~0.5 s it showed a later part
      of the story, then the place snapped back. The rooms stay out of sight until the place is restored, then fade in (0.3 s);
@@ -94,6 +107,7 @@
   safe('head', () => {
     H.classList.add('gfx-js', 'gfx-f3');
     if (!REDUCE) H.classList.add('gfx-m');
+    filmGate(); W.addEventListener('resize', filmGate);
     // the opening plays once a session (as local: sessionStorage sbx-intro-seen); ?intro forces it, ?intro=0 skips it
     const qs = location.search;
     const intro = !REDUCE && !/[?&]intro=0(&|$)/.test(qs) && (/[?&]intro(&|=1|$)/.test(qs) || (!location.hash && !store.get('gfx-intro-seen')));
@@ -749,8 +763,13 @@
        1280x500 window kept them and showed 272px of nothing between the firms and "The proof comes after the close." (54%
        of the screen; 30% on 900, the designed proportion). Under 900px tall the floors scale with the window (never below
        60%: 96, 173 and 134 on a 500px window), so the gap keeps the designed share of the screen. */
-    const k = cl(0.6, vh / 900, 1);
-    return { tight: cl(64 * k, vh * 0.0711, 93) * 2, standard: cl(96 * k, vh * 0.1067, 139) + cl(64 * k, vh * 0.0711, 93), breath: cl(192 * k, vh * 0.2133, 278) + cl(96 * k, vh * 0.1067, 139), turn };
+    /* (1.0.52, 10/31) THE DOCUMENT RHYTHM: a desktop window under the film gate (720px tall) is read as a document, and a
+       document's rooms are set apart by a reading gap, not a share of the screen (the 35%-of-the-screen turn was the hole a
+       1470x631 replay showed between the reading list and the close). The film rhythm (720 and up) is the designed one, on
+       the window's smaller side (vmin; the stylesheet's --gfx-a-* tokens say the same), its floor the 720px scale. */
+    if (vh < 720) return { tight: 80, standard: 112, breath: 160, turn: 192 };
+    const vm = Math.min(W.innerWidth, vh), k = cl(0.8, vm / 900, 1);
+    return { tight: cl(64 * k, vm * 0.0711, 93) * 2, standard: cl(96 * k, vm * 0.1067, 139) + cl(64 * k, vm * 0.0711, 93), breath: cl(192 * k, vm * 0.2133, 278) + cl(96 * k, vm * 0.1067, 139), turn: Math.max(224 * k, vm * 0.35) };
   };
   let STICKY = new Set();
   const stickyShift = (el, rm) => {
@@ -1562,7 +1581,7 @@
 
   let PAGE = null;
   const api = {
-    core: VERSION, G, $, $$, safe, mq, store, clamp, docTop, NS, TAN, BASE, REDUCE, TOUCH, READ,
+    core: VERSION, G, $, $$, safe, mq, store, clamp, docTop, NS, TAN, BASE, REDUCE, TOUCH, READ, FILM, DOC, film: () => mq(FILM),
     room, lineSplit, fitFilm, rooms, scrollToY, refresh, esc, postFrame,
     get gsap() { return gsap; }, get ST() { return ST; }, get lenis() { return shared; }, scrollNow,
     arrow: () => W.gfArrow, turn: () => W.gfTurn,
@@ -1677,14 +1696,15 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.26';   // 1.1.26 (10/29): the short held screen's chapters arrive once as well (1366x657); 1.1.25: the market's words and figures arrive once; 1.1.24: the unheld climb's chapters arrive once; 1.1.23: the firms' line spacing (stylesheet only)
+  W.__gfxHome = '1.2.0';   // 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
   // column now takes its own longest word; the four still fit the index's width with room to spare.
   if (!$('#gfx-mk-idx-fit')) { const st = D.createElement('style'); st.id = 'gfx-mk-idx-fit'; st.textContent = '@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
-  const PIN = '(min-width: 992px) and (min-height: 641.01px)', UNPIN = '(max-width: 991px), (max-height: 640.99px)';
+  // (1.2.0) the climb pins only where the stage fits: the site's one film gate (core 1.0.52 FILM, 992 x 720 and up); under it the chapters are a document
+  const PIN = gfx.FILM, UNPIN = gfx.DOC;
   const ss = t => t * t * (3 - 2 * t), eo = t => 1 - Math.pow(1 - t, 3), eio = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1), lerp = (a, b, t) => a + (b - a) * t;
   const arrowReady = cb => (W.gfArrow ? cb(W.gfArrow) : null);
@@ -1957,7 +1977,7 @@
       fit(); ST.addEventListener('refresh', fit);
       return () => { ST.removeEventListener('refresh', fit); if (rail) rail.style.removeProperty('margin-top'); };
     };
-    mm.add('(min-width: 992px) and (max-height: 680.99px)', shortClear);
+    mm.add('(min-width: 992px) and (max-height: 719.99px)', shortClear);
     // (1.1.26, 10/29) the short held screen's chapters arrive once too (1366x657 replayed "The first 18 months" on a return, the revisit pass)
     if (SHORT) { mm.add(PIN, () => { const off = shortClear(); const seen = []; const sts = parts.map((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => { if (seen[i]) return; seen[i] = true; enter(i); }, onLeave: () => { if (seen[i]) return; seen[i] = true; enter(i).progress(1); } })); return () => { off(); sts.forEach(s => s.kill()); }; }); }
     else mm.add(PIN, () => {
@@ -2424,7 +2444,9 @@
     // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
     // Decided at load. (1.1.20, a visitor's replay at 1267x634) the line was 680px; the film fits from 560px with the
     // column set for the short screen (gfx-home.css), so a laptop with the browser's bars keeps the strands and the window.
-    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 560; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
+    // (1.2.0, 10/31) the market is held only where the stage fits (the film gate, 992 x 720 and up); a shorter desktop window
+    // takes the still composition (gfx-home.css "THE MARKET ROOM AS A DOCUMENT"). Tablets keep their own held stage (1.1.11).
+    late: () => { const short = W.innerWidth >= 992 && !gfx.film(); [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
     still: () => {
       gsap = W.gsap || null; ST = W.ScrollTrigger || null;
       $$('.gfx-case-ch').forEach(c => c.classList.add('gfx-on'));

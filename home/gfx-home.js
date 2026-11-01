@@ -27,14 +27,15 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.26';   // 1.1.26 (10/29): the short held screen's chapters arrive once as well (1366x657); 1.1.25: the market's words and figures arrive once; 1.1.24: the unheld climb's chapters arrive once; 1.1.23: the firms' line spacing (stylesheet only)
+  W.__gfxHome = '1.2.0';   // 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
   // column now takes its own longest word; the four still fit the index's width with room to spare.
   if (!$('#gfx-mk-idx-fit')) { const st = D.createElement('style'); st.id = 'gfx-mk-idx-fit'; st.textContent = '@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
-  const PIN = '(min-width: 992px) and (min-height: 641.01px)', UNPIN = '(max-width: 991px), (max-height: 640.99px)';
+  // (1.2.0) the climb pins only where the stage fits: the site's one film gate (core 1.0.52 FILM, 992 x 720 and up); under it the chapters are a document
+  const PIN = gfx.FILM, UNPIN = gfx.DOC;
   const ss = t => t * t * (3 - 2 * t), eo = t => 1 - Math.pow(1 - t, 3), eio = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1), lerp = (a, b, t) => a + (b - a) * t;
   const arrowReady = cb => (W.gfArrow ? cb(W.gfArrow) : null);
@@ -307,7 +308,7 @@
       fit(); ST.addEventListener('refresh', fit);
       return () => { ST.removeEventListener('refresh', fit); if (rail) rail.style.removeProperty('margin-top'); };
     };
-    mm.add('(min-width: 992px) and (max-height: 680.99px)', shortClear);
+    mm.add('(min-width: 992px) and (max-height: 719.99px)', shortClear);
     // (1.1.26, 10/29) the short held screen's chapters arrive once too (1366x657 replayed "The first 18 months" on a return, the revisit pass)
     if (SHORT) { mm.add(PIN, () => { const off = shortClear(); const seen = []; const sts = parts.map((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => { if (seen[i]) return; seen[i] = true; enter(i); }, onLeave: () => { if (seen[i]) return; seen[i] = true; enter(i).progress(1); } })); return () => { off(); sts.forEach(s => s.kill()); }; }); }
     else mm.add(PIN, () => {
@@ -774,7 +775,9 @@
     // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
     // Decided at load. (1.1.20, a visitor's replay at 1267x634) the line was 680px; the film fits from 560px with the
     // column set for the short screen (gfx-home.css), so a laptop with the browser's bars keeps the strands and the window.
-    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 560; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
+    // (1.2.0, 10/31) the market is held only where the stage fits (the film gate, 992 x 720 and up); a shorter desktop window
+    // takes the still composition (gfx-home.css "THE MARKET ROOM AS A DOCUMENT"). Tablets keep their own held stage (1.1.11).
+    late: () => { const short = W.innerWidth >= 992 && !gfx.film(); [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
     still: () => {
       gsap = W.gsap || null; ST = W.ScrollTrigger || null;
       $$('.gfx-case-ch').forEach(c => c.classList.add('gfx-on'));

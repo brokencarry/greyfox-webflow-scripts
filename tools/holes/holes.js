@@ -3,8 +3,18 @@
 // a drawn border or a non-field background). Reports, per page x size, the worst stop (largest empty share) and any
 // section whose content fills under 60% of a desktop width. Shots of the worst stops go to shots/<page>-<w>x<h>-<y>.png.
 // Usage: node holes.js <outdir> [pages=/,/business-owners,...] [sizes=1267x634,...]   env HOLE=0.35 (empty share flag)
-const pw = require('C:/Users/shiva/Dev/greyfox/greyfoxpartners/node_modules/playwright'); const fs = require('fs'); const path = require('path');
+const pw = require(process.env.PW || 'C:/Users/shiva/Claude/02-website/greyfoxpartners/node_modules/playwright'); const fs = require('fs'); const path = require('path');
 const OUT = process.argv[2]; fs.mkdirSync(OUT + '/shots', { recursive: true });
+const BASE = process.env.BASE || 'https://www.greyfoxpartners.com';   // BASE=https://greyfox.webflow.io walks the staging domain (10/31)
+// LOCALREPO=<path to the scripts repo>: every served repo file comes from that working copy (an unstaged build on the live page); the document's SRI is dropped
+const localRepo = async (p) => {
+  if (!process.env.LOCALREPO) return;
+  const TYPES = { js: 'application/javascript', css: 'text/css', svg: 'image/svg+xml', json: 'application/json', webp: 'image/webp', png: 'image/png', html: 'text/plain' };
+  await p.route(/cdn\.jsdelivr\.net\/gh\/brokencarry\/greyfox-webflow-scripts@[0-9a-f]+\/[^?]+/, (r) => { const rel = r.request().url().replace(/^.*greyfox-webflow-scripts@[0-9a-f]+\//, '').split('?')[0], f = path.join(process.env.LOCALREPO, rel);
+    if (!fs.existsSync(f)) return r.continue(); r.fulfill({ status: 200, contentType: TYPES[rel.split('.').pop()] || 'application/octet-stream', body: fs.readFileSync(f), headers: { 'access-control-allow-origin': '*' } }); });
+  await p.route((u) => u.href.startsWith(BASE), async (r) => { if (r.request().resourceType() !== 'document') return r.continue(); try { const res = await r.fetch(); const html = (await res.text()).replace(/\sintegrity="[^"]+"/g, '').replace(/\scrossorigin="[^"]+"/g, ''); await r.fulfill({ status: 200, contentType: 'text/html', body: html }); } catch (e) { try { await r.abort(); } catch (x) { /* gone */ } } });   // (a network hiccup fails that one load, not the run)
+};
+process.on('unhandledRejection', (e) => { console.log('UNHANDLED ' + String(e && e.message || e).slice(0, 160)); });
 const PAGES = (process.argv[3] || '/,/business-owners,/investors,/insights,/contact,/team').split(',');
 const SIZES = (process.argv[4] || fs.readFileSync(__dirname + '/matrix.txt', 'utf8').split(/\s+/).filter(Boolean).join(',')).split(',').map(s => s.split('x').map(Number));
 const HOLE = +(process.env.HOLE || 0.35), WIDE = 0.6;
@@ -18,7 +28,8 @@ const results = [];
     for (const pg of PAGES) {
       if (FLAGGED && !FLAGGED.includes(pg + '@' + w + 'x' + h)) continue;
       const p = await c.newPage(); const errs = []; p.on('pageerror', e => errs.push(String(e.message).slice(0, 120)));
-      try { await p.goto('https://www.greyfoxpartners.com' + pg, { waitUntil: 'load', timeout: 60000 }); } catch (e) { results.push({ pg, w, h, err: 'load ' + e.message.slice(0, 60) }); await p.close(); continue; }
+      await localRepo(p);
+      try { await p.goto(BASE + pg + '?rv=' + Date.now(), { waitUntil: 'load', timeout: 60000 }); } catch (e) { results.push({ pg, w, h, err: 'load ' + e.message.slice(0, 60) }); await p.close(); continue; }
       await p.waitForTimeout(3500); await p.mouse.move(w / 2, h / 2);
       const stops = []; let last = -1, same = 0, guard = 0; let shotsNow = 0;
       while (guard++ < 400) {
