@@ -1,4 +1,4 @@
-/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.54 + investors 1.1.1. Sources: core/gfx-core.js, investors/gfx-investors.js */
+/* Grey Fox · Investors v2 (Flow 3) page script: core 1.0.55 + investors 1.1.2. Sources: core/gfx-core.js, investors/gfx-investors.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -29,7 +29,7 @@
   'use strict';
   var W = window, D = document;
   if (W.gfx && W.gfx.core) return;
-  if (/[?&]gfm=0(&|$)/.test(location.search)) { W.gfx = { core: 'off', page: function () {} }; return; }
+  if (/[?&]gfm=0(&|$)/.test(location.search)) { W.gfx = { core: 'off', page: function () {} }; try { D.documentElement.classList.remove('gfx-f3', 'gfx-curtain'); } catch (e) { /* none */ } return; }
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
   (function (w) {
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.54';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint)
+  const VERSION = '1.0.55';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -112,7 +112,17 @@
   // showed for ~0.3 s before this script ran) with its own 3.5 s safety; from here on this script decides
   try { clearTimeout(W.__gfxRestoreT); } catch (e) { /* none */ }
   if (!RESTORING) H.classList.remove('gfx-restoring');
-  if (RESTORING) { H.classList.add('gfx-restoring'); const st = D.createElement('style'); st.id = 'gfx-restore'; st.textContent = 'html.gfx-restoring .page-wrapper{opacity:0!important}html.gfx-restore-in .page-wrapper{transition:opacity .3s cubic-bezier(.16,1,.3,1)!important}'; (D.head || H).appendChild(st); setTimeout(unhide, 2200); }
+  // (1.0.55) the cover is on body, not .page-wrapper: Investors' ported sheet makes the wrapper display: contents (no box, so its opacity did nothing there)
+  if (RESTORING) { H.classList.add('gfx-restoring'); const st = D.createElement('style'); st.id = 'gfx-restore'; st.textContent = 'html.gfx-restoring body{opacity:0!important}html.gfx-restore-in body{transition:opacity .3s cubic-bezier(.16,1,.3,1)!important}'; (D.head || H).appendChild(st); setTimeout(unhide, 2200); }
+  /* (1.0.55, 11/1, the performance pass) THE CURTAIN. This script composes every page from the end of the body, so the raw
+     Webflow page painted for 0.2-0.3 s, jumped, vanished and animated in, on every load (cold or warm). The site's head
+     script (core/gfx-head.js, served by Webflow before the first paint) now keeps .page-wrapper out of sight (visibility:
+     it inherits through Investors' display: contents wrapper, where opacity has no box to act on) on the paper from the
+     first paint; curtainOff lifts it at the opening (start(): the page composed, the hero's first state
+     set, its film about to play, all in one paint), on a still page as soon as it is set, and in the failsafe. The head
+     script lifts it on its own 3.5 s in, whatever happened (a page kept out of sight is worse than a jump). A reload or
+     Back mid-page keeps its own cover (gfx-restoring, above) until the place is restored. */
+  const curtainOff = () => H.classList.remove('gfx-curtain');
   const store = { get: k => { try { return W.sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { W.sessionStorage.setItem(k, v); } catch (e) { /* private mode */ } } };
   const GROUP = G.group, LEAVE = G.leave;
   // the reading standard (sbx-m1.js GF_READ): a film is held to 1.6 s; a reader at 600 px/s
@@ -147,7 +157,7 @@
   // the failsafe: if the motion never takes the page (a blocked CDN, an error), everything shows
   const failsafe = () => {
     if (H.classList.contains('gfx-ready')) return;
-    H.classList.add('gfx-failsafe'); H.classList.remove('gfx-intro'); ix3Late();
+    H.classList.add('gfx-failsafe'); H.classList.remove('gfx-intro'); ix3Late(); curtainOff();
     safe('failsafe', () => { const p = D.querySelector('.page-wrapper'); p && p.removeAttribute('inert'); });
   };
   setTimeout(failsafe, 6000);
@@ -540,7 +550,7 @@
     });
   };
   const lineSplit = el => {
-    const o = { lines: [], played: false, split: null, reverted: false, revert() {} };
+    const o = { lines: [], played: false, split: null, reverted: false, unmasked: false, revert() {}, unmask() {} };
     if (!el || !W.SplitText) return o;
     const opts = { type: 'lines', mask: 'lines', linesClass: 'gfx-line', aria: 'none', onSplit: self => { o.lines = self.lines; if (!o.played) gsap.set(self.lines, { yPercent: G.headline.yPercent }); } };
     breakBalanced(el);
@@ -561,11 +571,16 @@
       const m = inkKeep();
       if (!o.reverted) o.split.revert();
       breakBalanced(el);
-      if (!o.reverted) { o.split = W.SplitText.create(el, opts); if (o.played) gsap.set(o.lines, { yPercent: 0 }); }
+      if (!o.reverted) { o.split = W.SplitText.create(el, opts); if (o.played) gsap.set(o.lines, { yPercent: 0 }); if (o.unmasked) o.unmask(); }
       inkPut(m);
       requestAnimationFrame(() => D.dispatchEvent(new Event('gfx:resplit')));
     }), 160); });
     o.revert = () => { if (o.reverted) return; o.reverted = true; const m = inkKeep(); o.split.revert(); inkPut(m); };
+    /* (1.0.55, the performance pass) after its rise a hero headline used to revert to its own markup, and that rebuilt
+       element, painted whole 3-4 s in, was the page's largest contentful paint (the picture's wipe never counts). Now the
+       lines stay and only their masks open (overflow), so descenders are free and nothing new is painted: the largest
+       paint is the opening itself. A resize re-splits and opens the new masks again. */
+    o.unmask = () => { o.unmasked = true; o.lines.forEach(l => { const m = l.parentElement; if (m && m !== el) m.style.overflow = 'visible'; }); };
     return o;
   };
   const fitFilm = (tl, max) => { max = max || READ.film; const d = tl.duration(); if (d > max + 0.01) tl.timeScale(d / max); return Math.min(d, max); };
@@ -1572,13 +1587,18 @@
     const fallback = () => {
       if (done) return; done = true;
       if (haveGsap()) { res(true); return; }
-      const v = (W.gsap && W.gsap.version) || '3.13.0', base = 'https://cdn.jsdelivr.net/npm/gsap@' + v + '/dist/';
+      /* (1.0.55, the performance pass) the plugins come from where the page's own gsap tag came from (Webflow's copy:
+         one cache entry for every page, Home has the tags in its markup), the two in parallel; jsDelivr's npm copy only
+         when there is no such tag. And they are fetched now: this runs after DOMContentLoaded, when every tag in the
+         body has run, so nothing is gained by waiting for the load event (it used to: the opening waited on every
+         image of the page, ~0.4 s on a fast line, and the site's head preloads them besides). */
+      const tag = D.querySelector('script[src*="/gsap/"][src$="/gsap.min.js"]'), v = (W.gsap && W.gsap.version) || '3.13.0';
+      const base = tag ? tag.src.replace(/gsap\.min\.js$/, '') : 'https://cdn.jsdelivr.net/npm/gsap@' + v + '/dist/';
       (W.gsap ? Promise.resolve() : loadScript(base + 'gsap.min.js'))
-        .then(() => (W.ScrollTrigger ? 0 : loadScript(base + 'ScrollTrigger.min.js')))
-        .then(() => (W.SplitText ? 0 : loadScript(base + 'SplitText.min.js')))
+        .then(() => Promise.all([W.ScrollTrigger ? 0 : loadScript(base + 'ScrollTrigger.min.js'), W.SplitText ? 0 : loadScript(base + 'SplitText.min.js')]))
         .then(() => res(haveGsap()), () => res(haveGsap()));
     };
-    if (D.readyState === 'complete') fallback(); else { W.addEventListener('load', fallback, { once: true }); setTimeout(fallback, 2500); }
+    if (D.readyState !== 'loading') fallback(); else D.addEventListener('DOMContentLoaded', fallback, { once: true });
   });
   const ensureLenis = () => new Promise(res => {
     if (REDUCE || TOUCH || shared) { res(); return; }
@@ -1609,7 +1629,7 @@
     safe('ix2 sweep', () => { strip(D.body); if (ixObs) ixObs.disconnect(); });
     skipLink(); stopIX2(); cleanIX();
     W.addEventListener('load', () => { stopIX2(); setTimeout(ix3Late, 3000); }, { once: true });
-    if (!PAGE) { H.classList.add('gfx-ready'); return; }
+    if (!PAGE) { H.classList.add('gfx-ready'); curtainOff(); return; }
     safe('nav reserve', navReserve);
     safe('menu foot', menuFoot);
     safe('phone menu', phoneMenu);
@@ -1627,7 +1647,7 @@
       H.classList.add('gfx-still-page');
       if (fieldDef) { removeEventListener('scroll', early); fieldStill(); }
       safe('page still', () => PAGE.still && PAGE.still(api));
-      H.classList.add('gfx-ready');
+      H.classList.add('gfx-ready'); curtainOff();
       if (W.gsap) { gsap = W.gsap; } footInit(PAGE.foot);
       if (PAGE.fox) foxStep(PAGE.fox);
     });
@@ -1638,7 +1658,7 @@
       const p = $('.page-wrapper'); p && p.removeAttribute('inert');
       if (fieldDef) { removeEventListener('scroll', early); fieldStill(); }
       safe('page still', () => PAGE.still && PAGE.still(api));
-      H.classList.add('gfx-ready');
+      H.classList.add('gfx-ready'); curtainOff();
     });
   }
   function start() {
@@ -1649,6 +1669,9 @@
     if (shared && sharedRaf) { tickerOn = true; cancelAnimationFrame(tempLoop); gsap.ticker.add(() => sharedRaf(performance.now())); gsap.ticker.lagSmoothing(0); shared.on('scroll', ST.update); }
     safe('page start', () => PAGE.start && PAGE.start(api));
     safe('nav', navInit);
+    // the curtain lifts here, not after the fonts: every hero's film starts in the page's start (a 0.1 s delay), so a
+    // later lift would show it part-played. The hero's first state is set; the lift and its first frame share one paint.
+    curtainOff();
     fontsReady().then(() => {
       safe('page rooms', () => PAGE.rooms && PAGE.rooms(api));
       safe('keyboard', keyboardInit);
@@ -1715,7 +1738,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.1.1';   // 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
+  W.__gfxInvestors = '1.1.2';   // 1.1.2 (11/1, the performance pass): the hero headline stays out of sight until its lines are masked (autoSplit waits for the fonts). 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -1915,6 +1938,10 @@
     const room = R.hero; if (!room) return;
     const h1 = $(O('ow-h1'), room); if (!h1) return;
     let heroTl = null, prevLines = null, first = true;
+    // (1.1.2, the performance pass) out of sight until its lines are masked: autoSplit waits for the fonts, and on a warm
+    // visit the whole headline showed for a beat before its lines dropped under their masks (the curtain made it visible)
+    h1.style.opacity = '0';
+    try {
     W.SplitText.create(h1, { type: 'lines', mask: 'lines', linesClass: 'ow-line', autoSplit: true, aria: 'none',
       onSplit: self => {
         const was = prevLines; prevLines = [...self.lines];
@@ -1922,6 +1949,7 @@
         else self.lines.forEach((l, i) => { const o = was && was[Math.min(i, was.length - 1)], from = o ? +gsap.getProperty(o, 'yPercent') || 0 : G.headline.yPercent;
           gsap.fromTo(l, { yPercent: from }, { yPercent: 0, duration: from > 0 ? G.headline.duration * (from / G.headline.yPercent) + 0.2 : 0.01, delay: from > 0 ? i * G.headline.stagger : 0, ease: SETTLE, overwrite: true }); });
         if (!first) requestAnimationFrame(() => D.dispatchEvent(new Event('ow:resplit'))); first = false; } });
+    } finally { const show = () => { h1.style.opacity = ''; }; if (D.fonts && D.fonts.ready) D.fonts.ready.then(show, show); else show(); }   // (after the split: autoSplit's own fonts wait was registered first)
     const words = [$(O('ow-hero-lede'), room), $(O('ow-actions'), room)].filter(Boolean), rule = $(O('ow-hero-foot') + ' > ' + O('ow-rule'), room) || $(O('ow-rule'), room), stats = $$(O('iv-stat'), room);
     const pic = $(O('ow-hero-pic'), room), img = pic && ($('img[data-o~="iv-hero-tug"]', pic) || $('img', pic)), fx = pic ? (getComputedStyle(pic).getPropertyValue('--fx').trim() || '96px') : '96px';
     const lede = $(O('ow-hero-lede'), room), wordsHid = words.filter(w => w !== lede);

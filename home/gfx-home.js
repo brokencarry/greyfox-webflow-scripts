@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.2.1';   // 1.2.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
+  W.__gfxHome = '1.2.2';   // 1.2.2 (11/1, the performance pass): the climb reads its path length and rail width once per placing, the middle camp by bisection; the intro mark is born in place. 1.2.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -96,6 +96,7 @@
        .gfx-mark (its stroke rule would reach the ink's mask); fixed in the preloader, on the black of the hero it opens on */
     const svg = D.createElementNS(NS, 'svg'); svg.setAttribute('class', 'gfx-intro-mark gfx-intro-line'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
     svg.style.cssText = 'position:fixed;left:0;top:0;overflow:visible;pointer-events:none;z-index:2;--gfa-c:#3aa678';
+    svg.setAttribute('width', '0'); svg.setAttribute('height', '0');   // (1.2.2) born without a size: an svg is 300 x 150 until sized, and its move to the logo at the placing counted as a layout shift under the preloader
     pre.appendChild(svg);
     let mk = null; const lk = { t: 0 };
     const place = () => safe('intro mark', () => {
@@ -355,9 +356,12 @@
         const mr = $('mask rect', svg); if (mr) { mr.setAttribute('width', Wr); mr.setAttribute('height', Hr); }
         cRect.setAttribute('height', Hr + 40);
         midX = pts[4][0];
+        cLen = cTrack.getTotalLength(); railW = Wr;   // (1.2.2) read once per placing: every frame of the climb asked the path's length and the rail's width (a layout flush each)
       };
-      const cPt = t => { const p = cTrack.getPointAtLength(t * cTrack.getTotalLength()); return { x: p.x, y: p.y }; };
-      const snapMid = () => { const L = cTrack.getTotalLength(); let dd = Infinity; for (let i = 0; i <= 800; i++) { const t = i / 800, e = Math.abs(cTrack.getPointAtLength(t * L).x - midX); if (e < dd) { dd = e; camps[1] = t; } } };
+      let cLen = 0, railW = 0;
+      const cPt = t => { const p = cTrack.getPointAtLength(t * (cLen || (cLen = cTrack.getTotalLength()))); return { x: p.x, y: p.y }; };
+      // (1.2.2) the ridge runs left to right, so x grows along the path: the middle camp is a bisection (~20 reads), not 801 points
+      const snapMid = () => { const L = cLen || cTrack.getTotalLength(); let lo = 0, hi = 1; for (let i = 0; i < 22; i++) { const mid = (lo + hi) / 2; if (cTrack.getPointAtLength(mid * L).x < midX) lo = mid; else hi = mid; } camps[1] = (lo + hi) / 2; };
       const leaders = stops.map(s => $(':scope > [class*="gfx-case-leader"]', s)), labels = stops.map(s => $(':scope > [class*="gfx-case-lbl-"]', s));
       gsap.set(leaders.filter(Boolean), { transformOrigin: '50% 100%' });
       const campReveal = (k, f) => {
@@ -370,7 +374,7 @@
       const drawClimb = f => {
         cF = f; const p = cPt(f);
         if (arrow) { arrow.style.left = p.x + 'px'; arrow.style.top = p.y + 'px'; arrow.classList.toggle('gfx-summit', f >= 0.97); }
-        cRect.setAttribute('width', f >= 1 ? rail.offsetWidth + 30 : p.x + 10);
+        cRect.setAttribute('width', f >= 1 ? (railW || rail.offsetWidth) + 30 : p.x + 10);
         camps.forEach((_, k) => campReveal(k, f));
         stops.forEach((s, k) => s.classList.toggle('gfx-dot-on', f >= camps[k] - 0.015));
       };

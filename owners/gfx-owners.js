@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.3.1';   // 1.3.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.3.0 (10/31): the site's film gate (core FILM) replaces the page's own hold gate; the 820 bands are gone (stylesheet). 1.2.15 (10/29): the call's film and the partnership's words arrive once
+  W.__gfxOwners = '1.3.2';   // 1.3.2 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint). 1.3.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.3.0 (10/31): the site's film gate (core FILM) replaces the page's own hold gate; the 820 bands are gone (stylesheet). 1.2.15 (10/29): the call's film and the partnership's words arrive once
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura; Tarn signed and back
   // 10/28, Fellow Health approved 10/28): eight marks sit two rows of four instead of five and three. When a mark comes
@@ -100,7 +100,8 @@
     const room = R.hero; if (!room) return;
     const h1 = $(O('ow-h1'), room), lede = $(O('ow-hero-lede'), room), act = $(O('ow-actions'), room), pic = $(O('ow-hero-pic'), room), firms = $(O('ow-firms'), room);
     heroHead = gfx.lineSplit(h1);
-    const tl = gsap.timeline({ delay: 0.12, onComplete: () => { if (heroHead && !heroHead.reverted) heroHead.revert(); } });
+    // (1.3.2, the performance pass) the lines stay after the rise, their masks open (core lineSplit.unmask); the revert repainted the headline whole 3-4 s in = the page's largest paint
+    const tl = gsap.timeline({ delay: 0.12, onComplete: () => { if (heroHead) heroHead.unmask(); } });
     heroHead.played = true;
     tl.fromTo(heroHead.lines, { y: 0, yPercent: 106 }, { y: 0, yPercent: 0, duration: 1.6, ease: 'expo.out', stagger: 0.09 }, 0)
       .fromTo([lede, act].filter(Boolean), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1.4, ease: 'expo.out', stagger: 0.1, clearProps: 'transform' }, 0.3)

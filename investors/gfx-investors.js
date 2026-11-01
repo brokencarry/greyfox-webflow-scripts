@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.1.1';   // 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
+  W.__gfxInvestors = '1.1.2';   // 1.1.2 (11/1, the performance pass): the hero headline stays out of sight until its lines are masked (autoSplit waits for the fonts). 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -231,6 +231,10 @@
     const room = R.hero; if (!room) return;
     const h1 = $(O('ow-h1'), room); if (!h1) return;
     let heroTl = null, prevLines = null, first = true;
+    // (1.1.2, the performance pass) out of sight until its lines are masked: autoSplit waits for the fonts, and on a warm
+    // visit the whole headline showed for a beat before its lines dropped under their masks (the curtain made it visible)
+    h1.style.opacity = '0';
+    try {
     W.SplitText.create(h1, { type: 'lines', mask: 'lines', linesClass: 'ow-line', autoSplit: true, aria: 'none',
       onSplit: self => {
         const was = prevLines; prevLines = [...self.lines];
@@ -238,6 +242,7 @@
         else self.lines.forEach((l, i) => { const o = was && was[Math.min(i, was.length - 1)], from = o ? +gsap.getProperty(o, 'yPercent') || 0 : G.headline.yPercent;
           gsap.fromTo(l, { yPercent: from }, { yPercent: 0, duration: from > 0 ? G.headline.duration * (from / G.headline.yPercent) + 0.2 : 0.01, delay: from > 0 ? i * G.headline.stagger : 0, ease: SETTLE, overwrite: true }); });
         if (!first) requestAnimationFrame(() => D.dispatchEvent(new Event('ow:resplit'))); first = false; } });
+    } finally { const show = () => { h1.style.opacity = ''; }; if (D.fonts && D.fonts.ready) D.fonts.ready.then(show, show); else show(); }   // (after the split: autoSplit's own fonts wait was registered first)
     const words = [$(O('ow-hero-lede'), room), $(O('ow-actions'), room)].filter(Boolean), rule = $(O('ow-hero-foot') + ' > ' + O('ow-rule'), room) || $(O('ow-rule'), room), stats = $$(O('iv-stat'), room);
     const pic = $(O('ow-hero-pic'), room), img = pic && ($('img[data-o~="iv-hero-tug"]', pic) || $('img', pic)), fx = pic ? (getComputedStyle(pic).getPropertyValue('--fx').trim() || '96px') : '96px';
     const lede = $(O('ow-hero-lede'), room), wordsHid = words.filter(w => w !== lede);

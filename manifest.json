@@ -1,15 +1,15 @@
 {
  "home/gfx-home.dist.js": {
-  "bytes": 140320,
-  "sri": "sha384-Hoa1HX9EiFrNDL2/BhGVe/NDnAhR7tR1RlopUqkoD+65UUtVMKoWD5LDIeejkni6"
+  "bytes": 140927,
+  "sri": "sha384-gYu9hJcEr4B8zMwssNSadRDdWFfwzss0ILTKl3B37CkygClJaf0k8Zn3lymyX1u5"
  },
  "core/gfx-core.dist.css": {
   "bytes": 35936,
-  "sri": "sha384-S6GUCfAoHfMTTQMrSM3Ujr501meePiI2lYxJBQ1XmNcBppjEyFwttH+Nejckcv3a"
+  "sri": "sha384-ebpG7FG1CcYURjhPwznvEJAjQQlM1vsMqcJoo+67I4p/DfvpffEUGcqO3WBvvmP8"
  },
  "home/gfx-home.dist.css": {
   "bytes": 37926,
-  "sri": "sha384-VP7uw54FDQv2OKCA0zqxx/ZuhKksLCOEYKJzWx0dCu+xvFBlinX584as5MbpkriD"
+  "sri": "sha384-6kCkj957BFfbwVVYXOnwnid8kkHvxTquUK7atrKXJz6MnxVJaP+NY/AtYumyGGgD"
  },
  "portal/desktop-portal.js": {
   "bytes": 9519,
@@ -20,75 +20,75 @@
   "sri": "sha384-wGOwqAfyGMMFPf9OPRIbu+IPlSRwZP85820QSFNvE1BMLaNpQ73+LHzFUy6gipoV"
  },
  "owners/gfx-owners.dist.js": {
-  "bytes": 123498,
-  "sri": "sha384-M4zxSg8AiqNW3pqvOtVL5ww+KPljxOM0+LtJoXorIE/mJfd3FCsnHzTu43luzbs2"
+  "bytes": 123925,
+  "sri": "sha384-c1iVEuNXpYZuCHTQKYYMRps9Zeid7kgbnlhNb+BMaYGAV0BIqWhjLaI6xWwgf+/k"
  },
  "owners/gfx-owners.dist.css": {
   "bytes": 50619,
-  "sri": "sha384-UQr7cjlTLuD5kfIbaMem6GvbUTcjds2Mp5/enrXxoft+xgMXvs6hcfbec398nuqI"
+  "sri": "sha384-crFFSt1ig/SLlaXIWnT+LLy6pkg6swVjNK+xjQLB2dyhwEXPL1g06Za/c9BeG+qn"
  },
  "owners/pt/pt-film.js": {
   "bytes": 108183,
   "sri": "sha384-9Bkb3x0gmXUxROz8Rz7G2ewiuh69dNFnP5G1mPe6rjcOqDwy10WZUKVyBEjSNQrP"
  },
  "contact/gfx-contact.dist.js": {
-  "bytes": 118988,
-  "sri": "sha384-bGWuqthuDcjDT7xu95GPM2y3Mf5otN4w9KpZOw7nMyHG1ixeOJAjNssvdi+AwchD"
+  "bytes": 119419,
+  "sri": "sha384-8b+DkuPMbbclW+fK397d3zZ9nWzvitp91itHurlWzOu/V9yg4sYQECHCoH73Mp+T"
  },
  "contact/gfx-contact.dist.css": {
   "bytes": 44067,
-  "sri": "sha384-VyYR26plHXwmAkBs0PPb9i45A0hku8QqTbIBJEdanmZLe/OVOz85c2li2QLEV5AQ"
+  "sri": "sha384-jtfvZv3wBJ6ezQrTOKbPtQpkQg58AhsZF7He6VEVqWWZjyUGR83fA/PFcT1Kr+tF"
  },
  "privacy/gfx-privacy.dist.js": {
-  "bytes": 108983,
-  "sri": "sha384-pmC1eM5FGRydqKgwEOm9Iy83RJfcoNLifSWUClOM5+7ogG2hxDVIWzdeOAkRVhk+"
+  "bytes": 109414,
+  "sri": "sha384-dsOchvhU1XYpEBM2weEj9QCQaJgu/Vthi9gGKyER78sNhCe9of+wrcUcVJar2cEB"
  },
  "privacy/gfx-privacy.dist.css": {
   "bytes": 23797,
-  "sri": "sha384-4J6zbbxHc8lPCpDWbfVWEG7aGrANvYjjrm19g9KEMn618TglDdBvxOpPOioBwKm2"
+  "sri": "sha384-trFf9YsH4T+P5SCIj0qSTejW8ZHSjrTvQSGcbruPv8TQ9QWep5YO8mea3qmwJgs6"
  },
  "team/gfx-team.dist.js": {
-  "bytes": 117514,
-  "sri": "sha384-1Ys6ZEaxafAQgpip2DUzYya7qTjBWMeHywMgPqH0GXFNaAmY1bEKEZfQ4QqlBOyu"
+  "bytes": 117945,
+  "sri": "sha384-NSKenOwcUO1BA9um7cAoRit19YnDE8xi2M5/fcwMH0usqYDgBP49feRQ4fnDjdqd"
  },
  "team/gfx-team.dist.css": {
   "bytes": 34977,
-  "sri": "sha384-2X1i6g5/iY6enRpsgxLNWqQl5O8hymkuTzOjGZCkRY5Yn3/RIuSbJA7rUrunSSHs"
+  "sri": "sha384-fMU+MQwEXrQRLs7j/Qwii58FE/f7iW1TGRXYYDnEPEYG4gcnsCokX9Olo8I6pe5D"
  },
  "insights/gfx-insights.dist.js": {
-  "bytes": 139657,
-  "sri": "sha384-BpnlvnySV2HtZAjYcj17zBv2gl+Of8UBJ/ysRQy/VK6JqeqrYndlgKYxFkHr3QeM"
+  "bytes": 140088,
+  "sri": "sha384-nKTCCj4PQtSyFBHrh86UQNNDkxC605fmsgUI7knVDzuXlh6IGlawAPA8jdzTZLzO"
  },
  "insights/gfx-insights.dist.css": {
   "bytes": 59464,
-  "sri": "sha384-sFZBSDXS7ghN0VQdUpj07xPH/dEzFd/N6bnl/58Uqaq4bnKLDtPY/dmru6Le+JAR"
+  "sri": "sha384-oHB5RsKgj8Ex5PfP8OeSAfPqdqkRHQ1QtBjs0f1AjpNqV1+pzM4dJnnuPJ4+mMu3"
  },
  "person/gfx-person.dist.js": {
-  "bytes": 102425,
-  "sri": "sha384-g8yl9h4wjzecNQ56Xx+Uebjq+Hr7ZBlfElDz+7PZiJ50jPk41i/QORoDRzjawk3B"
+  "bytes": 102872,
+  "sri": "sha384-8QhT8DY2bz1ktoYbWAPy7sz9y78cAFhJk71MhhkyKAwyvNRyljMynCrwhaJgK2tj"
  },
  "person/gfx-person.dist.css": {
   "bytes": 17032,
   "sri": "sha384-dhb/S1yI7H6qcvG8GVO7U5lLiMNLqVwL+4VI0CaST3hfJZhIAGdjB7D7flT2E0W8"
  },
  "investors/gfx-investors.dist.js": {
-  "bytes": 136907,
-  "sri": "sha384-D25EpVSSG2VHGmTIPE688DuM+BXpP8EPlNUFuj4S+vIwQUYAYA6dATa+Au7tjLU7"
+  "bytes": 137498,
+  "sri": "sha384-TNiYBx3R3cg8MBft2MDCcwejkMIlYPyE7hyG4SkiI4MazUK33a8tepYAwZpR/WWR"
  },
  "investors/gfx-investors.dist.css": {
   "bytes": 62152,
-  "sri": "sha384-O6wfANfvUW8TX4aFF98Hm0t2QgrN1apXI9MowWZLKHeijoDOuwMkoDj46aqiiQ+s"
+  "sri": "sha384-D2lZF/J5vm1r25VRsP2+2KLIi7XvaJAUkrZY/QR8ghKIwdqkB6K38rdqQ2QA64B7"
  },
  "_versions": {
-  "core": "1.0.54",
-  "home": "1.2.1",
-  "owners": "1.3.1",
-  "pages": "1.0.3",
+  "core": "1.0.55",
+  "home": "1.2.2",
+  "owners": "1.3.2",
+  "pages": "1.0.4",
   "contact": "1.0.12",
   "privacy": "1.0.2",
   "team": "1.0.3",
   "insights": "1.3.5",
   "person": "1.0.6",
-  "investors": "1.1.1"
+  "investors": "1.1.2"
  }
 }
