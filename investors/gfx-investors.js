@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.1.0';   // 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
+  W.__gfxInvestors = '1.1.1';   // 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -48,7 +48,7 @@
   // the local page's html states (the ported stylesheet keys on them): Flow 3 on, the rooms built; "live" = a desktop with motion
   let live = false;
   // (1.1.0, 10/31) "live" = the held stages: only where the stage fits, the site's film gate (core 1.0.52 FILM: 992 x 720 and up)
-  const decideLive = () => { live = !REDUCE && mq(gfx.FILM); H.classList.toggle('iv2-live', live); };
+  const decideLive = () => { live = !REDUCE && mq(gfx.FILM); H.classList.toggle('iv2-live', live); }; gfx.staged();   // (1.1.1) the two stages are built on the gate: a crossing reloads
   // (only Home has the first-visit opening: the core marks a session's first page html.gfx-intro, whose body { overflow:
   // hidden } waits for Home's splash to end. Here nothing would ever end it, and a hidden-overflow body is a scroll
   // container of its own, so the two sticky stages would never stick. Inner pages open straight on their room)

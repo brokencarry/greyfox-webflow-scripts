@@ -1,4 +1,4 @@
-/* Grey Fox · gfx core (Flow 3) stylesheet · core 1.0.52 (10/31: one fluid desktop scale, the film gate, the document rhythm) · core 1.0.0 · 2026-10-20
+/* Grey Fox · gfx core (Flow 3) stylesheet · core 1.0.54 (11/1: the hero headline rule keys on the document, with the width cap; 10/31, 1.0.52: one fluid desktop scale, the film gate, the document rhythm) · core 1.0.0 · 2026-10-20
    The shared Flow 3 styles every page links (core/gfx-core.min.css). Everything keys on html.gfx-f3 (set by the core
    script) or on classes the core script builds, so a page without the script is the page Webflow serves.
    TOKENS: every colour, face and type size the shared parts use is a custom property on :root, so a later token
@@ -63,7 +63,7 @@
   :root {
     --gf-body: clamp(16px, 2vmin, 18px); --gf-body-long: clamp(17px, 2.1112vmin, 19px);
     --gf-h3-display: clamp(35px, 4.8889vmin, 44px); --gf-h3-card: clamp(23px, 3.1112vmin, 28px); --gf-h3-item: clamp(19px, 2.5556vmin, 23px); --gf-h3-door: clamp(23px, 3.1112vmin, 28px);
-    --gfx-h1: clamp(56px, 8vmin, 72px);
+    --gfx-h1: min(clamp(56px, 8vmin, 72px), clamp(56px, 5vw, 72px));   /* (1.0.54) the smaller of the height scale and the width cap the heroes always had (56 at 1120 wide and under) */
     --gfx-h2: clamp(38px, 5.3334vmin, 52px);   /* (was clamp(40px, 3.3334vw, 52px): the width alone) */
     --gfx-body: var(--gf-body);
     --gfx-a-tight: clamp(51px, 7.1112vmin, 93px); --gfx-a-standard: clamp(77px, 10.6667vmin, 139px); --gfx-a-breath: clamp(154px, 21.3334vmin, 278px);
@@ -72,8 +72,11 @@
     /* the room gaps as one scale (what a page may use for its own spacing): 8 · 16 · 24 · 32 · 48 · 64 · 96 · 128 at 900 */
     --gfx-s-3: clamp(19px, 2.6667vmin, 24px); --gfx-s-4: clamp(26px, 3.5556vmin, 32px); --gfx-s-5: clamp(38px, 5.3334vmin, 48px); --gfx-s-6: clamp(51px, 7.1112vmin, 64px); --gfx-s-7: clamp(77px, 10.6667vmin, 96px); --gfx-s-8: clamp(102px, 14.2223vmin, 128px);
   }
-  /* the hero headlines on the scale (72 at 900, 56 at 720 and under; the pages' own width rules still cap them narrower) */
-  html.gfx-f3 :is(.gfx-hero-h, [data-o~="ow-h1"]):not(#gfx-h1x) { font-size: var(--gfx-h1) !important; }
+  /* the hero headlines on the scale (72 at 900, 56 at 720 and under). (1.0.54) Keyed on the document, not on a class the
+     script adds: keyed on html.gfx-f3 the headline painted at the page's own size and changed when the script ran, a
+     layout shift on every load of every page at a short window (Business Owners 0.02 -> 0.05). The pages that own
+     [data-o~=ow-h1] key their sheets on html:not(#gfx-o) the same way. */
+  html:not(#gfx-o) :is(.gfx-hero-h, [data-o~="ow-h1"]):not(#gfx-h1x) { font-size: var(--gfx-h1) !important; }
 }
 /* THE DOCUMENT RHYTHM (gfx-core.js TIERS: tight 80, standard 112, breath 160, turn 192): under the gate a desktop window
    is a document, and a document's rooms are set apart by a reading gap, not by a share of the screen */

@@ -67,7 +67,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.53';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload holds for a started form, a fullscreen video and a reload storm
+  const VERSION = '1.0.54';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint)
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -82,11 +82,13 @@
   /* The gate is decided at load (each page builds its stages once). A window that crosses it mid-read (a window un-maximised,
      the dev tools opened: never a phone's bars, TOUCH) reloads 0.6 s after the resize settles; the reader's place is saved
      on pagehide and restored on the reload (fieldInit), so the page reopens as the other kind at the same line. */
-  let film0 = null, gateT = 0;
-  /* (1.0.53) The reload is skipped when it would cost the reader something: a form they have started (Contact), a video they
-     put in fullscreen (the window's size changes with it), or a reload this gate made less than 10 s ago (a scrollbar that
-     comes and goes at exactly 720px tall would otherwise reload the page for ever). The page then keeps the stages it was
-     built with, as every window did before 1.0.52, until the next visit. */
+  let film0 = null, gateT = 0, staged = false;
+  /* (1.0.53) Only a page that built its stages on the gate reloads on a crossing: Home, Investors and Business Owners say so
+     with gfx.staged(). The inner pages have nothing built on it (their tokens follow the media query by themselves), so for
+     them a crossing only swaps the html class. And the reload is skipped when it would cost the reader something: a form they
+     have started (Contact), a video they put in fullscreen (the window's size changes with it), or a reload this gate made
+     less than 10 s ago (a scrollbar that comes and goes at exactly 720px tall would otherwise reload the page for ever).
+     The page then keeps the stages it was built with, as every window did before 1.0.52, until the next visit. */
   // words the reader has typed into a field they can see (the hidden fields a page fills itself and the door's radio, which
   // the URL carries across a reload, do not count)
   const TYPED = 'input:not([type]), input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="search"], input[type="number"], textarea';
@@ -97,7 +99,7 @@
     return Date.now() - (+store.get('gfx-gate-reload') || 0) < 10000;
   } catch (e) { return false; } };
   const filmGate = () => { const on = mq(FILM); H.classList.toggle('gfx-film', on); H.classList.toggle('gfx-doc', !on);
-    if (film0 === null) film0 = on; else if (on !== film0 && !TOUCH) { clearTimeout(gateT); gateT = setTimeout(() => { if (mq(FILM) !== film0 && !gateHolds()) { store.set('gfx-gate-reload', String(Date.now())); location.reload(); } }, 600); }
+    if (film0 === null) film0 = on; else if (on !== film0 && staged && !TOUCH) { clearTimeout(gateT); gateT = setTimeout(() => { if (mq(FILM) !== film0 && !gateHolds()) { store.set('gfx-gate-reload', String(Date.now())); location.reload(); } }, 600); }
     return on; };
   /* (1.0.41, launch QA 10/22, Safari) a reload or Back mid-page that is NOT served from the back/forward cache: the browser puts
      the reader at the old number before the pinned stages are built (Home: ~1800px short), so for ~0.5 s it showed a later part
@@ -1593,7 +1595,7 @@
 
   let PAGE = null;
   const api = {
-    core: VERSION, G, $, $$, safe, mq, store, clamp, docTop, NS, TAN, BASE, REDUCE, TOUCH, READ, FILM, DOC, film: () => mq(FILM),
+    core: VERSION, G, $, $$, safe, mq, store, clamp, docTop, NS, TAN, BASE, REDUCE, TOUCH, READ, FILM, DOC, film: () => mq(FILM), staged: () => { staged = true; },
     room, lineSplit, fitFilm, rooms, scrollToY, refresh, esc, postFrame,
     get gsap() { return gsap; }, get ST() { return ST; }, get lenis() { return shared; }, scrollNow,
     arrow: () => W.gfArrow, turn: () => W.gfTurn,

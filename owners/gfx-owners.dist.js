@@ -1,4 +1,4 @@
-/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.53 + owners 1.3.0 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
+/*! Grey Fox · Business Owners v2 (Flow 3) · core 1.0.54 + owners 1.3.1 · minified bundle of core/gfx-core.js + owners/gfx-owners.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,14 +38,14 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.53';
+const VERSION='1.0.54';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
 const mq=q=>{try{return W.matchMedia(q).matches;}catch(e){return false;}};
 const REDUCE=!!G.reduced(),TOUCH=mq('(pointer: coarse)');
 const FILM='(min-width: 992px) and (min-height: 720px)',DOC='(max-width: 991px), (max-height: 719.99px)';
-let film0=null,gateT=0;
+let film0=null,gateT=0,staged=false;
 const TYPED='input:not([type]), input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="search"], input[type="number"], textarea';
 const dirty=el=>el.getAttribute('aria-hidden')!=='true'&&!!el.getClientRects().length&&el.value!==el.defaultValue;
 const gateHolds=()=>{try{
@@ -54,7 +54,7 @@ if([].some.call(D.querySelectorAll(TYPED),dirty))return true;
 return Date.now()-(+store.get('gfx-gate-reload')||0)<10000;
 }catch(e){return false;}};
 const filmGate=()=>{const on=mq(FILM);H.classList.toggle('gfx-film',on);H.classList.toggle('gfx-doc',!on);
-if(film0===null)film0=on;else if(on!==film0&&!TOUCH){clearTimeout(gateT);gateT=setTimeout(()=>{if(mq(FILM)!==film0&&!gateHolds()){store.set('gfx-gate-reload',String(Date.now()));location.reload();}},600);}
+if(film0===null)film0=on;else if(on!==film0&&staged&&!TOUCH){clearTimeout(gateT);gateT=setTimeout(()=>{if(mq(FILM)!==film0&&!gateHolds()){store.set('gfx-gate-reload',String(Date.now()));location.reload();}},600);}
 return on;};
 const RESTORING=!REDUCE&&(()=>{try{const t=(performance.getEntriesByType('navigation')[0]||{}).type;if(t!=='reload'&&t!=='back_forward')return false;const sv=JSON.parse(W.sessionStorage.getItem('gfxFlowAt:'+location.pathname)||'null');return!!(sv&&(sv.i>0||sv.f>0.15));}catch(e){return false;}})();
 const unhide=()=>{if(!H.classList.contains('gfx-restoring'))return;H.classList.add('gfx-restore-in');H.classList.remove('gfx-restoring');setTimeout(()=>H.classList.remove('gfx-restore-in'),450);};
@@ -1257,7 +1257,7 @@ return Promise.race([fr,cap]);
 };
 let PAGE=null;
 const api={
-core:VERSION,G,$,$$,safe,mq,store,clamp,docTop,NS,TAN,BASE,REDUCE,TOUCH,READ,FILM,DOC,film:()=>mq(FILM),
+core:VERSION,G,$,$$,safe,mq,store,clamp,docTop,NS,TAN,BASE,REDUCE,TOUCH,READ,FILM,DOC,film:()=>mq(FILM),staged:()=>{staged=true;},
 room,lineSplit,fitFilm,rooms,scrollToY,refresh,esc,postFrame,
 get gsap(){return gsap;},get ST(){return ST;},get lenis(){return shared;},scrollNow,
 arrow:()=>W.gfArrow,turn:()=>W.gfTurn,
@@ -1337,12 +1337,12 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxOwners)return;
-W.__gfxOwners='1.3.0';
+W.__gfxOwners='1.3.1';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,mq=gfx.mq,clamp=gfx.clamp;
 if(!$('#gfx-ow-firms-8')){const st=D.createElement('style');st.id='gfx-ow-firms-8';st.textContent='@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(4,minmax(0,1fr))!important}}';(D.head||H).appendChild(st);}
 const NS=gfx.NS,TAN=gfx.TAN,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
-const HOLDQ=gfx.FILM,STACK='(max-width: 991px)',SHORT=gfx.DOC;
+const HOLDQ=gfx.FILM,STACK='(max-width: 991px)',SHORT=gfx.DOC;gfx.staged();
 const eo=t=>1-Math.pow(1-t,3),seg=(p,a,b)=>clamp((p-a) / (b-a),0,1);
 const c01=v=>Math.min(1,Math.max(0,+v||0)),f1=n=>(+n).toFixed(1),nv=(v,d)=>(v==null?d:v);
 const expo=t=>(t<=0?0:t>=1?1:1-Math.pow(2,-10*t));

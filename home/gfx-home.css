@@ -1,4 +1,4 @@
-/* Grey Fox · gfx Home (Flow 3) stylesheet · home 1.2.0 · 2026-10-31 (1.2.0: one fluid scale and the film gate, the per-window height bands gone) · home 1.1.0 · 2026-10-20
+/* Grey Fox · gfx Home (Flow 3) stylesheet · home 1.2.1 · 2026-11-01 (1.2.1: the hero headline's width cap moved into core's --gfx-h1; 1.2.0: one fluid scale and the film gate, the per-window height bands gone) · home 1.1.0 · 2026-10-20
    Home v2's own Flow 3 styles on the Webflow DOM (gfx- classes). Linked after core/gfx-core.min.css. Every rule keys
    on html.gfx-f3 (the core script's), so without the script the page is the page Webflow serves. Ported from the local
    Flow 3 Home: gf-flow.css, gf-flow2-base.css, gf-line.css, gf-flow3.css and the v14 layers' Flow paths. */
@@ -6,7 +6,7 @@
 /* ---------- the hero ---------- */
 html.gfx-f3 .gfx-hero-sec.gfx-hero-sec, html.gfx-f3 .gfx-hero-still { background-color: var(--gfx-black) !important; }
 html.gfx-f3 .gfx-hero-h { line-height: var(--gfx-h1-lh) !important; letter-spacing: var(--gfx-h1-ls) !important; text-wrap: balance; }
-@media (min-width: 992px) and (max-width: 1200px) { html.gfx-f3 .gfx-hero-h { font-size: min(clamp(56px, 5vw, 72px), var(--gfx-h1, 72px)) !important; } }   /* (1.2.0) and on the fluid scale (core --gfx-h1) */
+/* (1.2.1) the 992-1200 width cap on the hero headline (min(clamp(56px, 5vw, 72px), --gfx-h1)) now lives in core's --gfx-h1 itself, for every hero */
 html.gfx-f3 .gfx-hero-p { line-height: 1.58 !important; }
 html.gfx-f3 .gfx-hero-sec .button, html.gfx-f3 .gfx-hero-sec .button .button_overlap_frame { border-radius: 2px !important; }
 html.gfx-f3 .gfx-hero-sec .gfx-btn-arw { display: none !important; }

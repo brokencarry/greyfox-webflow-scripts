@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.2.0';   // 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
+  W.__gfxHome = '1.2.1';   // 1.2.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -35,7 +35,7 @@
   if (!$('#gfx-mk-idx-fit')) { const st = D.createElement('style'); st.id = 'gfx-mk-idx-fit'; st.textContent = '@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
   // (1.2.0) the climb pins only where the stage fits: the site's one film gate (core 1.0.52 FILM, 992 x 720 and up); under it the chapters are a document
-  const PIN = gfx.FILM, UNPIN = gfx.DOC;
+  const PIN = gfx.FILM, UNPIN = gfx.DOC; gfx.staged();   // (1.2.1) the climb and the market are built on the gate: a crossing reloads
   const ss = t => t * t * (3 - 2 * t), eo = t => 1 - Math.pow(1 - t, 3), eio = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1), lerp = (a, b, t) => a + (b - a) * t;
   const arrowReady = cb => (W.gfArrow ? cb(W.gfArrow) : null);
