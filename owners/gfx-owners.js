@@ -27,7 +27,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.3.2';   // 1.3.2 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint). 1.3.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.3.0 (10/31): the site's film gate (core FILM) replaces the page's own hold gate; the 820 bands are gone (stylesheet). 1.2.15 (10/29): the call's film and the partnership's words arrive once
+  W.__gfxOwners = '1.3.3';   // 1.3.3 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.3.2 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint). 1.3.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.3.0 (10/31): the site's film gate (core FILM) replaces the page's own hold gate; the 820 bands are gone (stylesheet). 1.2.15 (10/29): the call's film and the partnership's words arrive once
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura; Tarn signed and back
   // 10/28, Fellow Health approved 10/28): eight marks sit two rows of four instead of five and three. When a mark comes
@@ -542,12 +542,12 @@
       safe('hero', heroInit);
       safe('slide', () => slide(R.hero, R.proc, 0.06, R.hero && $(O('ow-hero-pic'), R.hero)));
     },
-    rooms: () => {
-      safe('call', callInit);
-      safe('partnership', ptInit);
-      safe('questions motion', () => questionsInit({ room: R.qs, items: R.qs ? $$(O('ow-acc-item'), R.qs) : [] }));
-      safe('close', closeInit);
-    },
+    rooms: [   // (1.3.3) a list: core 1.0.56 sets one up a frame after the lift's first paint
+      () => safe('call', callInit),
+      () => safe('partnership', ptInit),
+      () => safe('questions motion', () => questionsInit({ room: R.qs, items: R.qs ? $$(O('ow-acc-item'), R.qs) : [] })),
+      () => safe('close', closeInit)
+    ],
     late: () => { safe('close mark', () => closeMarkInit(false)); },
     still
   });

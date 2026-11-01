@@ -1,4 +1,4 @@
-/*! Grey Fox · Team v2 (Flow 3) · core 1.0.55 + pages 1.0.4 + team 1.0.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + team/gfx-team.js (read those for the notes) */
+/*! Grey Fox · Team v2 (Flow 3) · core 1.0.56 + pages 1.0.5 + team 1.0.3 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + team/gfx-team.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.55';
+const VERSION='1.0.56';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -69,6 +69,7 @@ W.GF_LEAVE=LEAVE;W.GF_GROUP=GROUP;
 safe('head',()=>{
 H.classList.add('gfx-js','gfx-f3');
 if(!REDUCE)H.classList.add('gfx-m');
+if(D.querySelector('.gfx-hero-sec'))H.classList.add('gfx-has-hero');
 filmGate();W.addEventListener('resize',filmGate);
 const qs=location.search;
 const intro=!REDUCE&&!/[?&]intro=0(&|$)/.test(qs)&&(/[?&]intro(&|=1|$)/.test(qs)||(!location.hash&&!store.get('gfx-intro-seen')));
@@ -546,12 +547,14 @@ for(const e of opaque)e.style.setProperty('background-color','transparent','impo
 };
 let lastC='',lastTone='',shown=null,fade=null,fadeRaf=0,toningT=0;
 const ease3=t=>(t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3) / 2);
+let fieldEl=null;
+const fieldLayer=()=>{if(!fieldEl&&D.body){fieldEl=D.createElement('div');fieldEl.id='gfx-field';fieldEl.setAttribute('aria-hidden','true');D.body.insertBefore(fieldEl,D.body.firstChild);}return fieldEl;};
 const apply=(c,tone)=>{
 const s=css(c);
-if(s!==lastC){lastC=s;D.body.style.backgroundColor=s;if(footTone)footTone(s);navTone(s);fieldListeners.forEach(f=>safe('field listener',()=>f(s,c)));}
+if(s!==lastC){lastC=s;const fl=fieldLayer();if(fl)fl.style.backgroundColor=s;else D.body.style.backgroundColor=s;if(footTone)footTone(s);navTone(s);fieldListeners.forEach(f=>safe('field listener',()=>f(s,c)));}
 if(tone!==lastTone){
 if(lastTone){H.classList.add('gfx-toning');clearTimeout(toningT);toningT=setTimeout(()=>H.classList.remove('gfx-toning'),220);}
-lastTone=tone;
+lastTone=tone;D.body.style.backgroundColor=css(toneRGB(tone));
 H.classList.toggle('gfx-tone-dark',tone==='D');H.classList.toggle('gfx-tone-light',tone!=='D');
 if(footTone)footTone(null);
 }
@@ -850,7 +853,7 @@ const s=getComputedStyle(e);if(+s.opacity===0||s.visibility==='hidden')continue;
 if(s.backgroundImage!=='none'&&!/gradient/.test(s.backgroundImage))return'rgb(20, 20, 21)';
 const c=solid(s.backgroundColor);if(c)return c;
 }
-return solid(getComputedStyle(D.body).backgroundColor)||'rgb(246, 245, 242)';
+return solid(lastC)||solid(getComputedStyle(D.body).backgroundColor)||'rgb(246, 245, 242)';
 };
 let ran=0,tmo=0,poked=0;
 const run=()=>{raf=0;ran=performance.now();const c=pick();if(c!==last){m.setAttribute('content',c);last=c;}};
@@ -1306,12 +1309,13 @@ gsap=W.gsap;ST=W.ScrollTrigger;
 gsap.registerPlugin(ST,W.SplitText);
 ST.defaults({toggleActions:'play complete none none'});
 if(TOUCH)ST.config({ignoreMobileResize:true});
-if(shared&&sharedRaf){tickerOn=true;cancelAnimationFrame(tempLoop);gsap.ticker.add(()=>sharedRaf(performance.now()));gsap.ticker.lagSmoothing(0);shared.on('scroll',ST.update);}
+if(shared&&sharedRaf){tickerOn=true;cancelAnimationFrame(tempLoop);gsap.ticker.add(()=>sharedRaf(performance.now()),false,true);gsap.ticker.lagSmoothing(0);shared.on('scroll',ST.update);}
 safe('page start',()=>PAGE.start&&PAGE.start(api));
 safe('nav',navInit);
 curtainOff();
-fontsReady().then(()=>{
-safe('page rooms',()=>PAGE.rooms&&PAGE.rooms(api));
+const roomList=PAGE.rooms?(Array.isArray(PAGE.rooms)?PAGE.rooms:[PAGE.rooms]):[];
+const roomStep=(i,done)=>{if(i>=roomList.length){done();return;}safe('page rooms',()=>roomList[i](api));postFrame(()=>roomStep(i+1,done));};
+fontsReady().then(()=>postFrame(()=>roomStep(0,()=>{
 safe('keyboard',keyboardInit);
 setTimeout(()=>{
 if(fieldDef){removeEventListener('scroll',early);safe('field',fieldInit);}
@@ -1333,14 +1337,14 @@ if(D.readyState==='complete')later();else W.addEventListener('load',later);
 });
 },60);
 },200);
-});
+})));
 }
 })();
 (function(){
 'use strict';
 var W=window,D=document,gfx=W.gfx;
 if(!gfx||!gfx.page||W.__gfxPages)return;
-W.__gfxPages='1.0.4';
+W.__gfxPages='1.0.5';
 const H=D.documentElement,G=gfx.G,$=gfx.$,$$=gfx.$$,safe=gfx.safe,REDUCE=gfx.REDUCE;
 const O=c=>'[data-o~="'+c+'"]';
 const GROUP=G.group,TIGHT=G.tight||0.08;
@@ -1488,12 +1492,12 @@ gsap=gfx.gsap;ST=gfx.ST;
 safe('hero',()=>heroInit(def));
 if(def.start)safe('page start',()=>def.start(api));
 },
-rooms:()=>{
-safe('heads',headsInit);
-safe('questions motion',questionsInit);
-safe('close',closeInit);
-if(def.rooms)safe('page rooms',()=>def.rooms(api));
-},
+rooms:[
+()=>safe('heads',headsInit),
+()=>safe('questions motion',questionsInit),
+()=>safe('close',closeInit),
+()=>{if(def.rooms)safe('page rooms',()=>def.rooms(api));}
+],
 late:()=>{safe('close mark',()=>closeMarkInit(false));if(def.late)safe('page late',()=>def.late(api));},
 still:()=>{
 gsap=W.gsap||null;ST=W.ScrollTrigger||null;

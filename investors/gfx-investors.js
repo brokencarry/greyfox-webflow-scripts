@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.1.2';   // 1.1.2 (11/1, the performance pass): the hero headline stays out of sight until its lines are masked (autoSplit waits for the fonts). 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
+  W.__gfxInvestors = '1.1.3';   // 1.1.3 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.1.2 (11/1, the performance pass): the hero headline stays out of sight until its lines are masked (autoSplit waits for the fonts). 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -716,24 +716,20 @@
       safe('inks', inks);
       safe('hero', heroInit);
     },
-    rooms: () => {
-      safe('breath', breathInit);
-      safe('delivery', () => { $$(O('iv-client') + ' ' + O('ow-open')).length && roomHead(R.del); deliveryInit(); });
-      safe('client quote', clientQuoteInit);
-      safe('mc head', () => roomHead(R.mc));
-      safe('cases head', () => roomHead(R.cases));
-      safe('cases', casesInit);
-      safe('care', careInit);
-      safe('close', closeInit);
-      safe('pairs', pairs);
-      safe('stage 1 layout', s1Layout);
-      safe('pipe', pipe);
-      if (live) safe('stages', stagesLive);
-      else { safe('stage 1 still', () => { s1Still(); W.addEventListener('resize', () => { s1Layout(); s1Still(); }); }); safe('stage 2 still', s2Static); safe('mc phone', mcPhone); safe('stage 1 phone', () => s1Phone(false)); }
-      H.classList.add('ow-ready');
-      if (W.ivHeroGo) requestAnimationFrame(() => requestAnimationFrame(W.ivHeroGo));
-      refresh();
-    },
+    // (1.1.3) a list, in the same order: core 1.0.56 sets one up a frame after the lift's first paint (was one task of all
+    // of them, 0.8 s on a slow phone, in the middle of the hero's opening). The last item is the page's ready mark.
+    rooms: [
+      () => safe('breath', breathInit),
+      () => safe('delivery', () => { $$(O('iv-client') + ' ' + O('ow-open')).length && roomHead(R.del); deliveryInit(); }),
+      () => safe('client quote', clientQuoteInit),
+      () => { safe('mc head', () => roomHead(R.mc)); safe('cases head', () => roomHead(R.cases)); },
+      () => safe('cases', casesInit),
+      () => safe('care', careInit),
+      () => safe('close', closeInit),
+      () => { safe('pairs', pairs); safe('stage 1 layout', s1Layout); safe('pipe', pipe); },
+      () => { if (live) safe('stages', stagesLive); else { safe('stage 1 still', () => { s1Still(); W.addEventListener('resize', () => { s1Layout(); s1Still(); }); }); safe('stage 2 still', s2Static); safe('mc phone', mcPhone); safe('stage 1 phone', () => s1Phone(false)); } },
+      () => { H.classList.add('ow-ready'); if (W.ivHeroGo) requestAnimationFrame(() => requestAnimationFrame(W.ivHeroGo)); refresh(); }
+    ],
     late: () => { safe('close mark', () => closeMarkInit(false)); safe('mc mark', () => mcMarkInit(false)); },
     still
   });

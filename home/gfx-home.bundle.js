@@ -1,4 +1,4 @@
-/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.55 + home 1.2.2. Sources: core/gfx-core.js, home/gfx-home.js */
+/* Grey Fox · Home v2 (Flow 3) page script: core 1.0.56 + home 1.2.3. Sources: core/gfx-core.js, home/gfx-home.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.55';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
+  const VERSION = '1.0.56';   // 1.0.56 (11/1, perf II): the rooms are set up after the lift's first paint, one a frame (start); the menu-button rule's html:has() is a class (gfx-has-hero: a :has() on html dirtied the whole tree on every class set); 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -132,6 +132,7 @@
   safe('head', () => {
     H.classList.add('gfx-js', 'gfx-f3');
     if (!REDUCE) H.classList.add('gfx-m');
+    if (D.querySelector('.gfx-hero-sec')) H.classList.add('gfx-has-hero');   // (1.0.56) for the stylesheet's menu-button rule, which keyed on html:has(.gfx-hero-sec): see the note there
     filmGate(); W.addEventListener('resize', filmGate);
     // the opening plays once a session (as local: sessionStorage sbx-intro-seen); ?intro forces it, ?intro=0 skips it
     const qs = location.search;
@@ -701,12 +702,20 @@
   };
   let lastC = '', lastTone = '', shown = null, fade = null, fadeRaf = 0, toningT = 0;
   const ease3 = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  /* (1.0.56, perf II) THE FIELD IS PAINTED ON ITS OWN LAYER. The colour used to be the body's background: every frame of a
+     crossfade repainted the document's root layer, the whole page's drawing re-recorded and committed each time (the layer
+     census: the root layer repainted ~100 times in one scroll of Home, and the compositor commit was the scroll's largest
+     cost). Now a fixed, full-screen layer under the content (#gfx-field, stylesheet) takes every frame of the fade, a one-item
+     drawing; the body takes only the tone's colour at an ink moment, so the page's own colour (overscroll, the canvas
+     behind everything) is still right. Readers of the colour get it from apply's own record (lastC), not from the body. */
+  let fieldEl = null;
+  const fieldLayer = () => { if (!fieldEl && D.body) { fieldEl = D.createElement('div'); fieldEl.id = 'gfx-field'; fieldEl.setAttribute('aria-hidden', 'true'); D.body.insertBefore(fieldEl, D.body.firstChild); } return fieldEl; };
   const apply = (c, tone) => {
     const s = css(c);
-    if (s !== lastC) { lastC = s; D.body.style.backgroundColor = s; if (footTone) footTone(s); navTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
+    if (s !== lastC) { lastC = s; const fl = fieldLayer(); if (fl) fl.style.backgroundColor = s; else D.body.style.backgroundColor = s; if (footTone) footTone(s); navTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
     if (tone !== lastTone) {
       if (lastTone) { H.classList.add('gfx-toning'); clearTimeout(toningT); toningT = setTimeout(() => H.classList.remove('gfx-toning'), 220); }
-      lastTone = tone;
+      lastTone = tone; D.body.style.backgroundColor = css(toneRGB(tone));
       H.classList.toggle('gfx-tone-dark', tone === 'D'); H.classList.toggle('gfx-tone-light', tone !== 'D');
       if (footTone) footTone(null);
     }
@@ -1077,7 +1086,7 @@
         if (s.backgroundImage !== 'none' && !/gradient/.test(s.backgroundImage)) return 'rgb(20, 20, 21)';
         const c = solid(s.backgroundColor); if (c) return c;
       }
-      return solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';
+      return solid(lastC) || solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';   // (1.0.56) the field's colour is apply's record; the body holds only the tone's
     };
     /* (1.0.27, smoothness lab 10/21) the strip's colour is read at most every 200 ms while the page moves (it was a probe
        every frame), and the slow look-again runs only for 2 s after a scroll or a tap (a turn's crossfade finishing in
@@ -1666,14 +1675,25 @@
     gsap.registerPlugin(ST, W.SplitText);
     ST.defaults({ toggleActions: 'play complete none none' });
     if (TOUCH) ST.config({ ignoreMobileResize: true });
-    if (shared && sharedRaf) { tickerOn = true; cancelAnimationFrame(tempLoop); gsap.ticker.add(() => sharedRaf(performance.now())); gsap.ticker.lagSmoothing(0); shared.on('scroll', ST.update); }
+    // (1.0.56, perf II) the smooth scroll steps FIRST in the tick (prioritised): its scrollTo needs the page laid out, and
+    // after the tweens had written their frame that read laid the whole page out again, every frame (the scroll trace:
+    // 123 forced layouts a scroll from lenis's setScroll). Scrolled first, it reads a settled page; the triggers and the
+    // tweens then write, and the browser lays out once at the frame's end.
+    if (shared && sharedRaf) { tickerOn = true; cancelAnimationFrame(tempLoop); gsap.ticker.add(() => sharedRaf(performance.now()), false, true); gsap.ticker.lagSmoothing(0); shared.on('scroll', ST.update); }
     safe('page start', () => PAGE.start && PAGE.start(api));
     safe('nav', navInit);
     // the curtain lifts here, not after the fonts: every hero's film starts in the page's start (a 0.1 s delay), so a
     // later lift would show it part-played. The hero's first state is set; the lift and its first frame share one paint.
     curtainOff();
-    fontsReady().then(() => {
-      safe('page rooms', () => PAGE.rooms && PAGE.rooms(api));
+    /* (1.0.56, perf) THE ROOMS AFTER THE FIRST PAINT, ONE A FRAME. The rooms used to be set up in the same task as the lift
+       (the fonts were long ready, so fontsReady resolved in a microtask), and a task cannot paint: the lifted curtain and the
+       opening's first frame waited for every room's setup, 0.9 s on a desktop, 2.8 s on a slow phone, the page on the paper
+       the whole time. Now the frame with the lift is drawn first (postFrame), then the rooms follow one per frame (a page
+       may give them as a list; a function is one room), the opening's own frames in between. A room's reveal targets are
+       still hidden until it is set up (.gfx-open, and the hero fills the first screen), so nothing shows before its time. */
+    const roomList = PAGE.rooms ? (Array.isArray(PAGE.rooms) ? PAGE.rooms : [PAGE.rooms]) : [];
+    const roomStep = (i, done) => { if (i >= roomList.length) { done(); return; } safe('page rooms', () => roomList[i](api)); postFrame(() => roomStep(i + 1, done)); };
+    fontsReady().then(() => postFrame(() => roomStep(0, () => {
       safe('keyboard', keyboardInit);
       setTimeout(() => {
         if (fieldDef) { removeEventListener('scroll', early); safe('field', fieldInit); }
@@ -1701,7 +1721,7 @@
           });
         }, 60);
       }, 200);
-    });
+    })));
   }
 })();
 
@@ -1734,7 +1754,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.2.2';   // 1.2.2 (11/1, the performance pass): the climb reads its path length and rail width once per placing, the middle camp by bisection; the intro mark is born in place. 1.2.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
+  W.__gfxHome = '1.2.3';   // 1.2.3 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.2.2 (11/1, the performance pass): the climb reads its path length and rail width once per placing, the middle camp by bisection; the intro mark is born in place. 1.2.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
@@ -2064,9 +2084,14 @@
         cRect.setAttribute('height', Hr + 40);
         midX = pts[4][0];
         cLen = cTrack.getTotalLength(); railW = Wr;   // (1.2.2) read once per placing: every frame of the climb asked the path's length and the rail's width (a layout flush each)
+        cPts = null;   // (1.2.3) the ridge moved: its point table is sampled again at the next read
       };
-      let cLen = 0, railW = 0;
-      const cPt = t => { const p = cTrack.getPointAtLength(t * (cLen || (cLen = cTrack.getTotalLength()))); return { x: p.x, y: p.y }; };
+      let cLen = 0, railW = 0, cPts = null;
+      /* (1.2.3, perf II) the ridge's points, sampled once per placing (512 along the path) and read by interpolation: every
+         frame of the climb asked the path for a point (getPointAtLength), which needs the page laid out and so laid it out
+         again after the frame's writes (the scroll trace: 34 forced recalcs a scroll, cPt). */
+      const samplePts = () => { const L = cLen || (cLen = cTrack.getTotalLength()), n = 512, a = new Float32Array((n + 1) * 2); for (let i = 0; i <= n; i++) { const p = cTrack.getPointAtLength(L * i / n); a[i * 2] = p.x; a[i * 2 + 1] = p.y; } return a; };
+      const cPt = t => { const a = cPts || (cPts = samplePts()), u = clamp(t, 0, 1) * 512, i = Math.min(511, Math.floor(u)), k = u - i; return { x: a[i * 2] + (a[i * 2 + 2] - a[i * 2]) * k, y: a[i * 2 + 1] + (a[i * 2 + 3] - a[i * 2 + 1]) * k }; };
       // (1.2.2) the ridge runs left to right, so x grows along the path: the middle camp is a bisection (~20 reads), not 801 points
       const snapMid = () => { const L = cLen || cTrack.getTotalLength(); let lo = 0, hi = 1; for (let i = 0; i < 22; i++) { const mid = (lo + hi) / 2; if (cTrack.getPointAtLength(mid * L).x < midX) lo = mid; else hi = mid; } camps[1] = (lo + hi) / 2; };
       const leaders = stops.map(s => $(':scope > [class*="gfx-case-leader"]', s)), labels = stops.map(s => $(':scope > [class*="gfx-case-lbl-"]', s));
@@ -2080,7 +2105,8 @@
       };
       const drawClimb = f => {
         cF = f; const p = cPt(f);
-        if (arrow) { arrow.style.left = p.x + 'px'; arrow.style.top = p.y + 'px'; arrow.classList.toggle('gfx-summit', f >= 0.97); }
+        // (1.2.3) the arrow moves on a transform (its own layer, no layout); it used to move by left/top, a layout a frame
+        if (arrow) { arrow.style.left = '0px'; arrow.style.top = '0px'; arrow.style.transform = `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) translateY(-94%)`; arrow.classList.toggle('gfx-summit', f >= 0.97); }
         cRect.setAttribute('width', f >= 1 ? (railW || rail.offsetWidth) + 30 : p.x + 10);
         camps.forEach((_, k) => campReveal(k, f));
         stops.forEach((s, k) => s.classList.toggle('gfx-dot-on', f >= camps[k] - 0.015));
@@ -2111,7 +2137,7 @@
         if (run) run.kill(); chs.forEach(c => c.classList.remove('gfx-on')); st.kill(); offs.forEach(f => f());
         ST.removeEventListener('refresh', placeClimb); ST.removeEventListener('refreshInit', setHold); tlBox.removeAttribute('data-gfx-held'); H.classList.remove('gfx-pinned');
         stops.forEach(s => { s.style.left = ''; s.style.top = ''; s.classList.remove('gfx-passed', 'gfx-dot-on'); });
-        if (arrow) { arrow.style.left = ''; arrow.style.top = ''; }
+        if (arrow) { arrow.style.left = ''; arrow.style.top = ''; arrow.style.transform = ''; }
         gsap.set(leaders.concat(labels).filter(Boolean), { clearProps: 'all' });
       };
     });
@@ -2137,36 +2163,48 @@
      hairline are drawn with the scroll. Step 04 opens the client's live pipeline (the real portal, fictional data). */
   function marketInit() {
     const sec = MK.sec; if (!sec) return;
-    const stage = MK.stage, cv = $('.gfx-mk-threads', stage), ctx = cv.getContext('2d'), portal = $('.gfx-mk-portal', sec), portalIn = $('.gfx-mk-portal-in', sec);
+    const stage = MK.stage, portal = $('.gfx-mk-portal', sec), portalIn = $('.gfx-mk-portal-in', sec);
+    let cv = $('.gfx-mk-threads', stage);
     let isPhone = W.innerWidth <= 767; W.addEventListener('resize', () => { isPhone = W.innerWidth <= 767; });
     const phone = () => isPhone;
-    const ink = a => `rgba(244, 243, 240, ${a})`, GREEN = '#3aa678';
-    let seed = 92631; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    const mk = n => Array.from({ length: n }, (_, i) => { const pri = rnd() < 100 / 226; return { y0: (i + rnd() * 0.9) / n, amp: 0.008 + rnd() * 0.022, f: 0.5 + rnd() * 1.3, ph: rnd() * Math.PI * 2, pri, lane: pri ? 4 + Math.floor(rnd() * 4) : (rnd() < 0.5 ? Math.floor(rnd() * 4) : 8 + Math.floor(rnd() * 4)) }; });
-    let TH = []; const build = () => { seed = 92631; TH = mk(phone() ? 30 : 110); }; build();
-    let Wd = 0, Hd = 0, DPR = 1, P = 0, E = 0, gInk = null, gGreen = null, dirty = true;
-    const size = () => {
-      Wd = stage.clientWidth; Hd = stage.clientHeight; DPR = Math.min(phone() ? 1.25 : 2, W.devicePixelRatio || 1);
-      cv.width = Math.round(Wd * DPR); cv.height = Math.round(Hd * DPR); cv.style.width = Wd + 'px'; cv.style.height = Hd + 'px';
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      const x0 = Wd * 0.28, x1 = Wd * 0.5;
-      const g = c => { const gr = ctx.createLinearGradient(x0, 0, x1 + 1, 0); gr.addColorStop(0, c.replace('A', '0')); gr.addColorStop(1, c.replace('A', '1')); return gr; };
-      gInk = phone() ? ink(1) : g('rgba(244, 243, 240, A)'); gGreen = phone() ? GREEN : g('rgba(58, 166, 120, A)');
-      dirty = true;
-    };
+    /* (1.2.3, perf II) THE STRANDS ARE DRAWN OFF THE MAIN THREAD. The stage's drawing (110 strands, 28 segments each, three
+       passes, a full-screen canvas) is rasterised when the frame is handed to the compositor, and that hand-over was the
+       scroll's single largest cost on Home: 100-150 ms a frame at a 4x CPU slowdown, 25-35 ms on this box at full speed,
+       for the whole of the market's hold (the compositor trace: Canvas2DResourceProvider::ProduceCanvasResource in every
+       long commit). The drawer below is self-contained (no reference to anything outside it, so its source can run in a
+       worker as it is): the canvas is transferred to a worker, which sizes and draws it from the messages the main thread
+       sends (one frame message a tick, at most), and the main thread keeps its frame for the page. Where workers or
+       offscreen canvases are missing (?mkworker=0 forces it), the same drawer runs here, as before. */
+    function stageDrawer(ctx) {
+      const ss = t => t * t * (3 - 2 * t), eo = t => 1 - Math.pow(1 - t, 3), clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+      const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1), lerp = (a, b, t) => a + (b - a) * t;
+      const ink = a => `rgba(244, 243, 240, ${a})`, GREEN = '#3aa678';
+      let seed = 92631; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+      const mk = n => Array.from({ length: n }, (_, i) => { const pri = rnd() < 100 / 226; return { y0: (i + rnd() * 0.9) / n, amp: 0.008 + rnd() * 0.022, f: 0.5 + rnd() * 1.3, ph: rnd() * Math.PI * 2, pri, lane: pri ? 4 + Math.floor(rnd() * 4) : (rnd() < 0.5 ? Math.floor(rnd() * 4) : 8 + Math.floor(rnd() * 4)) }; });
+      let TH = [], ph = false, narrow = false; const phone = () => ph;
+      const build = () => { seed = 92631; TH = mk(phone() ? 30 : 110); };
+      let Wd = 0, Hd = 0, DPR = 1, P = 0, E = 0, X = 0, gInk = null, gGreen = null;
+      const size = s => {
+        Wd = s.w; Hd = s.h; DPR = s.dpr; ph = s.phone; narrow = s.narrow; build();
+        ctx.canvas.width = Math.round(Wd * DPR); ctx.canvas.height = Math.round(Hd * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        const x0 = Wd * 0.28, x1 = Wd * 0.5;
+        const g = c => { const gr = ctx.createLinearGradient(x0, 0, x1 + 1, 0); gr.addColorStop(0, c.replace('A', '0')); gr.addColorStop(1, c.replace('A', '1')); return gr; };
+        gInk = phone() ? ink(1) : g('rgba(244, 243, 240, A)'); gGreen = phone() ? GREEN : g('rgba(58, 166, 120, A)');
+      };
     // (1.1.10, final sweeps) the gates' top never rises under the bar (74px): at 1280x720 their labels sat at 67px and the
     // returning bar cut them; 900px-tall screens and up are unchanged (14% is already past 118px). CSS .gfx-mk-gate matches
     // (1.1.11) tablets carry their labels on two lines, so their gates start a little lower (132)
-    const fieldR = () => phone() ? { x0: -8, x1: Wd + 8, top: Hd * 0.36, bot: Hd * 0.6 } : { x0: -Wd * 0.04, x1: Wd * 1.02, top: Math.max(Hd * 0.14, W.innerWidth < 992 ? 132 : 118), bot: Hd * 0.9 };
+    const fieldR = () => phone() ? { x0: -8, x1: Wd + 8, top: Hd * 0.36, bot: Hd * 0.6 } : { x0: -Wd * 0.04, x1: Wd * 1.02, top: Math.max(Hd * 0.14, narrow ? 132 : 118), bot: Hd * 0.9 };
     const PORTAL_U = () => (phone() ? 1.02 : 0.575);
     const GATES = [0.6, 0.71, 0.82];
     /* (home 1.1.5, founder 10/20: "feels like your scroll is moving the lines") each step's change runs across the first
        two thirds of its window, so the strands move for as long as the reader scrolls and rest once the step has said
        its piece (windows 0–.22, .22–.42, .42–.6, .6–1; before: 3% to 14% bursts that a flick of the wheel jumped) */
     const gateIn = () => ss(seg(P, 0.2, 0.28)), gateReach = i => ss(seg(P, 0.25 + i * 0.045, 0.31 + i * 0.045));
-    let X = 0;   // the stage's exit, 0 → 1 as it releases (the portal fades; the gathered line runs on to the edge)
+    // X: the stage's exit, 0 → 1 as it releases (the portal fades; the gathered line runs on to the edge)
     const drawStage = () => {
-      dirty = false; ctx.clearRect(0, 0, Wd, Hd);
+      ctx.clearRect(0, 0, Wd, Hd);
       const F = fieldR(), fh = F.bot - F.top, yc = phone() ? F.top + fh * 0.5 : Hd * 0.5;
       const a = ss(seg(P, 0.0, 0.16)), b = ss(seg(P, 0.22, 0.36)), c = ss(seg(P, 0.42, 0.57)), d = ss(seg(P, 0.6, 0.78));   // (1.1.5) smoothstep, not a steep in-out: even with the wheel
       const birthK = eo(clamp(E * 1.25, 0, 1));
@@ -2199,6 +2237,33 @@
       group(pr, gGreen, birthK * lerp(0, 0.6, c) * (1 - d * 0.35), lerp(1, 1.25, c));
       if (d > 0.01) { ctx.globalAlpha = d; ctx.strokeStyle = gGreen; ctx.lineWidth = 1.75; ctx.beginPath(); ctx.moveTo(F.x0 + (F.x1 - F.x0) * 0.3, yc); ctx.lineTo(F.x0 + (F.x1 - F.x0) * uEnd, yc); ctx.stroke(); }
       ctx.globalAlpha = 1;
+    };
+      return { size, draw: f => { P = f.P; E = f.E; X = f.X; drawStage(); } };
+    }
+    // the drawer, here or in a worker; P, E, X are the stage's own reading of the scroll (words() reads them too)
+    let P = 0, E = 0, X = 0, dirty = true, drawer = null, worker = null;
+    const gateReach = i => ss(seg(P, 0.25 + i * 0.045, 0.31 + i * 0.045));   // the gates' labels (words) follow the same reach as the drawer's gate lines
+    const onMain = () => { drawer = stageDrawer(cv.getContext('2d')); worker = null; };
+    const toWorker = () => {
+      if (/[?&]mkworker=0(&|$)/.test(location.search) || !W.Worker || !W.OffscreenCanvas || !cv.transferControlToOffscreen || !W.Blob || !W.URL || !W.URL.createObjectURL) return false;
+      let wk = null;
+      try {
+        const src = '"use strict";const mk=' + stageDrawer.toString() + ';let st=null;self.onmessage=e=>{const m=e.data;if(m.canvas)st=mk(m.canvas.getContext("2d"));if(!st)return;if(m.size)st.size(m.size);if(m.frame)st.draw(m.frame);};';
+        wk = new W.Worker(W.URL.createObjectURL(new W.Blob([src], { type: 'text/javascript' })));
+        const off = cv.transferControlToOffscreen();
+        wk.postMessage({ canvas: off }, [off]);
+      } catch (e) { if (wk) wk.terminate(); return false; }
+      // a worker that fails after the transfer (its script refused, an error inside): a fresh canvas, drawn here
+      wk.onerror = () => safe('mk worker', () => { if (worker !== wk) return; wk.terminate(); const n = cv.cloneNode(false); cv.replaceWith(n); cv = n; onMain(); size(); dirty = true; wake(); });
+      worker = wk; return true;
+    };
+    if (!toWorker()) onMain();
+    const size = () => {
+      const Wd = stage.clientWidth, Hd = stage.clientHeight, DPR = Math.min(phone() ? 1.25 : 2, W.devicePixelRatio || 1);
+      cv.style.width = Wd + 'px'; cv.style.height = Hd + 'px';
+      const s = { w: Wd, h: Hd, dpr: DPR, phone: phone(), narrow: W.innerWidth < 992 };
+      if (worker) worker.postMessage({ size: s }); else drawer.size(s);
+      dirty = true;
     };
     const odoSet = (el, v) => {
       if (!el) return;
@@ -2293,14 +2358,13 @@
     [lede, nA, nC].concat(capList).forEach(e => { if (e) e.style.opacity = '0'; });
     setPortal(0); odoSet(oC, 100);
     let raf = 0, stageOn = false;
-    const tick = () => { raf = 0; if (dirty && stageOn) drawStage(); };
+    const tick = () => { raf = 0; if (dirty && stageOn) { dirty = false; const f = { P, E, X }; if (worker) worker.postMessage({ frame: f }); else drawer.draw(f); } };
     const wake = () => { if (!raf) raf = requestAnimationFrame(tick); };
     size();
     ST.create({ trigger: sec, start: 'top bottom', end: 'top top', onUpdate: s => { E = s.progress; dirty = true; words(); wake(); }, onRefresh: s => { E = s.progress; } });
     ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: s => { P = s.progress; dirty = true; words(); wake(); }, onRefresh: s => { P = s.progress; } });
     ST.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: s => { stageOn = s.isActive; if (stageOn) { dirty = true; wake(); } } });
-    ST.addEventListener('refresh', () => { size(); words(); dirty = true; wake(); });
-    W.addEventListener('resize', build);
+    ST.addEventListener('refresh', () => { size(); words(); dirty = true; wake(); });   // (a resize refreshes the triggers: size() rebuilds the strands for the window)
     // THE PORTAL LEAVES WITH THE STAGE: (1.1.5) with the scroll, as the stage releases; the lines stay (the method lines
     // no longer fade with it) and the gathered line runs on past the window to the edge, so nothing cuts off
     const rd = () => { dirty = true; wake(); };
@@ -2461,7 +2525,9 @@
   let covers = null, rootT = 0;
   const mirror = s => {
     (covers || (covers = $$('.gfx-team-sec .reveal_block'))).forEach(e => e.style.setProperty('--gfx-field', s));
-    clearTimeout(rootT); rootT = setTimeout(() => H.style.setProperty('--gfx-field', s), 160);
+    // (1.2.3, perf II) the variable is no longer set on html: nothing read it there (the covers carry it inline; the footer is
+    // see-through since core 1.0.31), and a custom property changed on html recalculates the style of the whole page
+    clearTimeout(rootT);
     // (core 1.0.31) the footer is see-through; the page's background shows behind it
   };
 
@@ -2482,7 +2548,7 @@
       safe('marquee', marqueeInit);
       safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-std-sec'), 0.32));
     },
-    rooms: () => { [standardInit, casesInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
+    rooms: [standardInit, casesInit, teamInit, insightsInit, closeInit],   // (1.2.3) a list: core 1.0.56 sets one up a frame after the lift's first paint (was one task of all five, 2.1 s on a slow phone, before the page could paint)
     // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
     // Decided at load. (1.1.20, a visitor's replay at 1267x634) the line was 680px; the film fits from 560px with the
     // column set for the short screen (gfx-home.css), so a laptop with the browser's bars keeps the strands and the window.

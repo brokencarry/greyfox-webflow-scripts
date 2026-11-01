@@ -111,6 +111,9 @@ html.gfx-f3 [data-gfx-reveal] { transition-property: color, background-color, bo
 
 /* ---------- THE FIELD (gf-flow.css): the rooms are transparent; the body is the page's one colour ---------- */
 html.gfx-f3 body { background-color: var(--gfx-paper); font-family: var(--gfx-sans); }
+/* (core 1.0.56, perf II) the field's layer: the crossfade's colour, under the content, its own compositor layer so a fade
+   repaints a one-item drawing and not the document's root (see the core's apply) */
+html.gfx-f3 #gfx-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-color: var(--gfx-paper); will-change: background-color; }
 @media (prefers-reduced-motion: reduce) { html.gfx-f3 body { transition: background-color .15s linear; } }
 html.gfx-f3 .gfx-fr { background-color: transparent !important; background-image: none !important; min-height: 0 !important; }
 html.gfx-f3 .gfx-fr[data-gfx-opaque] { background-color: var(--gfx-black) !important; }
@@ -331,7 +334,11 @@ html body :is(.gfx-cta-sec .footer-logo-subtle, [data-o~="ow-close-fox"], [data-
    when the menu is open (it sat ink on the open menu's ink panel, invisible); the logo stays above the open menu. */
 html.gfx-tone-light .gfx-nav [class*="hamburger_inner"] { background-color: #1e1e1e !important; }
 html.gfx-tone-dark .gfx-nav [class*="hamburger_inner"] { background-color: #ffffff !important; }
-html.gfx-tone-light:has(.gfx-hero-sec) .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #ffffff !important; }
+/* (core 1.0.56, perf) was html.gfx-tone-light:has(.gfx-hero-sec): a :has() anchored on html made every class set anywhere in the
+   page (each of the hundreds of line and word boxes the headline splits create at boot) re-evaluate html and dirty the whole
+   tree, so each forced read in the rooms' setup recalculated the entire page (17 ms a time on a slow phone, 300 times).
+   The core marks the page instead (gfx-has-hero, set before the lift). */
+html.gfx-tone-light.gfx-has-hero .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #ffffff !important; }
 html body .w-nav-button.w--open [class*="hamburger_inner"]:not(#gfx-mo) { background-color: #f6f5f2 !important; }   /* (1.0.9b: the id outranks the inner pages' gfx-top rule) */
 html body .w-nav:has(.w-nav-button.w--open) .w-nav-brand { position: relative; z-index: 3; }
 

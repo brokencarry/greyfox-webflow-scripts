@@ -20,7 +20,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.4';   // 1.0.4 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint)
+  W.__gfxPages = '1.0.5';   // 1.0.5 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.0.4 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;
@@ -206,12 +206,12 @@
         safe('hero', () => heroInit(def));
         if (def.start) safe('page start', () => def.start(api));
       },
-      rooms: () => {
-        safe('heads', headsInit);
-        safe('questions motion', questionsInit);
-        safe('close', closeInit);
-        if (def.rooms) safe('page rooms', () => def.rooms(api));
-      },
+      rooms: [   // (1.0.5) a list: core 1.0.56 sets one up a frame after the lift's first paint
+        () => safe('heads', headsInit),
+        () => safe('questions motion', questionsInit),
+        () => safe('close', closeInit),
+        () => { if (def.rooms) safe('page rooms', () => def.rooms(api)); }
+      ],
       late: () => { safe('close mark', () => closeMarkInit(false)); if (def.late) safe('page late', () => def.late(api)); },
       still: () => {
         gsap = W.gsap || null; ST = W.ScrollTrigger || null;

@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.55 + pages 1.0.4 + insights 1.3.5. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.56 + pages 1.0.5 + insights 1.3.5. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.55';   // 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
+  const VERSION = '1.0.56';   // 1.0.56 (11/1, perf II): the rooms are set up after the lift's first paint, one a frame (start); the menu-button rule's html:has() is a class (gfx-has-hero: a :has() on html dirtied the whole tree on every class set); 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -132,6 +132,7 @@
   safe('head', () => {
     H.classList.add('gfx-js', 'gfx-f3');
     if (!REDUCE) H.classList.add('gfx-m');
+    if (D.querySelector('.gfx-hero-sec')) H.classList.add('gfx-has-hero');   // (1.0.56) for the stylesheet's menu-button rule, which keyed on html:has(.gfx-hero-sec): see the note there
     filmGate(); W.addEventListener('resize', filmGate);
     // the opening plays once a session (as local: sessionStorage sbx-intro-seen); ?intro forces it, ?intro=0 skips it
     const qs = location.search;
@@ -701,12 +702,20 @@
   };
   let lastC = '', lastTone = '', shown = null, fade = null, fadeRaf = 0, toningT = 0;
   const ease3 = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  /* (1.0.56, perf II) THE FIELD IS PAINTED ON ITS OWN LAYER. The colour used to be the body's background: every frame of a
+     crossfade repainted the document's root layer, the whole page's drawing re-recorded and committed each time (the layer
+     census: the root layer repainted ~100 times in one scroll of Home, and the compositor commit was the scroll's largest
+     cost). Now a fixed, full-screen layer under the content (#gfx-field, stylesheet) takes every frame of the fade, a one-item
+     drawing; the body takes only the tone's colour at an ink moment, so the page's own colour (overscroll, the canvas
+     behind everything) is still right. Readers of the colour get it from apply's own record (lastC), not from the body. */
+  let fieldEl = null;
+  const fieldLayer = () => { if (!fieldEl && D.body) { fieldEl = D.createElement('div'); fieldEl.id = 'gfx-field'; fieldEl.setAttribute('aria-hidden', 'true'); D.body.insertBefore(fieldEl, D.body.firstChild); } return fieldEl; };
   const apply = (c, tone) => {
     const s = css(c);
-    if (s !== lastC) { lastC = s; D.body.style.backgroundColor = s; if (footTone) footTone(s); navTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
+    if (s !== lastC) { lastC = s; const fl = fieldLayer(); if (fl) fl.style.backgroundColor = s; else D.body.style.backgroundColor = s; if (footTone) footTone(s); navTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
     if (tone !== lastTone) {
       if (lastTone) { H.classList.add('gfx-toning'); clearTimeout(toningT); toningT = setTimeout(() => H.classList.remove('gfx-toning'), 220); }
-      lastTone = tone;
+      lastTone = tone; D.body.style.backgroundColor = css(toneRGB(tone));
       H.classList.toggle('gfx-tone-dark', tone === 'D'); H.classList.toggle('gfx-tone-light', tone !== 'D');
       if (footTone) footTone(null);
     }
@@ -1077,7 +1086,7 @@
         if (s.backgroundImage !== 'none' && !/gradient/.test(s.backgroundImage)) return 'rgb(20, 20, 21)';
         const c = solid(s.backgroundColor); if (c) return c;
       }
-      return solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';
+      return solid(lastC) || solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';   // (1.0.56) the field's colour is apply's record; the body holds only the tone's
     };
     /* (1.0.27, smoothness lab 10/21) the strip's colour is read at most every 200 ms while the page moves (it was a probe
        every frame), and the slow look-again runs only for 2 s after a scroll or a tap (a turn's crossfade finishing in
@@ -1666,14 +1675,25 @@
     gsap.registerPlugin(ST, W.SplitText);
     ST.defaults({ toggleActions: 'play complete none none' });
     if (TOUCH) ST.config({ ignoreMobileResize: true });
-    if (shared && sharedRaf) { tickerOn = true; cancelAnimationFrame(tempLoop); gsap.ticker.add(() => sharedRaf(performance.now())); gsap.ticker.lagSmoothing(0); shared.on('scroll', ST.update); }
+    // (1.0.56, perf II) the smooth scroll steps FIRST in the tick (prioritised): its scrollTo needs the page laid out, and
+    // after the tweens had written their frame that read laid the whole page out again, every frame (the scroll trace:
+    // 123 forced layouts a scroll from lenis's setScroll). Scrolled first, it reads a settled page; the triggers and the
+    // tweens then write, and the browser lays out once at the frame's end.
+    if (shared && sharedRaf) { tickerOn = true; cancelAnimationFrame(tempLoop); gsap.ticker.add(() => sharedRaf(performance.now()), false, true); gsap.ticker.lagSmoothing(0); shared.on('scroll', ST.update); }
     safe('page start', () => PAGE.start && PAGE.start(api));
     safe('nav', navInit);
     // the curtain lifts here, not after the fonts: every hero's film starts in the page's start (a 0.1 s delay), so a
     // later lift would show it part-played. The hero's first state is set; the lift and its first frame share one paint.
     curtainOff();
-    fontsReady().then(() => {
-      safe('page rooms', () => PAGE.rooms && PAGE.rooms(api));
+    /* (1.0.56, perf) THE ROOMS AFTER THE FIRST PAINT, ONE A FRAME. The rooms used to be set up in the same task as the lift
+       (the fonts were long ready, so fontsReady resolved in a microtask), and a task cannot paint: the lifted curtain and the
+       opening's first frame waited for every room's setup, 0.9 s on a desktop, 2.8 s on a slow phone, the page on the paper
+       the whole time. Now the frame with the lift is drawn first (postFrame), then the rooms follow one per frame (a page
+       may give them as a list; a function is one room), the opening's own frames in between. A room's reveal targets are
+       still hidden until it is set up (.gfx-open, and the hero fills the first screen), so nothing shows before its time. */
+    const roomList = PAGE.rooms ? (Array.isArray(PAGE.rooms) ? PAGE.rooms : [PAGE.rooms]) : [];
+    const roomStep = (i, done) => { if (i >= roomList.length) { done(); return; } safe('page rooms', () => roomList[i](api)); postFrame(() => roomStep(i + 1, done)); };
+    fontsReady().then(() => postFrame(() => roomStep(0, () => {
       safe('keyboard', keyboardInit);
       setTimeout(() => {
         if (fieldDef) { removeEventListener('scroll', early); safe('field', fieldInit); }
@@ -1701,7 +1721,7 @@
           });
         }, 60);
       }, 200);
-    });
+    })));
   }
 })();
 
@@ -1727,7 +1747,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.4';   // 1.0.4 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint)
+  W.__gfxPages = '1.0.5';   // 1.0.5 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.0.4 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;
@@ -1913,12 +1933,12 @@
         safe('hero', () => heroInit(def));
         if (def.start) safe('page start', () => def.start(api));
       },
-      rooms: () => {
-        safe('heads', headsInit);
-        safe('questions motion', questionsInit);
-        safe('close', closeInit);
-        if (def.rooms) safe('page rooms', () => def.rooms(api));
-      },
+      rooms: [   // (1.0.5) a list: core 1.0.56 sets one up a frame after the lift's first paint
+        () => safe('heads', headsInit),
+        () => safe('questions motion', questionsInit),
+        () => safe('close', closeInit),
+        () => { if (def.rooms) safe('page rooms', () => def.rooms(api)); }
+      ],
       late: () => { safe('close mark', () => closeMarkInit(false)); if (def.late) safe('page late', () => def.late(api)); },
       still: () => {
         gsap = W.gsap || null; ST = W.ScrollTrigger || null;

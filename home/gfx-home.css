@@ -71,7 +71,11 @@ html.gfx-f3 [class*="gfx-case-stop-"].gfx-dot-on .gfx-case-dot:not(#gfx-x) { bac
 /* (as local: the leaders and label ticks keep their on-dark ink, so on paper they all but vanish) */
 html.gfx-f3 [class*="gfx-case-leader"] { background: linear-gradient(to top, rgba(255, 255, 255, .56), rgba(255, 255, 255, .04)) !important; }
 html.gfx-f3 [class*="gfx-case-tick"] { background-color: rgba(255, 255, 255, .56) !important; }
-html.gfx-f3 .gfx-rail-arrow { transition: opacity .6s cubic-bezier(.16, 1, .3, 1); --gfa-c: var(--gfx-green-l); }
+html.gfx-f3 .gfx-rail-arrow { transition: opacity .6s cubic-bezier(.16, 1, .3, 1); --gfa-c: var(--gfx-green-l); will-change: transform; }
+/* (1.2.3, perf II) the ridge drawing is its own compositor layer: each frame of the climb grows its clip, and that repaint
+   used to re-record the whole held stage (the layer census: the stage repainted 290 times in one scroll, the chapters and
+   all); now only this small drawing is repainted */
+html.gfx-f3 .gfx-climb-svg { will-change: transform; }
 html.gfx-f3 .gfx-rail-arrow:not(.gfx-summit) { opacity: 0 !important; }
 html.gfx-f3 .gfx-case-fig, html.gfx-f3 .gfx-case-fig-lead { position: relative; border-top-width: 0 !important; }
 html.gfx-f3 .gfx-case-fig::before, html.gfx-f3 .gfx-case-fig-lead::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: rgba(28, 28, 29, .22); transform-origin: 0 50%; transform: scaleX(var(--r, 1)); }
