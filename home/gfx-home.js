@@ -27,14 +27,15 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxHome) return;
-  W.__gfxHome = '1.1.29';
+  W.__gfxHome = '1.2.3-o30';   // (owners branch: main's 1.2.3 + the owners rooms, 1.1.20 to 1.1.29: no client window, the point ending, the founder's letter, the owner's order) 1.2.3 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.2.2 (11/1, the performance pass): the climb reads its path length and rail width once per placing, the middle camp by bisection; the intro mark is born in place. 1.2.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.2.0 (10/31): the film gate (core FILM, 992x720): the climb pins and the market holds only where the stage fits; under it both are documents (the chapters in turn, the market's still composition); the per-window height bands are gone (stylesheet). 1.1.26 (10/29): the short held screen's chapters arrive once as well
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   // (1.1.16, launch regression 10/24) the market film's step index between 768 and 991px (tablets, phones held sideways):
   // four equal columns of ~70-90px could not hold "conversation" (109px at 18px) and the word ran past its rule. Each
   // column now takes its own longest word; the four still fit the index's width with room to spare.
   if (!$('#gfx-mk-idx-fit')) { const st = D.createElement('style'); st.id = 'gfx-mk-idx-fit'; st.textContent = '@media (min-width:768px) and (max-width:991px){html .gfx-mk .gfx-mk-idx{grid-template-columns:repeat(4,auto)!important;column-gap:16px!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE, GROUP = G.group, LEAVE = G.leave;
-  const PIN = '(min-width: 992px) and (min-height: 641.01px)', UNPIN = '(max-width: 991px), (max-height: 640.99px)';
+  // (1.2.0) the climb pins only where the stage fits: the site's one film gate (core 1.0.52 FILM, 992 x 720 and up); under it the chapters are a document
+  const PIN = gfx.FILM, UNPIN = gfx.DOC; gfx.staged();   // (1.2.1) the climb and the market are built on the gate: a crossing reloads
   const ss = t => t * t * (3 - 2 * t), eo = t => 1 - Math.pow(1 - t, 3), eio = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1), lerp = (a, b, t) => a + (b - a) * t;
   const arrowReady = cb => (W.gfArrow ? cb(W.gfArrow) : null);
@@ -114,7 +115,9 @@
       'html .gfx-pull-q{text-wrap:pretty}' +
       // (1.1.29) an owner's one line is set as the room's second statement, under the headline on its column, not as a
       // small note in the prose column with half the room empty beside it
-      '@media (min-width:992px){html .gfx-std-sec .gfx-pull{grid-column:1/2;max-width:min(100%,46rem);margin-top:clamp(8px,1vw,16px)}' +
+      // (owners branch, 11/3: main's 1.1.21 sets its longer quote right-aligned across the grid, html.gfx-f3 .quote_section_wrapper
+      // .gfx-pull; the owner's line keeps the headline's column, so this rule is the more specific one)
+      '@media (min-width:992px){html.gfx-f3 .quote_section_wrapper.gfx-std-sec .gfx-pull{grid-column:1/2;justify-self:start;width:auto;margin-left:0;max-width:min(100%,46rem);margin-top:clamp(8px,1vw,16px)}' +
       'html .gfx-std-sec .gfx-pull-q{font-size:clamp(26px,2.3vw,34px)!important;line-height:1.24!important;letter-spacing:-.012em}}' +
       // (1.1.29) the market follows the hero: while it comes over the hero it carries the black itself (the hero travels
       // under it); once the hero has gone the market is see-through again, as the field's rooms are
@@ -165,6 +168,7 @@
        .gfx-mark (its stroke rule would reach the ink's mask); fixed in the preloader, on the black of the hero it opens on */
     const svg = D.createElementNS(NS, 'svg'); svg.setAttribute('class', 'gfx-intro-mark gfx-intro-line'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
     svg.style.cssText = 'position:fixed;left:0;top:0;overflow:visible;pointer-events:none;z-index:2;--gfa-c:#3aa678';
+    svg.setAttribute('width', '0'); svg.setAttribute('height', '0');   // (1.2.2) born without a size: an svg is 300 x 150 until sized, and its move to the logo at the placing counted as a layout shift under the preloader
     pre.appendChild(svg);
     let mk = null; const lk = { t: 0 };
     const place = () => safe('intro mark', () => {
@@ -377,8 +381,9 @@
       fit(); ST.addEventListener('refresh', fit);
       return () => { ST.removeEventListener('refresh', fit); if (rail) rail.style.removeProperty('margin-top'); };
     };
-    mm.add('(min-width: 992px) and (max-height: 680.99px)', shortClear);
-    if (SHORT) { mm.add(PIN, () => { const off = shortClear(); const sts = parts.map((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => enter(i), onLeave: () => enter(i).progress(1) })); return () => { off(); sts.forEach(s => s.kill()); }; }); }
+    mm.add('(min-width: 992px) and (max-height: 719.99px)', shortClear);
+    // (1.1.26, 10/29) the short held screen's chapters arrive once too (1366x657 replayed "The first 18 months" on a return, the revisit pass)
+    if (SHORT) { mm.add(PIN, () => { const off = shortClear(); const seen = []; const sts = parts.map((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => { if (seen[i]) return; seen[i] = true; enter(i); }, onLeave: () => { if (seen[i]) return; seen[i] = true; enter(i).progress(1); } })); return () => { off(); sts.forEach(s => s.kill()); }; }); }
     else mm.add(PIN, () => {
       const arrow = $('.gfx-rail-arrow', rail), stops = ['a', 'b', 'c'].map(k => $('.gfx-case-stop-' + k, rail)).filter(Boolean);
       const svg = $('.gfx-climb-svg', rail), cTrack = $('.gfx-climb-track', rail), cRect = $('#gfxc-rect', rail) || $('clipPath rect', rail);
@@ -423,9 +428,17 @@
         const mr = $('mask rect', svg); if (mr) { mr.setAttribute('width', Wr); mr.setAttribute('height', Hr); }
         cRect.setAttribute('height', Hr + 40);
         midX = pts[4][0];
+        cLen = cTrack.getTotalLength(); railW = Wr;   // (1.2.2) read once per placing: every frame of the climb asked the path's length and the rail's width (a layout flush each)
+        cPts = null;   // (1.2.3) the ridge moved: its point table is sampled again at the next read
       };
-      const cPt = t => { const p = cTrack.getPointAtLength(t * cTrack.getTotalLength()); return { x: p.x, y: p.y }; };
-      const snapMid = () => { const L = cTrack.getTotalLength(); let dd = Infinity; for (let i = 0; i <= 800; i++) { const t = i / 800, e = Math.abs(cTrack.getPointAtLength(t * L).x - midX); if (e < dd) { dd = e; camps[1] = t; } } };
+      let cLen = 0, railW = 0, cPts = null;
+      /* (1.2.3, perf II) the ridge's points, sampled once per placing (512 along the path) and read by interpolation: every
+         frame of the climb asked the path for a point (getPointAtLength), which needs the page laid out and so laid it out
+         again after the frame's writes (the scroll trace: 34 forced recalcs a scroll, cPt). */
+      const samplePts = () => { const L = cLen || (cLen = cTrack.getTotalLength()), n = 512, a = new Float32Array((n + 1) * 2); for (let i = 0; i <= n; i++) { const p = cTrack.getPointAtLength(L * i / n); a[i * 2] = p.x; a[i * 2 + 1] = p.y; } return a; };
+      const cPt = t => { const a = cPts || (cPts = samplePts()), u = clamp(t, 0, 1) * 512, i = Math.min(511, Math.floor(u)), k = u - i; return { x: a[i * 2] + (a[i * 2 + 2] - a[i * 2]) * k, y: a[i * 2 + 1] + (a[i * 2 + 3] - a[i * 2 + 1]) * k }; };
+      // (1.2.2) the ridge runs left to right, so x grows along the path: the middle camp is a bisection (~20 reads), not 801 points
+      const snapMid = () => { const L = cLen || cTrack.getTotalLength(); let lo = 0, hi = 1; for (let i = 0; i < 22; i++) { const mid = (lo + hi) / 2; if (cTrack.getPointAtLength(mid * L).x < midX) lo = mid; else hi = mid; } camps[1] = (lo + hi) / 2; };
       const leaders = stops.map(s => $(':scope > [class*="gfx-case-leader"]', s)), labels = stops.map(s => $(':scope > [class*="gfx-case-lbl-"]', s));
       gsap.set(leaders.filter(Boolean), { transformOrigin: '50% 100%' });
       const campReveal = (k, f) => {
@@ -437,8 +450,9 @@
       };
       const drawClimb = f => {
         cF = f; const p = cPt(f);
-        if (arrow) { arrow.style.left = p.x + 'px'; arrow.style.top = p.y + 'px'; arrow.classList.toggle('gfx-summit', f >= 0.97); }
-        cRect.setAttribute('width', f >= 1 ? rail.offsetWidth + 30 : p.x + 10);
+        // (1.2.3) the arrow moves on a transform (its own layer, no layout); it used to move by left/top, a layout a frame
+        if (arrow) { arrow.style.left = '0px'; arrow.style.top = '0px'; arrow.style.transform = `translate(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px) translateY(-94%)`; arrow.classList.toggle('gfx-summit', f >= 0.97); }
+        cRect.setAttribute('width', f >= 1 ? (railW || rail.offsetWidth) + 30 : p.x + 10);
         camps.forEach((_, k) => campReveal(k, f));
         stops.forEach((s, k) => s.classList.toggle('gfx-dot-on', f >= camps[k] - 0.015));
       };
@@ -468,11 +482,15 @@
         if (run) run.kill(); chs.forEach(c => c.classList.remove('gfx-on')); st.kill(); offs.forEach(f => f());
         ST.removeEventListener('refresh', placeClimb); ST.removeEventListener('refreshInit', setHold); tlBox.removeAttribute('data-gfx-held'); H.classList.remove('gfx-pinned');
         stops.forEach(s => { s.style.left = ''; s.style.top = ''; s.classList.remove('gfx-passed', 'gfx-dot-on'); });
-        if (arrow) { arrow.style.left = ''; arrow.style.top = ''; }
+        if (arrow) { arrow.style.left = ''; arrow.style.top = ''; arrow.style.transform = ''; }
         gsap.set(leaders.concat(labels).filter(Boolean), { clearProps: 'all' });
       };
     });
-    mm.add(UNPIN, () => { parts.forEach((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => enter(i), onLeave: () => enter(i).progress(1) })); return undefined; });
+    /* (1.1.24, 10/29) THE UNHELD CHAPTERS ARRIVE ONCE. A FullStory replay at 1280x631 (a reader who went back up to the firms
+       and down again) showed "The first 18 months" with no figures: every pass re-ran the chapter's arrival, which starts
+       with the numbers, captions and hairlines invisible and brings them back over ~1.8 s (numbers at 0.8 s, captions at
+       1.1 s), so a second visit opened on an empty block. A chapter seen once stays as it settled; nothing replays. */
+    mm.add(UNPIN, () => { const seen = []; parts.forEach((p, i) => ST.create({ trigger: p.ch, start: 'top 88%', onEnter: () => { if (seen[i]) return; seen[i] = true; enter(i); }, onLeave: () => { if (seen[i]) return; seen[i] = true; enter(i).progress(1); } })); return undefined; });
     };
     // decided on the held layout (the class off), again after a resize that changes the answer
     const decide = () => { H.classList.remove('gfx-case-short'); const s = caseShort(); H.classList.toggle('gfx-case-short', s); return s; };
@@ -490,48 +508,60 @@
      hairline are drawn with the scroll. Step 04 opens the client's live pipeline (the real portal, fictional data). */
   function marketInit() {
     const sec = MK.sec; if (!sec) return;
-    const stage = MK.stage, cv = $('.gfx-mk-threads', stage), ctx = cv.getContext('2d'), portal = $('.gfx-mk-portal', sec), portalIn = $('.gfx-mk-portal-in', sec);
+    const stage = MK.stage, portal = $('.gfx-mk-portal', sec), portalIn = $('.gfx-mk-portal-in', sec);
+    let cv = $('.gfx-mk-threads', stage);
     let isPhone = W.innerWidth <= 767; W.addEventListener('resize', () => { isPhone = W.innerWidth <= 767; });
     const phone = () => isPhone;
-    const ink = a => `rgba(244, 243, 240, ${a})`, GREEN = '#3aa678';
-    let seed = 92631; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    const mk = n => Array.from({ length: n }, (_, i) => { const pri = rnd() < 100 / 226; return { y0: (i + rnd() * 0.9) / n, amp: 0.008 + rnd() * 0.022, f: 0.5 + rnd() * 1.3, ph: rnd() * Math.PI * 2, pri, lane: pri ? 4 + Math.floor(rnd() * 4) : (rnd() < 0.5 ? Math.floor(rnd() * 4) : 8 + Math.floor(rnd() * 4)) }; });
-    let TH = []; const build = () => { seed = 92631; TH = mk(phone() ? 30 : 110); }; build();
-    let Wd = 0, Hd = 0, DPR = 1, P = 0, E = 0, gInk = null, gGreen = null, dirty = true;
-    const size = () => {
-      Wd = stage.clientWidth; Hd = stage.clientHeight; DPR = Math.min(phone() ? 1.25 : 2, W.devicePixelRatio || 1);
-      cv.width = Math.round(Wd * DPR); cv.height = Math.round(Hd * DPR); cv.style.width = Wd + 'px'; cv.style.height = Hd + 'px';
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      const x0 = Wd * 0.28, x1 = Wd * 0.5;
-      const g = c => { const gr = ctx.createLinearGradient(x0, 0, x1 + 1, 0); gr.addColorStop(0, c.replace('A', '0')); gr.addColorStop(1, c.replace('A', '1')); return gr; };
-      gInk = phone() ? ink(1) : g('rgba(244, 243, 240, A)'); gGreen = phone() ? GREEN : g('rgba(58, 166, 120, A)');
-      dirty = true;
-    };
+    /* (1.2.3, perf II) THE STRANDS ARE DRAWN OFF THE MAIN THREAD. The stage's drawing (110 strands, 28 segments each, three
+       passes, a full-screen canvas) is rasterised when the frame is handed to the compositor, and that hand-over was the
+       scroll's single largest cost on Home: 100-150 ms a frame at a 4x CPU slowdown, 25-35 ms on this box at full speed,
+       for the whole of the market's hold (the compositor trace: Canvas2DResourceProvider::ProduceCanvasResource in every
+       long commit). The drawer below is self-contained (no reference to anything outside it, so its source can run in a
+       worker as it is): the canvas is transferred to a worker, which sizes and draws it from the messages the main thread
+       sends (one frame message a tick, at most), and the main thread keeps its frame for the page. Where workers or
+       offscreen canvases are missing (?mkworker=0 forces it), the same drawer runs here, as before. */
+    function stageDrawer(ctx) {
+      const ss = t => t * t * (3 - 2 * t), eo = t => 1 - Math.pow(1 - t, 3), clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+      const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1), lerp = (a, b, t) => a + (b - a) * t;
+      const ink = a => `rgba(244, 243, 240, ${a})`, GREEN = '#3aa678';
+      let seed = 92631; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+      const mk = n => Array.from({ length: n }, (_, i) => { const pri = rnd() < 100 / 226; return { y0: (i + rnd() * 0.9) / n, amp: 0.008 + rnd() * 0.022, f: 0.5 + rnd() * 1.3, ph: rnd() * Math.PI * 2, pri, lane: pri ? 4 + Math.floor(rnd() * 4) : (rnd() < 0.5 ? Math.floor(rnd() * 4) : 8 + Math.floor(rnd() * 4)) }; });
+      let TH = [], ph = false, narrow = false, hasWin = true; const phone = () => ph;
+      const build = () => { seed = 92631; TH = mk(phone() ? 30 : 110); };
+      let Wd = 0, Hd = 0, DPR = 1, P = 0, E = 0, X = 0, gInk = null, gGreen = null;
+      const size = s => {
+        Wd = s.w; Hd = s.h; DPR = s.dpr; ph = s.phone; narrow = s.narrow; hasWin = s.win !== false; build();
+        ctx.canvas.width = Math.round(Wd * DPR); ctx.canvas.height = Math.round(Hd * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        const x0 = Wd * 0.28, x1 = Wd * 0.5;
+        const g = c => { const gr = ctx.createLinearGradient(x0, 0, x1 + 1, 0); gr.addColorStop(0, c.replace('A', '0')); gr.addColorStop(1, c.replace('A', '1')); return gr; };
+        gInk = phone() ? ink(1) : g('rgba(244, 243, 240, A)'); gGreen = phone() ? GREEN : g('rgba(58, 166, 120, A)');
+      };
     // (1.1.10, final sweeps) the gates' top never rises under the bar (74px): at 1280x720 their labels sat at 67px and the
     // returning bar cut them; 900px-tall screens and up are unchanged (14% is already past 118px). CSS .gfx-mk-gate matches
     // (1.1.11) tablets carry their labels on two lines, so their gates start a little lower (132)
-    const fieldR = () => phone() ? { x0: -8, x1: Wd + 8, top: Hd * 0.36, bot: Hd * 0.6 } : { x0: -Wd * 0.04, x1: Wd * 1.02, top: Math.max(Hd * 0.14, W.innerWidth < 992 ? 132 : 118), bot: Hd * 0.9 };
+    const fieldR = () => phone() ? { x0: -8, x1: Wd + 8, top: Hd * 0.36, bot: Hd * 0.6 } : { x0: -Wd * 0.04, x1: Wd * 1.02, top: Math.max(Hd * 0.14, narrow ? 132 : 118), bot: Hd * 0.9 };
     // (1.1.23, the owners site) without the window the gathered line ends in a point three quarters across: the one owner
     // the whole market narrowed to; as the stage releases, the line runs on to the edge and the point lets go
     // (1.1.27, desktop review 10/28: at 1920 the point sat well inside the content, the right third empty) on a desktop the
     // point stands on the content's right edge (32px in, room for its ring), where the window's own edge was
     const pointU = () => { const cw = Math.min(Wd - 96, 1400), xr = (Wd + cw) / 2 - 32; return (xr + Wd * 0.04) / (Wd * 1.06); };
-    const PORTAL_U = () => (!portal ? (phone() ? 0.86 : pointU()) : phone() ? 1.02 : 0.575);
+    const PORTAL_U = () => (!hasWin ? (phone() ? 0.86 : pointU()) : phone() ? 1.02 : 0.575);
     const GATES = [0.6, 0.71, 0.82];
     /* (home 1.1.5, founder 10/20: "feels like your scroll is moving the lines") each step's change runs across the first
        two thirds of its window, so the strands move for as long as the reader scrolls and rest once the step has said
        its piece (windows 0–.22, .22–.42, .42–.6, .6–1; before: 3% to 14% bursts that a flick of the wheel jumped) */
     const gateIn = () => ss(seg(P, 0.2, 0.28)), gateReach = i => ss(seg(P, 0.25 + i * 0.045, 0.31 + i * 0.045));
-    let X = 0;   // the stage's exit, 0 → 1 as it releases (the portal fades; the gathered line runs on to the edge)
+    // X: the stage's exit, 0 → 1 as it releases (the portal fades; the gathered line runs on to the edge)
     const drawStage = () => {
-      dirty = false; ctx.clearRect(0, 0, Wd, Hd);
+      ctx.clearRect(0, 0, Wd, Hd);
       const F = fieldR(), fh = F.bot - F.top, yc = phone() ? F.top + fh * 0.5 : Hd * 0.5;
       const a = ss(seg(P, 0.0, 0.16)), b = ss(seg(P, 0.22, 0.36)), c = ss(seg(P, 0.42, 0.57)), d = ss(seg(P, 0.6, 0.78));   // (1.1.5) smoothstep, not a steep in-out: even with the wheel
       const birthK = eo(clamp(E * 1.25, 0, 1));
       const uEnd = lerp(lerp(1, PORTAL_U(), d), 1, ss(X)) * birthK, SEG = phone() ? 14 : 28;
       const laneY = k => yc + (k - 5.5) * fh * 0.052 * (1 - d * 0.85);
       if (!phone()) {
-        const gIn = gateIn(), gA = gIn * (1 - c * 0.85) * (portal ? 1 : 1 - d);   // (1.1.24) the checks step aside for the point
+        const gIn = gateIn(), gA = gIn * (1 - c * 0.85) * (hasWin ? 1 : 1 - d);   // (1.1.24) the checks step aside for the point
         if (gA > 0.01) GATES.forEach((g, i) => { const r = gateReach(i), x = F.x0 + (F.x1 - F.x0) * g, y1 = F.top + fh * gIn; ctx.lineWidth = 1;
           if (r < 0.99) { ctx.globalAlpha = gA * 0.45 * (1 - r); ctx.strokeStyle = ink(0.4); ctx.beginPath(); ctx.moveTo(x, F.top); ctx.lineTo(x, y1); ctx.stroke(); }
           if (r > 0.01) { ctx.globalAlpha = gA * 0.8 * r; ctx.strokeStyle = '#2f9a6c'; ctx.beginPath(); ctx.moveTo(x, F.top); ctx.lineTo(x, y1); ctx.stroke(); } });
@@ -540,7 +570,7 @@
         let amp = t.amp * fh * (1 - c * 0.7) * (1 - d);
         if (b > 0) for (const g of GATES) if (u > g) amp *= 1 - 0.28 * b;
         // (1.1.24) without the window the funnel closes at the point, not at the edge, so the strands meet in it
-        const uf = portal ? u : u / lerp(1, PORTAL_U(), d);
+        const uf = hasWin ? u : u / lerp(1, PORTAL_U(), d);
         const wave = Math.sin(t.ph + u * t.f * 6.283) * amp, spread = F.top + t.y0 * fh, funnel = ss(clamp((uf - 0.25) / 0.75, 0, 1));
         const sorted = laneY(t.lane) + (t.y0 - 0.5) * fh * 0.04;
         let tgt = lerp(lerp(spread, yc + (t.y0 - 0.5) * fh * 0.62, a * 0.35), sorted, c);
@@ -558,7 +588,7 @@
       group(pr, gInk, 0.2 * birthK * (1 - c), 1);
       group(pr, gGreen, birthK * lerp(0, 0.6, c) * (1 - d * 0.35), lerp(1, 1.25, c));
       if (d > 0.01) { ctx.globalAlpha = d; ctx.strokeStyle = gGreen; ctx.lineWidth = 1.75; ctx.beginPath(); ctx.moveTo(F.x0 + (F.x1 - F.x0) * 0.3, yc); ctx.lineTo(F.x0 + (F.x1 - F.x0) * uEnd, yc); ctx.stroke(); }
-      if (!portal) {
+      if (!hasWin) {
         // the point: it forms once the strands have gathered, a single ring opens from it with the scroll, and it lets go
         // as the line runs on past it
         const k = ss(seg(P, 0.7, 0.8)) * (1 - ss(clamp(X * 1.6, 0, 1))), px = F.x0 + (F.x1 - F.x0) * PORTAL_U();
@@ -568,6 +598,33 @@
         }
       }
       ctx.globalAlpha = 1;
+    };
+      return { size, draw: f => { P = f.P; E = f.E; X = f.X; drawStage(); } };
+    }
+    // the drawer, here or in a worker; P, E, X are the stage's own reading of the scroll (words() reads them too)
+    let P = 0, E = 0, X = 0, dirty = true, drawer = null, worker = null;
+    const gateReach = i => ss(seg(P, 0.25 + i * 0.045, 0.31 + i * 0.045));   // the gates' labels (words) follow the same reach as the drawer's gate lines
+    const onMain = () => { drawer = stageDrawer(cv.getContext('2d')); worker = null; };
+    const toWorker = () => {
+      if (/[?&]mkworker=0(&|$)/.test(location.search) || !W.Worker || !W.OffscreenCanvas || !cv.transferControlToOffscreen || !W.Blob || !W.URL || !W.URL.createObjectURL) return false;
+      let wk = null;
+      try {
+        const src = '"use strict";const mk=' + stageDrawer.toString() + ';let st=null;self.onmessage=e=>{const m=e.data;if(m.canvas)st=mk(m.canvas.getContext("2d"));if(!st)return;if(m.size)st.size(m.size);if(m.frame)st.draw(m.frame);};';
+        wk = new W.Worker(W.URL.createObjectURL(new W.Blob([src], { type: 'text/javascript' })));
+        const off = cv.transferControlToOffscreen();
+        wk.postMessage({ canvas: off }, [off]);
+      } catch (e) { if (wk) wk.terminate(); return false; }
+      // a worker that fails after the transfer (its script refused, an error inside): a fresh canvas, drawn here
+      wk.onerror = () => safe('mk worker', () => { if (worker !== wk) return; wk.terminate(); const n = cv.cloneNode(false); cv.replaceWith(n); cv = n; onMain(); size(); dirty = true; wake(); });
+      worker = wk; return true;
+    };
+    if (!toWorker()) onMain();
+    const size = () => {
+      const Wd = stage.clientWidth, Hd = stage.clientHeight, DPR = Math.min(phone() ? 1.25 : 2, W.devicePixelRatio || 1);
+      cv.style.width = Wd + 'px'; cv.style.height = Hd + 'px';
+      const s = { w: Wd, h: Hd, dpr: DPR, phone: phone(), narrow: W.innerWidth < 992, win: !!portal };   // (owners branch) the drawer cannot see the page: it is told whether the client's window is there (no window: the strands end in the owner's point)
+      if (worker) worker.postMessage({ size: s }); else drawer.size(s);
+      dirty = true;
     };
     const odoSet = (el, v) => {
       if (!el) return;
@@ -620,8 +677,13 @@
       }
     };
     const words = () => {
-      if (!led && E > 0.35) lead(true); else if (led && E < 0.25) lead(false);
-      if (!arrived && E > 0.84) arrive(true); else if (arrived && E < 0.74) arrive(false);
+      /* (1.1.25, 10/29) THE MARKET'S WORDS AND FIGURES ARRIVE ONCE. A reader who went back up above the market and came
+         down again had the headline rise away and the lede, the count and the captions fade out, then play their arrival
+         again (lede 1.2 s, figures 0.9 s): a black stage with nothing on it for a second each time, which a FullStory replay
+         frame lands in (the same fault as the unheld climb's chapters, 1.1.24). Once led and once arrived they stay; the
+         stage's own scroll (the strands, the steps, the window) still reads from P and X as before. */
+      if (!led && E > 0.35) lead(true);
+      if (!arrived && E > 0.84) arrive(true);
       if (arrived) { const s = stepOf(P); if (s !== step) { const from = step; step = s; enterStep(s, from); } }
       ixs.forEach((li, i) => { const f = `scaleX(${clamp(seg(P, WIN[i][0], WIN[i][1] - 0.01), 0, 1).toFixed(4)})`; if (li._f !== f && li._bar) { li._bar.style.transform = f; li._f = f; } });
       gates.forEach((g, i) => { const r = gateReach(i).toFixed(3); if (g._g !== r) { g.style.setProperty('--g', r); g._g = r; } });
@@ -657,14 +719,13 @@
     [lede, nA, nC].concat(capList).forEach(e => { if (e) e.style.opacity = '0'; });
     setPortal(0); odoSet(oC, 100);
     let raf = 0, stageOn = false;
-    const tick = () => { raf = 0; if (dirty && stageOn) drawStage(); };
+    const tick = () => { raf = 0; if (dirty && stageOn) { dirty = false; const f = { P, E, X }; if (worker) worker.postMessage({ frame: f }); else drawer.draw(f); } };
     const wake = () => { if (!raf) raf = requestAnimationFrame(tick); };
     size();
     ST.create({ trigger: sec, start: 'top bottom', end: 'top top', onUpdate: s => { E = s.progress; dirty = true; words(); wake(); }, onRefresh: s => { E = s.progress; } });
     ST.create({ trigger: sec, start: 'top top', end: 'bottom bottom', onUpdate: s => { P = s.progress; dirty = true; words(); wake(); }, onRefresh: s => { P = s.progress; } });
     ST.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: s => { stageOn = s.isActive; if (stageOn) { dirty = true; wake(); } } });
-    ST.addEventListener('refresh', () => { size(); words(); dirty = true; wake(); });
-    W.addEventListener('resize', build);
+    ST.addEventListener('refresh', () => { size(); words(); dirty = true; wake(); });   // (a resize refreshes the triggers: size() rebuilds the strands for the window)
     // THE PORTAL LEAVES WITH THE STAGE: (1.1.5) with the scroll, as the stage releases; the lines stay (the method lines
     // no longer fade with it) and the gathered line runs on past the window to the edge, so nothing cuts off
     const rd = () => { dirty = true; wake(); };
@@ -709,12 +770,34 @@
     return portalP;
   }
 
+  /* (home 1.1.21, 10/28) A SECOND PULL QUOTE ON THE PAGE: the people room carries Lindsay's words under the three portraits
+     (data-o team-quote, the standard room's figure form). It arrives the way the standard room's does: the lines rise, the
+     mark settles, the portrait draws in, the name follows; once, as the figure reaches the lower sixth of the screen. */
+  function pullReveal(fig, trigger) {
+    const q = $('.gfx-pull-q', fig), markImg = $('.gfx-pull-mark', fig), attr = $('.gfx-attr', fig), pic = $('.gfx-attr-pic', fig);
+    let lines = [], split = null, played = false;
+    if (q) split = W.SplitText.create(q, { type: 'lines', mask: 'lines', aria: 'none', autoSplit: true, onSplit: self => { lines = self.lines; if (!played) gsap.set(self.lines, { yPercent: G.headline.yPercent }); } });
+    if (markImg) gsap.set(markImg, { opacity: 0, y: 10 });
+    if (pic) gsap.set(pic, { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom });
+    if (attr) { attr.setAttribute('data-gfx-reveal', ''); gsap.set(attr, { opacity: 0, y: G.detail.y }); }
+    const play = () => { if (played) return; played = true;
+      gfx.fitFilm(gsap.timeline({ onComplete: () => { if (split) split.revert(); D.dispatchEvent(new Event('gfx:resplit')); } })
+        .to(lines, { yPercent: 0, duration: G.headline.duration, stagger: G.headline.stagger, ease: G.SETTLE }, 0)
+        .to(markImg || {}, { opacity: 1, y: 0, duration: G.detail.duration, ease: G.SETTLE }, 0)
+        .to(pic || {}, { clipPath: 'inset(0% 0% 0% 0%)', duration: G.picture.duration, ease: G.DRAW }, G.picture.at)
+        .to(pic || {}, { scale: 1, duration: G.picture.duration, ease: G.SETTLE }, G.picture.at)
+        .to(attr || {}, { opacity: 1, y: 0, duration: G.detail.duration, ease: G.SETTLE }, G.detail.at)); };
+    ST.create({ trigger: trigger || fig, start: 'top 84%', once: true, onEnter: play });
+    return play;
+  }
   /* ========================= the team and its statement (sbx-m1.js + gf-line.js) ========================= */
   function teamInit() {
     const sec = $('.gfx-team-sec'); if (!sec) return;
     const head = $('.gfx-team-head .heading-2', sec);
     gfx.room({ trigger: head || sec, headline: head, body: $('.gfx-team-head .gfx-lead, .gfx-team-head .paragraph', sec), hairline: $('.gfx-team-hr', sec) });
     const imgs = $$('.gfx-team-img', sec), members = $$('.gfx-team-m', sec), stacked = W.innerWidth < 768;
+    // (1.1.21) Lindsay's words under the portraits
+    const tq = $('[data-o~="team-quote"]', sec); if (tq && $('.gfx-pull', tq)) safe('team quote', () => pullReveal($('.gfx-pull', tq), tq));
     const byRow = ms => { const rows = []; ms.forEach(m => { const t = m.getBoundingClientRect().top + W.scrollY, r = rows.find(x => Math.abs(x.t - t) < 8); if (r) r.ms.push(m); else rows.push({ t, ms: [m] }); }); return rows.map(x => x.ms); };
     (stacked ? byRow(members) : [members]).forEach(group => {
       if (!group.length) return;
@@ -804,7 +887,9 @@
   let covers = null, rootT = 0;
   const mirror = s => {
     (covers || (covers = $$('.gfx-team-sec .reveal_block, [data-o~="gn-cover"]'))).forEach(e => e.style.setProperty('--gfx-field', s));
-    clearTimeout(rootT); rootT = setTimeout(() => H.style.setProperty('--gfx-field', s), 160);
+    // (1.2.3, perf II) the variable is no longer set on html: nothing read it there (the covers carry it inline; the footer is
+    // see-through since core 1.0.31), and a custom property changed on html recalculates the style of the whole page
+    clearTimeout(rootT);
     // (core 1.0.31) the footer is see-through; the page's background shows behind it
   };
 
@@ -825,11 +910,13 @@
       safe('marquee', marqueeInit);
       safe('slide', () => slide($('.gfx-hero-sec'), $('.gfx-mk') || $('.gfx-std-sec'), 0.32));
     },
-    rooms: () => { [standardInit, casesInit, noteInit, teamInit, insightsInit, closeInit].forEach(f => safe(f.name, f)); },
+    rooms: [standardInit, casesInit, teamInit, insightsInit, noteInit, closeInit],   // (1.2.3) a list: core 1.0.56 sets one up a frame after the lift's first paint (was one task of all five, 2.1 s on a slow phone, before the page could paint)
     // (1.1.7) a window too short for the pinned market stage gets the still stage (every step shown, as with reduced motion).
     // Decided at load. (1.1.20, a visitor's replay at 1267x634) the line was 680px; the film fits from 560px with the
     // column set for the short screen (gfx-home.css), so a laptop with the browser's bars keeps the strands and the window.
-    late: () => { const short = W.innerWidth > 767 && W.innerHeight < 560; [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
+    // (1.2.0, 10/31) the market is held only where the stage fits (the film gate, 992 x 720 and up); a shorter desktop window
+    // takes the still composition (gfx-home.css "THE MARKET ROOM AS A DOCUMENT"). Tablets keep their own held stage (1.1.11).
+    late: () => { const short = W.innerWidth >= 992 && !gfx.film(); [short ? marketStill : marketInit, grownInit, () => closeMarkInit(false)].forEach(f => safe(f.name || 'late', f)); },
     still: () => {
       gsap = W.gsap || null; ST = W.ScrollTrigger || null;
       $$('.gfx-case-ch').forEach(c => c.classList.add('gfx-on'));

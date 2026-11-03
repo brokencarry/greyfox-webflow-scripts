@@ -27,14 +27,16 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxOwners) return;
-  W.__gfxOwners = '1.2.11';
+  W.__gfxOwners = '1.3.3-o';   // (owners branch: main's 1.3.3 + the owners site's own changes) 1.3.3 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.3.2 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint). 1.3.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.3.0 (10/31): the site's film gate (core FILM) replaces the page's own hold gate; the 820 bands are gone (stylesheet). 1.2.15 (10/29): the call's film and the partnership's words arrive once
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
-  // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura): eight marks sit two
-  // rows of four instead of five and three. DELETE THIS RULE when the ten are back (the stylesheet's five columns return).
+  // (1.2.8, founder 10/26) two firms' marks are off the row until they confirm (Accordion, Ventura; Tarn signed and back
+  // 10/28, Fellow Health approved 10/28): eight marks sit two rows of four instead of five and three. When a mark comes
+  // off, set the rule for the count (seven: repeat(8) with each mark spanning 2 and the fifth from column 2; six:
+  // repeat(3)); DELETE IT when the ten are back (the stylesheet's five columns return).
   if (!$('#gfx-ow-firms-8')) { const st = D.createElement('style'); st.id = 'gfx-ow-firms-8'; st.textContent = '@media (min-width:992px){html:not(#gfx-o) [data-o~=ow-marq-track]{grid-template-columns:repeat(4,minmax(0,1fr))!important}}'; (D.head || H).appendChild(st); }
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
-  const HOLDQ = '(min-width: 992px) and (min-height: 681px)', STACK = '(max-width: 991px)', SHORT = '(min-width: 992px) and (max-height: 680px)';
+  const HOLDQ = gfx.FILM, STACK = '(max-width: 991px)', SHORT = gfx.DOC; gfx.staged();   // (1.3.0) the site's one film gate (992 x 720 and up); (1.3.1) the holds are built on it: a crossing reloads
   const eo = t => 1 - Math.pow(1 - t, 3), seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
   const c01 = v => Math.min(1, Math.max(0, +v || 0)), f1 = n => (+n).toFixed(1), nv = (v, d) => (v == null ? d : v);
   const expo = t => (t <= 0 ? 0 : t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
@@ -98,7 +100,8 @@
     const room = R.hero; if (!room) return;
     const h1 = $(O('ow-h1'), room), lede = $(O('ow-hero-lede'), room), act = $(O('ow-actions'), room), pic = $(O('ow-hero-pic'), room), firms = $(O('ow-firms'), room);
     heroHead = gfx.lineSplit(h1);
-    const tl = gsap.timeline({ delay: 0.12, onComplete: () => { if (heroHead && !heroHead.reverted) heroHead.revert(); } });
+    // (1.3.2, the performance pass) the lines stay after the rise, their masks open (core lineSplit.unmask); the revert repainted the headline whole 3-4 s in = the page's largest paint
+    const tl = gsap.timeline({ delay: 0.12, onComplete: () => { if (heroHead) heroHead.unmask(); } });
     heroHead.played = true;
     tl.fromTo(heroHead.lines, { y: 0, yPercent: 106 }, { y: 0, yPercent: 0, duration: 1.6, ease: 'expo.out', stagger: 0.09 }, 0)
       .fromTo([lede, act].filter(Boolean), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1.4, ease: 'expo.out', stagger: 0.1, clearProps: 'transform' }, 0.3)
@@ -370,8 +373,10 @@
       const f = gsap.timeline({ onUpdate: paintDraw }); film(f, chIn(f)); tl.add(f, 0.2);
       tl.timeScale(tl.duration() / 2.2);   // (the whole film in 2.2 s, the house's longest timed beat)
       const sts = [
-        ST.create({ trigger: room, start: 'top 45%', onEnter: () => { if (tl.progress() < 1) tl.play(); } }),
-        ST.create({ trigger: room, start: 'top bottom', onLeaveBack: () => { tl.pause(0); zero(); paintDraw(); gsap.set(hl(), { yPercent: 106 }); } })
+        ST.create({ trigger: room, start: 'top 45%', onEnter: () => { if (tl.progress() < 1) tl.play(); } })
+        /* (1.2.15, 10/29) the call's film no longer resets when the reader goes back above the room: it played again on the
+           way down, which left the room empty (headline masked, line undrawn, the owner's words faded) for up to 2.2 s, and
+           a replay frame lands in that (the revisit pass, 1280x631 and 1440x789). Once played, the room stays as it settled. */
       ];
       D.addEventListener('gfx:resplit', () => { if (tl.progress() >= 1) gsap.set(hl(), { yPercent: 0 }); });
       // (arriving mid-page, a reload or a link: the room is simply there)
@@ -508,7 +513,7 @@
       .fromTo(hl(), { yPercent: 106 }, { yPercent: 0, duration: 1.4, ease: 'expo.out', stagger: 0.09 }, 0)
       .fromTo([lede].filter(Boolean), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.4, ease: 'expo.out' }, 0.2);
     let tl = mk();
-    ST.create({ trigger: room, start: 'top 78%', onEnter: () => tl.play(), onLeaveBack: () => tl.reverse() });
+    ST.create({ trigger: room, start: 'top 78%', onEnter: () => tl.play() });   // (1.2.15) no reverse on the way back up: the words stay
     D.addEventListener('gfx:resplit', () => { const p = tl.progress(), fwd = !tl.reversed(); tl.kill(); tl = mk(); tl.progress(p); if (p > 0 && p < 1) { if (fwd) tl.play(); else tl.reverse(); } });
     if (room.getBoundingClientRect().top < W.innerHeight * 0.78) tl.progress(1);
   }
@@ -537,12 +542,12 @@
       safe('hero', heroInit);
       safe('slide', () => slide(R.hero, R.proc, 0.06, R.hero && $(O('ow-hero-pic'), R.hero)));
     },
-    rooms: () => {
-      safe('call', callInit);
-      safe('partnership', ptInit);
-      safe('questions motion', () => questionsInit({ room: R.qs, items: R.qs ? $$(O('ow-acc-item'), R.qs) : [] }));
-      safe('close', closeInit);
-    },
+    rooms: [   // (1.3.3) a list: core 1.0.56 sets one up a frame after the lift's first paint
+      () => safe('call', callInit),
+      () => safe('partnership', ptInit),
+      () => safe('questions motion', () => questionsInit({ room: R.qs, items: R.qs ? $$(O('ow-acc-item'), R.qs) : [] })),
+      () => safe('close', closeInit)
+    ],
     late: () => { safe('close mark', () => closeMarkInit(false)); },
     still
   });

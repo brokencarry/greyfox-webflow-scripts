@@ -31,7 +31,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxInvestors) return;
-  W.__gfxInvestors = '1.0.19';
+  W.__gfxInvestors = '1.1.3';   // 1.1.3 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.1.2 (11/1, the performance pass): the hero headline stays out of sight until its lines are masked (autoSplit waits for the fonts). 1.1.1 (11/1): tells core the page is staged on the gate (gfx.staged()). 1.1.0 (10/31): the film gate (core FILM, 992 x 720): the two held stages run only where the stage fits; under it the page is a document; the 820 bands are gone (stylesheets)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, mq = gfx.mq, clamp = gfx.clamp;
   const NS = gfx.NS, TAN = gfx.TAN, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
@@ -47,7 +47,8 @@
   const sy = () => gfx.scrollNow();
   // the local page's html states (the ported stylesheet keys on them): Flow 3 on, the rooms built; "live" = a desktop with motion
   let live = false;
-  const decideLive = () => { live = !REDUCE && mq('(min-width: 992px)'); H.classList.toggle('iv2-live', live); };
+  // (1.1.0, 10/31) "live" = the held stages: only where the stage fits, the site's film gate (core 1.0.52 FILM: 992 x 720 and up)
+  const decideLive = () => { live = !REDUCE && mq(gfx.FILM); H.classList.toggle('iv2-live', live); }; gfx.staged();   // (1.1.1) the two stages are built on the gate: a crossing reloads
   // (only Home has the first-visit opening: the core marks a session's first page html.gfx-intro, whose body { overflow:
   // hidden } waits for Home's splash to end. Here nothing would ever end it, and a hidden-overflow body is a scroll
   // container of its own, so the two sticky stages would never stick. Inner pages open straight on their room)
@@ -230,6 +231,10 @@
     const room = R.hero; if (!room) return;
     const h1 = $(O('ow-h1'), room); if (!h1) return;
     let heroTl = null, prevLines = null, first = true;
+    // (1.1.2, the performance pass) out of sight until its lines are masked: autoSplit waits for the fonts, and on a warm
+    // visit the whole headline showed for a beat before its lines dropped under their masks (the curtain made it visible)
+    h1.style.opacity = '0';
+    try {
     W.SplitText.create(h1, { type: 'lines', mask: 'lines', linesClass: 'ow-line', autoSplit: true, aria: 'none',
       onSplit: self => {
         const was = prevLines; prevLines = [...self.lines];
@@ -237,6 +242,7 @@
         else self.lines.forEach((l, i) => { const o = was && was[Math.min(i, was.length - 1)], from = o ? +gsap.getProperty(o, 'yPercent') || 0 : G.headline.yPercent;
           gsap.fromTo(l, { yPercent: from }, { yPercent: 0, duration: from > 0 ? G.headline.duration * (from / G.headline.yPercent) + 0.2 : 0.01, delay: from > 0 ? i * G.headline.stagger : 0, ease: SETTLE, overwrite: true }); });
         if (!first) requestAnimationFrame(() => D.dispatchEvent(new Event('ow:resplit'))); first = false; } });
+    } finally { const show = () => { h1.style.opacity = ''; }; if (D.fonts && D.fonts.ready) D.fonts.ready.then(show, show); else show(); }   // (after the split: autoSplit's own fonts wait was registered first)
     const words = [$(O('ow-hero-lede'), room), $(O('ow-actions'), room)].filter(Boolean), rule = $(O('ow-hero-foot') + ' > ' + O('ow-rule'), room) || $(O('ow-rule'), room), stats = $$(O('iv-stat'), room);
     const pic = $(O('ow-hero-pic'), room), img = pic && ($('img[data-o~="iv-hero-tug"]', pic) || $('img', pic)), fx = pic ? (getComputedStyle(pic).getPropertyValue('--fx').trim() || '96px') : '96px';
     const lede = $(O('ow-hero-lede'), room), wordsHid = words.filter(w => w !== lede);
@@ -306,6 +312,8 @@
   const clientQuoteInit = () => {
     quoteRowInit(R.del, R.del && $(O('iv-cq') + O('is-client'), R.del));
     quoteRowInit(R.cases, R.cases && $(O('iv-cq') + O('is-cases'), R.cases));
+    // (1.0.21, 10/28) Lindsay Lewellen's quote (from Home) closes the research room under the four-stage funnel: the pace, then a client on the partnership
+    quoteRowInit(R.res, R.res && $(O('iv-cq') + O('is-fun'), R.res));
   };
   /* ========================= 5 · three searches (investors.js §5) ========================= */
   function casesInit() {
@@ -391,7 +399,9 @@
       const start = i === 0 ? 1 : ss(seg(P, a - 0.02, a + 0.01)), end = i === 3 ? 0 : ss(seg(P, a + STEP - 0.02, a + STEP + 0.01));
       setVar(li, '--hit', Math.max(hit, i === 0 ? hit : 0));
       setVar(li, '--on', Math.min(i === 0 ? clamp(E * 1.6 - 0.8, 0, 1) : start, 1 - end));
-      if (li._num) { const on = P > a + 0.003; if (on !== !!li._on) { li._on = on; figTo(li, on); } }
+      // (investors 1.0.20, the hole matrix 10/28) the first figure is on as soon as the stage has arrived (E), not only
+      // once the pin has moved (P): a reader who stopped at the pin's start saw the labels over an empty half-screen
+      if (li._num) { const on = i === 0 ? (E >= 0.99 || P > 0.003) : P > a + 0.003; if (on !== !!li._on) { li._on = on; figTo(li, on); } }
     });
     if (S1.vrule) { const t = `scaleX(${eo(clamp(E * 1.8 - 0.95, 0, 1)).toFixed(4)})`; if (S1.vrule._t !== t) { S1.vrule.style.transform = t; S1.vrule._t = t; } }
     S1.vs.forEach((v, i) => show(v, eo(seg(P, 3 * STEP + BEAT + 0.005 + i * 0.02, 3 * STEP + BEAT + 0.06 + i * 0.02)), 16));
@@ -706,24 +716,20 @@
       safe('inks', inks);
       safe('hero', heroInit);
     },
-    rooms: () => {
-      safe('breath', breathInit);
-      safe('delivery', () => { $$(O('iv-client') + ' ' + O('ow-open')).length && roomHead(R.del); deliveryInit(); });
-      safe('client quote', clientQuoteInit);
-      safe('mc head', () => roomHead(R.mc));
-      safe('cases head', () => roomHead(R.cases));
-      safe('cases', casesInit);
-      safe('care', careInit);
-      safe('close', closeInit);
-      safe('pairs', pairs);
-      safe('stage 1 layout', s1Layout);
-      safe('pipe', pipe);
-      if (live) safe('stages', stagesLive);
-      else { safe('stage 1 still', () => { s1Still(); W.addEventListener('resize', () => { s1Layout(); s1Still(); }); }); safe('stage 2 still', s2Static); safe('mc phone', mcPhone); safe('stage 1 phone', () => s1Phone(false)); }
-      H.classList.add('ow-ready');
-      if (W.ivHeroGo) requestAnimationFrame(() => requestAnimationFrame(W.ivHeroGo));
-      refresh();
-    },
+    // (1.1.3) a list, in the same order: core 1.0.56 sets one up a frame after the lift's first paint (was one task of all
+    // of them, 0.8 s on a slow phone, in the middle of the hero's opening). The last item is the page's ready mark.
+    rooms: [
+      () => safe('breath', breathInit),
+      () => safe('delivery', () => { $$(O('iv-client') + ' ' + O('ow-open')).length && roomHead(R.del); deliveryInit(); }),
+      () => safe('client quote', clientQuoteInit),
+      () => { safe('mc head', () => roomHead(R.mc)); safe('cases head', () => roomHead(R.cases)); },
+      () => safe('cases', casesInit),
+      () => safe('care', careInit),
+      () => safe('close', closeInit),
+      () => { safe('pairs', pairs); safe('stage 1 layout', s1Layout); safe('pipe', pipe); },
+      () => { if (live) safe('stages', stagesLive); else { safe('stage 1 still', () => { s1Still(); W.addEventListener('resize', () => { s1Layout(); s1Still(); }); }); safe('stage 2 still', s2Static); safe('mc phone', mcPhone); safe('stage 1 phone', () => s1Phone(false)); } },
+      () => { H.classList.add('ow-ready'); if (W.ivHeroGo) requestAnimationFrame(() => requestAnimationFrame(W.ivHeroGo)); refresh(); }
+    ],
     late: () => { safe('close mark', () => closeMarkInit(false)); safe('mc mark', () => mcMarkInit(false)); },
     still
   });

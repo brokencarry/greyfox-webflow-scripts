@@ -40,8 +40,8 @@ html.gf-flow2.gf-dark-black { --gf-flow-dark: #111112; --gl-raised: #1e1e20; --g
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) { --fi-field: #111112; }
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) body { font-family: "DM Sans", sans-serif; }
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) h1 { line-height: 1.08 !important; letter-spacing: -.015em !important; }
-html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is(h2.heading-2, .heading-2:not(h3), h2.ow-h2, h2.o2-d2:not(.av2-h), h2[data-o~="gi-h2"], h2.iv2-h, h2.gl-h, h2.t3-bio-n) { font-size: clamp(40px, 3.3334vw, 52px) !important; line-height: 1.08 !important; letter-spacing: -.015em !important; }
-html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is(.r4-hero p, .r4-qs .ow-acc-p p, .r4-qs p, .t3-b2, .ow-body, .pc-p, .gl-lede, .ixo-sum, [data-o~="gi-row-s"]) { font-size: 18px !important; line-height: 1.6 !important; }
+html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is(h2.heading-2, .heading-2:not(h3), h2.ow-h2, h2.o2-d2:not(.av2-h), h2[data-o~="gi-h2"], h2.iv2-h, h2.gl-h, h2.t3-bio-n) { font-size: var(--gfx-h2, clamp(40px, 3.3334vw, 52px)) !important; line-height: 1.08 !important; letter-spacing: -.015em !important; }
+html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is(.r4-hero p, .r4-qs .ow-acc-p p, .r4-qs p, .t3-b2, .ow-body, .pc-p, .gl-lede, .ixo-sum, [data-o~="gi-row-s"]) { font-size: var(--gf-body, 18px) !important; line-height: 1.6 !important; }
 html:not(#gf-c) [data-o~="gfc-top"] { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
 html:not(#gf-c) [data-o~="gfc-top"] { grid-column: 1 / -1; }
 html:not(#gf-c) [data-o~="gfc-top"] > :first-child { flex: 1 1 auto; min-width: 0; max-width: none !important; display: block !important; margin: 0 !important; }

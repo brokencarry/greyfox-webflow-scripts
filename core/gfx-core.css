@@ -1,4 +1,4 @@
-/* Grey Fox · gfx core (Flow 3) stylesheet · core 1.0.0 · 2026-10-20
+/* Grey Fox · gfx core (Flow 3) stylesheet · core 1.0.54 (11/1: the hero headline rule keys on the document, with the width cap; 10/31, 1.0.52: one fluid desktop scale, the film gate, the document rhythm) · core 1.0.0 · 2026-10-20
    The shared Flow 3 styles every page links (core/gfx-core.min.css). Everything keys on html.gfx-f3 (set by the core
    script) or on classes the core script builds, so a page without the script is the page Webflow serves.
    TOKENS: every colour, face and type size the shared parts use is a custom property on :root, so a later token
@@ -48,8 +48,41 @@
   /* the tiers (the gap above an arriving room's first line), scaled with the screen's height */
   --gfx-a-tight: clamp(64px, 7.11vh, 93px); --gfx-a-standard: clamp(96px, 10.67vh, 139px); --gfx-a-breath: clamp(192px, 21.33vh, 278px);
   --gfx-b: clamp(64px, 7.11vh, 93px); --gfx-b-breath: clamp(96px, 10.67vh, 139px);
+  --gfx-a-turn: max(128px, 20vh); --gfx-b-turn: 15vh;
 }
-@media (max-width: 991px) { :root { --gfx-a-tight: 40px; --gfx-a-standard: 56px; --gfx-a-breath: 80px; --gfx-b: 40px; --gfx-b-breath: 48px; } }
+@media (max-width: 991px) { :root { --gfx-a-tight: 40px; --gfx-a-standard: 56px; --gfx-a-breath: 80px; --gfx-b: 40px; --gfx-b-breath: 48px; --gfx-a-turn: max(144px, 20vh); --gfx-b-turn: 10vh; } }
+/* ---------- (core 1.0.52, 10/31, the founder: "what would real human engineers do?") ONE FLUID SCALE FOR THE DESKTOP.
+   The rooms were composed for a 1440 x 900 window and showed the same type and the same gaps on a laptop whose window is two
+   thirds as tall (1470 x 631, 1366 x 657, 1280 x 631: a browser's bars), so rooms were cut or left holes, and each got its own
+   height band. From 992px up every type size and gap is now a share of the window's SMALLER side (vmin): a 900px-tall window
+   reads exactly as designed, a shorter one takes the whole composition smaller, and a floor at the 720px scale (0.8) keeps it
+   readable. 1440 x 900 = 9px per vmin, so a token's coefficient is its designed size over 9. Phones and tablets are untouched.
+   THE FILM GATE (gfx-core.js FILM): a room is held, pinned or slid only from 992 x 720 up (html.gfx-film); under that the page
+   is a document (html.gfx-doc): the same content in flow, on the document rhythm below. */
+@media (min-width: 992px) {
+  :root {
+    --gf-body: clamp(16px, 2vmin, 18px); --gf-body-long: clamp(17px, 2.1112vmin, 19px);
+    --gf-h3-display: clamp(35px, 4.8889vmin, 44px); --gf-h3-card: clamp(23px, 3.1112vmin, 28px); --gf-h3-item: clamp(19px, 2.5556vmin, 23px); --gf-h3-door: clamp(23px, 3.1112vmin, 28px);
+    --gfx-h1: min(clamp(56px, 8vmin, 72px), clamp(56px, 5vw, 72px));   /* (1.0.54) the smaller of the height scale and the width cap the heroes always had (56 at 1120 wide and under) */
+    --gfx-h2: clamp(38px, 5.3334vmin, 52px);   /* (was clamp(40px, 3.3334vw, 52px): the width alone) */
+    --gfx-body: var(--gf-body);
+    --gfx-a-tight: clamp(51px, 7.1112vmin, 93px); --gfx-a-standard: clamp(77px, 10.6667vmin, 139px); --gfx-a-breath: clamp(154px, 21.3334vmin, 278px);
+    --gfx-b: clamp(51px, 7.1112vmin, 93px); --gfx-b-breath: clamp(77px, 10.6667vmin, 139px);
+    --gfx-a-turn: max(128px, 20vmin); --gfx-b-turn: 15vmin;
+    /* the room gaps as one scale (what a page may use for its own spacing): 8 · 16 · 24 · 32 · 48 · 64 · 96 · 128 at 900 */
+    --gfx-s-3: clamp(19px, 2.6667vmin, 24px); --gfx-s-4: clamp(26px, 3.5556vmin, 32px); --gfx-s-5: clamp(38px, 5.3334vmin, 48px); --gfx-s-6: clamp(51px, 7.1112vmin, 64px); --gfx-s-7: clamp(77px, 10.6667vmin, 96px); --gfx-s-8: clamp(102px, 14.2223vmin, 128px);
+  }
+  /* the hero headlines on the scale (72 at 900, 56 at 720 and under). (1.0.54) Keyed on the document, not on a class the
+     script adds: keyed on html.gfx-f3 the headline painted at the page's own size and changed when the script ran, a
+     layout shift on every load of every page at a short window (Business Owners 0.02 -> 0.05). The pages that own
+     [data-o~=ow-h1] key their sheets on html:not(#gfx-o) the same way. */
+  html:not(#gfx-o) :is(.gfx-hero-h, [data-o~="ow-h1"]):not(#gfx-h1x) { font-size: var(--gfx-h1) !important; }
+}
+/* THE DOCUMENT RHYTHM (gfx-core.js TIERS: tight 80, standard 112, breath 160, turn 192): under the gate a desktop window
+   is a document, and a document's rooms are set apart by a reading gap, not by a share of the screen */
+@media (min-width: 992px) and (max-height: 719.99px) {
+  :root { --gfx-a-tight: 40px; --gfx-a-standard: 72px; --gfx-a-breath: 104px; --gfx-b: 40px; --gfx-b-breath: 56px; --gfx-a-turn: 128px; --gfx-b-turn: 64px; }
+}
 @media (max-width: 767px) { :root { --gfx-gutter: 20px; --gfx-zone: 96px; } }
 /* (core 1.0.49, 10/27 polish pass) ONE TABLET GUTTER. Between 768 and 991px the pages had inherited five different insets (Home's
    rooms 20, 36, 48 and 64; Owners 48; Investors, Contact, Team and Privacy 20; Insights 32; the bar 30): 32px everywhere now,
@@ -78,6 +111,9 @@ html.gfx-f3 [data-gfx-reveal] { transition-property: color, background-color, bo
 
 /* ---------- THE FIELD (gf-flow.css): the rooms are transparent; the body is the page's one colour ---------- */
 html.gfx-f3 body { background-color: var(--gfx-paper); font-family: var(--gfx-sans); }
+/* (core 1.0.56, perf II) the field's layer: the crossfade's colour, under the content, its own compositor layer so a fade
+   repaints a one-item drawing and not the document's root (see the core's apply) */
+html.gfx-f3 #gfx-field { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-color: var(--gfx-paper); will-change: background-color; }
 @media (prefers-reduced-motion: reduce) { html.gfx-f3 body { transition: background-color .15s linear; } }
 html.gfx-f3 .gfx-fr { background-color: transparent !important; background-image: none !important; min-height: 0 !important; }
 html.gfx-f3 .gfx-fr[data-gfx-opaque] { background-color: var(--gfx-black) !important; }
@@ -85,8 +121,7 @@ html.gfx-f3 .gfx-fr[data-gfx-tier] { padding-bottom: 0 !important; }
 html.gfx-f3 .gfx-fr[data-gfx-tier="tight"] { --gfx-a: var(--gfx-a-tight); --gfx-bb: var(--gfx-b); }
 html.gfx-f3 .gfx-fr[data-gfx-tier="standard"] { --gfx-a: var(--gfx-a-standard); --gfx-bb: var(--gfx-b); }
 html.gfx-f3 .gfx-fr[data-gfx-tier="breath"] { --gfx-a: var(--gfx-a-breath); --gfx-bb: var(--gfx-b-breath); }
-html.gfx-f3 .gfx-fr[data-gfx-tier="turn"] { --gfx-a: max(128px, 20vh); --gfx-bb: 15vh; }
-@media (max-width: 991px) { html.gfx-f3 .gfx-fr[data-gfx-tier="turn"] { --gfx-a: max(144px, 20vh); --gfx-bb: 10vh; } }
+html.gfx-f3 .gfx-fr[data-gfx-tier="turn"] { --gfx-a: var(--gfx-a-turn); --gfx-bb: var(--gfx-b-turn); }
 html.gfx-f3 .gfx-fr[data-gfx-tier] { padding-top: calc(var(--gfx-a) + var(--gfx-bb)) !important; }
 html.gfx-f3 [data-gfx-clear] { background-color: transparent !important; }
 /* inks: every room's text takes the inks of the field it is on (the 150 ms swap runs only while the tone flips, and
@@ -299,7 +334,11 @@ html body :is(.gfx-cta-sec .footer-logo-subtle, [data-o~="ow-close-fox"], [data-
    when the menu is open (it sat ink on the open menu's ink panel, invisible); the logo stays above the open menu. */
 html.gfx-tone-light .gfx-nav [class*="hamburger_inner"] { background-color: #1e1e1e !important; }
 html.gfx-tone-dark .gfx-nav [class*="hamburger_inner"] { background-color: #ffffff !important; }
-html.gfx-tone-light:has(.gfx-hero-sec) .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #ffffff !important; }
+/* (core 1.0.56, perf) was html.gfx-tone-light:has(.gfx-hero-sec): a :has() anchored on html made every class set anywhere in the
+   page (each of the hundreds of line and word boxes the headline splits create at boot) re-evaluate html and dirty the whole
+   tree, so each forced read in the rooms' setup recalculated the entire page (17 ms a time on a slow phone, 300 times).
+   The core marks the page instead (gfx-has-hero, set before the lift). */
+html.gfx-tone-light.gfx-has-hero .gfx-nav.gfx-top [class*="hamburger_inner"] { background-color: #ffffff !important; }
 html body .w-nav-button.w--open [class*="hamburger_inner"]:not(#gfx-mo) { background-color: #f6f5f2 !important; }   /* (1.0.9b: the id outranks the inner pages' gfx-top rule) */
 html body .w-nav:has(.w-nav-button.w--open) .w-nav-brand { position: relative; z-index: 3; }
 
@@ -426,6 +465,10 @@ html body :is([data-o~="ow-btn"], [data-o~="gfc-btn"], .gfx-ow3-act, .gfx-pg-gfc
 html body :is([data-o~="ow-btn"], .gfx-ow3-act, [data-o~="gfc-btn"], .gfx-pg-gfc-btn, .gfx-iv3-gfc-btn):not(#gfx-b1) { height: 55px !important; min-height: 55px !important; box-sizing: border-box; }
 @media (min-width: 768px) {
   html body:not(#gfx-ts1):not(#gfx-ts2) :is([data-o~="ow-lead"], .ow-lead, [data-o~="gi-dek"], .gfx-lead, [data-gf-role="intro"]) { font-size: var(--_desktop---intro, 19px) !important; line-height: 30px !important; }
+}
+/* (core 1.0.52, 10/31) and from 992px up the intro is on the fluid scale (19 at 900, 17 at 720 and under) */
+@media (min-width: 992px) {
+  html body:not(#gfx-ts1):not(#gfx-ts2) :is([data-o~="ow-lead"], .ow-lead, [data-o~="gi-dek"], .gfx-lead, [data-gf-role="intro"]) { font-size: var(--gf-body-long, 19px) !important; line-height: 1.58 !important; }
 }
 /* (core 1.0.12, final audit) at the top of a page the bar is see-through and its box (120px on a phone) overlapped the
    first link below it (the person pages' "Team"): its empty area lets a tap through; the logo, the links, the menu

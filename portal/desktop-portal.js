@@ -47,6 +47,9 @@
     const q = `?c=${key}${o.theme === 'dark' ? '&t=dark' : ''}`, live = BASE + 'live/';
     fetch(live + 'portal.html', { mode: 'cors', credentials: 'omit' }).then(r => r.text()).then(t => {
       const head = `<base href="${esc(live)}"><script>window.__GF_PORTAL_Q=${JSON.stringify(q)};</script>`;
+      // (10/29, engine pass) Firefox's preloader reads a srcdoc frame's files before it applies the <base>: the page's five
+      // relative files were first asked of the site itself (five 404s on every Home and Investors view); they are written in full
+      t = t.replace(/(\s(?:src|href)=")(?![a-z][a-z0-9+.-]*:|\/|#)([^"]+)"/gi, (m, a, u) => a + live + u + '"');
       frame.srcdoc = t.replace(/<head([^>]*)>/i, m => m + head);
     }).catch(() => {});
     // ZOOMED OUT (the founder: 'so a viewer can see more'): the portal is laid out at a wider desktop (the window's width / Z) and

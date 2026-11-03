@@ -20,7 +20,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.3';
+  W.__gfxPages = '1.0.5';   // 1.0.5 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.0.4 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;
@@ -77,7 +77,8 @@
     const fx = pic ? (getComputedStyle(pic).getPropertyValue('--fx').trim() || '96px') : '96px';
     if (imgs.length) { gsap.set(imgs, { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom }); gsap.set(pic, { '--fx': '0px' }); }
     H.classList.add('ow-hero-on');
-    const tl = heroTl = gsap.timeline({ delay: 0.1, onComplete: () => { if (head && !head.reverted) head.revert(); } });
+    // (1.0.4, the performance pass) the headline keeps its lines after the rise; its masks open (core lineSplit.unmask): a revert here repainted the whole headline 3-4 s in and became the page's largest paint
+    const tl = heroTl = gsap.timeline({ delay: 0.1, onComplete: () => { if (head) head.unmask(); } });
     if (head) tl.to(head.lines, { yPercent: 0, duration: G.headline.duration, stagger: G.headline.stagger, ease: G.SETTLE }, 0);
     if (lede) tl.to(lede, { y: 0, duration: G.body.duration, ease: G.SETTLE, clearProps: 'transform' }, G.body.at);
     if (words.length) tl.to(words, { opacity: 1, y: 0, duration: G.body.duration, stagger: GROUP, ease: G.SETTLE, clearProps: 'transform' }, G.body.at);
@@ -205,12 +206,12 @@
         safe('hero', () => heroInit(def));
         if (def.start) safe('page start', () => def.start(api));
       },
-      rooms: () => {
-        safe('heads', headsInit);
-        safe('questions motion', questionsInit);
-        safe('close', closeInit);
-        if (def.rooms) safe('page rooms', () => def.rooms(api));
-      },
+      rooms: [   // (1.0.5) a list: core 1.0.56 sets one up a frame after the lift's first paint
+        () => safe('heads', headsInit),
+        () => safe('questions motion', questionsInit),
+        () => safe('close', closeInit),
+        () => { if (def.rooms) safe('page rooms', () => def.rooms(api)); }
+      ],
       late: () => { safe('close mark', () => closeMarkInit(false)); if (def.late) safe('page late', () => def.late(api)); },
       still: () => {
         gsap = W.gsap || null; ST = W.ScrollTrigger || null;

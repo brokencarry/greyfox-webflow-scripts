@@ -187,8 +187,8 @@ html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) { --fi-field: #111112; }
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is([data-o~="ow-btn"], .button:not(.w-nav-button), .iv-btn, [data-o~="r4-go"], .o2-btn, .gi-btn, .iv-close-a) { border-radius: 999px !important; }
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) body { font-family: "DM Sans", sans-serif; }
 html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) h1 { line-height: 1.08 !important; letter-spacing: -.015em !important; }
-html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is(h2.heading-2, .heading-2:not(h3), h2[data-o~="ow-h2"], h2.o2-d2:not(.av2-h), h2.gi-h2, h2.iv2-h, h2.gl-h, h2.t3-bio-n) { font-size: clamp(40px, 3.3334vw, 52px) !important; line-height: 1.08 !important; letter-spacing: -.015em !important; }
-html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is([data-o~="r4-hero"] p, [data-o~="r4-qs"] [data-o~="ow-acc-p"] p, [data-o~="r4-qs"] p, .t3-b2, .ow-body, .pc-p, .gl-lede, .ixo-sum, .gi-row-s) { font-size: 18px !important; line-height: 1.6 !important; }
+html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is(h2.heading-2, .heading-2:not(h3), h2[data-o~="ow-h2"], h2.o2-d2:not(.av2-h), h2.gi-h2, h2.iv2-h, h2.gl-h, h2.t3-bio-n) { font-size: var(--gfx-h2, clamp(40px, 3.3334vw, 52px)) !important; line-height: 1.08 !important; letter-spacing: -.015em !important; }
+html:is(.gf-flow2, .iv-f2, .ow-f2, .gi-html):not(#gf-c) :is([data-o~="r4-hero"] p, [data-o~="r4-qs"] [data-o~="ow-acc-p"] p, [data-o~="r4-qs"] p, .t3-b2, .ow-body, .pc-p, .gl-lede, .ixo-sum, .gi-row-s) { font-size: var(--gf-body, 18px) !important; line-height: 1.6 !important; }
 html:not(#gf-c) .gfc-on [data-o~="ow-open-r"] { display: none !important; }
 html:not(#gf-c) [data-o~="gfc-top"] { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
 html:not(#gf-c) [data-o~="gfc-top"] { grid-column: 1 / -1; }

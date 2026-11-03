@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.52 + pages 1.0.3 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.57 + pages 1.0.5 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -29,7 +29,7 @@
   'use strict';
   var W = window, D = document;
   if (W.gfx && W.gfx.core) return;
-  if (/[?&]gfm=0(&|$)/.test(location.search)) { W.gfx = { core: 'off', page: function () {} }; return; }
+  if (/[?&]gfm=0(&|$)/.test(location.search)) { W.gfx = { core: 'off', page: function () {} }; try { D.documentElement.classList.remove('gfx-f3', 'gfx-curtain'); } catch (e) { /* none */ } return; }
 
   /* ========================= 0 · the grammar (gf-grammar.js, verbatim) ========================= */
   (function (w) {
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.52';   // (owners branch) main's 1.0.51 (the layout report, the rhythm floors) + the site config
+  const VERSION = '1.0.57';   // (owners branch: main's 1.0.57 + the site config, GFX_SITE) 1.0.57 (11/3): the client door (Client login) moves from the phone menu's large list into its foot, beside the button (menuFoot); 1.0.56 (11/1, perf II): the rooms are set up after the lift's first paint, one a frame (start); the menu-button rule's html:has() is a class (gfx-has-hero: a :has() on html dirtied the whole tree on every class set); 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
   /* (1.0.51, founder 10/27) one site config: the owners-only site on greyfox-partners.com sets window.GFX_SITE in its
      head so nothing it prints names the main domain (its address, its inbox, the footer's fallback links). Without it,
      greyfoxpartners.com is unchanged. */
@@ -81,6 +81,34 @@
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
   const mq = q => { try { return W.matchMedia(q).matches; } catch (e) { return false; } };
   const REDUCE = !!G.reduced(), TOUCH = mq('(pointer: coarse)');
+  /* (1.0.52, 10/31, the founder: "we're solving the issue incorrectly") THE FILM GATE. The site's rooms were composed as screens for
+     a 900px-tall window and patched, window by window, for the laptops that showed them at 631 to 760px tall (a browser's bars).
+     One rule now: a room is held, pinned or slid only where the stage fits, 992 x 720 and up (FILM); under that the page is a
+     document (DOC): every room sized to its content, in flow, on the document rhythm (TIERS), nothing measured per window.
+     The pages read gfx.FILM / gfx.DOC and html.gfx-film / html.gfx-doc; the stylesheets key the same gate on the media query. */
+  const FILM = '(min-width: 992px) and (min-height: 720px)', DOC = '(max-width: 991px), (max-height: 719.99px)';
+  /* The gate is decided at load (each page builds its stages once). A window that crosses it mid-read (a window un-maximised,
+     the dev tools opened: never a phone's bars, TOUCH) reloads 0.6 s after the resize settles; the reader's place is saved
+     on pagehide and restored on the reload (fieldInit), so the page reopens as the other kind at the same line. */
+  let film0 = null, gateT = 0, staged = false;
+  /* (1.0.53) Only a page that built its stages on the gate reloads on a crossing: Home, Investors and Business Owners say so
+     with gfx.staged(). The inner pages have nothing built on it (their tokens follow the media query by themselves), so for
+     them a crossing only swaps the html class. And the reload is skipped when it would cost the reader something: a form they
+     have started (Contact), a video they put in fullscreen (the window's size changes with it), or a reload this gate made
+     less than 10 s ago (a scrollbar that comes and goes at exactly 720px tall would otherwise reload the page for ever).
+     The page then keeps the stages it was built with, as every window did before 1.0.52, until the next visit. */
+  // words the reader has typed into a field they can see (the hidden fields a page fills itself and the door's radio, which
+  // the URL carries across a reload, do not count)
+  const TYPED = 'input:not([type]), input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="search"], input[type="number"], textarea';
+  const dirty = el => el.getAttribute('aria-hidden') !== 'true' && !!el.getClientRects().length && el.value !== el.defaultValue;
+  const gateHolds = () => { try {
+    if (D.fullscreenElement || D.webkitFullscreenElement) return true;
+    if ([].some.call(D.querySelectorAll(TYPED), dirty)) return true;
+    return Date.now() - (+store.get('gfx-gate-reload') || 0) < 10000;
+  } catch (e) { return false; } };
+  const filmGate = () => { const on = mq(FILM); H.classList.toggle('gfx-film', on); H.classList.toggle('gfx-doc', !on);
+    if (film0 === null) film0 = on; else if (on !== film0 && staged && !TOUCH) { clearTimeout(gateT); gateT = setTimeout(() => { if (mq(FILM) !== film0 && !gateHolds()) { store.set('gfx-gate-reload', String(Date.now())); location.reload(); } }, 600); }
+    return on; };
   /* (1.0.41, launch QA 10/22, Safari) a reload or Back mid-page that is NOT served from the back/forward cache: the browser puts
      the reader at the old number before the pinned stages are built (Home: ~1800px short), so for ~0.5 s it showed a later part
      of the story, then the place snapped back. The rooms stay out of sight until the place is restored, then fade in (0.3 s);
@@ -91,7 +119,17 @@
   // showed for ~0.3 s before this script ran) with its own 3.5 s safety; from here on this script decides
   try { clearTimeout(W.__gfxRestoreT); } catch (e) { /* none */ }
   if (!RESTORING) H.classList.remove('gfx-restoring');
-  if (RESTORING) { H.classList.add('gfx-restoring'); const st = D.createElement('style'); st.id = 'gfx-restore'; st.textContent = 'html.gfx-restoring .page-wrapper{opacity:0!important}html.gfx-restore-in .page-wrapper{transition:opacity .3s cubic-bezier(.16,1,.3,1)!important}'; (D.head || H).appendChild(st); setTimeout(unhide, 2200); }
+  // (1.0.55) the cover is on body, not .page-wrapper: Investors' ported sheet makes the wrapper display: contents (no box, so its opacity did nothing there)
+  if (RESTORING) { H.classList.add('gfx-restoring'); const st = D.createElement('style'); st.id = 'gfx-restore'; st.textContent = 'html.gfx-restoring body{opacity:0!important}html.gfx-restore-in body{transition:opacity .3s cubic-bezier(.16,1,.3,1)!important}'; (D.head || H).appendChild(st); setTimeout(unhide, 2200); }
+  /* (1.0.55, 11/1, the performance pass) THE CURTAIN. This script composes every page from the end of the body, so the raw
+     Webflow page painted for 0.2-0.3 s, jumped, vanished and animated in, on every load (cold or warm). The site's head
+     script (core/gfx-head.js, served by Webflow before the first paint) now keeps .page-wrapper out of sight (visibility:
+     it inherits through Investors' display: contents wrapper, where opacity has no box to act on) on the paper from the
+     first paint; curtainOff lifts it at the opening (start(): the page composed, the hero's first state
+     set, its film about to play, all in one paint), on a still page as soon as it is set, and in the failsafe. The head
+     script lifts it on its own 3.5 s in, whatever happened (a page kept out of sight is worse than a jump). A reload or
+     Back mid-page keeps its own cover (gfx-restoring, above) until the place is restored. */
+  const curtainOff = () => H.classList.remove('gfx-curtain');
   const store = { get: k => { try { return W.sessionStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { W.sessionStorage.setItem(k, v); } catch (e) { /* private mode */ } } };
   const GROUP = G.group, LEAVE = G.leave;
   // the reading standard (sbx-m1.js GF_READ): a film is held to 1.6 s; a reader at 600 px/s
@@ -101,6 +139,8 @@
   safe('head', () => {
     H.classList.add('gfx-js', 'gfx-f3');
     if (!REDUCE) H.classList.add('gfx-m');
+    if (D.querySelector('.gfx-hero-sec')) H.classList.add('gfx-has-hero');   // (1.0.56) for the stylesheet's menu-button rule, which keyed on html:has(.gfx-hero-sec): see the note there
+    filmGate(); W.addEventListener('resize', filmGate);
     // the opening plays once a session (as local: sessionStorage sbx-intro-seen); ?intro forces it, ?intro=0 skips it
     const qs = location.search;
     const intro = !REDUCE && !/[?&]intro=0(&|$)/.test(qs) && (/[?&]intro(&|=1|$)/.test(qs) || (!location.hash && !store.get('gfx-intro-seen')));
@@ -125,7 +165,7 @@
   // the failsafe: if the motion never takes the page (a blocked CDN, an error), everything shows
   const failsafe = () => {
     if (H.classList.contains('gfx-ready')) return;
-    H.classList.add('gfx-failsafe'); H.classList.remove('gfx-intro'); ix3Late();
+    H.classList.add('gfx-failsafe'); H.classList.remove('gfx-intro'); ix3Late(); curtainOff();
     safe('failsafe', () => { const p = D.querySelector('.page-wrapper'); p && p.removeAttribute('inert'); });
   };
   setTimeout(failsafe, 6000);
@@ -518,7 +558,7 @@
     });
   };
   const lineSplit = el => {
-    const o = { lines: [], played: false, split: null, reverted: false, revert() {} };
+    const o = { lines: [], played: false, split: null, reverted: false, unmasked: false, revert() {}, unmask() {} };
     if (!el || !W.SplitText) return o;
     const opts = { type: 'lines', mask: 'lines', linesClass: 'gfx-line', aria: 'none', onSplit: self => { o.lines = self.lines; if (!o.played) gsap.set(self.lines, { yPercent: G.headline.yPercent }); } };
     breakBalanced(el);
@@ -539,11 +579,16 @@
       const m = inkKeep();
       if (!o.reverted) o.split.revert();
       breakBalanced(el);
-      if (!o.reverted) { o.split = W.SplitText.create(el, opts); if (o.played) gsap.set(o.lines, { yPercent: 0 }); }
+      if (!o.reverted) { o.split = W.SplitText.create(el, opts); if (o.played) gsap.set(o.lines, { yPercent: 0 }); if (o.unmasked) o.unmask(); }
       inkPut(m);
       requestAnimationFrame(() => D.dispatchEvent(new Event('gfx:resplit')));
     }), 160); });
     o.revert = () => { if (o.reverted) return; o.reverted = true; const m = inkKeep(); o.split.revert(); inkPut(m); };
+    /* (1.0.55, the performance pass) after its rise a hero headline used to revert to its own markup, and that rebuilt
+       element, painted whole 3-4 s in, was the page's largest contentful paint (the picture's wipe never counts). Now the
+       lines stay and only their masks open (overflow), so descenders are free and nothing new is painted: the largest
+       paint is the opening itself. A resize re-splits and opens the new masks again. */
+    o.unmask = () => { o.unmasked = true; o.lines.forEach(l => { const m = l.parentElement; if (m && m !== el) m.style.overflow = 'visible'; }); };
     return o;
   };
   const fitFilm = (tl, max) => { max = max || READ.film; const d = tl.duration(); if (d > max + 0.01) tl.timeScale(d / max); return Math.min(d, max); };
@@ -664,12 +709,20 @@
   };
   let lastC = '', lastTone = '', shown = null, fade = null, fadeRaf = 0, toningT = 0;
   const ease3 = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  /* (1.0.56, perf II) THE FIELD IS PAINTED ON ITS OWN LAYER. The colour used to be the body's background: every frame of a
+     crossfade repainted the document's root layer, the whole page's drawing re-recorded and committed each time (the layer
+     census: the root layer repainted ~100 times in one scroll of Home, and the compositor commit was the scroll's largest
+     cost). Now a fixed, full-screen layer under the content (#gfx-field, stylesheet) takes every frame of the fade, a one-item
+     drawing; the body takes only the tone's colour at an ink moment, so the page's own colour (overscroll, the canvas
+     behind everything) is still right. Readers of the colour get it from apply's own record (lastC), not from the body. */
+  let fieldEl = null;
+  const fieldLayer = () => { if (!fieldEl && D.body) { fieldEl = D.createElement('div'); fieldEl.id = 'gfx-field'; fieldEl.setAttribute('aria-hidden', 'true'); D.body.insertBefore(fieldEl, D.body.firstChild); } return fieldEl; };
   const apply = (c, tone) => {
     const s = css(c);
-    if (s !== lastC) { lastC = s; D.body.style.backgroundColor = s; if (footTone) footTone(s); navTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
+    if (s !== lastC) { lastC = s; const fl = fieldLayer(); if (fl) fl.style.backgroundColor = s; else D.body.style.backgroundColor = s; if (footTone) footTone(s); navTone(s); fieldListeners.forEach(f => safe('field listener', () => f(s, c))); }
     if (tone !== lastTone) {
       if (lastTone) { H.classList.add('gfx-toning'); clearTimeout(toningT); toningT = setTimeout(() => H.classList.remove('gfx-toning'), 220); }
-      lastTone = tone;
+      lastTone = tone; D.body.style.backgroundColor = css(toneRGB(tone));
       H.classList.toggle('gfx-tone-dark', tone === 'D'); H.classList.toggle('gfx-tone-light', tone !== 'D');
       if (footTone) footTone(null);
     }
@@ -756,8 +809,13 @@
        1280x500 window kept them and showed 272px of nothing between the firms and "The proof comes after the close." (54%
        of the screen; 30% on 900, the designed proportion). Under 900px tall the floors scale with the window (never below
        60%: 96, 173 and 134 on a 500px window), so the gap keeps the designed share of the screen. */
-    const k = cl(0.6, vh / 900, 1);
-    return { tight: cl(64 * k, vh * 0.0711, 93) * 2, standard: cl(96 * k, vh * 0.1067, 139) + cl(64 * k, vh * 0.0711, 93), breath: cl(192 * k, vh * 0.2133, 278) + cl(96 * k, vh * 0.1067, 139), turn };
+    /* (1.0.52, 10/31) THE DOCUMENT RHYTHM: a desktop window under the film gate (720px tall) is read as a document, and a
+       document's rooms are set apart by a reading gap, not a share of the screen (the 35%-of-the-screen turn was the hole a
+       1470x631 replay showed between the reading list and the close). The film rhythm (720 and up) is the designed one, on
+       the window's smaller side (vmin; the stylesheet's --gfx-a-* tokens say the same), its floor the 720px scale. */
+    if (vh < 720) return { tight: 80, standard: 112, breath: 160, turn: 192 };
+    const vm = Math.min(W.innerWidth, vh), k = cl(0.8, vm / 900, 1);
+    return { tight: cl(64 * k, vm * 0.0711, 93) * 2, standard: cl(96 * k, vm * 0.1067, 139) + cl(64 * k, vm * 0.0711, 93), breath: cl(192 * k, vm * 0.2133, 278) + cl(96 * k, vm * 0.1067, 139), turn: Math.max(224 * k, vm * 0.35) };
   };
   let STICKY = new Set();
   const stickyShift = (el, rm) => {
@@ -1010,7 +1068,22 @@
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
     const href = (cta && cta.getAttribute('href')) || '/contact';
-    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:${SITE.mail}"><span>Write to us</span>${SITE.mail}</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+    // (1.0.57, founder 11/3: "Client login") the menu's client door (the bar's fourth link, the menu's fifth) leaves the large
+    // list and stands beside the button in the foot: a quiet link with a hairline under it. The words and the address stay
+    // the component's own; without the script it is the menu's fifth link.
+    const door = $$('.nav_mobile a[href*="clients.greyfoxpartners.com"]', menu)[0];
+    const act = door ? `<div class="gfx-menu-act"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><a class="gfx-menu-cl" href="${esc(door.getAttribute('href'))}">${esc(door.textContent.trim())}</a></div>` : `<a class="gfx-menu-cta" href="${href}">Start a conversation</a>`;
+    if (door) {
+      door.classList.add('gfx-menu-moved'); door.setAttribute('aria-hidden', 'true'); door.tabIndex = -1;
+      if (!$('#gfx-menu-cl')) { const st = D.createElement('style'); st.id = 'gfx-menu-cl'; st.textContent = '@media (max-width:991px){' +
+        'html body .w-nav-menu .nav_mobile>a.gfx-menu-moved{display:none!important}' +
+        'html body .gfx-menu-foot .gfx-menu-act{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}' +
+        'html body .gfx-menu-foot .gfx-menu-cl{position:relative;display:inline-flex;align-items:center;height:52px;color:#fff!important;font:500 16px/1 "DM Sans",sans-serif;letter-spacing:0;text-decoration:none}' +
+        'html body .gfx-menu-foot .gfx-menu-cl::after{content:"";position:absolute;left:0;right:0;top:calc(50% + 12px);height:1px;background:rgba(255,255,255,.36);transition:background-color .3s}' +
+        'html body .gfx-menu-foot .gfx-menu-cl:active::after{background:#fff}@media (hover:hover){html body .gfx-menu-foot .gfx-menu-cl:hover::after{background:#fff}}' +
+        'html body .gfx-menu-foot .gfx-menu-cl:focus-visible{outline:2px solid #3aa678;outline-offset:4px;border-radius:2px}}'; (D.head || H).appendChild(st); }
+    }
+    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot">${act}<ul class="gfx-menu-lines"><li><a href="mailto:${SITE.mail}"><span>Write to us</span>${SITE.mail}</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
   }
   /* (1.0.11) the logo link is two images with empty alt text, so it had no name for a screen reader: it is named here */
   function navName() {
@@ -1035,7 +1108,7 @@
         if (s.backgroundImage !== 'none' && !/gradient/.test(s.backgroundImage)) return 'rgb(20, 20, 21)';
         const c = solid(s.backgroundColor); if (c) return c;
       }
-      return solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';
+      return solid(lastC) || solid(getComputedStyle(D.body).backgroundColor) || 'rgb(246, 245, 242)';   // (1.0.56) the field's colour is apply's record; the body holds only the tone's
     };
     /* (1.0.27, smoothness lab 10/21) the strip's colour is read at most every 200 ms while the page moves (it was a probe
        every frame), and the slow look-again runs only for 2 s after a scroll or a tap (a turn's crossfade finishing in
@@ -1545,13 +1618,18 @@
     const fallback = () => {
       if (done) return; done = true;
       if (haveGsap()) { res(true); return; }
-      const v = (W.gsap && W.gsap.version) || '3.13.0', base = 'https://cdn.jsdelivr.net/npm/gsap@' + v + '/dist/';
+      /* (1.0.55, the performance pass) the plugins come from where the page's own gsap tag came from (Webflow's copy:
+         one cache entry for every page, Home has the tags in its markup), the two in parallel; jsDelivr's npm copy only
+         when there is no such tag. And they are fetched now: this runs after DOMContentLoaded, when every tag in the
+         body has run, so nothing is gained by waiting for the load event (it used to: the opening waited on every
+         image of the page, ~0.4 s on a fast line, and the site's head preloads them besides). */
+      const tag = D.querySelector('script[src*="/gsap/"][src$="/gsap.min.js"]'), v = (W.gsap && W.gsap.version) || '3.13.0';
+      const base = tag ? tag.src.replace(/gsap\.min\.js$/, '') : 'https://cdn.jsdelivr.net/npm/gsap@' + v + '/dist/';
       (W.gsap ? Promise.resolve() : loadScript(base + 'gsap.min.js'))
-        .then(() => (W.ScrollTrigger ? 0 : loadScript(base + 'ScrollTrigger.min.js')))
-        .then(() => (W.SplitText ? 0 : loadScript(base + 'SplitText.min.js')))
+        .then(() => Promise.all([W.ScrollTrigger ? 0 : loadScript(base + 'ScrollTrigger.min.js'), W.SplitText ? 0 : loadScript(base + 'SplitText.min.js')]))
         .then(() => res(haveGsap()), () => res(haveGsap()));
     };
-    if (D.readyState === 'complete') fallback(); else { W.addEventListener('load', fallback, { once: true }); setTimeout(fallback, 2500); }
+    if (D.readyState !== 'loading') fallback(); else D.addEventListener('DOMContentLoaded', fallback, { once: true });
   });
   const ensureLenis = () => new Promise(res => {
     if (REDUCE || TOUCH || shared) { res(); return; }
@@ -1569,7 +1647,7 @@
 
   let PAGE = null;
   const api = {
-    core: VERSION, G, $, $$, safe, mq, store, clamp, docTop, NS, TAN, BASE, REDUCE, TOUCH, READ,
+    core: VERSION, G, $, $$, safe, mq, store, clamp, docTop, NS, TAN, BASE, REDUCE, TOUCH, READ, FILM, DOC, film: () => mq(FILM), staged: () => { staged = true; },
     room, lineSplit, fitFilm, rooms, scrollToY, refresh, esc, postFrame,
     get gsap() { return gsap; }, get ST() { return ST; }, get lenis() { return shared; }, scrollNow,
     arrow: () => W.gfArrow, turn: () => W.gfTurn,
@@ -1582,7 +1660,7 @@
     safe('ix2 sweep', () => { strip(D.body); if (ixObs) ixObs.disconnect(); });
     skipLink(); stopIX2(); cleanIX();
     W.addEventListener('load', () => { stopIX2(); setTimeout(ix3Late, 3000); }, { once: true });
-    if (!PAGE) { H.classList.add('gfx-ready'); return; }
+    if (!PAGE) { H.classList.add('gfx-ready'); curtainOff(); return; }
     safe('nav reserve', navReserve);
     safe('menu foot', menuFoot);
     safe('phone menu', phoneMenu);
@@ -1600,7 +1678,7 @@
       H.classList.add('gfx-still-page');
       if (fieldDef) { removeEventListener('scroll', early); fieldStill(); }
       safe('page still', () => PAGE.still && PAGE.still(api));
-      H.classList.add('gfx-ready');
+      H.classList.add('gfx-ready'); curtainOff();
       if (W.gsap) { gsap = W.gsap; } footInit(PAGE.foot);
       if (PAGE.fox) foxStep(PAGE.fox);
     });
@@ -1611,7 +1689,7 @@
       const p = $('.page-wrapper'); p && p.removeAttribute('inert');
       if (fieldDef) { removeEventListener('scroll', early); fieldStill(); }
       safe('page still', () => PAGE.still && PAGE.still(api));
-      H.classList.add('gfx-ready');
+      H.classList.add('gfx-ready'); curtainOff();
     });
   }
   function start() {
@@ -1619,11 +1697,25 @@
     gsap.registerPlugin(ST, W.SplitText);
     ST.defaults({ toggleActions: 'play complete none none' });
     if (TOUCH) ST.config({ ignoreMobileResize: true });
-    if (shared && sharedRaf) { tickerOn = true; cancelAnimationFrame(tempLoop); gsap.ticker.add(() => sharedRaf(performance.now())); gsap.ticker.lagSmoothing(0); shared.on('scroll', ST.update); }
+    // (1.0.56, perf II) the smooth scroll steps FIRST in the tick (prioritised): its scrollTo needs the page laid out, and
+    // after the tweens had written their frame that read laid the whole page out again, every frame (the scroll trace:
+    // 123 forced layouts a scroll from lenis's setScroll). Scrolled first, it reads a settled page; the triggers and the
+    // tweens then write, and the browser lays out once at the frame's end.
+    if (shared && sharedRaf) { tickerOn = true; cancelAnimationFrame(tempLoop); gsap.ticker.add(() => sharedRaf(performance.now()), false, true); gsap.ticker.lagSmoothing(0); shared.on('scroll', ST.update); }
     safe('page start', () => PAGE.start && PAGE.start(api));
     safe('nav', navInit);
-    fontsReady().then(() => {
-      safe('page rooms', () => PAGE.rooms && PAGE.rooms(api));
+    // the curtain lifts here, not after the fonts: every hero's film starts in the page's start (a 0.1 s delay), so a
+    // later lift would show it part-played. The hero's first state is set; the lift and its first frame share one paint.
+    curtainOff();
+    /* (1.0.56, perf) THE ROOMS AFTER THE FIRST PAINT, ONE A FRAME. The rooms used to be set up in the same task as the lift
+       (the fonts were long ready, so fontsReady resolved in a microtask), and a task cannot paint: the lifted curtain and the
+       opening's first frame waited for every room's setup, 0.9 s on a desktop, 2.8 s on a slow phone, the page on the paper
+       the whole time. Now the frame with the lift is drawn first (postFrame), then the rooms follow one per frame (a page
+       may give them as a list; a function is one room), the opening's own frames in between. A room's reveal targets are
+       still hidden until it is set up (.gfx-open, and the hero fills the first screen), so nothing shows before its time. */
+    const roomList = PAGE.rooms ? (Array.isArray(PAGE.rooms) ? PAGE.rooms : [PAGE.rooms]) : [];
+    const roomStep = (i, done) => { if (i >= roomList.length) { done(); return; } safe('page rooms', () => roomList[i](api)); postFrame(() => roomStep(i + 1, done)); };
+    fontsReady().then(() => postFrame(() => roomStep(0, () => {
       safe('keyboard', keyboardInit);
       setTimeout(() => {
         if (fieldDef) { removeEventListener('scroll', early); safe('field', fieldInit); }
@@ -1651,7 +1743,7 @@
           });
         }, 60);
       }, 200);
-    });
+    })));
   }
 })();
 
@@ -1677,7 +1769,7 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.page || W.__gfxPages) return;
-  W.__gfxPages = '1.0.3';
+  W.__gfxPages = '1.0.5';   // 1.0.5 (11/1, perf II): the rooms as a list, one a frame (core 1.0.56). 1.0.4 (11/1, the performance pass): the hero headline keeps its lines after the rise (masks open, no revert repaint)
   const H = D.documentElement, G = gfx.G, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
   const O = c => '[data-o~="' + c + '"]';
   const GROUP = G.group, TIGHT = G.tight || 0.08;
@@ -1734,7 +1826,8 @@
     const fx = pic ? (getComputedStyle(pic).getPropertyValue('--fx').trim() || '96px') : '96px';
     if (imgs.length) { gsap.set(imgs, { clipPath: G.picture.clipFrom, scale: G.picture.scaleFrom }); gsap.set(pic, { '--fx': '0px' }); }
     H.classList.add('ow-hero-on');
-    const tl = heroTl = gsap.timeline({ delay: 0.1, onComplete: () => { if (head && !head.reverted) head.revert(); } });
+    // (1.0.4, the performance pass) the headline keeps its lines after the rise; its masks open (core lineSplit.unmask): a revert here repainted the whole headline 3-4 s in and became the page's largest paint
+    const tl = heroTl = gsap.timeline({ delay: 0.1, onComplete: () => { if (head) head.unmask(); } });
     if (head) tl.to(head.lines, { yPercent: 0, duration: G.headline.duration, stagger: G.headline.stagger, ease: G.SETTLE }, 0);
     if (lede) tl.to(lede, { y: 0, duration: G.body.duration, ease: G.SETTLE, clearProps: 'transform' }, G.body.at);
     if (words.length) tl.to(words, { opacity: 1, y: 0, duration: G.body.duration, stagger: GROUP, ease: G.SETTLE, clearProps: 'transform' }, G.body.at);
@@ -1862,12 +1955,12 @@
         safe('hero', () => heroInit(def));
         if (def.start) safe('page start', () => def.start(api));
       },
-      rooms: () => {
-        safe('heads', headsInit);
-        safe('questions motion', questionsInit);
-        safe('close', closeInit);
-        if (def.rooms) safe('page rooms', () => def.rooms(api));
-      },
+      rooms: [   // (1.0.5) a list: core 1.0.56 sets one up a frame after the lift's first paint
+        () => safe('heads', headsInit),
+        () => safe('questions motion', questionsInit),
+        () => safe('close', closeInit),
+        () => { if (def.rooms) safe('page rooms', () => def.rooms(api)); }
+      ],
       late: () => { safe('close mark', () => closeMarkInit(false)); if (def.late) safe('page late', () => def.late(api)); },
       still: () => {
         gsap = W.gsap || null; ST = W.ScrollTrigger || null;
