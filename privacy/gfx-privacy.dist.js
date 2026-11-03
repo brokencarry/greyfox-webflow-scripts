@@ -1,4 +1,4 @@
-/*! Grey Fox · Privacy v2 (Flow 3) · core 1.0.56 + pages 1.0.5 + privacy 1.0.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + privacy/gfx-privacy.js (read those for the notes) */
+/*! Grey Fox · Privacy v2 (Flow 3) · core 1.0.57 + pages 1.0.5 + privacy 1.0.2 · minified bundle of core/gfx-core.js + pages/gfx-pages.js + privacy/gfx-privacy.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.56';
+const VERSION='1.0.57';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -833,7 +833,19 @@ function menuFoot(){
 const menu=$('.w-nav-menu');if(!menu||$('.gfx-menu-foot',menu))return;
 const cta=$$('.gfx-nav a, .w-nav a').find(a=> /^start a conversation$/i.test(a.textContent.trim()));
 const href=(cta&&cta.getAttribute('href'))||'/contact';
-menu.insertAdjacentHTML('beforeend',`<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+const door=$$('.nav_mobile a[href*="clients.greyfoxpartners.com"]',menu)[0];
+const act=door?`<div class="gfx-menu-act"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><a class="gfx-menu-cl" href="${esc(door.getAttribute('href'))}">${esc(door.textContent.trim())}</a></div>`:`<a class="gfx-menu-cta" href="${href}">Start a conversation</a>`;
+if(door){
+door.classList.add('gfx-menu-moved');door.setAttribute('aria-hidden','true');door.tabIndex=-1;
+if(!$('#gfx-menu-cl')){const st=D.createElement('style');st.id='gfx-menu-cl';st.textContent='@media (max-width:991px){'+
+'html body .w-nav-menu .nav_mobile>a.gfx-menu-moved{display:none!important}'+
+'html body .gfx-menu-foot .gfx-menu-act{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}'+
+'html body .gfx-menu-foot .gfx-menu-cl{position:relative;display:inline-flex;align-items:center;height:52px;color:#fff!important;font:500 16px/1 "DM Sans",sans-serif;letter-spacing:0;text-decoration:none}'+
+'html body .gfx-menu-foot .gfx-menu-cl::after{content:"";position:absolute;left:0;right:0;top:calc(50% + 12px);height:1px;background:rgba(255,255,255,.36);transition:background-color .3s}'+
+'html body .gfx-menu-foot .gfx-menu-cl:active::after{background:#fff}@media (hover:hover){html body .gfx-menu-foot .gfx-menu-cl:hover::after{background:#fff}}'+
+'html body .gfx-menu-foot .gfx-menu-cl:focus-visible{outline:2px solid #3aa678;outline-offset:4px;border-radius:2px}}';(D.head||H).appendChild(st);}
+}
+menu.insertAdjacentHTML('beforeend',`<div class="gfx-menu-foot">${act}<ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
 }
 function navName(){
 $$('a.w-nav-brand, a.logo-link').forEach(a=>{

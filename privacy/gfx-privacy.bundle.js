@@ -1,4 +1,4 @@
-/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.56 + pages 1.0.5 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
+/* Grey Fox · Privacy v2 (Flow 3) page script: core 1.0.57 + pages 1.0.5 + privacy 1.0.2. Sources: core/gfx-core.js, pages/gfx-pages.js, privacy/gfx-privacy.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.56';   // 1.0.56 (11/1, perf II): the rooms are set up after the lift's first paint, one a frame (start); the menu-button rule's html:has() is a class (gfx-has-hero: a :has() on html dirtied the whole tree on every class set); 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
+  const VERSION = '1.0.57';   // 1.0.57 (11/3): the client door (Client login) moves from the phone menu's large list into its foot, beside the button (menuFoot); 1.0.56 (11/1, perf II): the rooms are set up after the lift's first paint, one a frame (start); the menu-button rule's html:has() is a class (gfx-has-hero: a :has() on html dirtied the whole tree on every class set); 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -1061,7 +1061,22 @@
     const menu = $('.w-nav-menu'); if (!menu || $('.gfx-menu-foot', menu)) return;
     const cta = $$('.gfx-nav a, .w-nav a').find(a => /^start a conversation$/i.test(a.textContent.trim()));
     const href = (cta && cta.getAttribute('href')) || '/contact';
-    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
+    // (1.0.57, founder 11/3: "Client login") the menu's client door (the bar's fourth link, the menu's fifth) leaves the large
+    // list and stands beside the button in the foot: a quiet link with a hairline under it. The words and the address stay
+    // the component's own; without the script it is the menu's fifth link.
+    const door = $$('.nav_mobile a[href*="clients.greyfoxpartners.com"]', menu)[0];
+    const act = door ? `<div class="gfx-menu-act"><a class="gfx-menu-cta" href="${href}">Start a conversation</a><a class="gfx-menu-cl" href="${esc(door.getAttribute('href'))}">${esc(door.textContent.trim())}</a></div>` : `<a class="gfx-menu-cta" href="${href}">Start a conversation</a>`;
+    if (door) {
+      door.classList.add('gfx-menu-moved'); door.setAttribute('aria-hidden', 'true'); door.tabIndex = -1;
+      if (!$('#gfx-menu-cl')) { const st = D.createElement('style'); st.id = 'gfx-menu-cl'; st.textContent = '@media (max-width:991px){' +
+        'html body .w-nav-menu .nav_mobile>a.gfx-menu-moved{display:none!important}' +
+        'html body .gfx-menu-foot .gfx-menu-act{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}' +
+        'html body .gfx-menu-foot .gfx-menu-cl{position:relative;display:inline-flex;align-items:center;height:52px;color:#fff!important;font:500 16px/1 "DM Sans",sans-serif;letter-spacing:0;text-decoration:none}' +
+        'html body .gfx-menu-foot .gfx-menu-cl::after{content:"";position:absolute;left:0;right:0;top:calc(50% + 12px);height:1px;background:rgba(255,255,255,.36);transition:background-color .3s}' +
+        'html body .gfx-menu-foot .gfx-menu-cl:active::after{background:#fff}@media (hover:hover){html body .gfx-menu-foot .gfx-menu-cl:hover::after{background:#fff}}' +
+        'html body .gfx-menu-foot .gfx-menu-cl:focus-visible{outline:2px solid #3aa678;outline-offset:4px;border-radius:2px}}'; (D.head || H).appendChild(st); }
+    }
+    menu.insertAdjacentHTML('beforeend', `<div class="gfx-menu-foot">${act}<ul class="gfx-menu-lines"><li><a href="mailto:inquiries@greyfoxpartners.com"><span>Write to us</span>inquiries@greyfoxpartners.com</a></li><li><a href="tel:+16469466641"><span>Telephone</span>(646) 946-6641</a></li></ul></div>`);
   }
   /* (1.0.11) the logo link is two images with empty alt text, so it had no name for a screen reader: it is named here */
   function navName() {
