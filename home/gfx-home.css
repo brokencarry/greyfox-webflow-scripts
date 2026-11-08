@@ -334,9 +334,13 @@ html.gfx-f3 .gfx-logos img[src*="logo_robots_pencils"] { --lh: 29px; }
   html.gfx-f3 .gfx-logos img.testimonial_logo { margin-right: 120px !important; }
   html.gfx-m .gfx-marq .gfx-marq-track { animation-duration: 76s; }
 }
-@media (prefers-reduced-motion: reduce) and (min-width: 992px) {
-  html.gfx-f3 .gfx-logos .gfx-marq-track { flex-wrap: nowrap !important; justify-content: space-between !important; width: 100% !important; transform: none !important; }
-  html.gfx-f3 .gfx-logos img.testimonial_logo { margin: 0 !important; flex: 0 1 auto !important; min-width: 0; max-width: 9.2% !important; object-fit: contain; }
+/* (11/8, a visitor's replay at 1521x730: 5 marks over 3) the still row keys on the page's own state (no gfx-m: Reduce Motion,
+   or the motion library failed to load and core went static), not on the media query alone. A static page kept the moving
+   line's 120 px gaps and wrapped 5 / 3; and FullStory's player does not replay the visitor's Reduce Motion, so a still
+   visitor's one row replayed as that wrap. Under 992 px the grid below already keys on :not(.gfx-m). */
+@media (min-width: 992px) {
+  html.gfx-f3:not(.gfx-m) .gfx-logos .gfx-marq-track { flex-wrap: nowrap !important; justify-content: space-between !important; width: 100% !important; transform: none !important; animation: none !important; }
+  html.gfx-f3:not(.gfx-m) .gfx-logos img.testimonial_logo { margin: 0 !important; flex: 0 1 auto !important; min-width: 0; max-width: 9.2% !important; object-fit: contain; }
 }
 
 /* (home 1.1.18, 10/26) THE FIRMS WHEN THE LINE DOES NOT MOVE: an iPhone with Reduce Motion on (any page without the motion
