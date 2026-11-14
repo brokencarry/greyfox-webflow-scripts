@@ -37,7 +37,8 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.10';   // 1.3.10 (11/14): evaluate-a-firm = the scorecard that erodes (similar promises in gold; one firm's work holds; Follow the work)
+  W.__gfxInsights = '1.3.11';   // 1.3.11 (11/14): evaluate-a-firm in more of the site colour (the column that holds in greens, gold dashes where only the promise remains)
+  // 1.3.10 (11/14): evaluate-a-firm = the scorecard that erodes (similar promises in gold; one firm's work holds; Follow the work)
   // 1.3.9 (11/14): evaluate-a-firm ends in the site's own arrow (gfArrow line + fox ears) instead of the plain kick
   // 1.3.8 (11/14): evaluate-a-firm = similar promises, different depth (core samples through the article's stages)
   // 1.3.7 (11/14): evaluate-a-firm redrawn (the booked meeting as the product / the transaction as the objective)
@@ -314,7 +315,7 @@
     'buyer-financials': 'sha384-UGXC22PJYJjHkh5iL4B/JGRD/WlkWrl+3HN+T2zKK0mq77q1n0eq0hOaHz4gKRTk',
     'cold-call': 'sha384-K6ixKY/zEtbf6WyCHEWWhyMw6uXQ65OQZJDYyZsHUFHwEdYa20tjNT7/0xAxwJWY',
     'company-problem': 'sha384-kk/NKIJvUOB8I1evJoaPdWjZsNz5o5szPVWx008ofs/xd4Q32tPTZvWGvcXlph6V',
-    'evaluate-a-firm': 'sha384-pOdNyuN341W4ATPFo7mTXjyWG/iqMQZPhz2RCSNi8K4bbyifwRy8RIdtMqLvOpyQ',
+    'evaluate-a-firm': 'sha384-Jf6hho4qIw/dWa8vbO9Q/1sPt9rAyJ2aNLV+J5ZuLbDb6DuiUqUsVwYfGc75PVul',
     'exit-timeline': 'sha384-33YuPYaEbtWq0ex7nNk+FZplz6sxv6zxnOJi2ReB/PYNkTiBWaGh03leSc/qfOn0',
     'field-margin': 'sha384-HJKzCuVq3394L8uokafJZV1nrFFqoR7s0QxoFG9zMTu9rZhsgR5DuZCRdNdoSiRo',
     'fifty-email': 'sha384-3ntOLDx7YzSLeqtWH9n65uEZa+hHAip/VYrgM7Ku0O+kS4gobMBqnqOWnRhIUYZJ',
