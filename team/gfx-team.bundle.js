@@ -1,4 +1,4 @@
-/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.57 + pages 1.0.5 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
+/* Grey Fox · Team v2 (Flow 3) page script: core 1.0.58 + pages 1.0.5 + team 1.0.3. Sources: core/gfx-core.js, pages/gfx-pages.js, team/gfx-team.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -68,7 +68,7 @@
 
   /* ========================= 1 · header-safe setup ========================= */
   const H = D.documentElement, G = W.GF_GRAMMAR;
-  const VERSION = '1.0.57';   // 1.0.57 (11/3): the client door (Client login) moves from the phone menu's large list into its foot, beside the button (menuFoot); 1.0.56 (11/1, perf II): the rooms are set up after the lift's first paint, one a frame (start); the menu-button rule's html:has() is a class (gfx-has-hero: a :has() on html dirtied the whole tree on every class set); 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
+  const VERSION = '1.0.58';   // 1.0.58 (11/8, site sweep): a first-screen room headline rises at the top of the page (it waited for a scroll); gfx-ready at the opening on every page (the failsafe fired on inner pages); the layout report skips reading columns and Team's designed first room; 1.0.57 (11/3): the client door (Client login) moves from the phone menu's large list into its foot, beside the button (menuFoot); 1.0.56 (11/1, perf II): the rooms are set up after the lift's first paint, one a frame (start); the menu-button rule's html:has() is a class (gfx-has-hero: a :has() on html dirtied the whole tree on every class set); 1.0.52 (10/31): one fluid desktop scale + the film gate (FILM / html.gfx-film, html.gfx-doc) + the document rhythm under 720px tall; 1.0.53 (11/1): the gate's reload is a staged page's (gfx.staged()) and holds for a started form, a fullscreen video and a reload storm; 1.0.54 (11/1): the hero headline rule keys on the document, not on html.gfx-f3 (stylesheet: no size change at first paint); 1.0.55 (11/1, perf): the curtain (the head script hides the page from the first paint; lifted here at the opening, curtainOff)
   const DEBUG = /[?&]gfxdebug(&|$)/.test(location.search);
   const log = (where, e) => { if (DEBUG) { try { console.warn('[gfx] ' + where, e); } catch (x) { /* nothing */ } } };
   const safe = (where, fn) => { try { return fn(); } catch (e) { log(where, e); return undefined; } };
@@ -620,7 +620,13 @@
     if (head) {
       let hp = false;
       const rise = d => { if (hp) return; hp = true; head.played = true; gsap.to(head.lines, { yPercent: 0, duration: d, stagger: d > 0.5 ? G.headline.stagger : 0, ease: G.SETTLE, onComplete: () => { head.revert(); requestAnimationFrame(() => D.dispatchEvent(new Event('gfx:resplit'))); } }); };
-      LINES.forEach(start => ST.create({ trigger: hEl, start, end: 'bottom top', onEnter: () => rise(G.headline.duration), onLeave: () => rise(G.fastForward), onEnterBack: () => rise(G.fastForward) }));
+      const hts = LINES.map(start => ST.create({ trigger: hEl, start, end: 'bottom top', onEnter: () => rise(G.headline.duration), onLeave: () => rise(G.fastForward), onEnterBack: () => rise(G.fastForward) }));
+      /* (1.0.58, 11/8 site sweep) a headline already on the first screen at load has its start clamped to 0, and at the top
+         of the page (scroll 0) a trigger starting at 0 never enters: the headline waited, hidden, for the first scroll
+         (Privacy's first section on a desktop, Team's "The people behind the work." on a portrait tablet). At the top, a
+         headline whose start is 0 rises now, as any first-screen headline does; checked again at each refresh. */
+      const atTop = () => { if (hp) { ST.removeEventListener('refresh', atTop); return; } if (W.scrollY < 1 && hts.some(t => t && t.start < 1)) rise(G.headline.duration); };
+      ST.addEventListener('refresh', atTop); postFrame(atTop);
     }
     if (o.extra) safe('room extra', () => o.extra(tl, at));
     fitFilm(tl);
@@ -1038,10 +1044,14 @@
       }
       let run = 0, band = 0; for (let y = 0; y < rows; y++) { let empty = true; for (let x = 0; x < cols; x++) if (grid[y * cols + x]) { empty = false; break; } run = empty ? run + 1 : 0; if (run > band) band = run; }
       run = 0; let col = 0; for (let x = 0; x < cols; x++) { let empty = true; for (let y = 2; y < rows; y++) if (grid[y * cols + x]) { empty = false; break; } run = empty ? run + 1 : 0; if (run > col) col = run; }
+      /* (1.0.58, 11/8 site sweep) two things the report flagged are the design, not holes, and buried the real ones (87% of
+         14 days' events): a reading column (the articles' gfx-pg-gi-*, Privacy's gfx-pg-pv-*) is narrow by intent, and Team's
+         first room (gfx-pg-t2-name) sets its headline low under open space (founder 11/8: keep as designed). */
+      const tn = D.querySelector('.gfx-pg-t2-name'), tr = tn && tn.getBoundingClientRect(), teamTop = !!tr && tr.top < vh * 0.55 && tr.bottom > vh * 0.45;
       let found = null;
-      if (band / rows >= 0.45) found = { kind: 'band', share: +(band / rows).toFixed(2) };
-      else if (col / cols >= 0.4) found = { kind: 'column', share: +(col / cols).toFixed(2) };
-      else spans.forEach((o, s) => { if (found) return; const sr = s.getBoundingClientRect(); if (sr.top > vh * 0.1 || sr.bottom < vh * 0.9) return; const share = (o.r - o.l) / vw; if (share < 0.6) found = { kind: 'narrow', share: +share.toFixed(2), sec: (s.className || '').toString().slice(0, 40) }; });
+      if (band / rows >= 0.45) { if (!teamTop) found = { kind: 'band', share: +(band / rows).toFixed(2) }; }
+      else if (col / cols >= 0.4) { if (!teamTop) found = { kind: 'column', share: +(col / cols).toFixed(2) }; }
+      else spans.forEach((o, s) => { if (found || /\bgfx-pg-(gi|pv)-/.test((s.className || '').toString())) return; const sr = s.getBoundingClientRect(); if (sr.top > vh * 0.1 || sr.bottom < vh * 0.9) return; const share = (o.r - o.l) / vw; if (share < 0.6) found = { kind: 'narrow', share: +share.toFixed(2), sec: (s.className || '').toString().slice(0, 40) }; });
       return found;
     };
     // a hole counts when it is still there 1.2 s later at the same place (a section mid-reveal, a footer rising, are not holes)
@@ -1700,6 +1710,10 @@
     // the curtain lifts here, not after the fonts: every hero's film starts in the page's start (a 0.1 s delay), so a
     // later lift would show it part-played. The hero's first state is set; the lift and its first frame share one paint.
     curtainOff();
+    // (1.0.58, 11/8 site sweep) the opening has happened: say so. Home, Owners and Investors set this in their own hero
+    // (earlier, in PAGE.start); the other pages never did, so the 6 s failsafe fired on every inner page and every replay
+    // read "the motion failed" on a healthy page.
+    H.classList.add('gfx-ready');
     /* (1.0.56, perf) THE ROOMS AFTER THE FIRST PAINT, ONE A FRAME. The rooms used to be set up in the same task as the lift
        (the fonts were long ready, so fontsReady resolved in a microtask), and a task cannot paint: the lifted curtain and the
        opening's first frame waited for every room's setup, 0.9 s on a desktop, 2.8 s on a slow phone, the page on the paper

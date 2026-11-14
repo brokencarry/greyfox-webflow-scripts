@@ -105,6 +105,12 @@ html:not(#gfx-iv1):not(#gfx-iv2):not(#gfx-iv3):not(#gfx-iv4) [data-o~="iv-cases"
 @media (max-width: 767px) {
   html:not(#gfx-iv1):not(#gfx-iv2):not(#gfx-iv3):not(#gfx-iv4) [data-o~="iv-cases"] [data-o~="iv-case-sf"] { font-size: min(23px, calc((100vw - 128px) / 14)); }
 }
+/* (11/8, site sweep) the same collision on the three-card desktop from 992 to 1279: "Under 90 days" (153px) in a column of
+   97 px (992) to 139 px (1240) ran into "3.7". Shrinking to fit would set the figure at ~14px, its caption's size, so here
+   the two small figures stand one above the other at their own size; the cards keep one set of row lines. 1280 up unchanged. */
+@media (min-width: 992px) and (max-width: 1279px) {
+  html:not(#gfx-iv1):not(#gfx-iv2):not(#gfx-iv3):not(#gfx-iv4) [data-o~="iv-cases"] [data-o~="iv-case-ss"] { grid-template-columns: minmax(0, 1fr); }
+}
 
 /* (investors 1.0.8) THE FOUR STAGES ON A PHONE: one line down the left (Owners' phone line; gfx-investors.js s1Phone) */
 @media (max-width: 767px) {

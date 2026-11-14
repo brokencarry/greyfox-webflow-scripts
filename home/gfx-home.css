@@ -517,6 +517,10 @@ html .hero_title h1.gfx-hero-h { margin: 0; }
    core H2 token (up to 52px on wide screens) the line fell a few pixels short at every desktop width (738 needed vs 728 at 1440,
    800 vs 761 at 1920) and the heading ran three lines. The pull quote shares the grid, so it keeps the lead's column. */
 @media (min-width: 992px) { html.gfx-f3 .gfx-std-grid { grid-template-columns: 7.6fr 4.4fr; } }
+/* (11/8, site sweep) the Designer's combo .quote_title.gfx-std-title carries align-self: end. In the desktop grid that only
+   bottom-aligns the title; under 992 the room is a flex column, where "end" is the right edge: on a 768-991 tablet the title
+   stood 89 to 312 px right of the lead and quote below it. The column keeps it on the gutter. */
+@media (max-width: 991px) { html.gfx-f3 .gfx-std-title { align-self: flex-start; } }
 /* The hero at 1366 to 1392: the page embed's narrow-desktop hero rule (lead 420px wide) stops at 1365px, one pixel short of the
    commonest laptop width, where "Grey Fox gives owners" (725px at 72px) lost 7px and the H1 ran three lines. From 1393 the
    designer's 520px lead leaves the title its two lines. */

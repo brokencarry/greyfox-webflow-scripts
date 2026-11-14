@@ -1,4 +1,4 @@
-/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.57 + person 1.0.6 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
+/*! Grey Fox · person pages v2 (Flow 3) · core 1.0.58 + person 1.0.6 · minified bundle of core/gfx-core.js + person/gfx-person.js (read those for the notes) */
 (function(){
 'use strict';
 var W=window,D=document;
@@ -38,7 +38,7 @@ reduced:()=>w.matchMedia&&w.matchMedia('(prefers-reduced-motion: reduce)').match
 };
 })(W);
 const H=D.documentElement,G=W.GF_GRAMMAR;
-const VERSION='1.0.57';
+const VERSION='1.0.58';
 const DEBUG= /[?&]gfxdebug(&|$)/.test(location.search);
 const log=(where,e)=>{if(DEBUG){try{console.warn('[gfx] '+where,e);}catch(x){}}};
 const safe=(where,fn)=>{try{return fn();}catch(e){log(where,e);return undefined;}};
@@ -486,7 +486,9 @@ batch(det,{opacity:0,y:G.detail.y},{opacity:1,y:0},G.detail.duration,G.SETTLE,o.
 if(head){
 let hp=false;
 const rise=d=>{if(hp)return;hp=true;head.played=true;gsap.to(head.lines,{yPercent:0,duration:d,stagger:d>0.5?G.headline.stagger:0,ease:G.SETTLE,onComplete:()=>{head.revert();requestAnimationFrame(()=>D.dispatchEvent(new Event('gfx:resplit')));}});};
-LINES.forEach(start=>ST.create({trigger:hEl,start,end:'bottom top',onEnter:()=>rise(G.headline.duration),onLeave:()=>rise(G.fastForward),onEnterBack:()=>rise(G.fastForward)}));
+const hts=LINES.map(start=>ST.create({trigger:hEl,start,end:'bottom top',onEnter:()=>rise(G.headline.duration),onLeave:()=>rise(G.fastForward),onEnterBack:()=>rise(G.fastForward)}));
+const atTop=()=>{if(hp){ST.removeEventListener('refresh',atTop);return;}if(W.scrollY<1&&hts.some(t=>t&&t.start<1))rise(G.headline.duration);};
+ST.addEventListener('refresh',atTop);postFrame(atTop);
 }
 if(o.extra)safe('room extra',()=>o.extra(tl,at));
 fitFilm(tl);
@@ -813,10 +815,11 @@ if(content)mark(r);const s=e.closest('section, footer, .gfx-fr');if(s){const o=s
 }
 let run=0,band=0;for(let y=0;y<rows;y++){let empty=true;for(let x=0;x<cols;x++)if(grid[y*cols+x]){empty=false;break;}run=empty?run+1:0;if(run>band)band=run;}
 run=0;let col=0;for(let x=0;x<cols;x++){let empty=true;for(let y=2;y<rows;y++)if(grid[y*cols+x]){empty=false;break;}run=empty?run+1:0;if(run>col)col=run;}
+const tn=D.querySelector('.gfx-pg-t2-name'),tr=tn&&tn.getBoundingClientRect(),teamTop=!!tr&&tr.top<vh*0.55&&tr.bottom>vh*0.45;
 let found=null;
-if(band / rows>=0.45)found={kind:'band',share:+(band / rows).toFixed(2)};
-else if(col / cols>=0.4)found={kind:'column',share:+(col / cols).toFixed(2)};
-else spans.forEach((o,s)=>{if(found)return;const sr=s.getBoundingClientRect();if(sr.top>vh*0.1||sr.bottom<vh*0.9)return;const share=(o.r-o.l) / vw;if(share<0.6)found={kind:'narrow',share:+share.toFixed(2),sec:(s.className||'').toString().slice(0,40)};});
+if(band / rows>=0.45){if(!teamTop)found={kind:'band',share:+(band / rows).toFixed(2)};}
+else if(col / cols>=0.4){if(!teamTop)found={kind:'column',share:+(col / cols).toFixed(2)};}
+else spans.forEach((o,s)=>{if(found|| /\bgfx-pg-(gi|pv)-/.test((s.className||'').toString()))return;const sr=s.getBoundingClientRect();if(sr.top>vh*0.1||sr.bottom<vh*0.9)return;const share=(o.r-o.l) / vw;if(share<0.6)found={kind:'narrow',share:+share.toFixed(2),sec:(s.className||'').toString().slice(0,40)};});
 return found;
 };
 const measure=()=>{
@@ -1325,6 +1328,7 @@ if(shared&&sharedRaf){tickerOn=true;cancelAnimationFrame(tempLoop);gsap.ticker.a
 safe('page start',()=>PAGE.start&&PAGE.start(api));
 safe('nav',navInit);
 curtainOff();
+H.classList.add('gfx-ready');
 const roomList=PAGE.rooms?(Array.isArray(PAGE.rooms)?PAGE.rooms:[PAGE.rooms]):[];
 const roomStep=(i,done)=>{if(i>=roomList.length){done();return;}safe('page rooms',()=>roomList[i](api));postFrame(()=>roomStep(i+1,done));};
 fontsReady().then(()=>postFrame(()=>roomStep(0,()=>{
