@@ -1,4 +1,4 @@
-/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.58 + pages 1.0.5 + insights 1.3.5. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
+/* Grey Fox · Insights v2 (Flow 3) page script: core 1.0.58 + pages 1.0.5 + insights 1.3.6. Sources: core/gfx-core.js, pages/gfx-pages.js, insights/gfx-insights.js */
 /*!
  * Grey Fox · gfx core (Flow 3), the shared layer every Flow 3 page runs on Webflow.
  * core 1.0.2 · 2026-10-20 (1.0.1: the text arrow re-finds its words at every placing and leaves with them under the header zone; 1.0.2: one brand arrow, the link glyph is the fox-ear mark, gfArrow.line for the opening's line) · front-end only (nothing secret).
@@ -2025,7 +2025,8 @@
   'use strict';
   var W = window, D = document, gfx = W.gfx;
   if (!gfx || !gfx.pages || W.__gfxInsights) return;
-  W.__gfxInsights = '1.3.5';   // 1.3.5 (10/31): the index's turn into the close on the site's one rule (stylesheet only)
+  W.__gfxInsights = '1.3.6';   // 1.3.6 (11/14): the drawn cover evaluate-a-firm (How to Evaluate a Buy-Side Origination Firm)
+  // 1.3.5 (10/31): the index's turn into the close on the site's one rule (stylesheet only)
   // (1.1) this bundle's own address: the covers live beside it, on the same pinned commit
   const SRC = (D.currentScript && D.currentScript.src) || '';
   const P = gfx.pages, O = P.O, H = D.documentElement, $ = gfx.$, $$ = gfx.$$, safe = gfx.safe, REDUCE = gfx.REDUCE;
@@ -2297,6 +2298,7 @@
     'buyer-financials': 'sha384-UGXC22PJYJjHkh5iL4B/JGRD/WlkWrl+3HN+T2zKK0mq77q1n0eq0hOaHz4gKRTk',
     'cold-call': 'sha384-K6ixKY/zEtbf6WyCHEWWhyMw6uXQ65OQZJDYyZsHUFHwEdYa20tjNT7/0xAxwJWY',
     'company-problem': 'sha384-kk/NKIJvUOB8I1evJoaPdWjZsNz5o5szPVWx008ofs/xd4Q32tPTZvWGvcXlph6V',
+    'evaluate-a-firm': 'sha384-awPRxMIWUKnIfkdRXbraPYzTNt+Rxnorb82ff/7vXZJaWsgOah3qMKt/4i1tcDS2',
     'exit-timeline': 'sha384-33YuPYaEbtWq0ex7nNk+FZplz6sxv6zxnOJi2ReB/PYNkTiBWaGh03leSc/qfOn0',
     'field-margin': 'sha384-HJKzCuVq3394L8uokafJZV1nrFFqoR7s0QxoFG9zMTu9rZhsgR5DuZCRdNdoSiRo',
     'fifty-email': 'sha384-3ntOLDx7YzSLeqtWH9n65uEZa+hHAip/VYrgM7Ku0O+kS4gobMBqnqOWnRhIUYZJ',
